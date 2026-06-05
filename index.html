@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Camping Sole, Mare & Zanzare - PERLA1 V62 Mobile Touch Portrait</title>
+    <title>Camping Sole, Mare & Zanzare - PERLA1 V63 Mobile Responsive Comfort</title>
     <style>
         :root { --panel: rgba(20,16,12,.88); --gold:#f1c40f; --sand:#f5d99e; }
         body { margin:0; min-height:100vh; background:radial-gradient(circle at 50% 0%,#183b4a 0%,#07090d 55%,#000 100%); color:white; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; display:flex; flex-direction:column; align-items:center; overflow-x:hidden; }
@@ -49,14 +49,31 @@
             .touch-look { width:74px; height:74px; }
             .touch-turn-btn { width:44px; height:44px; }
         }
+
+
+        /* V63: mobile landscape reale, non canvas portrait stirato. */
+        html.perla-mobile-landscape body { min-height:100dvh; justify-content:center; overflow:hidden; padding:0; touch-action:none; }
+        html.perla-mobile-landscape h2 { display:none; }
+        html.perla-mobile-landscape #game-container { width:min(100vw, calc((100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom)) * 1.777777)); max-width:100vw; max-height:100dvh; margin:0 auto; border-width:2px; border-radius:0; box-sizing:border-box; touch-action:none; }
+        html.perla-mobile-landscape #screen { width:100%; height:auto; max-width:100vw; max-height:100dvh; }
+        html.perla-mobile-landscape .ui-panel { display:none; }
+        html.perla-mobile-landscape #mini-map { width:64px; height:64px; right:7px; top:7px; border-width:1px; opacity:.78; }
+        html.perla-mobile-landscape #mobile-controls { display:flex; position:fixed; left:0; right:0; bottom:calc(4px + env(safe-area-inset-bottom)); height:82px; z-index:7; justify-content:space-between; align-items:center; padding:0 16px; box-sizing:border-box; pointer-events:none; opacity:.82; }
+        html.perla-mobile-landscape .touch-cluster { pointer-events:auto; display:flex; align-items:center; justify-content:center; gap:8px; }
+        html.perla-mobile-landscape .touch-pad { width:76px; height:76px; border-width:1px; }
+        html.perla-mobile-landscape .touch-knob { width:32px; height:32px; margin:-16px 0 0 -16px; }
+        html.perla-mobile-landscape .touch-pad-label { font-size:8px; bottom:8px; }
+        html.perla-mobile-landscape .touch-look { width:58px; height:58px; border-radius:18px; font-size:8px; }
+        html.perla-mobile-landscape .touch-turn-btn { width:38px; height:38px; border-radius:14px; font-size:20px; }
+        html.perla-mobile-landscape #loading { font-size:12px; padding:10px; }
     </style>
 </head>
 <body>
-    <h2>Camping Sole, Mare & Zanzare - PERLA1 V62</h2>
+    <h2>Camping Sole, Mare & Zanzare - PERLA1 V63</h2>
     <div id="game-container">
         <canvas id="screen" width="800" height="450"></canvas>
         <canvas id="mini-map" width="128" height="128"></canvas>
-        <div id="loading"><div><strong>Caricamento asset PERLA1 V62...</strong><br><span class="muted">Usa il launcher locale PowerShell/BAT per evitare problemi da file://.</span></div></div>
+        <div id="loading"><div><strong>Caricamento asset PERLA1 V63...</strong><br><span class="muted">Usa il launcher locale PowerShell/BAT per evitare problemi da file://.</span></div></div>
     </div>
     <div id="mobile-controls" aria-label="Controlli touch PERLA1">
         <div class="touch-cluster touch-cluster-left">
@@ -73,7 +90,7 @@
     </div>
     <div class="ui-panel">
         <strong>COMANDI:</strong> Desktop [W][A][S][D] o Frecce. Smartphone: pad CAMMINA + pad GIRA, oppure tieni premuto lo schermo.<br>
-        <span class="alert">V62: giocabilità mobile con canvas portrait, controlli touch e V61 pavimenti morbidi preservata.</span><br>
+        <span class="alert">V63: mobile responsive portrait/landscape, camera comfort e controlli touch più precisi.</span><br>
         <span class="muted" id="debugLine">posizione...</span>
     </div>
 
@@ -82,22 +99,34 @@
 'use strict';
 
 const canvas = document.getElementById('screen');
+function isCoarseViewport(){
+    return (navigator.maxTouchPoints||0)>0 || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+}
 function isCoarsePortraitViewport(){
-    const coarse = (navigator.maxTouchPoints||0)>0 || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
-    return coarse && window.innerHeight > window.innerWidth;
+    return isCoarseViewport() && window.innerHeight >= window.innerWidth;
+}
+function getPerlaViewportMode(){
+    if(!isCoarseViewport()) return 'desktop';
+    return window.innerWidth > window.innerHeight ? 'mobile-landscape' : 'mobile-portrait';
+}
+function getCanvasSizeForMode(mode){
+    // V63: tre risoluzioni reali, non CSS stretching.
+    // Desktop resta 800x450; mobile portrait resta 450x720; mobile landscape usa 720x405 per rapporto 16:9 con costo pixel controllato.
+    if(mode === 'mobile-portrait') return {w:450,h:720};
+    if(mode === 'mobile-landscape') return {w:720,h:405};
+    return {w:800,h:450};
+}
+function applyViewportClasses(mode){
+    document.documentElement.classList.toggle('perla-mobile-portrait', mode === 'mobile-portrait');
+    document.documentElement.classList.toggle('perla-mobile-landscape', mode === 'mobile-landscape');
 }
 function setupInitialCanvasSize(){
-    // V62: su smartphone verticale il canvas diventa realmente portrait, non solo CSS stirato.
-    // 450x720 resta vicino al costo pixel della base desktop 800x450, quindi non distrugge le performance.
-    if(isCoarsePortraitViewport()){
-        canvas.width = 450;
-        canvas.height = 720;
-        document.documentElement.classList.add('perla-mobile-portrait');
-    }else{
-        canvas.width = 800;
-        canvas.height = 450;
-        document.documentElement.classList.remove('perla-mobile-portrait');
-    }
+    const mode=getPerlaViewportMode();
+    const size=getCanvasSizeForMode(mode);
+    canvas.width=size.w;
+    canvas.height=size.h;
+    canvas.dataset.perlaMode=mode;
+    applyViewportClasses(mode);
 }
 setupInitialCanvasSize();
 const ctx = canvas.getContext('2d');
@@ -108,7 +137,13 @@ miniCtx.imageSmoothingEnabled = false;
 const loading = document.getElementById('loading');
 const debugLine = document.getElementById('debugLine');
 
-const screenW = canvas.width, screenH = canvas.height;
+let screenW = canvas.width, screenH = canvas.height;
+let currentViewportMode = canvas.dataset.perlaMode || getPerlaViewportMode();
+function cameraPlaneScaleForMode(mode){ return mode === 'mobile-portrait' ? 0.96 : 0.90; }
+function cameraVerticalScaleForMode(mode){ return mode === 'mobile-portrait' ? 0.86 : (mode === 'mobile-landscape' ? 0.96 : 1.0); }
+let planeScale = cameraPlaneScaleForMode(currentViewportMode);
+let verticalProjectionScale = cameraVerticalScaleForMode(currentViewportMode);
+let projectionH = screenH * verticalProjectionScale;
 const texW = 64, texH = 64;
 const mapW = 80, mapH = 88;
 const SEA_Y = 80;
@@ -346,7 +381,7 @@ function roofWorldToCamera(wx,wy,wz){
 }
 function projectRoofCameraPoint(q){
     if(!q || q.ty<=ROOF_NEAR_PLANE) return null;
-    const unit=screenH/q.ty;
+    const unit=projectionH/q.ty;
     return {x:(screenW*.5)*(1+q.tx/q.ty), y:screenH*.5+unit*.5-unit*q.wz, d:q.ty, z:q.wz};
 }
 function projectRoofPoint(wx,wy,wz){
@@ -638,7 +673,7 @@ function slopedRoofPixelVisible(px, sy, dist){
 // Le falde e le testate usano drawExistingWallFogOverlay(), la stessa regola storica del wallcasting.
 function projectRoofSliceY(z, dist){
     // Proiezione coerente con il wallcasting: camera a quota 0.5 mondo.
-    return Math.round(screenH*.5 + screenH*(.5-z)/Math.max(.001,dist));
+    return Math.round(screenH*.5 + projectionH*(.5-z)/Math.max(.001,dist));
 }
 function slopedRoofEdgeZAt(r, wx, wy){
     const ez=r.eaveZ, rz=r.ridgeZ;
@@ -735,7 +770,7 @@ function drawSlopedRoofLayer2_5D(time){
     if(!planes.length) return;
     const yEnd=Math.floor(screenH/2)+2;
     for(let sy=0; sy<yEnd; sy+=2){
-        const screenSlope=(sy+.5-screenH*.5)/screenH;
+        const screenSlope=(sy+.5-screenH*.5)/projectionH;
         for(let sx=0; sx<screenW; sx+=2){
             const camX=2*sx/screenW-1;
             const rDirX=dirX+planeX*camX, rDirY=dirY+planeY*camX;
@@ -1206,7 +1241,7 @@ function buildFloorVisualMaps(){
     const colorStats=buildFloorVisualColorMap();
     const subTileStats=buildFloorSubTileColorMap();
     const nearSubTileStats=buildFloorNearSubTileColorMap();
-    floorVisualStats={ stage:'V62_MOBILE_TOUCH_PORTRAIT', noiseCells, roadSoftCells, trailSoftCells, outlineCells, decalCells:decalStats.cells, microDecalCells:decalStats.microCells, trailDecals:decalStats.trailNeedles, trailMottle:decalStats.trailMottle, sandFootprints:decalStats.sandFootprints, sandShells:decalStats.sandShells, showerWater:decalStats.showerWater, roadPebbles:decalStats.roadPebbles, roadDustFlecks:decalStats.roadDustFlecks, grassWear:decalStats.grassWear, colorCells:colorStats.cells, uniqueFloorColors:colorStats.uniqueColors, subTileCells:subTileStats.cells, subTileSlots:subTileStats.slots, uniqueSubTileColors:subTileStats.uniqueSubColors, nearSubTileCells:nearSubTileStats.cells, nearSubTileSlots:nearSubTileStats.slots, uniqueNearSubTileColors:nearSubTileStats.uniqueNearSubColors, nearSubTileRes:FLOOR_NEAR_SUB_TILE_RES, nearDetailDist:FLOOR_NEAR_DETAIL_DIST };
+    floorVisualStats={ stage:'V63_MOBILE_RESPONSIVE_COMFORT', noiseCells, roadSoftCells, trailSoftCells, outlineCells, decalCells:decalStats.cells, microDecalCells:decalStats.microCells, trailDecals:decalStats.trailNeedles, trailMottle:decalStats.trailMottle, sandFootprints:decalStats.sandFootprints, sandShells:decalStats.sandShells, showerWater:decalStats.showerWater, roadPebbles:decalStats.roadPebbles, roadDustFlecks:decalStats.roadDustFlecks, grassWear:decalStats.grassWear, colorCells:colorStats.cells, uniqueFloorColors:colorStats.uniqueColors, subTileCells:subTileStats.cells, subTileSlots:subTileStats.slots, uniqueSubTileColors:subTileStats.uniqueSubColors, nearSubTileCells:nearSubTileStats.cells, nearSubTileSlots:nearSubTileStats.slots, uniqueNearSubTileColors:nearSubTileStats.uniqueNearSubColors, nearSubTileRes:FLOOR_NEAR_SUB_TILE_RES, nearDetailDist:FLOOR_NEAR_DETAIL_DIST };
     return floorVisualStats;
 }
 function markBlocked(x,y){ if(inBounds(x,y)) objectBlock[y][x]=1; }
@@ -2051,14 +2086,48 @@ generateWorld();
 
 let posX=40.5, posY=10.0;
 let dirX=0.0, dirY=1.0;
-let planeX=-0.90, planeY=0.0;
-let ZBuffer=new Float32Array(screenW);
-let WallTopBuffer=new Int16Array(screenW);
-let WallBottomBuffer=new Int16Array(screenW);
-let WallOwnerBuffer=new Uint8Array(screenW); // V44: diagnostica owner muro; NON dà più permessi al tetto di attraversare pareti.
-let CeilingDepthBuffer=new Float32Array(screenW * Math.ceil(screenH/2 + 4));
-let CeilingOwnerBuffer=new Uint8Array(screenW * Math.ceil(screenH/2 + 4)); // V44: owner del soffitto/coperura inferiore per non bucare il tetto esterno dello stesso edificio.
-let CeilingColumnHasDepth=new Uint8Array(screenW);
+let planeX=-dirY*planeScale, planeY=dirX*planeScale;
+let ZBuffer, WallTopBuffer, WallBottomBuffer, WallOwnerBuffer, CeilingDepthBuffer, CeilingOwnerBuffer, CeilingColumnHasDepth;
+function allocateRenderBuffers(){
+    ZBuffer=new Float32Array(screenW);
+    WallTopBuffer=new Int16Array(screenW);
+    WallBottomBuffer=new Int16Array(screenW);
+    WallOwnerBuffer=new Uint8Array(screenW); // V44: diagnostica owner muro; NON dà più permessi al tetto di attraversare pareti.
+    CeilingDepthBuffer=new Float32Array(screenW * Math.ceil(screenH/2 + 4));
+    CeilingOwnerBuffer=new Uint8Array(screenW * Math.ceil(screenH/2 + 4)); // V44: owner del soffitto/copertura inferiore per non bucare il tetto esterno dello stesso edificio.
+    CeilingColumnHasDepth=new Uint8Array(screenW);
+}
+function refreshCameraPlane(){
+    const len=Math.hypot(dirX,dirY)||1;
+    dirX/=len; dirY/=len;
+    planeX=-dirY*planeScale;
+    planeY=dirX*planeScale;
+}
+function applyRendererMode(mode){
+    currentViewportMode=mode;
+    verticalProjectionScale=cameraVerticalScaleForMode(mode);
+    projectionH=screenH*verticalProjectionScale;
+    planeScale=cameraPlaneScaleForMode(mode);
+    refreshCameraPlane();
+}
+function resizePerlaRenderer(force=false){
+    const mode=getPerlaViewportMode();
+    const size=getCanvasSizeForMode(mode);
+    if(!force && mode===currentViewportMode && size.w===screenW && size.h===screenH) return;
+    screenW=size.w; screenH=size.h;
+    canvas.width=screenW; canvas.height=screenH;
+    ctx.imageSmoothingEnabled=false;
+    canvas.dataset.perlaMode=mode;
+    applyViewportClasses(mode);
+    applyRendererMode(mode);
+    allocateRenderBuffers();
+    touchInput.moveX=touchInput.moveY=touchInput.lookX=touchInput.buttonTurn=touchInput.screenForward=touchInput.screenLookX=0;
+}
+allocateRenderBuffers();
+applyRendererMode(currentViewportMode);
+let resizeTimer=null;
+window.addEventListener('resize',()=>{ clearTimeout(resizeTimer); resizeTimer=setTimeout(()=>resizePerlaRenderer(false),80); }, {passive:true});
+window.addEventListener('orientationchange',()=>{ clearTimeout(resizeTimer); resizeTimer=setTimeout(()=>resizePerlaRenderer(true),160); }, {passive:true});
 const keys={};
 const touchInput = { moveX:0, moveY:0, lookX:0, buttonTurn:0, screenForward:0, screenLookX:0, activeMove:false, activeLook:false };
 window.addEventListener('keydown',e=>{
@@ -2111,7 +2180,7 @@ function bindScreenTouchWalk(){
         if(state.id!==e.pointerId) return;
         e.preventDefault();
         state.lastX=e.clientX;
-        touchInput.screenLookX=clamp((state.lastX-state.startX)/90, -1, 1);
+        touchInput.screenLookX=clamp((state.lastX-state.startX)/(currentViewportMode==='mobile-landscape'?130:105), -1, 1);
     }, {passive:false});
     canvas.addEventListener('pointerup',e=>{ if(state.id===e.pointerId){ e.preventDefault(); reset(); } }, {passive:false});
     canvas.addEventListener('pointercancel',e=>{ if(state.id===e.pointerId){ e.preventDefault(); reset(); } }, {passive:false});
@@ -2129,11 +2198,16 @@ setupTouchControls();
 let lastTime=0;
 function isWalkable(y,x){ const ix=Math.floor(x), iy=Math.floor(y); if(iy<0||iy>=mapH||ix<0||ix>=mapW) return false; if(fMap[iy][ix]===2) return false; if(objectBlock[iy][ix]) return false; return map[iy][ix]===0; }
 function moveWithSliding(dx,dy){
-    const radius=.18; const nx=posX+dx, ny=posY+dy;
+    // V63: mobile comfort. Su touch il raggio effettivo e lo sliding sono appena più permissivi,
+    // così porte/sentieri stretti non diventano una lotta contro i controlli. Desktop resta identico.
+    const mobileComfort=currentViewportMode!=='desktop';
+    const radius=mobileComfort ? .155 : .18;
+    const slideFactor=mobileComfort ? .72 : .58;
+    const nx=posX+dx, ny=posY+dy;
     if(isWalkable(posY,nx+Math.sign(dx)*radius) && isWalkable(posY-radius,nx) && isWalkable(posY+radius,nx)) posX=nx;
-    else { const slide=dy*.58; if(isWalkable(posY+slide,posX)) posY+=slide; }
+    else { const slide=dy*slideFactor; if(isWalkable(posY+slide,posX)) posY+=slide; }
     if(isWalkable(ny+Math.sign(dy)*radius,posX) && isWalkable(ny,posX-radius) && isWalkable(ny,posX+radius)) posY=ny;
-    else { const slide=dx*.58; if(isWalkable(posY,posX+slide)) posX+=slide; }
+    else { const slide=dx*slideFactor; if(isWalkable(posY,posX+slide)) posX+=slide; }
 }
 function rotatePlayer(angle){
     if(!angle) return;
@@ -2147,13 +2221,16 @@ function updatePlayer(ft){
     const ms=5.2*ft, rs=2.0*ft;
     const keyForward=(keys['w']||keys['arrowup']?1:0) - (keys['s']||keys['arrowdown']?1:0);
     const keyTurn=(keys['d']||keys['arrowright']?1:0) - (keys['a']||keys['arrowleft']?1:0);
-    // V62 mobile: pad sinistro = cammina avanti/indietro; laterale aiuta a girare se si gioca a una mano. Pad destro/bottoni = rotazione.
+    // V63 mobile: il pad sinistro laterale ora aiuta soprattutto con micro-strafe,
+    // molto più utile per infilarsi in porte/sentieri stretti. Resta una piccola rotazione one-hand.
     const touchForward=clamp(-touchInput.moveY + touchInput.screenForward, -1, 1);
-    const oneHandTurn=clamp(touchInput.moveX*.55, -1, 1);
+    const touchStrafe=clamp(touchInput.moveX, -1, 1);
+    const oneHandTurn=clamp(touchInput.moveX*.24, -1, 1);
     const lookTurn=clamp(touchInput.lookX + touchInput.screenLookX, -1, 1);
     const forwardAxis=clamp(keyForward + touchForward, -1, 1);
     const turnAxis=clamp(keyTurn + oneHandTurn + lookTurn + touchInput.buttonTurn, -1, 1);
     if(Math.abs(forwardAxis)>.03) moveWithSliding(dirX*ms*forwardAxis, dirY*ms*forwardAxis);
+    if(currentViewportMode!=='desktop' && Math.abs(touchStrafe)>.08) moveWithSliding(-dirY*ms*.62*touchStrafe, dirX*ms*.62*touchStrafe);
     if(Math.abs(turnAxis)>.03) rotatePlayer(rs*turnAxis);
 }
 function isOutdoors(){ const ix=clamp(Math.floor(posX),0,mapW-1), iy=clamp(Math.floor(posY),0,mapH-1); return cMap[iy][ix]===0 && zoneMask[iy][ix]!=='bath_garden' && zoneMask[iy][ix]!=='yoga_room' && zoneMask[iy][ix]!=='bar'; }
@@ -2219,7 +2296,7 @@ function drawWorld(time){
     ctx.clearRect(0,0,screenW,screenH); drawBackdrop(time); resetCeilingDepthBuffer(); WallTopBuffer.fill(screenH); WallBottomBuffer.fill(-1); WallOwnerBuffer.fill(0);
     const rayDirX0=dirX-planeX, rayDirY0=dirY-planeY, rayDirX1=dirX+planeX, rayDirY1=dirY+planeY;
     for(let y=Math.floor(screenH/2)+1;y<screenH;y+=2){
-        const p=y-screenH/2, posZ=.5*screenH, rowDist=posZ/p;
+        const p=y-screenH/2, posZ=.5*projectionH, rowDist=posZ/p;
         const fStepX=rowDist*(rayDirX1-rayDirX0)/screenW, fStepY=rowDist*(rayDirY1-rayDirY0)/screenW;
         let fX=posX+rowDist*rayDirX0, fY=posY+rowDist*rayDirY0;
         let curFloorColor=null,curCeil=-1,curCeilOwner=-1,startX=0,startXCeil=0; const ceilY=screenH-y;
@@ -2256,7 +2333,7 @@ function drawWorld(time){
         while(hit===0 && mapY<mapH && mapY>=0 && mapX<mapW && mapX>=0){ if(sDistX<sDistY){ sDistX+=dDistX; mapX+=stepX; side=0; } else { sDistY+=dDistY; mapY+=stepY; side=1; } if(rDirY>0 && mapY>=SEA_Y){ break; } if(map[mapY]&&map[mapY][mapX]>0) hit=1; }
         if(hit){
             const perpDist=(side===0)?(mapX-posX+(1-stepX)/2)/rDirX:(mapY-posY+(1-stepY)/2)/rDirY; ZBuffer[x]=perpDist;
-            const baseLineH=Math.floor(screenH/Math.max(.001,perpDist));
+            const baseLineH=Math.floor(projectionH/Math.max(.001,perpDist));
             const wallH=wallVisualHeight(mapX,mapY,map[mapY][mapX]);
             const lineH=Math.max(1,Math.floor(baseLineH*wallH));
             const wallBottom=Math.floor(screenH/2 + baseLineH/2); // ancora a terra: l'edificio cresce verso l'alto
@@ -2297,7 +2374,7 @@ function drawWorld(time){
     sprites.forEach(s=>{ s.dist=(posX-s.x)**2+(posY-s.y)**2; }); sprites.sort((a,b)=>b.dist-a.dist);
     sprites.forEach(s=>{
         const spX=s.x-posX, spY=s.y-posY; const invDet=1.0/(planeX*dirY-dirX*planeY); const transX=invDet*(dirY*spX-dirX*spY); const transY=invDet*(-planeY*spX+planeX*spY); if(transY<=0) return;
-        const spScreenX=Math.floor((screenW/2)*(1+transX/transY)); const spSize=Math.abs(Math.floor(screenH/transY)); const spriteHeight=Math.floor(spSize*(s.hScale||1)); const spriteWidth=Math.floor(spSize*(s.wScale||1));
+        const spScreenX=Math.floor((screenW/2)*(1+transX/transY)); const spSize=Math.abs(Math.floor(projectionH/transY)); const spriteHeight=Math.floor(spSize*(s.hScale||1)); const spriteWidth=Math.floor(spSize*(s.wScale||1));
         const drawSX=Math.max(0,Math.floor(-spriteWidth/2+spScreenX)); const drawEX=Math.min(screenW-1,Math.floor(spriteWidth/2+spScreenX)); const baseY=screenH/2+spSize/2; const anchorSink=spriteAnchorSink(s,spSize); const startY=Math.round(baseY-spriteHeight+anchorSink);
         const img=getTex(s.tex,time); if(!img) return;
         const endY=startY+spriteHeight;
@@ -2331,9 +2408,9 @@ function drawMiniMap(){
     miniCtx.fillStyle='#fffbcc'; miniCtx.beginPath(); miniCtx.arc(posX*scale,posY*scale,3,0,Math.PI*2); miniCtx.fill(); miniCtx.strokeStyle='#fffbcc'; miniCtx.lineWidth=2; miniCtx.beginPath(); miniCtx.moveTo(posX*scale,posY*scale); miniCtx.lineTo((posX+dirX*3)*scale,(posY+dirY*3)*scale); miniCtx.stroke(); miniCtx.restore();
 }
 function zoneAtPlayer(){ const x=clamp(Math.floor(posX),0,mapW-1), y=clamp(Math.floor(posY),0,mapH-1); return zoneMask[y][x]||'erba'; }
-function gameLoop(time){ const ft=Math.min(.05,(time-lastTime)/1000||0); lastTime=time; updatePlayer(ft); drawWorld(time); drawMiniMap(); debugLine.textContent=`X ${posX.toFixed(2)} / Y ${posY.toFixed(2)} · zona: ${zoneAtPlayer()} · sprite: ${sprites.length} · map ${mapW}x${mapH} · asset ID: ${Object.keys(ASSET_MANIFEST).length}`; requestAnimationFrame(gameLoop); }
+function gameLoop(time){ const ft=Math.min(.05,(time-lastTime)/1000||0); lastTime=time; updatePlayer(ft); drawWorld(time); drawMiniMap(); debugLine.textContent=`X ${posX.toFixed(2)} / Y ${posY.toFixed(2)} · zona: ${zoneAtPlayer()} · ${currentViewportMode} ${screenW}x${screenH} · sprite: ${sprites.length}`; requestAnimationFrame(gameLoop); }
 
-window.__PERLA_DEBUG__ = { map, fMap, cMap, zoneMask, roadMask, noNature, objectBlock, sprites, roofSegments, ASSET_MANIFEST, wallDecalMap, wallHeightMap, roadSoftEdgeMap, trailSoftEdgeMap, floorNoiseMap, floorDecalMap, floorOutlineMap, floorVisualColorMap, floorSubTileColorMap, floorNearSubTileColorMap, floorMicroDecalMap, floorVisualStats, buildFloorVisualMaps, buildFloorVisualColorMap, buildFloorDecalMap, buildFloorSubTileColorMap, buildFloorNearSubTileColorMap, resetFloorVisualMaps, getFloorColorAt, computeFloorVisualColor, floorHash2D, floorNoiseSigned, mixColorHex, mixFloorQuantized, floorNeedsSubTileColor, organicTrailMask, regularRoadMask, applyOrganicTrailSubTile, applyHumanRoadSubTile, applyFloorDecalAt, inferWallDecalFaceV35, getWallDecalTexX, wallVisualHeight, drawRoofRimColumn, drawCeilingSegment, isModernCoverOwner, drawRoofLayer2_5D, drawGabledRoof2_5D, drawModernBuildingSolid2_5D, collectModernWallFaces, collectModernRoofFaces, drawRoofPoly, roofVisibleAt, playerInsideRoof, modernInsideDepth, shouldDrawModernExteriorRoof, shouldUseModernNearWallGuard, drawModernCoverCeilingSegment, getModernCoverForOwner, drawSlopedRoofLayer2_5D, drawSlopedRoofGableCaps2_5D, slopedRoofGableCapsFor, slopedRoofGableCapFacesCamera, slopedRoofEdgeZAt, slopedRoofPlanesFor, slopedRoofPixelVisible, drawWorld, WallTopBuffer, WallBottomBuffer, WallOwnerBuffer, CeilingOwnerBuffer, ceilingOwnerMap, isWalkable, shouldDrawSeaHorizon, distToRoad, ceilingSpriteClipY, CeilingDepthBuffer, CeilingColumnHasDepth, touchInput, setupTouchControls, isCoarsePortraitViewport, setPlayerForDebug(x,y,dx,dy){ posX=x; posY=y; if(typeof dx==='number' && typeof dy==='number'){ const len=Math.hypot(dx,dy)||1; dirX=dx/len; dirY=dy/len; planeX=-dirY*.90; planeY=dirX*.90; } } };
+window.__PERLA_DEBUG__ = { map, fMap, cMap, zoneMask, roadMask, noNature, objectBlock, sprites, roofSegments, ASSET_MANIFEST, wallDecalMap, wallHeightMap, roadSoftEdgeMap, trailSoftEdgeMap, floorNoiseMap, floorDecalMap, floorOutlineMap, floorVisualColorMap, floorSubTileColorMap, floorNearSubTileColorMap, floorMicroDecalMap, floorVisualStats, buildFloorVisualMaps, buildFloorVisualColorMap, buildFloorDecalMap, buildFloorSubTileColorMap, buildFloorNearSubTileColorMap, resetFloorVisualMaps, getFloorColorAt, computeFloorVisualColor, floorHash2D, floorNoiseSigned, mixColorHex, mixFloorQuantized, floorNeedsSubTileColor, organicTrailMask, regularRoadMask, applyOrganicTrailSubTile, applyHumanRoadSubTile, applyFloorDecalAt, inferWallDecalFaceV35, getWallDecalTexX, wallVisualHeight, drawRoofRimColumn, drawCeilingSegment, isModernCoverOwner, drawRoofLayer2_5D, drawGabledRoof2_5D, drawModernBuildingSolid2_5D, collectModernWallFaces, collectModernRoofFaces, drawRoofPoly, roofVisibleAt, playerInsideRoof, modernInsideDepth, shouldDrawModernExteriorRoof, shouldUseModernNearWallGuard, drawModernCoverCeilingSegment, getModernCoverForOwner, drawSlopedRoofLayer2_5D, drawSlopedRoofGableCaps2_5D, slopedRoofGableCapsFor, slopedRoofGableCapFacesCamera, slopedRoofEdgeZAt, slopedRoofPlanesFor, slopedRoofPixelVisible, drawWorld, WallTopBuffer, WallBottomBuffer, WallOwnerBuffer, CeilingOwnerBuffer, ceilingOwnerMap, isWalkable, shouldDrawSeaHorizon, distToRoad, ceilingSpriteClipY, CeilingDepthBuffer, CeilingColumnHasDepth, touchInput, setupTouchControls, isCoarseViewport, isCoarsePortraitViewport, getPerlaViewportMode, resizePerlaRenderer, currentViewportMode:()=>currentViewportMode, projectionH:()=>projectionH, screenSize:()=>({screenW,screenH}), setPlayerForDebug(x,y,dx,dy){ posX=x; posY=y; if(typeof dx==='number' && typeof dy==='number'){ const len=Math.hypot(dx,dy)||1; dirX=dx/len; dirY=dy/len; planeScale=cameraPlaneScaleForMode(currentViewportMode); refreshCameraPlane(); } } };
 loadAssets().then(()=>{ loading.classList.add('hidden'); requestAnimationFrame(gameLoop); }).catch(err=>{ loading.innerHTML=`<div><strong>Errore caricamento asset</strong><br><span class="muted">${String(err.message||err)}</span><br><br>Avvia con AVVIA_GIOCO_WINDOWS_SENZA_PYTHON.bat.</div>`; console.error(err); });
 
 })();
