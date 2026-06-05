@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Camping Sole, Mare & Zanzare - PERLA1 V65 Mobile Debug Profiler</title>
+    <title>Camping Sole, Mare & Zanzare - PERLA1 V66 Mobile Optimizer</title>
     <style>
-        :root { --panel: rgba(20,16,12,.88); --gold:#f1c40f; --sand:#f5d99e; }
+        :root { --panel: rgba(20,16,12,.88); --gold:#f1c40f; --sand:#f5d99e; --perla-vv-left:0px; --perla-vv-top:0px; --perla-vv-width:100vw; --perla-vv-height:100dvh; }
         body { margin:0; min-height:100vh; background:radial-gradient(circle at 50% 0%,#183b4a 0%,#07090d 55%,#000 100%); color:white; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; display:flex; flex-direction:column; align-items:center; overflow-x:hidden; }
         h2 { margin:12px 0 6px; font-size:22px; letter-spacing:.04em; text-shadow:0 3px 14px rgba(0,0,0,.8); }
         #game-container { position:relative; margin-top:8px; background:linear-gradient(to bottom,#56CCF2 0%,#a1c4fd 100%); border:4px solid #473526; box-shadow:0 16px 52px rgba(0,0,0,.92), inset 0 0 0 2px rgba(255,255,255,.08); overflow:hidden; }
@@ -20,7 +20,7 @@
         html { width:100%; min-height:100%; background:#000; overscroll-behavior:none; }
         #screen { width:800px; height:450px; max-width:calc(100vw - 28px); height:auto; }
         #mobile-controls { display:none; }
-        /* V65: debug mobile smart, visibile solo se PERLA_MOBILE_DEBUG_ENABLED=true. */
+        /* V66: debug mobile smart + layout visualViewport-safe. */
         #perla-debug-widget { position:fixed; left:calc(8px + env(safe-area-inset-left)); top:calc(8px + env(safe-area-inset-top)); z-index:30; display:flex; flex-direction:column; align-items:flex-start; gap:6px; pointer-events:none; }
         #perla-debug-widget[hidden] { display:none !important; }
         #perlaDebugCopyBtn { pointer-events:auto; border:1px solid rgba(255,255,255,.34); border-radius:999px; padding:8px 12px; color:#fff; background:linear-gradient(180deg,rgba(241,196,15,.92),rgba(162,97,30,.92)); box-shadow:0 7px 18px rgba(0,0,0,.42); font-size:12px; font-weight:900; letter-spacing:.04em; -webkit-user-select:none; user-select:none; touch-action:manipulation; }
@@ -38,7 +38,7 @@
             .ui-panel { position:fixed; left:8px; right:8px; bottom:calc(136px + env(safe-area-inset-bottom)); z-index:6; width:auto; margin:0; padding:6px 8px; border-radius:10px; font-size:11px; line-height:1.25; opacity:.88; pointer-events:none; }
             .ui-panel strong, .ui-panel .alert { display:none; }
             .muted { font-size:11px; }
-            #mobile-controls { display:flex; position:fixed; left:env(safe-area-inset-left); right:env(safe-area-inset-right); bottom:calc(8px + env(safe-area-inset-bottom)); height:118px; z-index:7; justify-content:space-between; align-items:center; padding:0 18px; box-sizing:border-box; pointer-events:none; }
+            #mobile-controls { display:flex; position:fixed; left:calc(var(--perla-vv-left, 0px) + env(safe-area-inset-left)); right:auto; width:calc(var(--perla-vv-width, 100vw) - env(safe-area-inset-left) - env(safe-area-inset-right)); bottom:calc(8px + env(safe-area-inset-bottom)); height:118px; z-index:7; justify-content:space-between; align-items:center; padding:0 14px; box-sizing:border-box; pointer-events:none; }
             .touch-cluster { pointer-events:auto; display:flex; align-items:center; justify-content:center; gap:10px; }
             .touch-pad { position:relative; width:108px; height:108px; border-radius:50%; background:radial-gradient(circle at 50% 45%,rgba(255,255,255,.18),rgba(255,255,255,.06) 58%,rgba(0,0,0,.34)); border:2px solid rgba(255,255,255,.28); box-shadow:0 10px 28px rgba(0,0,0,.5), inset 0 0 18px rgba(255,255,255,.06); }
             .touch-pad-label { position:absolute; inset:auto 0 12px; text-align:center; font-size:10px; font-weight:800; letter-spacing:.08em; color:rgba(255,255,255,.78); text-shadow:0 2px 4px rgba(0,0,0,.8); }
@@ -65,7 +65,7 @@
         html.perla-mobile-landscape #screen { width:100%; height:auto; max-width:100vw; max-height:100dvh; }
         html.perla-mobile-landscape .ui-panel { display:none; }
         html.perla-mobile-landscape #mini-map { width:64px; height:64px; right:7px; top:7px; border-width:1px; opacity:.78; }
-        html.perla-mobile-landscape #mobile-controls { display:flex; position:fixed; left:env(safe-area-inset-left); right:env(safe-area-inset-right); bottom:calc(4px + env(safe-area-inset-bottom)); height:82px; z-index:7; justify-content:space-between; align-items:center; padding:0 12px; box-sizing:border-box; pointer-events:none; opacity:.86; }
+        html.perla-mobile-landscape #mobile-controls { display:flex; position:fixed; left:calc(var(--perla-vv-left, 0px) + env(safe-area-inset-left)); right:auto; width:calc(var(--perla-vv-width, 100vw) - env(safe-area-inset-left) - env(safe-area-inset-right)); bottom:calc(4px + env(safe-area-inset-bottom)); height:82px; z-index:7; justify-content:space-between; align-items:center; padding:0 10px; box-sizing:border-box; pointer-events:none; opacity:.86; }
         html.perla-mobile-landscape .touch-cluster { pointer-events:auto; display:flex; align-items:center; justify-content:center; gap:7px; flex-shrink:0; }
         html.perla-mobile-landscape .touch-pad { width:74px; height:74px; border-width:1px; }
         html.perla-mobile-landscape .touch-knob { width:32px; height:32px; margin:-16px 0 0 -16px; }
@@ -88,11 +88,11 @@
     </style>
 </head>
 <body>
-    <h2>Camping Sole, Mare & Zanzare - PERLA1 V65</h2>
+    <h2>Camping Sole, Mare & Zanzare - PERLA1 V66</h2>
     <div id="game-container">
         <canvas id="screen" width="800" height="450"></canvas>
         <canvas id="mini-map" width="128" height="128"></canvas>
-        <div id="loading"><div><strong>Caricamento asset PERLA1 V65...</strong><br><span class="muted">Usa il launcher locale PowerShell/BAT per evitare problemi da file://.</span></div></div>
+        <div id="loading"><div><strong>Caricamento asset PERLA1 V66...</strong><br><span class="muted">Usa il launcher locale PowerShell/BAT per evitare problemi da file://.</span></div></div>
     </div>
     <div id="mobile-controls" aria-label="Controlli touch PERLA1">
         <div class="touch-cluster touch-cluster-left">
@@ -116,7 +116,7 @@
     </div>
     <div class="ui-panel">
         <strong>COMANDI:</strong> Desktop [W][A][S][D] o Frecce. Smartphone: pad CAMMINA + pad GIRA, oppure tieni premuto lo schermo.<br>
-        <span class="alert">V65: debug mobile smart attivo, export TXT/copia + V64 preservata.</span><br>
+        <span class="alert">V66: debug mobile + ottimizzazione visualViewport, floor LOD, sprite culling e minimappa mobile.</span><br>
         <span class="muted" id="debugLine">posizione...</span>
     </div>
 
@@ -146,6 +146,20 @@ function applyViewportClasses(mode){
     document.documentElement.classList.toggle('perla-mobile-portrait', mode === 'mobile-portrait');
     document.documentElement.classList.toggle('perla-mobile-landscape', mode === 'mobile-landscape');
 }
+function updatePerlaVisualViewportCSS(){
+    // V66: iOS puo' avere visualViewport piu' stretto del layout viewport.
+    // I controlli touch devono stare nel viewport realmente visibile, non nel 100vw teorico.
+    const vv=window.visualViewport;
+    const left=vv ? vv.offsetLeft : 0;
+    const top=vv ? vv.offsetTop : 0;
+    const width=vv ? vv.width : window.innerWidth;
+    const height=vv ? vv.height : window.innerHeight;
+    const st=document.documentElement.style;
+    st.setProperty('--perla-vv-left', (left||0).toFixed(2)+'px');
+    st.setProperty('--perla-vv-top', (top||0).toFixed(2)+'px');
+    st.setProperty('--perla-vv-width', Math.max(1,width||window.innerWidth).toFixed(2)+'px');
+    st.setProperty('--perla-vv-height', Math.max(1,height||window.innerHeight).toFixed(2)+'px');
+}
 function setupInitialCanvasSize(){
     const mode=getPerlaViewportMode();
     const size=getCanvasSizeForMode(mode);
@@ -153,6 +167,7 @@ function setupInitialCanvasSize(){
     canvas.height=size.h;
     canvas.dataset.perlaMode=mode;
     applyViewportClasses(mode);
+    updatePerlaVisualViewportCSS();
 }
 setupInitialCanvasSize();
 const ctx = canvas.getContext('2d');
@@ -163,8 +178,8 @@ miniCtx.imageSmoothingEnabled = false;
 const loading = document.getElementById('loading');
 const debugLine = document.getElementById('debugLine');
 
-const PERLA_BUILD_ID = 'PERLA1_V65_MOBILE_DEBUG_PROFILER';
-const PERLA_MOBILE_DEBUG_ENABLED = true; // V65: switch test. Mettere false per nascondere completamente il bottone debug.
+const PERLA_BUILD_ID = 'PERLA1_V66_MOBILE_OPTIMIZER';
+const PERLA_MOBILE_DEBUG_ENABLED = true; // V66: switch test. Mettere false per nascondere completamente il bottone debug.
 const perlaDebugWidget = document.getElementById('perla-debug-widget');
 const perlaDebugButton = document.getElementById('perlaDebugCopyBtn');
 const perlaDebugOutput = document.getElementById('perlaDebugOutput');
@@ -181,6 +196,44 @@ function cameraVerticalScaleForMode(mode){
     return mode === 'mobile-portrait' ? 0.68 : (mode === 'mobile-landscape' ? 0.99 : 1.0);
 }
 function screenLookDragDivisorForMode(mode){ return mode === 'mobile-landscape' ? 118 : 112; }
+const PERLA_MOBILE_MINIMAP_FRAME_SKIP = 2; // V66: su mobile la minimappa viene aggiornata ogni 2 frame.
+function floorBandHeightForMode(rowDist){
+    // V66: LOD conservativo. Mantiene dettaglio pieno vicino, riduce righe lontane/periferiche.
+    if(currentViewportMode==='desktop') return 2;
+    if(currentViewportMode==='mobile-portrait'){
+        if(rowDist>24) return 5;
+        if(rowDist>13) return 4;
+        if(rowDist>7.5) return 3;
+        return 2;
+    }
+    if(rowDist>20) return 4;
+    if(rowDist>10) return 3;
+    return 2;
+}
+function getSpriteRenderCandidates(drawStats){
+    // V66: culling pre-sort conservativo solo mobile. Desktop resta pieno.
+    if(currentViewportMode==='desktop'){
+        for(const s of sprites) s.dist=(posX-s.x)**2+(posY-s.y)**2;
+        drawStats.spriteCulled=0; drawStats.spriteCandidates=sprites.length;
+        return sprites;
+    }
+    const list=[]; let culled=0;
+    const maxDist=currentViewportMode==='mobile-landscape' ? 88 : 80;
+    const maxDistSq=maxDist*maxDist;
+    const fovPad=planeScale + (currentViewportMode==='mobile-landscape' ? .86 : .92);
+    const lateralSlack=currentViewportMode==='mobile-landscape' ? 5.2 : 5.8;
+    for(const s of sprites){
+        const dx=s.x-posX, dy=s.y-posY;
+        const distSq=dx*dx+dy*dy;
+        const forward=dx*dirX+dy*dirY;
+        const lateral=dx*(-dirY)+dy*dirX;
+        const veryClose=distSq<16;
+        if(!veryClose && (distSq>maxDistSq || forward<-2.5 || Math.abs(lateral)>(Math.max(5,forward*fovPad)+lateralSlack))){ culled++; continue; }
+        s.dist=distSq; list.push(s);
+    }
+    drawStats.spriteCulled=culled; drawStats.spriteCandidates=list.length;
+    return list;
+}
 let planeScale = cameraPlaneScaleForMode(currentViewportMode);
 let verticalProjectionScale = cameraVerticalScaleForMode(currentViewportMode);
 let projectionH = screenH * verticalProjectionScale;
@@ -365,13 +418,14 @@ function drawRoofRimColumn(x, drawStartFixed, wallBottomFixed, lineH, baseLineH,
     // Il tetto vero ora vive nel roof layer 2.5D dedicato; questa funzione resta disattivata.
     return;
 }
-function drawCeilingSegment(x0, y, w, typeC, rowDist){
+function drawCeilingSegment(x0, y, w, typeC, rowDist, bandH){
     // V39: resa tettoie/soffitti conservativa. Nessun pattern screen-space mobile.
     // CeilingDepthBuffer e clipping sprite restano popolati fuori da questa funzione.
     if(w<=0) return;
+    bandH=bandH||2;
     const base=floorColors[typeC]||'#9b6b3c';
     ctx.fillStyle=base;
-    ctx.fillRect(x0,y,w,2);
+    ctx.fillRect(x0,y,w,bandH);
     if(typeC===7){
         ctx.fillStyle='rgba(72,36,18,.10)';
         ctx.fillRect(x0,y,w,1);
@@ -386,15 +440,16 @@ function getModernCoverForOwner(owner){
     for(let i=0;i<roofSegments.length;i++) if(roofSegments[i].ownerId===owner) return roofSegments[i];
     return null;
 }
-function drawModernCoverCeilingSegment(x0, y, w, owner, typeC, rowDist){
+function drawModernCoverCeilingSegment(x0, y, w, owner, typeC, rowDist, bandH){
     // V54: cMap resta buffer tecnico e intradosso interno semplice/stabile.
     // Niente shading dinamico da rowDist: la copertura usa la stessa famiglia materiale del tetto.
     if(w<=0) return;
+    bandH=bandH||2;
     const roof=getModernCoverForOwner(owner);
     const p=roof && roof.palette ? roof.palette : null;
     const base=(p && (p.soffit || p.near)) ? (p.soffit || p.near) : '#963728';
     ctx.fillStyle=base;
-    ctx.fillRect(x0,y,w,2);
+    ctx.fillRect(x0,y,w,bandH);
     ctx.fillStyle='rgba(35,12,8,.055)';
     ctx.fillRect(x0,y,w,1);
 }
@@ -1317,7 +1372,7 @@ function buildFloorVisualMaps(){
     const colorStats=buildFloorVisualColorMap();
     const subTileStats=buildFloorSubTileColorMap();
     const nearSubTileStats=buildFloorNearSubTileColorMap();
-    floorVisualStats={ stage:'V65_MOBILE_DEBUG_PROFILER', noiseCells, roadSoftCells, trailSoftCells, outlineCells, decalCells:decalStats.cells, microDecalCells:decalStats.microCells, trailDecals:decalStats.trailNeedles, trailMottle:decalStats.trailMottle, sandFootprints:decalStats.sandFootprints, sandShells:decalStats.sandShells, showerWater:decalStats.showerWater, roadPebbles:decalStats.roadPebbles, roadDustFlecks:decalStats.roadDustFlecks, grassWear:decalStats.grassWear, colorCells:colorStats.cells, uniqueFloorColors:colorStats.uniqueColors, subTileCells:subTileStats.cells, subTileSlots:subTileStats.slots, uniqueSubTileColors:subTileStats.uniqueSubColors, nearSubTileCells:nearSubTileStats.cells, nearSubTileSlots:nearSubTileStats.slots, uniqueNearSubTileColors:nearSubTileStats.uniqueNearSubColors, nearSubTileRes:FLOOR_NEAR_SUB_TILE_RES, nearDetailDist:FLOOR_NEAR_DETAIL_DIST };
+    floorVisualStats={ stage:'V66_MOBILE_OPTIMIZER', noiseCells, roadSoftCells, trailSoftCells, outlineCells, decalCells:decalStats.cells, microDecalCells:decalStats.microCells, trailDecals:decalStats.trailNeedles, trailMottle:decalStats.trailMottle, sandFootprints:decalStats.sandFootprints, sandShells:decalStats.sandShells, showerWater:decalStats.showerWater, roadPebbles:decalStats.roadPebbles, roadDustFlecks:decalStats.roadDustFlecks, grassWear:decalStats.grassWear, colorCells:colorStats.cells, uniqueFloorColors:colorStats.uniqueColors, subTileCells:subTileStats.cells, subTileSlots:subTileStats.slots, uniqueSubTileColors:subTileStats.uniqueSubColors, nearSubTileCells:nearSubTileStats.cells, nearSubTileSlots:nearSubTileStats.slots, uniqueNearSubTileColors:nearSubTileStats.uniqueNearSubColors, nearSubTileRes:FLOOR_NEAR_SUB_TILE_RES, nearDetailDist:FLOOR_NEAR_DETAIL_DIST };
     return floorVisualStats;
 }
 function markBlocked(x,y){ if(inBounds(x,y)) objectBlock[y][x]=1; }
@@ -2195,6 +2250,7 @@ function resizePerlaRenderer(force=false){
     ctx.imageSmoothingEnabled=false;
     canvas.dataset.perlaMode=mode;
     applyViewportClasses(mode);
+    updatePerlaVisualViewportCSS();
     applyRendererMode(mode);
     allocateRenderBuffers();
     touchInput.moveX=touchInput.moveY=touchInput.lookX=touchInput.buttonTurn=touchInput.screenForward=touchInput.screenLookX=0;
@@ -2205,6 +2261,10 @@ applyRendererMode(currentViewportMode);
 let resizeTimer=null;
 window.addEventListener('resize',()=>{ clearTimeout(resizeTimer); resizeTimer=setTimeout(()=>resizePerlaRenderer(false),80); }, {passive:true});
 window.addEventListener('orientationchange',()=>{ clearTimeout(resizeTimer); resizeTimer=setTimeout(()=>resizePerlaRenderer(true),160); }, {passive:true});
+if(window.visualViewport){
+    window.visualViewport.addEventListener('resize',()=>{ updatePerlaVisualViewportCSS(); clearTimeout(resizeTimer); resizeTimer=setTimeout(()=>resizePerlaRenderer(false),60); }, {passive:true});
+    window.visualViewport.addEventListener('scroll',updatePerlaVisualViewportCSS,{passive:true});
+}
 const keys={};
 const touchInput = { moveX:0, moveY:0, lookX:0, buttonTurn:0, screenForward:0, screenLookX:0, activeMove:false, activeLook:false };
 window.addEventListener('keydown',e=>{
@@ -2273,6 +2333,7 @@ function setupTouchControls(){
 }
 setupTouchControls();
 let lastTime=0;
+let perlaMiniMapFrameCounter=0;
 function isWalkable(y,x){ const ix=Math.floor(x), iy=Math.floor(y); if(iy<0||iy>=mapH||ix<0||ix>=mapW) return false; if(fMap[iy][ix]===2) return false; if(objectBlock[iy][ix]) return false; return map[iy][ix]===0; }
 function moveWithSliding(dx,dy){
     // V63: mobile comfort. Su touch il raggio effettivo e lo sliding sono appena più permissivi,
@@ -2370,15 +2431,18 @@ function ceilingSpriteClipY(stripe, y0, y1, spriteDist, sprite){
 }
 
 function drawWorld(time){
-    const drawStats={ mode:currentViewportMode, screenW, screenH, projectionH:+projectionH.toFixed(3), planeScale:+planeScale.toFixed(3), floorRows:0, floorSegments:0, ceilingSegments:0, wallColumns:0, wallHits:0, spriteConsidered:0, spriteVisible:0, spriteStripes:0, shadowRects:0 };
+    const drawStats={ mode:currentViewportMode, screenW, screenH, projectionH:+projectionH.toFixed(3), planeScale:+planeScale.toFixed(3), floorRows:0, floorSegments:0, floorLodBands:0, ceilingSegments:0, wallColumns:0, wallHits:0, spriteConsidered:0, spriteVisible:0, spriteStripes:0, spriteCulled:0, spriteCandidates:0, shadowRects:0 };
     ctx.clearRect(0,0,screenW,screenH); drawBackdrop(time); resetCeilingDepthBuffer(); WallTopBuffer.fill(screenH); WallBottomBuffer.fill(-1); WallOwnerBuffer.fill(0);
     const rayDirX0=dirX-planeX, rayDirY0=dirY-planeY, rayDirX1=dirX+planeX, rayDirY1=dirY+planeY;
-    for(let y=Math.floor(screenH/2)+1;y<screenH;y+=2){
+    for(let y=Math.floor(screenH/2)+1;y<screenH;){
         drawStats.floorRows++;
         const p=y-screenH/2, posZ=.5*projectionH, rowDist=posZ/p;
+        const floorBandH=floorBandHeightForMode(rowDist);
+        if(floorBandH>2) drawStats.floorLodBands++;
         const fStepX=rowDist*(rayDirX1-rayDirX0)/screenW, fStepY=rowDist*(rayDirY1-rayDirY0)/screenW;
         let fX=posX+rowDist*rayDirX0, fY=posY+rowDist*rayDirY0;
-        let curFloorColor=null,curCeil=-1,curCeilOwner=-1,startX=0,startXCeil=0; const ceilY=screenH-y;
+        let curFloorColor=null,curCeil=-1,curCeilOwner=-1,startX=0,startXCeil=0;
+        const ceilY=screenH-y, ceilDrawY=Math.max(0, ceilY-(floorBandH-2));
         for(let x=0;x<screenW;x+=2){
             const cX=Math.floor(fX), cY=Math.floor(fY); let type=0,typeC=0;
             if(cY>=SEA_Y) type=2;
@@ -2387,21 +2451,22 @@ function drawWorld(time){
             const floorColor=getFloorColorAt(cX,cY,fX,fY,type,rowDist);
             const ceilOwner=(typeC>0 && cX>=0&&cX<mapW&&cY>=0&&cY<mapH) ? ceilingOwnerMap[cY][cX] : 0;
             if(typeC>0){
-                setCeilingDepthAt(x,ceilY,rowDist,ceilOwner);
-                setCeilingDepthAt(x+1,ceilY,rowDist,ceilOwner);
-                setCeilingDepthAt(x,ceilY+1,rowDist,ceilOwner);
-                setCeilingDepthAt(x+1,ceilY+1,rowDist,ceilOwner);
+                for(let yy=ceilDrawY; yy<ceilDrawY+floorBandH; yy++){
+                    setCeilingDepthAt(x,yy,rowDist,ceilOwner);
+                    setCeilingDepthAt(x+1,yy,rowDist,ceilOwner);
+                }
             }
-            if(floorColor!==curFloorColor){ if(curFloorColor!==null){ ctx.fillStyle=curFloorColor; ctx.fillRect(startX,y,x-startX,2); drawStats.floorSegments++; } curFloorColor=floorColor; startX=x; }
+            if(floorColor!==curFloorColor){ if(curFloorColor!==null){ ctx.fillStyle=curFloorColor; ctx.fillRect(startX,y,x-startX,floorBandH); drawStats.floorSegments++; } curFloorColor=floorColor; startX=x; }
             if(typeC!==curCeil || ceilOwner!==curCeilOwner){
-                if(curCeil>0){ if(isModernCoverOwner(curCeilOwner)) drawModernCoverCeilingSegment(startXCeil,ceilY,x-startXCeil,curCeilOwner,curCeil,rowDist); else drawCeilingSegment(startXCeil,ceilY,x-startXCeil,curCeil,rowDist); drawStats.ceilingSegments++; }
+                if(curCeil>0){ if(isModernCoverOwner(curCeilOwner)) drawModernCoverCeilingSegment(startXCeil,ceilDrawY,x-startXCeil,curCeilOwner,curCeil,rowDist,floorBandH); else drawCeilingSegment(startXCeil,ceilDrawY,x-startXCeil,curCeil,rowDist,floorBandH); drawStats.ceilingSegments++; }
                 curCeil=typeC; curCeilOwner=ceilOwner; startXCeil=x;
             }
             fX+=fStepX*2; fY+=fStepY*2;
         }
-        if(curFloorColor!==null){ ctx.fillStyle=curFloorColor; ctx.fillRect(startX,y,screenW-startX,2); drawStats.floorSegments++; }
-        if(curCeil>0){ if(isModernCoverOwner(curCeilOwner)) drawModernCoverCeilingSegment(startXCeil,ceilY,screenW-startXCeil,curCeilOwner,curCeil,rowDist); else drawCeilingSegment(startXCeil,ceilY,screenW-startXCeil,curCeil,rowDist); drawStats.ceilingSegments++; }
-        const fog=clamp(rowDist/32,0,1); ctx.fillStyle=`rgba(96, 201, 236, ${fog*.68})`; ctx.fillRect(0,y,screenW,2); if(curCeil>0 && !isModernCoverOwner(curCeilOwner)) ctx.fillRect(0,ceilY,screenW,2);
+        if(curFloorColor!==null){ ctx.fillStyle=curFloorColor; ctx.fillRect(startX,y,screenW-startX,floorBandH); drawStats.floorSegments++; }
+        if(curCeil>0){ if(isModernCoverOwner(curCeilOwner)) drawModernCoverCeilingSegment(startXCeil,ceilDrawY,screenW-startXCeil,curCeilOwner,curCeil,rowDist,floorBandH); else drawCeilingSegment(startXCeil,ceilDrawY,screenW-startXCeil,curCeil,rowDist,floorBandH); drawStats.ceilingSegments++; }
+        const fog=clamp(rowDist/32,0,1); ctx.fillStyle=`rgba(96, 201, 236, ${fog*.68})`; ctx.fillRect(0,y,screenW,floorBandH); if(curCeil>0 && !isModernCoverOwner(curCeilOwner)) ctx.fillRect(0,ceilDrawY,screenW,floorBandH);
+        y+=floorBandH;
     }
     for(let x=0;x<screenW;x++){
         drawStats.wallColumns++;
@@ -2452,8 +2517,9 @@ function drawWorld(time){
         } else { ZBuffer[x]=1000; WallTopBuffer[x]=screenH; WallBottomBuffer[x]=-1; WallOwnerBuffer[x]=0; }
     }
     drawRoofLayer2_5D(time);
-    sprites.forEach(s=>{ s.dist=(posX-s.x)**2+(posY-s.y)**2; }); sprites.sort((a,b)=>b.dist-a.dist);
-    sprites.forEach(s=>{
+    const spriteRenderList=getSpriteRenderCandidates(drawStats);
+    spriteRenderList.sort((a,b)=>b.dist-a.dist);
+    spriteRenderList.forEach(s=>{
         drawStats.spriteConsidered++;
         const spX=s.x-posX, spY=s.y-posY; const invDet=1.0/(planeX*dirY-dirX*planeY); const transX=invDet*(dirY*spX-dirX*spY); const transY=invDet*(-planeY*spX+planeX*spY); if(transY<=0) return;
         const spScreenX=Math.floor((screenW/2)*(1+transX/transY)); const spSize=Math.abs(Math.floor(projectionH/transY)); const spriteHeight=Math.floor(spSize*(s.hScale||1)); const spriteWidth=Math.floor(spSize*(s.wScale||1));
@@ -2543,8 +2609,11 @@ function buildPerlaWarnings(snapshot){
     if(fps && fps.avg<30) w.push('FPS medio sotto 30: carico alto o throttling evidente.');
     if(frame && frame.p95>40) w.push('Frame interval p95 sopra 40ms: possibili scatti percepibili.');
     if(cpu && cpu.p95>18) w.push('CPU render loop p95 sopra 18ms: il telefono potrebbe essere vicino al limite.');
-    if(snapshot.layout && snapshot.layout.turnRightBtn && snapshot.layout.turnRightBtn.right > snapshot.viewport.innerWidth-2) w.push('Tasto ruota destra vicino/fuori bordo viewport.');
-    if(snapshot.layout && snapshot.layout.turnLeftBtn && snapshot.layout.turnLeftBtn.left < 2) w.push('Tasto ruota sinistra vicino/fuori bordo viewport.');
+    const vv=snapshot.viewport.visualViewport && snapshot.viewport.visualViewport.available ? snapshot.viewport.visualViewport : {width:snapshot.viewport.innerWidth, height:snapshot.viewport.innerHeight, offsetLeft:0, offsetTop:0};
+    const isMobile=snapshot.viewport.mode && snapshot.viewport.mode!=='desktop';
+    const visibleRect=(r)=>r && r.width>1 && r.height>1;
+    if(isMobile && visibleRect(snapshot.layout && snapshot.layout.turnRightBtn) && snapshot.layout.turnRightBtn.right > (vv.offsetLeft+vv.width-2)) w.push('Tasto ruota destra vicino/fuori bordo visualViewport.');
+    if(isMobile && visibleRect(snapshot.layout && snapshot.layout.turnLeftBtn) && snapshot.layout.turnLeftBtn.left < (vv.offsetLeft+2)) w.push('Tasto ruota sinistra vicino/fuori bordo visualViewport.');
     if(snapshot.memory && snapshot.memory.available && snapshot.memory.usedMB>300) w.push('Heap JS usato sopra 300MB: monitorare memoria su device reale.');
     if(snapshot.performance.longFramesRatio>0.08) w.push('Oltre 8% di frame lunghi: possibile micro-stutter.');
     if(!w.length) w.push('Nessun warning automatico grave rilevato nel momento del debug.');
@@ -2557,7 +2626,7 @@ function collectPerlaDebugSnapshot(reason='manuale'){
     const frameSummary=summarizeNumbers(perlaPerfStats.frameIntervals);
     const cpuSummary=summarizeNumbers(perlaPerfStats.cpuMs);
     const snapshot={
-        build:{ id:PERLA_BUILD_ID, base:'PERLA1_V65_MOBILE_DEBUG_PROFILER', debugEnabled:PERLA_MOBILE_DEBUG_ENABLED, reason, generatedAt:new Date().toISOString(), uptimeSec:+((now-perlaPerfStats.startedAt)/1000).toFixed(2) },
+        build:{ id:PERLA_BUILD_ID, base:'PERLA1_V66_MOBILE_OPTIMIZER', debugEnabled:PERLA_MOBILE_DEBUG_ENABLED, reason, generatedAt:new Date().toISOString(), uptimeSec:+((now-perlaPerfStats.startedAt)/1000).toFixed(2) },
         app:{ title:document.title, url:location.href, online:navigator.onLine, visibilityState:document.visibilityState, focus:document.hasFocus && document.hasFocus() },
         device:{ userAgent:navigator.userAgent, platform:navigator.platform||null, language:navigator.language||null, languages:navigator.languages||null, maxTouchPoints:navigator.maxTouchPoints||0, hardwareConcurrency:navigator.hardwareConcurrency||null, deviceMemory:navigator.deviceMemory||null, vendor:navigator.vendor||null },
         viewport:{ mode:currentViewportMode, innerWidth:window.innerWidth, innerHeight:window.innerHeight, outerWidth:window.outerWidth, outerHeight:window.outerHeight, devicePixelRatio:window.devicePixelRatio, orientation:(screen.orientation?{type:screen.orientation.type, angle:screen.orientation.angle}:{ type:null, angle:window.orientation||0 }), visualViewport:getVisualViewportInfo() },
@@ -2643,14 +2712,16 @@ function gameLoop(time){
     const t1=performance.now();
     drawWorld(time);
     const t2=performance.now();
-    drawMiniMap();
+    let miniMapMs=0;
+    const drawMiniMapThisFrame=(currentViewportMode==='desktop') || ((perlaMiniMapFrameCounter++ % PERLA_MOBILE_MINIMAP_FRAME_SKIP)===0);
+    if(drawMiniMapThisFrame){ const mt0=performance.now(); drawMiniMap(); miniMapMs=performance.now()-mt0; }
     const t3=performance.now();
-    recordPerlaFrameStats(frameIntervalMs, t1-t0, t2-t1, t3-t2, t3-loopStart);
+    recordPerlaFrameStats(frameIntervalMs, t1-t0, t2-t1, miniMapMs, t3-loopStart);
     debugLine.textContent=`X ${posX.toFixed(2)} / Y ${posY.toFixed(2)} · zona: ${zoneAtPlayer()} · ${currentViewportMode} ${screenW}x${screenH} · FPS ${perlaPerfStats.lastFps.toFixed(1)} · draw ${((perlaPerfStats.drawMs.at&&perlaPerfStats.drawMs.at(-1))||0).toFixed(1)}ms · sprite: ${sprites.length}`;
     requestAnimationFrame(gameLoop);
 }
 
-window.__PERLA_DEBUG__ = { map, fMap, cMap, zoneMask, roadMask, noNature, objectBlock, sprites, roofSegments, ASSET_MANIFEST, wallDecalMap, wallHeightMap, roadSoftEdgeMap, trailSoftEdgeMap, floorNoiseMap, floorDecalMap, floorOutlineMap, floorVisualColorMap, floorSubTileColorMap, floorNearSubTileColorMap, floorMicroDecalMap, floorVisualStats, buildFloorVisualMaps, buildFloorVisualColorMap, buildFloorDecalMap, buildFloorSubTileColorMap, buildFloorNearSubTileColorMap, resetFloorVisualMaps, getFloorColorAt, computeFloorVisualColor, floorHash2D, floorNoiseSigned, mixColorHex, mixFloorQuantized, floorNeedsSubTileColor, organicTrailMask, regularRoadMask, applyOrganicTrailSubTile, applyHumanRoadSubTile, applyFloorDecalAt, inferWallDecalFaceV35, getWallDecalTexX, wallVisualHeight, drawRoofRimColumn, drawCeilingSegment, isModernCoverOwner, drawRoofLayer2_5D, drawGabledRoof2_5D, drawModernBuildingSolid2_5D, collectModernWallFaces, collectModernRoofFaces, drawRoofPoly, roofVisibleAt, playerInsideRoof, modernInsideDepth, shouldDrawModernExteriorRoof, shouldUseModernNearWallGuard, drawModernCoverCeilingSegment, getModernCoverForOwner, drawSlopedRoofLayer2_5D, drawSlopedRoofGableCaps2_5D, slopedRoofGableCapsFor, slopedRoofGableCapFacesCamera, slopedRoofEdgeZAt, slopedRoofPlanesFor, slopedRoofPixelVisible, drawWorld, WallTopBuffer, WallBottomBuffer, WallOwnerBuffer, CeilingOwnerBuffer, ceilingOwnerMap, isWalkable, shouldDrawSeaHorizon, distToRoad, ceilingSpriteClipY, CeilingDepthBuffer, CeilingColumnHasDepth, touchInput, setupTouchControls, isCoarseViewport, isCoarsePortraitViewport, getPerlaViewportMode, resizePerlaRenderer, cameraPlaneScaleForMode, cameraVerticalScaleForMode, screenLookDragDivisorForMode, perlaPerfStats, collectPerlaDebugSnapshot, formatPerlaDebugReport, exportPerlaDebugReport, perlaLastDrawStats:()=>perlaLastDrawStats, currentViewportMode:()=>currentViewportMode, projectionH:()=>projectionH, screenSize:()=>({screenW,screenH}), setPlayerForDebug(x,y,dx,dy){ posX=x; posY=y; if(typeof dx==='number' && typeof dy==='number'){ const len=Math.hypot(dx,dy)||1; dirX=dx/len; dirY=dy/len; planeScale=cameraPlaneScaleForMode(currentViewportMode); refreshCameraPlane(); } } };
+window.__PERLA_DEBUG__ = { map, fMap, cMap, zoneMask, roadMask, noNature, objectBlock, sprites, roofSegments, ASSET_MANIFEST, wallDecalMap, wallHeightMap, roadSoftEdgeMap, trailSoftEdgeMap, floorNoiseMap, floorDecalMap, floorOutlineMap, floorVisualColorMap, floorSubTileColorMap, floorNearSubTileColorMap, floorMicroDecalMap, floorVisualStats, buildFloorVisualMaps, buildFloorVisualColorMap, buildFloorDecalMap, buildFloorSubTileColorMap, buildFloorNearSubTileColorMap, resetFloorVisualMaps, getFloorColorAt, computeFloorVisualColor, floorHash2D, floorNoiseSigned, mixColorHex, mixFloorQuantized, floorNeedsSubTileColor, organicTrailMask, regularRoadMask, applyOrganicTrailSubTile, applyHumanRoadSubTile, applyFloorDecalAt, inferWallDecalFaceV35, getWallDecalTexX, wallVisualHeight, drawRoofRimColumn, drawCeilingSegment, isModernCoverOwner, drawRoofLayer2_5D, drawGabledRoof2_5D, drawModernBuildingSolid2_5D, collectModernWallFaces, collectModernRoofFaces, drawRoofPoly, roofVisibleAt, playerInsideRoof, modernInsideDepth, shouldDrawModernExteriorRoof, shouldUseModernNearWallGuard, drawModernCoverCeilingSegment, getModernCoverForOwner, drawSlopedRoofLayer2_5D, drawSlopedRoofGableCaps2_5D, slopedRoofGableCapsFor, slopedRoofGableCapFacesCamera, slopedRoofEdgeZAt, slopedRoofPlanesFor, slopedRoofPixelVisible, drawWorld, WallTopBuffer, WallBottomBuffer, WallOwnerBuffer, CeilingOwnerBuffer, ceilingOwnerMap, isWalkable, shouldDrawSeaHorizon, distToRoad, ceilingSpriteClipY, CeilingDepthBuffer, CeilingColumnHasDepth, touchInput, setupTouchControls, isCoarseViewport, isCoarsePortraitViewport, getPerlaViewportMode, resizePerlaRenderer, cameraPlaneScaleForMode, cameraVerticalScaleForMode, screenLookDragDivisorForMode, floorBandHeightForMode, getSpriteRenderCandidates, updatePerlaVisualViewportCSS, perlaPerfStats, collectPerlaDebugSnapshot, formatPerlaDebugReport, exportPerlaDebugReport, perlaLastDrawStats:()=>perlaLastDrawStats, currentViewportMode:()=>currentViewportMode, projectionH:()=>projectionH, screenSize:()=>({screenW,screenH}), setPlayerForDebug(x,y,dx,dy){ posX=x; posY=y; if(typeof dx==='number' && typeof dy==='number'){ const len=Math.hypot(dx,dy)||1; dirX=dx/len; dirY=dy/len; planeScale=cameraPlaneScaleForMode(currentViewportMode); refreshCameraPlane(); } } };
 setupPerlaMobileDebugUI();
 loadAssets().then(()=>{ loading.classList.add('hidden'); requestAnimationFrame(gameLoop); }).catch(err=>{ loading.innerHTML=`<div><strong>Errore caricamento asset</strong><br><span class="muted">${String(err.message||err)}</span><br><br>Avvia con AVVIA_GIOCO_WINDOWS_SENZA_PYTHON.bat.</div>`; console.error(err); });
 
