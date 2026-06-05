@@ -1,0 +1,2200 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camping Sole, Mare & Zanzare - PERLA1 V61 Near Trail Detail</title>
+    <style>
+        :root { --panel: rgba(20,16,12,.88); --gold:#f1c40f; --sand:#f5d99e; }
+        body { margin:0; min-height:100vh; background:radial-gradient(circle at 50% 0%,#183b4a 0%,#07090d 55%,#000 100%); color:white; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; display:flex; flex-direction:column; align-items:center; overflow-x:hidden; }
+        h2 { margin:12px 0 6px; font-size:22px; letter-spacing:.04em; text-shadow:0 3px 14px rgba(0,0,0,.8); }
+        #game-container { position:relative; margin-top:8px; background:linear-gradient(to bottom,#56CCF2 0%,#a1c4fd 100%); border:4px solid #473526; box-shadow:0 16px 52px rgba(0,0,0,.92), inset 0 0 0 2px rgba(255,255,255,.08); overflow:hidden; }
+        canvas { display:block; image-rendering:pixelated; }
+        #mini-map { position:absolute; right:12px; top:12px; width:128px; height:128px; border:2px solid rgba(255,255,255,.6); border-radius:50%; background:rgba(20,16,12,.65); box-shadow:0 5px 22px rgba(0,0,0,.55); }
+        #loading { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-align:center; background:rgba(0,0,0,.82); z-index:4; letter-spacing:.02em; }
+        #loading.hidden { display:none; }
+        .ui-panel { margin:10px 0 18px; text-align:center; background:linear-gradient(180deg,rgba(49,38,28,.92),rgba(20,16,12,.94)); padding:12px 16px; width:min(780px,calc(100vw - 32px)); border:1px solid rgba(255,255,255,.12); border-radius:12px; line-height:1.5; box-shadow:0 8px 26px rgba(0,0,0,.45); }
+        .alert { color:var(--gold); font-weight:750; }
+        .muted { color:rgba(255,255,255,.72); font-size:13px; }
+    </style>
+</head>
+<body>
+    <h2>Camping Sole, Mare & Zanzare - PERLA1 V61</h2>
+    <div id="game-container">
+        <canvas id="screen" width="800" height="450"></canvas>
+        <canvas id="mini-map" width="128" height="128"></canvas>
+        <div id="loading"><div><strong>Caricamento asset PERLA1 V61...</strong><br><span class="muted">Usa il launcher locale PowerShell/BAT per evitare problemi da file://.</span></div></div>
+    </div>
+    <div class="ui-panel">
+        <strong>COMANDI:</strong> [W][A][S][D] o Frecce.<br>
+        <span class="alert">V61: trail vicini 8x8, decal pavimento più ricchi e noise leggermente più vivo; tetti V57 preservati con Sloped Roof Casting e fog unificato.</span><br>
+        <span class="muted" id="debugLine">posizione...</span>
+    </div>
+
+<script>
+(() => {
+'use strict';
+
+const canvas = document.getElementById('screen');
+const ctx = canvas.getContext('2d');
+ctx.imageSmoothingEnabled = false;
+const mini = document.getElementById('mini-map');
+const miniCtx = mini.getContext('2d');
+miniCtx.imageSmoothingEnabled = false;
+const loading = document.getElementById('loading');
+const debugLine = document.getElementById('debugLine');
+
+const screenW = canvas.width, screenH = canvas.height;
+const texW = 64, texH = 64;
+const mapW = 80, mapH = 88;
+const SEA_Y = 80;
+const ASSET_BASE = 'assets/raycast/';
+
+const ASSET_MANIFEST = {
+    1:['wall_hedge.png'], 2:['wall_wood_reception.png'], 3:['wall_tile_bath.png'],
+    7:['bush.png'], 8:['umbrella.png'], 9:['pine.png'], 10:['camper.png'], 11:['deckchair.png'],
+    12:['grass.png'], 13:['flower.png'], 14:['pot.png'], 15:['bar_counter.png'], 16:['shower_0.png','shower_1.png'],
+    17:['barman.png'], 18:['gazebo_column.png'], 19:['palm_0.png','palm_1.png'], 20:['yoga_mat.png'],
+    21:['tent_blue.png'], 22:['tent_orange.png'], 23:['sofa.png'], 24:['stool.png'],
+    25:['bush_dark.png'], 26:['bush_flower.png'], 27:['flower_red.png'], 28:['flower_purple.png'], 29:['flower_white.png'],
+    30:['grass_soft.png'], 31:['grass_reed.png'], 32:['palm_tall_0.png','palm_tall_1.png'], 33:['palm_dwarf_0.png','palm_dwarf_1.png'],
+    34:['pot_red.png'], 35:['pot_purple.png'], 36:['tent_green.png'],
+    37:['flower_arch_left_0.png','flower_arch_left_1.png'], 39:['flower_arch_right_0.png','flower_arch_right_1.png'], 38:['fountain.png'],
+    40:['pinecone.png'], 41:['pine_needles.png'],
+    42:['wall_fence_wood.png'], 43:['car_red.png'], 44:['car_blue.png'], 45:['car_yellow.png'], 46:['parking_line.png'], 47:['sign_camping_imperio.png'], 48:['car_green.png'], 49:['car_white.png'], 50:['billiard_table.png'], 51:['pingpong_table.png'], 52:['cafe_table_chairs.png'], 53:['marble_statue.png'],
+    54:['tamarisk_0.png'], 55:['tamarisk_1.png'], 56:['tamarisk_2.png'], 57:['ad_gelato.png'], 58:['ad_pizza.png'], 59:['ad_patatine.png'], 60:['ad_tris.png'],
+    61:['sign_reception.png'], 62:['sign_bar.png'], 63:['sign_pineta.png'], 64:['sign_camper.png'], 65:['sign_bagni.png'], 66:['sign_spiaggia.png'], 67:['sign_parcheggio.png'], 68:['sign_tende.png'], 69:['sign_yoga.png']
+};
+const tex = {};
+function loadImage(src) {
+    return new Promise((resolve, reject) => {
+        const im = new Image();
+        im.onload = () => resolve(im);
+        im.onerror = () => reject(new Error('Asset non caricato: ' + src));
+        im.src = ASSET_BASE + src;
+    });
+}
+async function loadAssets() {
+    const jobs = [];
+    Object.keys(ASSET_MANIFEST).forEach(id => jobs.push(Promise.all(ASSET_MANIFEST[id].map(loadImage)).then(frames => { tex[id] = frames; })));
+    await Promise.all(jobs);
+}
+function getTex(id, timeMs) {
+    const frames = tex[id];
+    if (!frames || !frames.length) return null;
+    if (frames.length === 1) return frames[0];
+    return frames[Math.floor((timeMs || 0) / 360) % frames.length];
+}
+
+let rngState = 0x51A55114 >>> 0;
+function rnd() { rngState += 0x6D2B79F5; let t=rngState; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }
+function irand(min,max){ return Math.floor(min+rnd()*(max-min+1)); }
+function choice(arr){ return arr[Math.floor(rnd()*arr.length)%arr.length]; }
+function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
+function drawExistingWallFogOverlay(x,y,w,h,dist){
+    // V57: una sola regola fog per muri e tetti moderni.
+    // Riusa esattamente il fog storico del wallcasting: overlay cielo in base a dist/25.
+    const fog=clamp(dist/25,0,1);
+    if(fog<=0 || w<=0 || h<=0) return;
+    ctx.fillStyle=`rgba(86,204,242,${fog})`;
+    ctx.fillRect(x,y,w,h);
+}
+
+const map = Array.from({length:mapH},()=>new Uint8Array(mapW));
+const fMap = Array.from({length:mapH},()=>new Uint8Array(mapW));
+const cMap = Array.from({length:mapH},()=>new Uint8Array(mapW));
+const ceilingOwnerMap = Array.from({length:mapH},()=>new Uint8Array(mapW)); // V44: proprietario della faccia inferiore copertura/soffitto; resta separato dal clipping sprite.
+const safeHuman = Array.from({length:mapH},()=>new Uint8Array(mapW));
+const roadMask = Array.from({length:mapH},()=>new Uint8Array(mapW));
+const noNature = Array.from({length:mapH},()=>new Uint8Array(mapW));
+const objectBlock = Array.from({length:mapH},()=>new Uint8Array(mapW));
+const zoneMask = Array.from({length:mapH},()=>Array(mapW).fill('erba'));
+const wallDecalMap = Array.from({length:mapH},()=>Array(mapW).fill(null));
+const wallHeightMap = Array.from({length:mapH},()=>new Float32Array(mapW).fill(1.0));
+const sprites = [];
+const roofSegments = []; // V54: sloped roof sectors. I muri moderni restano nel wallcasting; le falde sono castate colonna/righe.
+const roadSoftEdgeMap = Array.from({length:mapH},()=>new Float32Array(mapW)); // V58: alone visivo strada umana, non logica/collisione.
+const trailSoftEdgeMap = Array.from({length:mapH},()=>new Float32Array(mapW)); // V58: alone visivo sentiero pineta, separato dalla main road.
+const floorNoiseMap = Array.from({length:mapH},()=>new Float32Array(mapW)); // V58: rumore deterministico per pavimenti, calcolato una volta.
+const floorDecalMap = Array.from({length:mapH},()=>Array(mapW).fill(null)); // V58: riservato a decal stampati a terra, non sprite verticali.
+const floorOutlineMap = Array.from({length:mapH},()=>new Uint8Array(mapW)); // V58: edge/darkening leggero futuro, non outline globale.
+const floorVisualColorMap = Array.from({length:mapH},()=>Array(mapW).fill(null)); // V60: colore pavimento già precomputato, così il render non fa mix pesanti per pixel.
+const floorSubTileColorMap = Array.from({length:mapH},()=>Array(mapW).fill(null)); // V60: 4x4 colori precomputati per medio/lontano.
+const floorNearSubTileColorMap = Array.from({length:mapH},()=>Array(mapW).fill(null)); // V61: 8x8 solo per trail/decal vicini; dettaglio più fine senza costo globale.
+const floorMicroDecalMap = Array.from({length:mapH},()=>Array(mapW).fill(null)); // V61: secondo livello di decal piatti/micro texture, non sprite.
+const FLOOR_FAR_SUB_TILE_RES = 4;
+const FLOOR_NEAR_SUB_TILE_RES = 8;
+const FLOOR_NEAR_DETAIL_DIST = 9.5;
+let floorVisualStats = null;
+let floorMixCache = Object.create(null); // V60: cache colori quantizzati per maschere sub-tile/decal, evita mix ripetuti nel render loop.
+
+// 0=Sabbia, 1=Erba, 2=Mare, 3=Piastrelle, 4=Ghiaia, 5=Legno, 6=Piazzola terra, 7=Soffitto legno, 8=Aghi pino, 9=Duna/palme, 10=Prato fiorito
+const floorColors = {0:'#e6c280',1:'#556b2f',2:'#1d7eb8',3:'#95a5a6',4:'#cda87c',5:'#5c4033',6:'#946a3f',7:'#cd853f',8:'#34482a',9:'#b8aa62',10:'#607b3f',11:'#303237',12:'#4a4c50'};
+const miniColors = {0:'#d8b56e',1:'#496b33',2:'#227ab2',3:'#aab7b8',4:'#d2ad7f',5:'#6a4026',6:'#906133',7:'#cd853f',8:'#22391e',9:'#948a4d',10:'#698c45',11:'#34363a',12:'#50545a'};
+const FLOOR_VISUAL_SEED = 0x5F100A7; // V58: seed stabile per noise pavimenti; non usa rnd()/Math.random nel render.
+function floorHash2D(x,y,seed=FLOOR_VISUAL_SEED){
+    let n = Math.imul(x|0, 374761393) + Math.imul(y|0, 668265263) + Math.imul(seed|0, 1442695041);
+    n = Math.imul(n ^ (n >>> 13), 1274126177);
+    n = n ^ (n >>> 16);
+    return (n >>> 0) / 4294967295;
+}
+function floorNoiseSigned(x,y,seed=FLOOR_VISUAL_SEED){ return floorHash2D(x,y,seed) * 2 - 1; }
+function mixColorHex(a,b,t){
+    t=clamp(t,0,1);
+    const pa=parseInt((a||'#000000').slice(1),16), pb=parseInt((b||'#000000').slice(1),16);
+    const ar=(pa>>16)&255, ag=(pa>>8)&255, ab=pa&255;
+    const br=(pb>>16)&255, bg=(pb>>8)&255, bb=pb&255;
+    const rr=Math.round(ar+(br-ar)*t), rg=Math.round(ag+(bg-ag)*t), rb=Math.round(ab+(bb-ab)*t);
+    return '#' + ((1<<24) | (rr<<16) | (rg<<8) | rb).toString(16).slice(1);
+}
+function smoothstep(edge0,edge1,x){
+    const t=clamp((x-edge0)/Math.max(.0001,edge1-edge0),0,1);
+    return t*t*(3-2*t);
+}
+function mixFloorQuantized(a,b,t,steps){
+    steps=steps||8;
+    const q=Math.round(clamp(t,0,1)*steps)/steps;
+    if(q<=0) return a;
+    if(q>=1) return b;
+    const key=a+'|'+b+'|'+q;
+    return floorMixCache[key] || (floorMixCache[key]=mixColorHex(a,b,q));
+}
+function inBounds(x,y){ return x>=0 && x<mapW && y>=0 && y<mapH; }
+function setFloor(x,y,t){ if(inBounds(x,y)) fMap[y][x]=t; }
+function setWall(x,y,t){ if(inBounds(x,y)) map[y][x]=t; }
+function clearWall(x,y){ if(inBounds(x,y)) { map[y][x]=0; wallHeightMap[y][x]=1.0; } }
+function setCeil(x,y,t){ if(inBounds(x,y)) cMap[y][x]=t; }
+function roofOwnerIdForWallTex(t){ return t===2 ? 1 : (t===3 ? 2 : 0); }
+function setCeilOwner(x,y,owner){ if(inBounds(x,y)) ceilingOwnerMap[y][x]=owner||0; }
+function isModernCoverOwner(owner){ return owner===1 || owner===2; }
+function isModernBuildingWallTex(t){ return t===2 || t===3; }
+function setWallHeight(x,y,h){ if(inBounds(x,y)) wallHeightMap[y][x]=h||1.0; }
+function buildingWallHeightForTex(t){ return (t===2 || t===3) ? 1.10 : 1.0; } // V40: facciata edificio prudente; volume tetto separato in roofSegments.
+function roofCapColorForWall(t, ceilType){
+    if(t===2) return '#9b4a2e';
+    if(t===3) return '#b75242';
+    if(t===42) return '#8a5b37';
+    if(ceilType===7) return '#b85c32';
+    return '#8f4a31';
+}
+function roofPaletteForWall(t, ceilType){
+    // V37: palette tetto/fascia superiore. Non altera la geometria né il CeilingDepthBuffer.
+    if(t===2) return {base:'#a94e2f', dark:'#5f261b', mid:'#cf6a38', light:'#f0b66b', trim:'#ffe1a1'};
+    if(t===3) return {base:'#b94f42', dark:'#6d2828', mid:'#d86b5c', light:'#f4b0a2', trim:'#ffe3d4'};
+    if(ceilType===7) return {base:'#a9562f', dark:'#5d2a18', mid:'#ca6b39', light:'#ecc07a', trim:'#ffe1a1'};
+    return {base:'#9f4c2f', dark:'#572418', mid:'#bf6135', light:'#e9a55f', trim:'#ffd995'};
+}
+function drawRoofRimColumn(x, drawStartFixed, wallBottomFixed, lineH, baseLineH, t, ceilType, rawTX, side){
+    // V39: disattivato intenzionalmente.
+    // In V37 la gronda procedurale dipendeva da baseLineH/lineH e produceva movimento apparente.
+    // Il tetto vero ora vive nel roof layer 2.5D dedicato; questa funzione resta disattivata.
+    return;
+}
+function drawCeilingSegment(x0, y, w, typeC, rowDist){
+    // V39: resa tettoie/soffitti conservativa. Nessun pattern screen-space mobile.
+    // CeilingDepthBuffer e clipping sprite restano popolati fuori da questa funzione.
+    if(w<=0) return;
+    const base=floorColors[typeC]||'#9b6b3c';
+    ctx.fillStyle=base;
+    ctx.fillRect(x0,y,w,2);
+    if(typeC===7){
+        ctx.fillStyle='rgba(72,36,18,.10)';
+        ctx.fillRect(x0,y,w,1);
+    } else if(typeC===3){
+        ctx.fillStyle='rgba(255,255,255,.07)';
+        ctx.fillRect(x0,y,w,1);
+    }
+}
+
+function getModernCoverForOwner(owner){
+    if(!owner) return null;
+    for(let i=0;i<roofSegments.length;i++) if(roofSegments[i].ownerId===owner) return roofSegments[i];
+    return null;
+}
+function drawModernCoverCeilingSegment(x0, y, w, owner, typeC, rowDist){
+    // V54: cMap resta buffer tecnico e intradosso interno semplice/stabile.
+    // Niente shading dinamico da rowDist: la copertura usa la stessa famiglia materiale del tetto.
+    if(w<=0) return;
+    const roof=getModernCoverForOwner(owner);
+    const p=roof && roof.palette ? roof.palette : null;
+    const base=(p && (p.soffit || p.near)) ? (p.soffit || p.near) : '#963728';
+    ctx.fillStyle=base;
+    ctx.fillRect(x0,y,w,2);
+    ctx.fillStyle='rgba(35,12,8,.055)';
+    ctx.fillRect(x0,y,w,1);
+}
+function wallVisualHeight(x,y,t){
+    if(!inBounds(x,y)) return 1.0;
+    const h=wallHeightMap[y][x] || 1.0;
+    return h>0 ? h : 1.0;
+}
+function registerClosedBuildingRoof(x1,y1,x2,y2,wallTex,ceilType,doors){
+    // V54: definisce un settore tetto inclinato. Le pareti moderne tornano al wallcasting classico;
+    // questa struttura serve solo al nuovo Sloped Sector Casting delle falde.
+    if(!ceilType || !isModernBuildingWallTex(wallTex)) return;
+    doors=doors||[];
+    const isReception = wallTex===2;
+    const kind = isReception ? 'reception' : 'bath';
+    const wallTopZ = buildingWallHeightForTex(wallTex);
+    const thickness = isReception ? .22 : .20;
+    const overhang = isReception ? .30 : .24;
+    const palette = isReception ?
+        {
+            wall:'#4b3b29', wallSide:'#372c20', wallLine:'rgba(219,166,103,.34)',
+            near:'#b84b2e', far:'#963728', ridge:'#d36d3a', fascia:'#6b2a1b',
+            shadow:'#552014', gable:'#7b2f1f', edge:'rgba(35,12,8,.42)', soffit:'#963728', soffitLine:'rgba(255,200,150,.08)'
+        } :
+        {
+            wall:'#4b6565', wallSide:'#334b4c', wallLine:'rgba(181,218,205,.28)',
+            near:'#c85a4c', far:'#9b3834', ridge:'#dc7b70', fascia:'#6b2d2a',
+            shadow:'#542222', gable:'#7f302c', edge:'rgba(44,14,14,.42)', soffit:'#9b3834', soffitLine:'rgba(255,210,200,.08)'
+        };
+    roofSegments.push({
+        x1:x1, y1:y1, x2:x2, y2:y2,
+        x0:x1-overhang, y0:y1-overhang, x3:x2+1+overhang, y3:y2+1+overhang,
+        wallTex:wallTex, kind:kind, ownerId:roofOwnerIdForWallTex(wallTex),
+        axis:isReception ? 'x' : 'y',
+        modernSolid:true,
+        wallTopZ:wallTopZ,
+        thickness:thickness,
+        eaveZ:wallTopZ,
+        ridgeZ:wallTopZ + (isReception ? .74 : .64),
+        fasciaLowZ:wallTopZ - thickness,
+        overhang:overhang,
+        undersideZ:wallTopZ - thickness*.70,
+        anchorOverlapPx:isReception ? 16 : 14,
+        entryRoofKeep:isReception ? 2.65 : 2.10,
+        roofTopClearanceZ:.025,
+        palette:palette, doors:doors.slice(0),
+        trimSteps:0,
+        undersideSteps:0
+    });
+}
+function roofCameraDistance(r){
+    const cx=(r.x0+r.x3)*.5, cy=(r.y0+r.y3)*.5;
+    return Math.hypot(cx-posX, cy-posY);
+}
+const ROOF_NEAR_PLANE = 0.045;
+function roofWorldToCamera(wx,wy,wz){
+    const relX=wx-posX, relY=wy-posY;
+    const invDet=1.0/(planeX*dirY-dirX*planeY);
+    return { tx:invDet*(dirY*relX-dirX*relY), ty:invDet*(-planeY*relX+planeX*relY), wz:wz };
+}
+function projectRoofCameraPoint(q){
+    if(!q || q.ty<=ROOF_NEAR_PLANE) return null;
+    const unit=screenH/q.ty;
+    return {x:(screenW*.5)*(1+q.tx/q.ty), y:screenH*.5+unit*.5-unit*q.wz, d:q.ty, z:q.wz};
+}
+function projectRoofPoint(wx,wy,wz){
+    return projectRoofCameraPoint(roofWorldToCamera(wx,wy,wz));
+}
+function clipRoofCameraPoly(cam){
+    if(!cam || cam.length<2) return [];
+    const out=[];
+    for(let i=0;i<cam.length;i++){
+        const a=cam[i], b=cam[(i+1)%cam.length];
+        const aIn=a.ty>=ROOF_NEAR_PLANE, bIn=b.ty>=ROOF_NEAR_PLANE;
+        if(aIn && bIn){
+            out.push(b);
+        } else if(aIn && !bIn){
+            const t=(ROOF_NEAR_PLANE-a.ty)/Math.max(.00001,b.ty-a.ty);
+            out.push({tx:a.tx+(b.tx-a.tx)*t, ty:ROOF_NEAR_PLANE, wz:a.wz+(b.wz-a.wz)*t});
+        } else if(!aIn && bIn){
+            const t=(ROOF_NEAR_PLANE-a.ty)/Math.max(.00001,b.ty-a.ty);
+            out.push({tx:a.tx+(b.tx-a.tx)*t, ty:ROOF_NEAR_PLANE, wz:a.wz+(b.wz-a.wz)*t});
+            out.push(b);
+        }
+    }
+    return out;
+}
+function projectRoofPolyPoints(points){
+    const cam=[];
+    for(let i=0;i<points.length;i++) cam.push(roofWorldToCamera(points[i][0],points[i][1],points[i][2]));
+    const clipped=clipRoofCameraPoly(cam);
+    if(clipped.length<3) return null;
+    const projected=[];
+    for(let i=0;i<clipped.length;i++){
+        const p=projectRoofCameraPoint(clipped[i]);
+        if(p) projected.push(p);
+    }
+    return projected.length>=3 ? projected : null;
+}
+function projectRoofLinePoints(a,b){
+    const clipped=clipRoofCameraPoly([roofWorldToCamera(a[0],a[1],a[2]), roofWorldToCamera(b[0],b[1],b[2])]);
+    if(clipped.length<2) return null;
+    const pa=projectRoofCameraPoint(clipped[0]);
+    const pb=projectRoofCameraPoint(clipped[clipped.length-1]);
+    return (pa&&pb) ? [pa,pb] : null;
+}
+function playerInsideRoof(r){
+    return posX>r.x1 && posX<r.x2+1 && posY>r.y1 && posY<r.y2+1;
+}
+function modernInsideDepth(r){
+    // V51: profondita' reale dentro il footprint. <0 significa fuori.
+    if(!playerInsideRoof(r)) return -1;
+    return Math.min(posX-r.x1, r.x2+1-posX, posY-r.y1, r.y2+1-posY);
+}
+function shouldDrawModernExteriorRoof(r){
+    // V51: l'esterno non sparisce nel primo passo oltre la soglia.
+    // Resta visibile in ingresso/corridoio vicino ai bordi, poi sparisce solo quando sei davvero dentro.
+    const d=modernInsideDepth(r);
+    if(d<0) return true;
+    const keep = r.entryRoofKeep == null ? 1.55 : r.entryRoofKeep;
+    return d < keep;
+}
+function shouldUseModernNearWallGuard(perpDist, wallTex){
+    // V52: guardia piu' robusta. Il BuildingSolid moderno e' la fonte visiva primaria,
+    // ma quando la camera e' quasi contro la parete il raycaster classico copre i buchi da near-plane/spigoli.
+    return false; // V54: muri moderni sempre disegnati dal wallcasting classico; niente fallback speciale.
+}
+function roofVisibleAt(px, py, depth, roof, layer, wz){
+    px=px|0; py=py|0;
+    if(px<0 || px>=screenW || py<0 || py>=screenH || depth<=0) return false;
+    const ownerId=roof && roof.ownerId ? roof.ownerId : 0;
+    const wallD=ZBuffer[px] || 1000;
+    const wt=WallTopBuffer[px] == null ? screenH : WallTopBuffer[px];
+    const wb=WallBottomBuffer[px] == null ? -1 : WallBottomBuffer[px];
+    const wallOwner=WallOwnerBuffer[px] || 0;
+    const wallTopZ=(roof && roof.wallTopZ) ? roof.wallTopZ : 1.10;
+    const sameSupport = ownerId && wallOwner===ownerId;
+    if(wallD>0 && wallD<999 && depth>wallD+.040 && py>=wt && py<=wb){
+        // V50: il wallcasting moderno resta solo occlusore tecnico. Per lo stesso edificio non deve divorare
+        // le facce del ModernBuildingSolid; il solido viene ordinato internamente. Muri/oggetti diversi restano davanti.
+        if(!sameSupport) return false;
+        if(layer==='solid_wall'){
+            // Per i muri del solido disegna solo la faccia effettivamente vicina al raycast, evitando pareti posteriori fantasma.
+            if(depth>wallD+.22) return false;
+        } else if(layer==='roof_top' || layer==='roof_fascia' || layer==='roof_cap'){
+            // Falda/fascia appartengono allo stesso blocco del muro: restano visibili sopra/al giunto del proprio supporto.
+            if(wz < wallTopZ-(roof && roof.thickness ? roof.thickness+.04 : .24)) return false;
+        } else {
+            if(depth>wallD+.10) return false;
+        }
+    }
+    if(py < Math.ceil(screenH/2 + 4) && CeilingColumnHasDepth[px]){
+        const idx=py*screenW+px;
+        const cd=CeilingDepthBuffer[idx];
+        const co=CeilingOwnerBuffer[idx] || 0;
+        if(cd>0 && depth>cd+.040){
+            // Il ceiling tecnico dello stesso ModernBuildingSolid non buca il suo tetto; altri soffitti/tettoie sì.
+            if(!(ownerId && co===ownerId)) return false;
+        }
+    }
+    return true;
+}
+function drawRoofLineDepth(a,b,color,width,alpha,roof,layer){
+    const seg=projectRoofLinePoints(a,b);
+    if(!seg) return false;
+    const pa=seg[0], pb=seg[1];
+    const steps=Math.max(2, Math.ceil(Math.hypot(pb.x-pa.x,pb.y-pa.y)));
+    ctx.save();
+    ctx.globalAlpha=alpha==null?1:alpha;
+    ctx.fillStyle=color;
+    const w=Math.max(1,width||1);
+    let drew=false;
+    for(let i=0;i<=steps;i++){
+        const t=i/steps;
+        const sx=Math.round(pa.x+(pb.x-pa.x)*t);
+        const sy=Math.round(pa.y+(pb.y-pa.y)*t);
+        const d=pa.d+(pb.d-pa.d)*t;
+        const z=(pa.z||0)+((pb.z||0)-(pa.z||0))*t;
+        if(roofVisibleAt(sx,sy,d,roof,layer||'roof_line',z)){ ctx.fillRect(sx,sy,w,w); drew=true; }
+    }
+    ctx.restore();
+    return drew;
+}
+function drawRoofPoly(points, fill, stroke, alpha, roof, layer){
+    // V49: rasterizzazione surface-aware. Ogni faccia passa layer e quota z al visibility test.
+    const projected=projectRoofPolyPoints(points);
+    if(!projected) return false;
+    let minX=9999,maxX=-9999,minY=9999,maxY=-9999;
+    for(let i=0;i<projected.length;i++){
+        minX=Math.min(minX,projected[i].x); maxX=Math.max(maxX,projected[i].x);
+        minY=Math.min(minY,projected[i].y); maxY=Math.max(maxY,projected[i].y);
+    }
+    if(maxX<-.5 || minX>screenW+.5 || maxY<-.5 || minY>screenH+.5) return false;
+    const xA=clamp(Math.floor(minX),0,screenW-1);
+    const xB=clamp(Math.ceil(maxX),0,screenW-1);
+    ctx.save();
+    ctx.globalAlpha = alpha==null ? 1 : alpha;
+    ctx.fillStyle=fill;
+    let drew=false;
+    for(let sx=xA;sx<=xB;sx++){
+        const sampleX=sx+.5;
+        const hits=[];
+        for(let i=0;i<projected.length;i++){
+            const a=projected[i], b=projected[(i+1)%projected.length];
+            if(Math.abs(a.x-b.x)<.0001) continue;
+            if((a.x<=sampleX && b.x>sampleX) || (b.x<=sampleX && a.x>sampleX)){
+                const u=(sampleX-a.x)/(b.x-a.x);
+                hits.push({ y:a.y+(b.y-a.y)*u, d:a.d+(b.d-a.d)*u, z:(a.z||0)+((b.z||0)-(a.z||0))*u });
+            }
+        }
+        if(hits.length<2) continue;
+        hits.sort((a,b)=>a.y-b.y);
+        for(let h=0;h<hits.length-1;h+=2){
+            const top=hits[h], bot=hits[h+1];
+            let y0=clamp(Math.ceil(top.y),0,screenH-1);
+            let y1=clamp(Math.floor(bot.y),0,screenH-1);
+            if(y1<y0) continue;
+            let runStart=-1;
+            for(let sy=y0; sy<=y1; sy++){
+                const denom=Math.max(.001, bot.y-top.y);
+                const v=(sy+.5-top.y)/denom;
+                const d=top.d+(bot.d-top.d)*v;
+                const z=top.z+(bot.z-top.z)*v;
+                if(roofVisibleAt(sx,sy,d,roof,layer||'roof_surface',z)){
+                    if(runStart<0) runStart=sy;
+                } else if(runStart>=0){
+                    ctx.fillRect(sx,runStart,1,sy-runStart); drew=true; runStart=-1;
+                }
+            }
+            if(runStart>=0){ ctx.fillRect(sx,runStart,1,y1-runStart+1); drew=true; }
+        }
+    }
+    ctx.restore();
+    if(stroke){
+        for(let i=0;i<points.length;i++) drawRoofLineDepth(points[i], points[(i+1)%points.length], stroke, 1, .55, roof, layer||'roof_line');
+    }
+    return drew;
+}
+function roofAvgDepth(poly){
+    let d=0,c=0;
+    for(let i=0;i<poly.pts.length;i++){ const q=projectRoofPoint(poly.pts[i][0],poly.pts[i][1],poly.pts[i][2]); if(q){ d+=q.d; c++; } }
+    return c?d/c:9999;
+}
+function modernSolidWallFaceColor(r, side){
+    const p=r.palette;
+    if(side==='west' || side==='north') return p.wallSide || p.wall;
+    return p.wall || '#4b3b29';
+}
+function collectModernWallFaces(r){
+    const faces=[];
+    const z0=0, z1=r.wallTopZ || 1.1;
+    for(let y=r.y1;y<=r.y2;y++) for(let x=r.x1;x<=r.x2;x++){
+        if(!inBounds(x,y) || map[y][x]!==r.wallTex) continue;
+        if(!inBounds(x-1,y) || map[y][x-1]!==r.wallTex){
+            faces.push({kind:'wall', layer:'solid_wall', side:'west', color:modernSolidWallFaceColor(r,'west'), edge:r.palette.wallLine, pts:[[x,y,z0],[x,y+1,z0],[x,y+1,z1],[x,y,z1]]});
+        }
+        if(!inBounds(x+1,y) || map[y][x+1]!==r.wallTex){
+            faces.push({kind:'wall', layer:'solid_wall', side:'east', color:modernSolidWallFaceColor(r,'east'), edge:r.palette.wallLine, pts:[[x+1,y+1,z0],[x+1,y,z0],[x+1,y,z1],[x+1,y+1,z1]]});
+        }
+        if(!inBounds(x,y-1) || map[y-1][x]!==r.wallTex){
+            faces.push({kind:'wall', layer:'solid_wall', side:'north', color:modernSolidWallFaceColor(r,'north'), edge:r.palette.wallLine, pts:[[x+1,y,z0],[x,y,z0],[x,y,z1],[x+1,y,z1]]});
+        }
+        if(!inBounds(x,y+1) || map[y+1][x]!==r.wallTex){
+            faces.push({kind:'wall', layer:'solid_wall', side:'south', color:modernSolidWallFaceColor(r,'south'), edge:r.palette.wallLine, pts:[[x,y+1,z0],[x+1,y+1,z0],[x+1,y+1,z1],[x,y+1,z1]]});
+        }
+    }
+    return faces;
+}
+function collectModernRoofFaces(r){
+    const p=r.palette, x0=r.x0, x1=r.x3, y0=r.y0, y1=r.y3;
+    const ez=r.eaveZ, rz=r.ridgeZ, fz=r.fasciaLowZ;
+    let faces=[], ridgeA, ridgeB;
+    const gableColor=p.gable || p.fascia || p.shadow;
+    if(r.axis==='x'){
+        const cx=(x0+x1)*.5;
+        ridgeA=[cx,y0,rz]; ridgeB=[cx,y1,rz];
+        faces.push({kind:'roof', layer:'roof_top', color:p.far, edge:null, pts:[[x0,y0,ez],ridgeA,ridgeB,[x0,y1,ez]]});
+        faces.push({kind:'roof', layer:'roof_top', color:p.near, edge:null, pts:[ridgeA,[x1,y0,ez],[x1,y1,ez],ridgeB]});
+        // V52: testate triangolari chiuse. Prima si vedeva il cielo attraverso il lato del tetto.
+        faces.push({kind:'gable', layer:'roof_cap', color:gableColor, edge:null, pts:[[x1,y0,ez],[x0,y0,ez],ridgeA]});
+        faces.push({kind:'gable', layer:'roof_cap', color:gableColor, edge:null, pts:[[x0,y1,ez],[x1,y1,ez],ridgeB]});
+    } else {
+        const cy=(y0+y1)*.5;
+        ridgeA=[x0,cy,rz]; ridgeB=[x1,cy,rz];
+        faces.push({kind:'roof', layer:'roof_top', color:p.far, edge:null, pts:[[x0,y0,ez],[x1,y0,ez],ridgeB,ridgeA]});
+        faces.push({kind:'roof', layer:'roof_top', color:p.near, edge:null, pts:[ridgeA,ridgeB,[x1,y1,ez],[x0,y1,ez]]});
+        // V52: testate triangolari chiuse per tetti con colmo sull'asse Y.
+        faces.push({kind:'gable', layer:'roof_cap', color:gableColor, edge:null, pts:[[x0,y0,ez],[x0,y1,ez],ridgeA]});
+        faces.push({kind:'gable', layer:'roof_cap', color:gableColor, edge:null, pts:[[x1,y1,ez],[x1,y0,ez],ridgeB]});
+    }
+    // Fasce laterali verticali continue: parte del blocco unico, non linee decorative indipendenti.
+    faces.push({kind:'fascia', layer:'roof_fascia', color:p.fascia, edge:null, pts:[[x0,y1,fz],[x1,y1,fz],[x1,y1,ez],[x0,y1,ez]]});
+    faces.push({kind:'fascia', layer:'roof_fascia', color:p.fascia, edge:null, pts:[[x1,y0,fz],[x0,y0,fz],[x0,y0,ez],[x1,y0,ez]]});
+    faces.push({kind:'fascia', layer:'roof_fascia', color:p.shadow, edge:null, pts:[[x0,y0,fz],[x0,y1,fz],[x0,y1,ez],[x0,y0,ez]]});
+    faces.push({kind:'fascia', layer:'roof_fascia', color:p.shadow, edge:null, pts:[[x1,y1,fz],[x1,y0,fz],[x1,y0,ez],[x1,y1,ez]]});
+    return faces;
+}
+function drawModernBuildingSolid2_5D(r){
+    if(roofCameraDistance(r)>42) return false;
+    const drawExteriorRoof=shouldDrawModernExteriorRoof(r);
+    const faces=[];
+    collectModernWallFaces(r).forEach(f=>faces.push(f));
+    if(drawExteriorRoof) collectModernRoofFaces(r).forEach(f=>faces.push(f));
+    // V52: la copertura esterna resta visibile piu' a lungo nella zona ingresso;
+    // non si spegne al primo passo sotto la tettoia.
+    faces.sort((a,b)=>roofAvgDepth(b)-roofAvgDepth(a));
+    let drew=false;
+    for(let i=0;i<faces.length;i++){
+        const f=faces[i];
+        drew = drawRoofPoly(f.pts, f.color, f.edge, 1, r, f.layer) || drew;
+    }
+    return drew;
+}
+function drawGabledRoof2_5D(r){
+    // V54: il vecchio renderer poligonale ModernBuildingSolid resta come fallback/debug,
+    // ma non e' piu' usato dalla pipeline principale. Le falde moderne sono castate a piani inclinati.
+    return false;
+}
+
+function slopedRoofPlaneZ(plane, wx, wy){
+    return plane.a*wx + plane.b*wy + plane.c;
+}
+function slopedRoofPlanesFor(r){
+    const planes=[];
+    const x0=r.x0, x1=r.x3, y0=r.y0, y1=r.y3, ez=r.eaveZ, rz=r.ridgeZ;
+    const p=r.palette || {};
+    if(r.axis==='x'){
+        const cx=(x0+x1)*.5;
+        let a=(rz-ez)/Math.max(.001,cx-x0);
+        planes.push({roof:r, a:a, b:0, c:ez-a*x0, x0:x0, x1:cx, y0:y0, y1:y1, color:p.far||'#963728'});
+        a=(ez-rz)/Math.max(.001,x1-cx);
+        planes.push({roof:r, a:a, b:0, c:rz-a*cx, x0:cx, x1:x1, y0:y0, y1:y1, color:p.near||'#b84b2e'});
+    } else {
+        const cy=(y0+y1)*.5;
+        let b=(rz-ez)/Math.max(.001,cy-y0);
+        planes.push({roof:r, a:0, b:b, c:ez-b*y0, x0:x0, x1:x1, y0:y0, y1:cy, color:p.far||'#9b3834'});
+        b=(ez-rz)/Math.max(.001,y1-cy);
+        planes.push({roof:r, a:0, b:b, c:rz-b*cy, x0:x0, x1:x1, y0:cy, y1:y1, color:p.near||'#c85a4c'});
+    }
+    return planes;
+}
+function slopedRoofPixelVisible(px, sy, dist){
+    if(px<0 || px>=screenW || sy<0 || sy>=screenH || dist<=ROOF_NEAR_PLANE) return false;
+    const wallD=ZBuffer[px] || 1000;
+    const wt=WallTopBuffer[px] == null ? screenH : WallTopBuffer[px];
+    // V56: il muro raycast resta l'occlusore principale. Se il punto del tetto cade dentro/sotto
+    // la fascia verticale del muro davanti, non si disegna; sopra il top muro resta visibile.
+    if(wallD>0 && wallD<999 && dist>wallD+.025 && sy>=wt-1) return false;
+    return true;
+}
+// V57: rimosso il fog parallelo dei tetti V56.
+// Le falde e le testate usano drawExistingWallFogOverlay(), la stessa regola storica del wallcasting.
+function projectRoofSliceY(z, dist){
+    // Proiezione coerente con il wallcasting: camera a quota 0.5 mondo.
+    return Math.round(screenH*.5 + screenH*(.5-z)/Math.max(.001,dist));
+}
+function slopedRoofEdgeZAt(r, wx, wy){
+    const ez=r.eaveZ, rz=r.ridgeZ;
+    if(r.axis==='x'){
+        const x0=r.x0, x1=r.x3, cx=(x0+x1)*.5;
+        const half=Math.max(.001,(x1-x0)*.5);
+        const t=1-Math.min(1,Math.abs(wx-cx)/half);
+        return ez+(rz-ez)*t;
+    }
+    const y0=r.y0, y1=r.y3, cy=(y0+y1)*.5;
+    const half=Math.max(.001,(y1-y0)*.5);
+    const t=1-Math.min(1,Math.abs(wy-cy)/half);
+    return ez+(rz-ez)*t;
+}
+function slopedRoofGableCapsFor(r){
+    // V56: testate triangolari chiuse del tetto inclinate, renderizzate a slice come il resto del roof casting.
+    // Non sono poligoni Canvas/painter-sorted: ogni colonna interseca il piano verticale della testata.
+    const p=r.palette||{};
+    const color=p.gable || p.fascia || p.far || '#7f302c';
+    if(r.axis==='x'){
+        return [
+            {roof:r, kind:'north', constAxis:'y', constValue:r.y0, span0:r.x0, span1:r.x3, color:color},
+            {roof:r, kind:'south', constAxis:'y', constValue:r.y3, span0:r.x0, span1:r.x3, color:color}
+        ];
+    }
+    return [
+        {roof:r, kind:'west', constAxis:'x', constValue:r.x0, span0:r.y0, span1:r.y3, color:color},
+        {roof:r, kind:'east', constAxis:'x', constValue:r.x3, span0:r.y0, span1:r.y3, color:color}
+    ];
+}
+function slopedRoofGableCapFacesCamera(cap){
+    // V56: le testate del tetto sono chiusure reali del volume, non solo front-face decorative.
+    // In V55 il culling disegnava solo la testata rivolta alla camera: da frontale mancava la
+    // faccia interna/dietro e si vedeva ancora cielo nel triangolo. Ora entrambe le testate
+    // vengono candidate; l'occlusione resta affidata allo ZBuffer dei muri raycast.
+    return true;
+}
+function drawSlopedRoofGableCaps2_5D(time){
+    if(!roofSegments.length) return;
+    const caps=[];
+    for(let i=0;i<roofSegments.length;i++){
+        const r=roofSegments[i];
+        if(roofCameraDistance(r)>44) continue;
+        slopedRoofGableCapsFor(r).forEach(c=>{ if(slopedRoofGableCapFacesCamera(c)) caps.push(c); });
+    }
+    if(!caps.length) return;
+    for(let ci=0; ci<caps.length; ci++){
+        const cap=caps[ci], r=cap.roof;
+        let runStart=-1, runEnd=-1;
+        for(let sx=0; sx<screenW; sx+=2){
+            const camX=2*sx/screenW-1;
+            const rDirX=dirX+planeX*camX, rDirY=dirY+planeY*camX;
+            let dist, wx, wy, along;
+            if(cap.constAxis==='y'){
+                if(Math.abs(rDirY)<.00001) { if(runStart>=0){ runStart=-1; runEnd=-1; } continue; }
+                dist=(cap.constValue-posY)/rDirY;
+                if(dist<=ROOF_NEAR_PLANE || dist>48) { if(runStart>=0){ runStart=-1; runEnd=-1; } continue; }
+                wx=posX+rDirX*dist; wy=cap.constValue; along=wx;
+            } else {
+                if(Math.abs(rDirX)<.00001) { if(runStart>=0){ runStart=-1; runEnd=-1; } continue; }
+                dist=(cap.constValue-posX)/rDirX;
+                if(dist<=ROOF_NEAR_PLANE || dist>48) { if(runStart>=0){ runStart=-1; runEnd=-1; } continue; }
+                wx=cap.constValue; wy=posY+rDirY*dist; along=wy;
+            }
+            if(along<cap.span0-.001 || along>cap.span1+.001) { if(runStart>=0){ runStart=-1; runEnd=-1; } continue; }
+            const topZ=slopedRoofEdgeZAt(r, wx, wy);
+            const botZ=Math.max(r.eaveZ-.018, r.wallTopZ || r.eaveZ);
+            let yTop=projectRoofSliceY(topZ,dist);
+            let yBot=projectRoofSliceY(botZ,dist);
+            if(yTop>yBot){ const tmp=yTop; yTop=yBot; yBot=tmp; }
+            yTop=clamp(yTop,0,screenH-1); yBot=clamp(yBot,0,screenH-1);
+            if(yBot<yTop) continue;
+            let segStart=-1;
+            for(let sy=yTop; sy<=yBot; sy++){
+                if(slopedRoofPixelVisible(sx,sy,dist)){
+                    if(segStart<0) segStart=sy;
+                } else if(segStart>=0){
+                    ctx.fillStyle=cap.color; ctx.fillRect(sx,segStart,2,sy-segStart); drawExistingWallFogOverlay(sx,segStart,2,sy-segStart,dist);
+                    segStart=-1;
+                }
+            }
+            if(segStart>=0){ ctx.fillStyle=cap.color; ctx.fillRect(sx,segStart,2,yBot-segStart+1); drawExistingWallFogOverlay(sx,segStart,2,yBot-segStart+1,dist); }
+        }
+    }
+}
+function drawSlopedRoofLayer2_5D(time){
+    if(!roofSegments.length) return;
+    const planes=[];
+    for(let i=0;i<roofSegments.length;i++){
+        const r=roofSegments[i];
+        if(roofCameraDistance(r)>44) continue;
+        slopedRoofPlanesFor(r).forEach(pl=>planes.push(pl));
+    }
+    if(!planes.length) return;
+    const yEnd=Math.floor(screenH/2)+2;
+    for(let sy=0; sy<yEnd; sy+=2){
+        const screenSlope=(sy+.5-screenH*.5)/screenH;
+        for(let sx=0; sx<screenW; sx+=2){
+            const camX=2*sx/screenW-1;
+            const rDirX=dirX+planeX*camX, rDirY=dirY+planeY*camX;
+            let best=null;
+            for(let i=0;i<planes.length;i++){
+                const pl=planes[i];
+                const denom=screenSlope + pl.a*rDirX + pl.b*rDirY;
+                if(Math.abs(denom)<.00001) continue;
+                const dist=(.5 - (pl.a*posX + pl.b*posY + pl.c))/denom;
+                if(dist<=ROOF_NEAR_PLANE || dist>48) continue;
+                const wx=posX+rDirX*dist, wy=posY+rDirY*dist;
+                if(wx<pl.x0-.001 || wx>pl.x1+.001 || wy<pl.y0-.001 || wy>pl.y1+.001) continue;
+                if(!slopedRoofPixelVisible(sx,sy,dist)) continue;
+                if(!best || dist<best.dist) best={dist:dist,color:pl.color};
+            }
+            if(best){
+                ctx.fillStyle=best.color;
+                ctx.fillRect(sx,sy,2,2);
+                drawExistingWallFogOverlay(sx,sy,2,2,best.dist);
+            }
+        }
+    }
+}
+
+function drawRoofLayer2_5D(time){
+    // V57: Sloped Sector Casting completo; falde/testate usano il fog storico del wallcasting tramite overlay unico.
+    drawSlopedRoofLayer2_5D(time);
+    drawSlopedRoofGableCaps2_5D(time);
+}
+function markHuman(x,y){ if(inBounds(x,y)) { safeHuman[y][x]=1; noNature[y][x]=1; } }
+function markRoad(x,y){ if(inBounds(x,y)) { roadMask[y][x]=1; noNature[y][x]=1; } }
+function resetFloorVisualMaps(){
+    for(let y=0;y<mapH;y++){
+        roadSoftEdgeMap[y].fill(0);
+        trailSoftEdgeMap[y].fill(0);
+        floorNoiseMap[y].fill(0);
+        floorOutlineMap[y].fill(0);
+        floorDecalMap[y].fill(null);
+        floorMicroDecalMap[y].fill(null);
+        floorVisualColorMap[y].fill(null);
+        floorSubTileColorMap[y].fill(null);
+        floorNearSubTileColorMap[y].fill(null);
+    }
+    floorVisualStats = null;
+    floorMixCache = Object.create(null);
+}
+function isPinetaTrailCell(x,y){ return inBounds(x,y) && zoneMask[y][x]==='pineta_trail'; }
+function isHumanRoadCell(x,y){ return inBounds(x,y) && roadMask[y][x]===1 && !isPinetaTrailCell(x,y); }
+function isTrailRoadCell(x,y){ return inBounds(x,y) && roadMask[y][x]===1 && isPinetaTrailCell(x,y); }
+function canReceiveFloorSoftEdge(x,y){
+    if(!inBounds(x,y)) return false;
+    if(fMap[y][x]===2 || cMap[y][x]!==0 || map[y][x]!==0 || objectBlock[y][x] || safeHuman[y][x]) return false;
+    const z=zoneMask[y][x];
+    if(z==='parking' || z==='yoga_room' || z==='reception' || z==='bath' || z==='game_room' || z==='camper_room') return false;
+    return true;
+}
+function buildRoadSoftEdgeMap(){
+    let cells=0;
+    for(let y=0;y<mapH;y++) for(let x=0;x<mapW;x++){
+        if(!canReceiveFloorSoftEdge(x,y) || roadMask[y][x]) continue;
+        let best=99;
+        for(let dy=-3;dy<=3;dy++) for(let dx=-3;dx<=3;dx++){
+            const xx=x+dx, yy=y+dy;
+            if(!inBounds(xx,yy) || !isHumanRoadCell(xx,yy)) continue;
+            const d=Math.hypot(dx,dy);
+            if(d<best) best=d;
+        }
+        let v=0;
+        if(best<=1.01) v=.85;
+        else if(best<=2.01) v=.45;
+        else if(best<=3.01) v=.18;
+        if(v>0){ roadSoftEdgeMap[y][x]=v; cells++; }
+    }
+    return cells;
+}
+function buildTrailSoftEdgeMap(){
+    let cells=0;
+    for(let y=0;y<mapH;y++) for(let x=0;x<mapW;x++){
+        if(!canReceiveFloorSoftEdge(x,y) || roadMask[y][x]) continue;
+        let best=99;
+        for(let dy=-2;dy<=2;dy++) for(let dx=-2;dx<=2;dx++){
+            const xx=x+dx, yy=y+dy;
+            if(!inBounds(xx,yy) || !isTrailRoadCell(xx,yy)) continue;
+            const d=Math.hypot(dx,dy);
+            if(d<best) best=d;
+        }
+        let v=0;
+        if(best<=1.01) v=.80;
+        else if(best<=2.01) v=.36;
+        if(v>0){
+            const irregular = .82 + floorHash2D(x*3+7,y*5+11,FLOOR_VISUAL_SEED) * .22;
+            trailSoftEdgeMap[y][x]=Math.min(1,v*irregular);
+            cells++;
+        }
+    }
+    return cells;
+}
+function buildFloorNoiseMap(){
+    let cells=0;
+    for(let y=0;y<mapH;y++) for(let x=0;x<mapW;x++){
+        if(fMap[y][x]===2){ floorNoiseMap[y][x]=0; continue; }
+        floorNoiseMap[y][x]=floorNoiseSigned(x,y,FLOOR_VISUAL_SEED);
+        cells++;
+    }
+    return cells;
+}
+function buildFloorOutlineMap(){
+    let cells=0;
+    for(let y=1;y<mapH-1;y++) for(let x=1;x<mapW-1;x++){
+        if(fMap[y][x]===2 || cMap[y][x]!==0) continue;
+        const t=fMap[y][x];
+        if((fMap[y][x-1]!==t || fMap[y][x+1]!==t || fMap[y-1][x]!==t || fMap[y+1][x]!==t) && !roadMask[y][x]){
+            floorOutlineMap[y][x]=1; cells++;
+        }
+    }
+    return cells;
+}
+function floorRenderBaseColor(type){
+    return floorColors[type] || floorColors[1];
+}
+function floorLightColorFor(type){
+    if(type===0) return '#f1d69b';      // sabbia: schiarita calda
+    if(type===1) return '#667f3c';      // erba: verde oliva più vivo
+    if(type===3) return '#a8b5b6';      // piastrelle
+    if(type===4) return '#ddbc8c';      // ghiaia/strada
+    if(type===5) return '#704f3d';      // legno
+    if(type===6) return '#a77a4b';      // terra piazzole
+    if(type===8) return '#405a32';      // aghi/pineta
+    if(type===9) return '#c6b96f';      // duna
+    if(type===10) return '#708c4a';     // prato fiorito
+    if(type===11) return '#3a3d42';     // asfalto
+    return '#5a5d61';
+}
+function floorDarkColorFor(type){
+    if(type===0) return '#cfaa69';
+    if(type===1) return '#465a29';
+    if(type===3) return '#829092';
+    if(type===4) return '#b98e64';
+    if(type===5) return '#4a3329';
+    if(type===6) return '#775431';
+    if(type===8) return '#26371f';
+    if(type===9) return '#998d50';
+    if(type===10) return '#506835';
+    if(type===11) return '#26282d';
+    return '#3b3d40';
+}
+function roadDustColorFor(type){
+    // Polvere chiara/calda: non cambia logica, solo alone visivo sulle celle confinanti.
+    if(type===0 || type===9) return '#dcc28a';
+    if(type===8) return '#675a36';
+    if(type===11) return '#6a6358';
+    return '#b99a6a';
+}
+function trailDirtColorFor(type){
+    // Sentiero pineta: più terra/aghi, meno ghiaia da strada umana.
+    if(type===8) return '#4a3d22';
+    if(type===1 || type===10) return '#73562f';
+    if(type===0 || type===9) return '#aa8652';
+    return '#6b4f2d';
+}
+function floorNoiseStrength(type){
+    // V61: noise aumentato con prudenza (+circa 15-20%) perché la V59/V60 ha funzionato bene.
+    // Resta quantizzato: più vita visiva, senza generare migliaia di fillStyle diversi nel render loop.
+    if(type===2 || type===3 || type===7) return 0;
+    if(type===4) return .135;      // ghiaia: variazione più viva ma non granulare pesante
+    if(type===8) return .128;      // pineta: aghi/terra più presenti
+    if(type===11) return .086;     // asfalto: micro-variazione
+    if(type===0 || type===9) return .105;
+    if(type===1 || type===10) return .095;
+    if(type===5 || type===6) return .082;
+    return .064;
+}
+function applyQuantizedFloorNoise(color,type,n){
+    const strength=floorNoiseStrength(type);
+    if(strength<=0) return color;
+    // Quantizzazione a 5 livelli: evita migliaia di fillStyle diversi e mantiene buone prestazioni.
+    const q=Math.round(clamp(n,-1,1)*2)/2;
+    if(q>0) return mixColorHex(color,floorLightColorFor(type),strength*q);
+    if(q<0) return mixColorHex(color,floorDarkColorFor(type),strength*(-q));
+    return color;
+}
+function computeFloorVisualColor(x,y,type){
+    let color=floorRenderBaseColor(type);
+    if(type===2 || !inBounds(x,y)) return color;
+
+    color=applyQuantizedFloorNoise(color,type,floorNoiseMap[y][x]||0);
+
+    const roadEdge=roadSoftEdgeMap[y][x]||0;
+    if(roadEdge>0){
+        color=mixColorHex(color,roadDustColorFor(type),Math.min(.34,roadEdge*.40));
+    }
+
+    const trailEdge=trailSoftEdgeMap[y][x]||0;
+    if(trailEdge>0){
+        const irregular=.85 + floorHash2D(x*11+3,y*13+5,FLOOR_VISUAL_SEED)*.18;
+        color=mixColorHex(color,trailDirtColorFor(type),Math.min(.44,trailEdge*.48*irregular));
+    }
+
+    // Le celle realmente di strada/sentiero restano logiche, ma ricevono piccole variazioni visive.
+    if(isHumanRoadCell(x,y)){
+        color=mixColorHex(color,'#d6b486',.10 + Math.max(0,floorNoiseMap[y][x]||0)*.08);
+    } else if(isTrailRoadCell(x,y)){
+        color=mixColorHex(color,'#5f4526',.20 + Math.max(0,-(floorNoiseMap[y][x]||0))*.10);
+    }
+
+    if(floorOutlineMap[y][x]){
+        color=mixColorHex(color,'#2b2418',.055); // edge darkening caldo, non griglia nera.
+    }
+    return color;
+}
+function buildFloorVisualColorMap(){
+    let cells=0;
+    const unique=Object.create(null);
+    for(let y=0;y<mapH;y++) for(let x=0;x<mapW;x++){
+        const type=fMap[y][x];
+        const color=computeFloorVisualColor(x,y,type);
+        floorVisualColorMap[y][x]=color;
+        unique[color]=1;
+        cells++;
+    }
+    return { cells, uniqueColors:Object.keys(unique).length };
+}
+function buildFloorDecalMap(){
+    // V61: decal piatti/procedurali più ricchi. Restano colore del pavimento: zero sprite, zero collisioni, zero ZBuffer.
+    let cells=0, microCells=0, trailNeedles=0, trailMottle=0, sandFootprints=0, sandShells=0, showerWater=0, roadPebbles=0, roadDustFlecks=0, grassWear=0;
+    for(let y=0;y<mapH;y++) for(let x=0;x<mapW;x++){
+        floorMicroDecalMap[y][x]=null;
+        if(fMap[y][x]===2 || cMap[y][x]!==0 || map[y][x]!==0){ floorDecalMap[y][x]=null; continue; }
+        const h=floorHash2D(x*17+5,y*19+9,FLOOR_VISUAL_SEED);
+        const h2=floorHash2D(x*31+7,y*37+13,FLOOR_VISUAL_SEED^0xBEE61);
+        const h3=floorHash2D(x*41+11,y*43+17,FLOOR_VISUAL_SEED^0xFA11);
+        let decal=null, micro=null;
+        const trailEdge=trailSoftEdgeMap[y][x]||0;
+        const roadEdge=roadSoftEdgeMap[y][x]||0;
+        if(isTrailRoadCell(x,y) && h>.34){ decal='trail_needles'; trailNeedles++; }
+        else if(trailEdge>.18 && h>.50){ decal='trail_specks'; trailNeedles++; }
+        else if((isHumanRoadCell(x,y) || roadEdge>.28) && h>.72){ decal='road_pebbles'; roadPebbles++; }
+        else if((fMap[y][x]===0 || fMap[y][x]===9) && y>=66 && y<SEA_Y && h>.84){ decal='sand_footprints'; sandFootprints++; }
+        else if(zoneMask[y][x]==='bath_garden'){
+            if(h>.82){ decal='shower_water'; showerWater++; }
+        }
+        if((isTrailRoadCell(x,y) || trailEdge>.22 || fMap[y][x]===8) && h2>.56){ micro='trail_mottle'; trailMottle++; }
+        else if((isHumanRoadCell(x,y) || roadEdge>.18) && h2>.58){ micro='road_dust_flecks'; roadDustFlecks++; }
+        else if((fMap[y][x]===0 || fMap[y][x]===9) && y>=66 && y<SEA_Y && h2>.90){ micro='sand_shells'; sandShells++; }
+        else if((trailEdge>.18 || roadEdge>.18) && (fMap[y][x]===1 || fMap[y][x]===10 || fMap[y][x]===8) && h3>.62){ micro='grass_wear'; grassWear++; }
+        floorDecalMap[y][x]=decal;
+        floorMicroDecalMap[y][x]=micro;
+        if(decal) cells++;
+        if(micro) microCells++;
+    }
+    return { cells, microCells, trailNeedles, trailMottle, sandFootprints, sandShells, showerWater, roadPebbles, roadDustFlecks, grassWear };
+}
+
+function floorTypeBaseVisualColor(type){ return floorRenderBaseColor(type); }
+function findNeighborFloorType(x,y,predicate){
+    const dirs=[[1,0],[-1,0],[0,1],[0,-1]];
+    for(let i=0;i<dirs.length;i++){
+        const xx=x+dirs[i][0], yy=y+dirs[i][1];
+        if(inBounds(xx,yy) && predicate(xx,yy)) return fMap[yy][xx];
+    }
+    return fMap[y] ? fMap[y][x] : 1;
+}
+function boundaryDistanceToDifferentKind(x,y,fx,fy,isSameKind){
+    // Distanza normalizzata al bordo più vicino che esce dal tipo corrente, dentro la tile.
+    let d=1;
+    if(!inBounds(x-1,y) || !isSameKind(x-1,y)) d=Math.min(d,fx);
+    if(!inBounds(x+1,y) || !isSameKind(x+1,y)) d=Math.min(d,1-fx);
+    if(!inBounds(x,y-1) || !isSameKind(x,y-1)) d=Math.min(d,fy);
+    if(!inBounds(x,y+1) || !isSameKind(x,y+1)) d=Math.min(d,1-fy);
+    return d;
+}
+function proximityToNeighborKind(x,y,fx,fy,isKind){
+    // Quanto il sample è vicino a un bordo verso una tile del tipo richiesto.
+    let p=0;
+    if(inBounds(x-1,y) && isKind(x-1,y)) p=Math.max(p,1-smoothstep(.02,.50,fx));
+    if(inBounds(x+1,y) && isKind(x+1,y)) p=Math.max(p,1-smoothstep(.02,.50,1-fx));
+    if(inBounds(x,y-1) && isKind(x,y-1)) p=Math.max(p,1-smoothstep(.02,.50,fy));
+    if(inBounds(x,y+1) && isKind(x,y+1)) p=Math.max(p,1-smoothstep(.02,.50,1-fy));
+    return p;
+}
+function organicTrailMask(x,y,fx,fy){
+    const d=boundaryDistanceToDifferentKind(x,y,fx,fy,isTrailRoadCell);
+    const n=floorNoiseSigned(Math.floor((x+fx)*7),Math.floor((y+fy)*7),FLOOR_VISUAL_SEED^0x736f6674);
+    // V61: bordo trail più frastagliato/fine. L'8x8 vicino rende questa maschera leggibile senza scalettatura grossa.
+    const inner=.12 + n*.045;
+    const outer=.52 + n*.075;
+    return smoothstep(inner,outer,d);
+}
+function regularRoadMask(x,y,fx,fy){
+    const d=boundaryDistanceToDifferentKind(x,y,fx,fy,isHumanRoadCell);
+    return smoothstep(.08,.34,d);
+}
+function applyOrganicTrailSubTile(color,x,y,fx,fy,type){
+    if(isTrailRoadCell(x,y)){
+        // V60A/B: il centro resta sentiero, i bordi si fondono verso erba/aghi/terra invece del quadrato pieno.
+        const mask=organicTrailMask(x,y,fx,fy);
+        if(mask<.96){
+            const neighborType=findNeighborFloorType(x,y,(xx,yy)=>!isTrailRoadCell(xx,yy) && fMap[yy][xx]!==2);
+            let edgeColor=applyQuantizedFloorNoise(floorRenderBaseColor(neighborType),neighborType,floorNoiseMap[y][x]||0);
+            if(floorOutlineMap[y][x]) edgeColor=mixFloorQuantized(edgeColor,'#2b2418',.04,8);
+            color=mixFloorQuantized(edgeColor,color,mask,5);
+        }
+        const vein=floorNoiseSigned(Math.floor((x+fx)*7),Math.floor((y+fy)*7),FLOOR_VISUAL_SEED^0x54524149);
+        if(vein>.48) color=mixFloorQuantized(color,'#3e311c',.10,4);
+        else if(vein<-.55) color=mixFloorQuantized(color,'#6c522d',.08,4);
+        return color;
+    }
+    const edge=trailSoftEdgeMap[y][x]||0;
+    if(edge>0){
+        // Celle accanto al trail: blending sub-tile solo vicino al bordo, non tutta la cella quadrata.
+        const near=proximityToNeighborKind(x,y,fx,fy,isTrailRoadCell);
+        if(near>0){
+            const n=floorNoiseSigned(Math.floor((x+fx)*5),Math.floor((y+fy)*5),FLOOR_VISUAL_SEED^0x45444745);
+            const amount=clamp(edge*near*(.44+n*.08),0,.46);
+            color=mixFloorQuantized(color,trailDirtColorFor(type),amount,5);
+        }
+    }
+    return color;
+}
+function applyHumanRoadSubTile(color,x,y,fx,fy,type){
+    if(isHumanRoadCell(x,y)){
+        // V60C: strada umana più ordinata del trail; bordo impolverato ma non frastagliato.
+        const mask=regularRoadMask(x,y,fx,fy);
+        if(mask<.98){
+            const neighborType=findNeighborFloorType(x,y,(xx,yy)=>!isHumanRoadCell(xx,yy) && fMap[yy][xx]!==2);
+            const edgeColor=mixFloorQuantized(floorRenderBaseColor(neighborType),roadDustColorFor(neighborType),.30,8);
+            color=mixFloorQuantized(edgeColor,color,mask,5);
+        }
+        return color;
+    }
+    const edge=roadSoftEdgeMap[y][x]||0;
+    if(edge>0){
+        const near=proximityToNeighborKind(x,y,fx,fy,isHumanRoadCell);
+        if(near>0){
+            const amount=clamp(edge*near*.30,0,.34);
+            color=mixFloorQuantized(color,roadDustColorFor(type),amount,5);
+        }
+    }
+    return color;
+}
+function applyOneFloorDecal(color,decal,x,y,fx,fy,type){
+    if(!decal) return color;
+    const hx=floorHash2D(x*23+Math.floor(fx*12),y*29+Math.floor(fy*12),FLOOR_VISUAL_SEED^0xDEC0);
+    if(decal==='trail_needles'){
+        const diag=Math.abs(fx-fy);
+        const diag2=Math.abs((1-fx)-fy);
+        if((fx>.12&&fx<.88&&fy>.08&&fy<.92&&hx>.50) || diag<.030 || diag2<.024) return mixFloorQuantized(color,'#2a2414',.14,5);
+        if(hx>.86) return mixFloorQuantized(color,'#776032',.10,5);
+    } else if(decal==='trail_specks'){
+        if(hx>.66) return mixFloorQuantized(color,'#5c4424',.13,5);
+        if(hx<.11 && fx>.2 && fx<.8) return mixFloorQuantized(color,'#2f2817',.09,5);
+    } else if(decal==='trail_mottle'){
+        const mott=(Math.sin((fx*13.0 + y*.37)*Math.PI)+Math.cos((fy*11.0 + x*.29)*Math.PI))*.5;
+        if(mott+hx>.88) return mixFloorQuantized(color,'#40351e',.10,5);
+        if(hx<.14) return mixFloorQuantized(color,'#7b6138',.07,5);
+    } else if(decal==='road_pebbles'){
+        if(hx>.76) return mixFloorQuantized(color,'#8c7355',.12,5);
+        if(hx<.08) return mixFloorQuantized(color,'#dbc298',.08,5);
+    } else if(decal==='road_dust_flecks'){
+        if(hx>.70 && fx>.10 && fy>.10 && fx<.90 && fy<.90) return mixFloorQuantized(color,'#c8ae82',.08,5);
+    } else if(decal==='grass_wear'){
+        if(hx>.62) return mixFloorQuantized(color,'#79613b',.08,5);
+    } else if(decal==='sand_footprints'){
+        const dx=fx-(hx>.5?.34:.66), dy=fy-.50;
+        if(dx*dx*1.8+dy*dy<.035) return mixFloorQuantized(color,'#b9925e',.17,5);
+    } else if(decal==='sand_shells'){
+        const dx=fx-.5, dy=fy-.5;
+        if(dx*dx+dy*dy<.018 && hx>.45) return mixFloorQuantized(color,'#ead59f',.16,5);
+    } else if(decal==='shower_water'){
+        const dx=fx-.5, dy=fy-.5;
+        if(dx*dx+dy*dy<.09) return mixFloorQuantized(color,'#7fb7bd',.18,5);
+        if(hx>.86) return mixFloorQuantized(color,'#93c6ca',.09,5);
+    }
+    return color;
+}
+function applyFloorDecalAt(color,x,y,fx,fy,type){
+    color=applyOneFloorDecal(color, floorDecalMap[y] && floorDecalMap[y][x], x,y,fx,fy,type);
+    color=applyOneFloorDecal(color, floorMicroDecalMap[y] && floorMicroDecalMap[y][x], x,y,fx,fy,type);
+    return color;
+}
+
+function floorNeedsSubTileColor(x,y){
+    return inBounds(x,y) && fMap[y][x]!==2 && cMap[y][x]===0 && (
+        isTrailRoadCell(x,y) || isHumanRoadCell(x,y) ||
+        (trailSoftEdgeMap[y][x]||0)>0 || (roadSoftEdgeMap[y][x]||0)>0 || !!floorDecalMap[y][x] || !!floorMicroDecalMap[y][x]
+    );
+}
+function computeFloorSubTileColor(x,y,fx,fy,type){
+    let color=floorVisualColorMap[y][x] || floorRenderBaseColor(type);
+    color=applyOrganicTrailSubTile(color,x,y,fx,fy,type);
+    color=applyHumanRoadSubTile(color,x,y,fx,fy,type);
+    color=applyFloorDecalAt(color,x,y,fx,fy,type);
+    return color;
+}
+function buildFloorSubTileColorMap(){
+    let cells=0, slots=0;
+    const unique=Object.create(null);
+    const res=FLOOR_FAR_SUB_TILE_RES;
+    for(let y=0;y<mapH;y++) for(let x=0;x<mapW;x++){
+        if(!floorNeedsSubTileColor(x,y)){ floorSubTileColorMap[y][x]=null; continue; }
+        const type=fMap[y][x];
+        const base=floorVisualColorMap[y][x] || floorRenderBaseColor(type);
+        const arr=new Array(res*res);
+        let changed=false;
+        for(let sy=0;sy<res;sy++) for(let sx=0;sx<res;sx++){
+            const fx=(sx+.5)/res, fy=(sy+.5)/res;
+            const color=computeFloorSubTileColor(x,y,fx,fy,type);
+            arr[sy*res+sx]=color;
+            unique[color]=1;
+            if(color!==base) changed=true;
+            slots++;
+        }
+        if(changed){ floorSubTileColorMap[y][x]=arr; cells++; }
+        else floorSubTileColorMap[y][x]=null;
+    }
+    return { cells, slots, uniqueSubColors:Object.keys(unique).length };
+}
+function floorNeedsNearSubTileColor(x,y){
+    if(!floorNeedsSubTileColor(x,y)) return false;
+    // V61: 8x8 solo dove è visivamente utile: sentieri naturali, bordi trail e decal/microdecal.
+    return isTrailRoadCell(x,y) || (trailSoftEdgeMap[y][x]||0)>.12 || !!floorDecalMap[y][x] || !!floorMicroDecalMap[y][x];
+}
+function buildFloorNearSubTileColorMap(){
+    let cells=0, slots=0;
+    const unique=Object.create(null);
+    const res=FLOOR_NEAR_SUB_TILE_RES;
+    for(let y=0;y<mapH;y++) for(let x=0;x<mapW;x++){
+        if(!floorNeedsNearSubTileColor(x,y)){ floorNearSubTileColorMap[y][x]=null; continue; }
+        const type=fMap[y][x];
+        const base=floorVisualColorMap[y][x] || floorRenderBaseColor(type);
+        const arr=new Array(res*res);
+        let changed=false;
+        for(let sy=0;sy<res;sy++) for(let sx=0;sx<res;sx++){
+            const fx=(sx+.5)/res, fy=(sy+.5)/res;
+            const color=computeFloorSubTileColor(x,y,fx,fy,type);
+            arr[sy*res+sx]=color;
+            unique[color]=1;
+            if(color!==base) changed=true;
+            slots++;
+        }
+        if(changed){ floorNearSubTileColorMap[y][x]=arr; cells++; }
+        else floorNearSubTileColorMap[y][x]=null;
+    }
+    return { cells, slots, uniqueNearSubColors:Object.keys(unique).length };
+}
+function getFloorColorAt(cellX,cellY,worldX,worldY,baseType,rowDist){
+    if(!inBounds(cellX,cellY)) return floorRenderBaseColor(baseType);
+    const fx=clamp(worldX-cellX,0,0.9999), fy=clamp(worldY-cellY,0,0.9999);
+    const near=floorNearSubTileColorMap[cellY][cellX];
+    if(near && rowDist<=FLOOR_NEAR_DETAIL_DIST){
+        const res=FLOOR_NEAR_SUB_TILE_RES;
+        return near[(Math.floor(fy*res)<<3) + Math.floor(fx*res)];
+    }
+    const sub=floorSubTileColorMap[cellY][cellX];
+    if(sub){
+        const res=FLOOR_FAR_SUB_TILE_RES;
+        return sub[(Math.floor(fy*res)<<2) + Math.floor(fx*res)];
+    }
+    return floorVisualColorMap[cellY][cellX] || floorRenderBaseColor(baseType);
+}
+function buildFloorVisualMaps(){
+    resetFloorVisualMaps();
+    const noiseCells=buildFloorNoiseMap();
+    const roadSoftCells=buildRoadSoftEdgeMap();
+    const trailSoftCells=buildTrailSoftEdgeMap();
+    const outlineCells=buildFloorOutlineMap();
+    const decalStats=buildFloorDecalMap();
+    const colorStats=buildFloorVisualColorMap();
+    const subTileStats=buildFloorSubTileColorMap();
+    const nearSubTileStats=buildFloorNearSubTileColorMap();
+    floorVisualStats={ stage:'V61_NEAR_TRAIL_DETAIL', noiseCells, roadSoftCells, trailSoftCells, outlineCells, decalCells:decalStats.cells, microDecalCells:decalStats.microCells, trailDecals:decalStats.trailNeedles, trailMottle:decalStats.trailMottle, sandFootprints:decalStats.sandFootprints, sandShells:decalStats.sandShells, showerWater:decalStats.showerWater, roadPebbles:decalStats.roadPebbles, roadDustFlecks:decalStats.roadDustFlecks, grassWear:decalStats.grassWear, colorCells:colorStats.cells, uniqueFloorColors:colorStats.uniqueColors, subTileCells:subTileStats.cells, subTileSlots:subTileStats.slots, uniqueSubTileColors:subTileStats.uniqueSubColors, nearSubTileCells:nearSubTileStats.cells, nearSubTileSlots:nearSubTileStats.slots, uniqueNearSubTileColors:nearSubTileStats.uniqueNearSubColors, nearSubTileRes:FLOOR_NEAR_SUB_TILE_RES, nearDetailDist:FLOOR_NEAR_DETAIL_DIST };
+    return floorVisualStats;
+}
+function markBlocked(x,y){ if(inBounds(x,y)) objectBlock[y][x]=1; }
+function markNoNatureDisk(cx,cy,r){ fillDisk(cx,cy,r,(x,y)=>{ noNature[y][x]=1; }); }
+function setZoneRect(x1,y1,x2,y2,name){ for(let y=y1;y<=y2;y++) for(let x=x1;x<=x2;x++) if(inBounds(x,y)) zoneMask[y][x]=name; }
+function setRectFloor(x1,y1,x2,y2,t){ for(let y=y1;y<=y2;y++) for(let x=x1;x<=x2;x++) setFloor(x,y,t); }
+function setRectCeil(x1,y1,x2,y2,t){ for(let y=y1;y<=y2;y++) for(let x=x1;x<=x2;x++) setCeil(x,y,t); }
+function fillDisk(cx,cy,r,fn){ for(let y=Math.floor(cy-r);y<=Math.ceil(cy+r);y++) for(let x=Math.floor(cx-r);x<=Math.ceil(cx+r);x++){ if(!inBounds(x,y)) continue; const dx=x+.5-cx, dy=y+.5-cy; if(dx*dx+dy*dy<=r*r) fn(x,y); } }
+function carveCell(x,y,floorType,width){ fillDisk(x+.5,y+.5,width||1.1,(tx,ty)=>{ clearWall(tx,ty); setFloor(tx,ty,floorType); markRoad(tx,ty); }); }
+function carvePath(points,floorType,width){ for(let i=0;i<points.length-1;i++){ const a=points[i],b=points[i+1]; const steps=Math.max(Math.abs(b[0]-a[0]),Math.abs(b[1]-a[1]))*5+1; for(let s=0;s<=steps;s++){ const t=s/steps; const x=Math.round(a[0]+(b[0]-a[0])*t), y=Math.round(a[1]+(b[1]-a[1])*t); carveCell(x,y,floorType,width); } } }
+function reserveDisk(cx,cy,r){ fillDisk(cx,cy,r,(x,y)=>{ markBlocked(x,y); noNature[y][x]=1; }); }
+function placeSprite(x,y,texId,opts){
+    opts=opts||{};
+    if(texId===18 && opts.allowRoof){
+        if(!opts.hScale) opts.hScale=1.18;
+        if(!opts.wScale) opts.wScale=1.06;
+        if(!opts.groundSink) opts.groundSink=2.15;
+    }
+    const ix=Math.floor(x), iy=Math.floor(y);
+    if(!inBounds(ix,iy)) return false;
+    if(!opts.allowWall && map[iy][ix]!==0) return false;
+    if(!opts.allowRoof && cMap[iy][ix]!==0 && !safeHuman[iy][ix]) return false;
+    if(opts.noRoad && roadMask[iy][ix]) return false;
+    if(opts.nature && (cMap[iy][ix]!==0 || safeHuman[iy][ix] || roadMask[iy][ix] || noNature[iy][ix] || fMap[iy][ix]===2)) return false;
+    if(opts.blocking && objectBlock[iy][ix]) return false;
+    sprites.push({x,y,tex:texId,hScale:opts.hScale||1,wScale:opts.wScale||1,groundSink:opts.groundSink||1,kind:opts.kind||'',nature:!!opts.nature,blocking:!!opts.blocking,underRoof:cMap[iy][ix]!==0});
+    if(opts.blocking) reserveDisk(x,y,opts.blockRadius||.55);
+    return true;
+}
+function buildClosedRoom(x1,y1,x2,y2,wallTex,floorType,ceilType,doors){
+    doors=doors||[];
+    const ownerId=roofOwnerIdForWallTex(wallTex);
+    for(let y=y1;y<=y2;y++) for(let x=x1;x<=x2;x++) {
+        setFloor(x,y,floorType); if(ceilType) { setCeil(x,y,ceilType); setCeilOwner(x,y,ownerId); } markHuman(x,y);
+        const border=(x===x1||x===x2||y===y1||y===y2);
+        if(border){ setWall(x,y,wallTex); if(ceilType && wallTex!==1) setWallHeight(x,y,buildingWallHeightForTex(wallTex)); }
+    }
+    doors.forEach(d=>{ for(let i=0;i<(d.w||1);i++){ const dx=d.dir==='h'?i:0, dy=d.dir==='v'?i:0; clearWall(d.x+dx,d.y+dy); } });
+    registerClosedBuildingRoof(x1,y1,x2,y2,wallTex,ceilType,doors);
+}
+function hedgeRect(x1,y1,x2,y2,doors){
+    for(let y=y1;y<=y2;y++) for(let x=x1;x<=x2;x++) { const border=(x===x1||x===x2||y===y1||y===y2); if(border) setWall(x,y,1); }
+    (doors||[]).forEach(d=>{ for(let i=0;i<(d.w||1);i++){ clearWall(d.x+(d.dir==='h'?i:0), d.y+(d.dir==='v'?i:0)); } });
+}
+function fenceRect(x1,y1,x2,y2,doors){
+    for(let y=y1;y<=y2;y++) for(let x=x1;x<=x2;x++) { const border=(x===x1||x===x2||y===y1||y===y2); if(border) setWall(x,y,42); }
+    (doors||[]).forEach(d=>{ for(let i=0;i<(d.w||1);i++){ clearWall(d.x+(d.dir==='h'?i:0), d.y+(d.dir==='v'?i:0)); } });
+}
+function hedgeBlob(cx,cy,r){ fillDisk(cx,cy,r,(x,y)=>{ if(roadMask[y][x] || objectBlock[y][x]) return; setWall(x,y,1); noNature[y][x]=1; }); }
+function decorativeCluster(cx,cy,r,count,items,zoneFilter){
+    for(let i=0;i<count;i++){
+        const a=rnd()*Math.PI*2, rr=Math.sqrt(rnd())*r; const x=cx+Math.cos(a)*rr, y=cy+Math.sin(a)*rr; const ix=Math.floor(x), iy=Math.floor(y);
+        if(!inBounds(ix,iy) || map[iy][ix]!==0 || noNature[iy][ix] || roadMask[iy][ix] || objectBlock[iy][ix] || (zoneFilter && !zoneFilter(zoneMask[iy][ix], fMap[iy][ix]))) continue;
+        const it=choice(items); placeSprite(x,y,it.tex,{hScale:it.h||1,wScale:it.w||1,nature:true,groundSink:it.g||2,kind:it.k||'',blocking:!!it.block,blockRadius:it.br||.45});
+    }
+}
+function placeFlowerPatch(cx,cy,r,density){ decorativeCluster(cx,cy,r,density,[{tex:13,h:.48},{tex:27,h:.5},{tex:28,h:.52},{tex:29,h:.46},{tex:12,h:.45},{tex:30,h:.5}],(z,f)=>f===1||f===9||f===10||z==='camper_room'); }
+function placeGrassPatch(cx,cy,r,density){ decorativeCluster(cx,cy,r,density,[{tex:12,h:.55},{tex:30,h:.58},{tex:31,h:.52},{tex:7,h:.72},{tex:25,h:.78}],(z,f)=>f===1||f===9||f===10||z==='camper_room'||z==='bar_field'); }
+function placePotLine(points){ points.forEach((p,i)=>{ const texId=[14,34,35][i%3]; placeSprite(p[0],p[1],texId,{hScale:.88,wScale:.9,groundSink:2,noRoad:true,blocking:true,blockRadius:.35}); }); }
+function placePalm(x,y,scale){ const id=choice([19,32,33]); placeSprite(x,y,id,{hScale:scale||1.9,wScale:id===33?.88:1.05,nature:true,groundSink:2,kind:'palm',blocking:true,blockRadius:.45}); }
+function placePathSideArch(cx,cy,dx,dy){
+    // Pairs on the sides of the path. Nothing is placed on the walkable spine.
+    placeSprite(cx-dx,cy-dy,37,{hScale:1.72,wScale:1.16,groundSink:2,noRoad:true,blocking:true,blockRadius:.35,kind:'arch_left'});
+    placeSprite(cx+dx,cy+dy,39,{hScale:1.72,wScale:1.16,groundSink:2,noRoad:true,blocking:true,blockRadius:.35,kind:'arch_right'});
+}
+function hasNearbyWall(x,y,r){ for(let yy=Math.floor(y-r);yy<=Math.ceil(y+r);yy++) for(let xx=Math.floor(x-r);xx<=Math.ceil(x+r);xx++){ if(inBounds(xx,yy) && map[yy][xx]>0) return true; } return false; }
+function canBeachFurniture(x,y){ const ix=Math.floor(x),iy=Math.floor(y); return inBounds(ix,iy)&&fMap[iy][ix]===0&&zoneMask[iy][ix]==='spiaggia'&&map[iy][ix]===0&&!roadMask[iy][ix]&&!objectBlock[iy][ix]&&!hasNearbyWall(x,y,1.8); }
+
+function distToRoad(x,y,r){
+    let best=999;
+    for(let yy=Math.floor(y-r); yy<=Math.ceil(y+r); yy++) for(let xx=Math.floor(x-r); xx<=Math.ceil(x+r); xx++){
+        if(inBounds(xx,yy) && roadMask[yy][xx]){
+            const dx=xx+.5-x, dy=yy+.5-y; const d=Math.sqrt(dx*dx+dy*dy); if(d<best) best=d;
+        }
+    }
+    return best;
+}
+function clearRoadDisk(cx,cy,r,floorType){
+    fillDisk(cx,cy,r,(x,y)=>{ clearWall(x,y); setFloor(x,y,floorType||4); markRoad(x,y); noNature[y][x]=1; objectBlock[y][x]=0; });
+}
+function paintRoadRect(x1,y1,x2,y2,floorType){
+    const xa=Math.min(x1,x2), xb=Math.max(x1,x2), ya=Math.min(y1,y2), yb=Math.max(y1,y2);
+    for(let y=ya;y<=yb;y++) for(let x=xa;x<=xb;x++){
+        if(!inBounds(x,y)) continue;
+        clearWall(x,y); setFloor(x,y,floorType||4); markRoad(x,y); noNature[y][x]=1; objectBlock[y][x]=0;
+    }
+}
+function paintRoadRound(cx,cy,r,floorType){
+    fillDisk(cx,cy,r,(x,y)=>{ clearWall(x,y); setFloor(x,y,floorType||4); markRoad(x,y); noNature[y][x]=1; objectBlock[y][x]=0; });
+}
+function carveEngineeredMainRoadV25(){
+    // V28 ROAD TOPOLOGY FIX: spina principale prima, bivi collegati dopo.
+    // La strada non deve puntare contro recinti/muri: passa sotto al parcheggio, poi crea bivio verticale pulito.
+    paintRoadRect(39,8,41,16,4);      // uscita reception, asse verticale pulito
+    paintRoadRound(41.5,16.5,1.25,4);
+    paintRoadRect(40,16,53,18,4);     // primo rettilineo verso est
+    paintRoadRound(53.5,19.5,1.25,4);
+    paintRoadRect(53,19,55,22,4);     // piccola discesa controllata, non diagonale a ventaglio
+    paintRoadRound(55.5,22.0,1.20,4);
+    paintRoadRect(55,21,72,23,4);     // spina orizzontale sotto il parcheggio, non sul recinto
+    paintRoadRound(72.0,23.5,1.20,4);
+    paintRoadRect(71,23,73,31,4);     // calata verso corridoio camper
+    paintRoadRound(72.0,31.5,1.35,4);
+    paintRoadRect(45,33,72,35,4);     // corridoio geometrico barriera pineta <-> camper
+    paintRoadRound(45.0,35.5,1.35,4);
+    paintRoadRect(43,35,45,61,4);     // discesa principale verso fontana/spiaggia
+    paintRoadRound(43.5,62.5,2.35,4);
+    paintRoadRect(43,62,45,68,4);
+}
+function carveBarBranchV27(){
+    // Bivio bar umano: orizzontale pulito, non diagonale a scaletta.
+    paintRoadRect(21,11,40,13,4);
+    paintRoadRound(40.0,12.0,1.15,4);
+}
+function carveParkingBranchV27(){
+    // V28: il parcheggio e' un ramo verticale secondario. Solo la porta x68..70 tocca il recinto; niente strada davanti a tutto il muro.
+    paintRoadRect(68,18,70,23,4);
+    paintRoadRound(69.0,22.5,1.05,4);
+}
+function carvePinetaBranchV27(){
+    // V28: il bivio pineta arriva davvero alla spina stradale. Prima era troncato a x50 e raggiungibile solo sul prato.
+    paintRoadRect(34,24,62,26,4);
+    paintRoadRect(60,22,62,26,4);
+    paintRoadRound(61.5,23.5,1.15,4);
+    for(let yy=24; yy<=27; yy++) for(let xx=32; xx<=35; xx++) clearWall(xx,yy);
+}
+function carveCamperBranchV27(){
+    // Imbocco camper: ramo corto, rettilineo e centrato sulla porta ovest.
+    paintRoadRect(45,45,52,47,4);
+    paintRoadRound(45.5,46.5,1.20,4);
+    for(let yy=45; yy<=48; yy++) clearWall(52,yy);
+}
+function carveCamperInternalRoadV27(){
+    // Viabilità interna camper ordinata, separata dalla main road.
+    paintRoadRect(52,45,75,47,4);
+    paintRoadRect(74,47,76,52,4);
+}
+function carveBathBranchV27(){
+    // Fontana -> bagni: raccordo rettilineo pulito verso la porta del giardino bagni.
+    paintRoadRect(43,62,59,64,4);
+}
+function carveBeachAccessV27(){
+    // Accesso spiaggia: percorso sabbioso marcato come noNature, non ghiaia nel mare.
+    for(let y=67;y<=79;y++) for(let x=43;x<=45;x++){
+        if(!inBounds(x,y)) continue;
+        clearWall(x,y); setFloor(x,y, y>=68 ? 0 : 9); markRoad(x,y); noNature[y][x]=1; objectBlock[y][x]=0;
+    }
+}
+
+function carvePinetaTrailDiskV31(cx,cy,r,floorType){
+    // Sentiero naturale interno pineta: può usare un tratto organico, ma non deve tagliare yoga/tettoie/aree umane.
+    fillDisk(cx,cy,r,(x,y)=>{
+        if(!inBounds(x,y)) return;
+        const z=zoneMask[y][x];
+        if(z==='yoga_room' || z==='bar' || z==='game_room' || z==='camper_room' || z==='parking') return;
+        if(cMap[y][x]>0 || safeHuman[y][x] || objectBlock[y][x]) return;
+        if(!(z==='pineta' || z==='piazzola_pineta' || z==='pineta_trail' || z==='scenic_hedge_wall')) return;
+        clearWall(x,y); setFloor(x,y,floorType||4); markRoad(x,y); noNature[y][x]=1; zoneMask[y][x]='pineta_trail';
+    });
+}
+function carvePinetaScenicTrailV31(){
+    // V31: ripristino del segno viola. Il tracciato aggira la sala yoga invece di attraversarla.
+    const pts=[[34,25],[31,29],[28,36],[25,43],[24,48],[25,55],[20,56],[14,56],[7,56]];
+    for(let i=0;i<pts.length-1;i++){
+        const a=pts[i], b=pts[i+1];
+        const steps=Math.max(Math.abs(b[0]-a[0]),Math.abs(b[1]-a[1]))*5+1;
+        for(let s=0;s<=steps;s++){
+            const t=s/steps;
+            const x=a[0]+(b[0]-a[0])*t, y=a[1]+(b[1]-a[1])*t;
+            carvePinetaTrailDiskV31(x,y,.68,4);
+        }
+    }
+}
+function setScenicHedgeCellV31(x,y,label){
+    if(!inBounds(x,y) || roadMask[y][x] || safeHuman[y][x] || cMap[y][x]>0 || objectBlock[y][x]) return false;
+    const z=zoneMask[y][x];
+    if(z==='yoga_room' || z==='bar' || z==='game_room' || z==='camper_room' || z==='parking') return false;
+    setWall(x,y,1); noNature[y][x]=1; zoneMask[y][x]=label||'scenic_hedge_wall'; objectBlock[y][x]=0;
+    return true;
+}
+function clearWrongAnnotatedHedgesV32(){
+    // V32: rimuove i due muri V31 piazzati fuori target.
+    // Le linee annotate dallo screenshot non erano segmenti generici in pineta: erano prolungamenti
+    // di muri-padre reali. Si eliminano solo le celle marcate dai label V31, lasciando intatti
+    // yoga, strade, piazzole, sala giochi e muri originali.
+    for(let y=0;y<mapH;y++) for(let x=0;x<mapW;x++){
+        const z=zoneMask[y][x];
+        if(z==='v31_east_pineta_wall_extension' || z==='v31_yoga_wall_extension'){
+            clearWall(x,y);
+            noNature[y][x]=0;
+            objectBlock[y][x]=0;
+            if(x<=34 && y>=16 && y<=62) { zoneMask[y][x]='pineta'; if(fMap[y][x]===4) setFloor(x,y,8); }
+            else { zoneMask[y][x]='erba'; if(fMap[y][x]===4) setFloor(x,y,1); }
+        }
+    }
+}
+function buildAnnotatedHedgesV31(){
+    // V32: correzione definitiva delle linee rosse annotate.
+    // Regola: lo screenshot viene tradotto in coordinate 80x88 e ogni linea deve agganciarsi
+    // al suo muro padre, non nascere come segmento generico.
+    clearWrongAnnotatedHedgesV32();
+
+    // Linea rossa alta: prolungamento del muro est della pineta verso il bivio.
+    // È una quinta orizzontale poco sotto il margine nord della pineta, non la vecchia fascia V31 a y31/32.
+    for(let x=34;x<=51;x++){
+        setScenicHedgeCellV31(x,20,'v32_east_pineta_wall_extension');
+        setScenicHedgeCellV31(x,21,'v32_east_pineta_wall_extension');
+    }
+
+    // Linea rossa bassa: prolungamento ovest del muro superiore dell'area yoga.
+    // Si ferma sulla spalla del muro yoga senza entrare nello yoga né mangiare piazzole/tende.
+    for(let x=2;x<=9;x++){
+        setScenicHedgeCellV31(x,42,'v32_yoga_wall_extension');
+        setScenicHedgeCellV31(x,43,'v32_yoga_wall_extension');
+    }
+}
+function resetRectToGrass(x1,y1,x2,y2){
+    const xa=Math.min(x1,x2), xb=Math.max(x1,x2), ya=Math.min(y1,y2), yb=Math.max(y1,y2);
+    for(let y=ya;y<=yb;y++) for(let x=xa;x<=xb;x++){
+        if(!inBounds(x,y)) continue;
+        if(map[y][x]===0 && !objectBlock[y][x]){ roadMask[y][x]=0; if(fMap[y][x]===4) setFloor(x,y,1); }
+    }
+}
+function placeCamperHedgeLine(points){
+    points.forEach(p=>{
+        const x=p[0], y=p[1], s=p[2]||.82;
+        if(distToRoad(x,y,3.2)<2.15) return;
+        placeSprite(x,y,7,{hScale:s,wScale:1.08,nature:true,groundSink:2,blocking:true,blockRadius:.42,noRoad:true,kind:'camper_managed_hedge'});
+    });
+}
+function placeParkingLine(x,y,rotBias){
+    // Segni bassi a terra: billboard minimi, non bloccanti, usati solo nel parcheggio.
+    return placeSprite(x,y,46,{hScale:.20,wScale:1.28,groundSink:3.0,noRoad:true,kind:'parking_line'});
+}
+function placeCar(x,y,texId,w,h){
+    return placeSprite(x,y,texId,{hScale:h||.78,wScale:w||1.18,groundSink:2.55,blocking:true,blockRadius:.62,noRoad:true,kind:'parked_car'});
+}
+function placeGameTable(x,y,texId,kind){
+    return placeSprite(x,y,texId,{hScale:.70,wScale:1.18,groundSink:2.35,blocking:true,blockRadius:.58,noRoad:true,kind:kind||'outdoor_game_table'});
+}
+function buildOpenRoofArea(x1,y1,x2,y2,floorType,ceilType,zone){
+    for(let y=y1;y<=y2;y++) for(let x=x1;x<=x2;x++){
+        setFloor(x,y,floorType); setCeil(x,y,ceilType); markHuman(x,y); zoneMask[y][x]=zone; roadMask[y][x]=0; noNature[y][x]=1; objectBlock[y][x]=0; clearWall(x,y);
+    }
+    [[x1+.5,y1+.5],[x2+.5,y1+.5],[x1+.5,y2+.5],[x2+.5,y2+.5]].forEach(p=>placeSprite(p[0],p[1],18,{allowRoof:true,groundSink:2,blocking:true,blockRadius:.25,kind:zone+'_column'}));
+}
+function placeCafeSet(x,y){
+    // V31: sprite dehors più alto e prospettico. L'ombrellone non deve sembrare basso/giocattolo.
+    return placeSprite(x,y,52,{hScale:1.08,wScale:1.04,groundSink:2.75,noRoad:true,blocking:true,blockRadius:.44,kind:'bar_outdoor_table'});
+}
+function placeBarDehorsGreeneryV32(){
+    // V32: area bar piu' viva, ma ordinata. Vegetazione solo a nord/ovest del dehors,
+    // lontana dai tavolini e dalla strada; non blocca gli accessi.
+    const grasses=[
+        [8.7,5.2,30,.48],[9.8,5.0,12,.42],[11.2,4.9,29,.44],[13.0,5.0,30,.46],
+        [17.5,4.9,12,.42],[20.8,5.2,30,.48],[22.2,5.8,29,.44],
+        [7.0,7.5,12,.44],[6.8,9.1,30,.46],[6.8,10.9,29,.42],[7.1,12.7,12,.44],[7.5,14.2,30,.46]
+    ];
+    grasses.forEach(g=>{
+        const ix=Math.floor(g[0]), iy=Math.floor(g[1]);
+        if(inBounds(ix,iy) && map[iy][ix]===0 && !roadMask[iy][ix] && !objectBlock[iy][ix]){
+            placeSprite(g[0],g[1],g[2],{hScale:g[3],wScale:.70,groundSink:2,noRoad:true,kind:'bar_dehors_grass'});
+        }
+    });
+    const distantBushes=[[7.0,5.7,25,.62],[6.7,14.8,7,.66],[22.5,5.6,26,.58]];
+    distantBushes.forEach(b=>{
+        const ix=Math.floor(b[0]), iy=Math.floor(b[1]);
+        if(inBounds(ix,iy) && map[iy][ix]===0 && !roadMask[iy][ix] && !objectBlock[iy][ix]){
+            placeSprite(b[0],b[1],b[2],{hScale:b[3],wScale:.82,groundSink:2.2,noRoad:true,blocking:false,kind:'bar_distant_bush'});
+        }
+    });
+}
+function placeStatue(x,y){
+    // V33: statua fissata a coordinate progettuali esatte. Non usa noRoad: la piazzola/sanity libera la cella se serve.
+    return placeSprite(x,y,53,{hScale:1.82,wScale:.78,groundSink:2.45,blocking:true,blockRadius:.46,kind:'marble_statue'});
+}
+function canPlaceGrassFeatureV33(x,y,minRoad){
+    const ix=Math.floor(x), iy=Math.floor(y);
+    if(!inBounds(ix,iy)) return false;
+    if(map[iy][ix]!==0 || cMap[iy][ix]!==0 || safeHuman[iy][ix] || roadMask[iy][ix] || objectBlock[iy][ix]) return false;
+    if(!(fMap[iy][ix]===1 || fMap[iy][ix]===10 || zoneMask[iy][ix]==='bar_field')) return false;
+    if(distToRoad(x,y,3.8) < (minRoad||1.20)) return false;
+    return true;
+}
+function placeTamariskV33(x,y,variant,scale,kind){
+    if(!canPlaceGrassFeatureV33(x,y,1.18)) return false;
+    const texId=54+(variant%3);
+    return placeSprite(x,y,texId,{hScale:scale||1.35,wScale:.96+(variant%3)*.06,groundSink:2.25,blocking:true,blockRadius:.38,kind:kind||'tamarisk'});
+}
+function placeTamariskGroveV33(){
+    // V33: boschetto fitto di tamerici marittime nel grande vuoto a ovest della reception.
+    const grove=[
+        [24.7,4.9,0,1.22],[27.1,4.2,1,1.34],[30.0,4.8,2,1.28],[32.6,6.0,0,1.38],
+        [25.8,7.8,2,1.26],[28.7,7.1,0,1.42],[31.2,8.4,1,1.30],[34.1,9.8,2,1.20],
+        [24.5,11.5,1,1.32],[27.4,10.8,2,1.24],[30.5,11.8,0,1.44],[33.3,13.4,1,1.22],
+        [23.9,14.2,2,1.18],[26.2,14.8,0,1.24],[29.4,14.7,1,1.20],[32.2,15.2,2,1.16],[34.5,14.5,0,1.18]
+    ];
+    grove.forEach(p=>placeTamariskV33(p[0],p[1],p[2],p[3],'tamarisk_reception_west'));
+    // Esemplari singoli in prati larghi o accanto a muri lunghi, sempre fuori strada/edifici.
+    const singles=[
+        [54.8,14.8,0,1.28],[57.8,24.7,1,1.22],[74.5,25.8,2,1.18],
+        [38.2,18.2,1,1.20],[51.8,28.2,0,1.26],[57.0,52.7,2,1.16],
+        [48.4,40.2,1,1.18],[31.8,66.3,0,1.14]
+    ];
+    singles.forEach(p=>placeTamariskV33(p[0],p[1],p[2],p[3],'tamarisk_scattered'));
+}
+
+function canPlaceTamariskV35(x,y,minRoad){
+    const ix=Math.floor(x), iy=Math.floor(y);
+    if(!inBounds(ix,iy)) return false;
+    if(map[iy][ix]!==0 || cMap[iy][ix]!==0 || safeHuman[iy][ix] || roadMask[iy][ix] || objectBlock[iy][ix]) return false;
+    if(!(fMap[iy][ix]===1 || fMap[iy][ix]===10 || zoneMask[iy][ix]==='bar_field')) return false;
+    if(zoneMask[iy][ix]==='pineta' || zoneMask[iy][ix]==='spiaggia' || zoneMask[iy][ix]==='bath_room') return false;
+    if(distToRoad(x,y,3.8) < (minRoad||1.05)) return false;
+    return true;
+}
+function placeTamariskV35(x,y,variant,scale,kind,minRoad){
+    if(!canPlaceTamariskV35(x,y,minRoad||1.05)) return false;
+    const texId=54+(variant%3);
+    return placeSprite(x,y,texId,{hScale:scale||1.22,wScale:.96+(variant%3)*.06,groundSink:2.25,blocking:true,blockRadius:.36,kind:kind||'tamarisk_v35'});
+}
+function placeTamariskVisualV35(x,y,variant,scale,kind,minRoad){
+    // Usato per macchie fitte decorative in campi larghi: controlla strada/mare/tettoie,
+    // ma non blocca fisicamente per evitare di chiudere aree erbose libere.
+    const ix=Math.floor(x), iy=Math.floor(y);
+    if(!inBounds(ix,iy)) return false;
+    if(map[iy][ix]!==0 || cMap[iy][ix]!==0 || safeHuman[iy][ix] || roadMask[iy][ix]) return false;
+    if(!(fMap[iy][ix]===1 || fMap[iy][ix]===10 || zoneMask[iy][ix]==='bar_field')) return false;
+    if(zoneMask[iy][ix]==='pineta' || zoneMask[iy][ix]==='spiaggia' || zoneMask[iy][ix]==='bath_room') return false;
+    if(distToRoad(x,y,3.8) < (minRoad||1.02)) return false;
+    const texId=54+(variant%3);
+    return placeSprite(x,y,texId,{hScale:scale||1.14,wScale:.94+(variant%3)*.06,groundSink:2.25,blocking:false,kind:kind||'tamarisk_visual_v35'});
+}
+function placeGrassTuftV35(x,y,texId,scale,kind,minRoad){
+    const ix=Math.floor(x), iy=Math.floor(y);
+    if(!inBounds(ix,iy)) return false;
+    if(map[iy][ix]!==0 || cMap[iy][ix]!==0 || safeHuman[iy][ix] || roadMask[iy][ix] || objectBlock[iy][ix] || noNature[iy][ix]) return false;
+    if(!(fMap[iy][ix]===1 || fMap[iy][ix]===10 || zoneMask[iy][ix]==='bar_field')) return false;
+    if(distToRoad(x,y,3.8) < (minRoad||1.0)) return false;
+    return placeSprite(x,y,texId,{hScale:scale||.42,wScale:.76,groundSink:2,nature:true,blocking:false,kind:kind||'grass_tuft_v35'});
+}
+function placeTamariskLandscapeV35(){
+    // V35-A: grande quadrato verde vicino al parcheggio, lato opposto alla main road e accanto al lungo muro-cespuglio.
+    const parkingFieldTrees=[
+        [58.4,22.4,0,1.18],[62.2,22.0,1,1.30],[66.4,22.7,2,1.16],[71.3,23.4,0,1.28],
+        [57.5,25.8,2,1.18],[61.4,26.2,0,1.26],[65.8,26.5,1,1.22],[70.4,27.2,2,1.18],
+        [74.0,26.4,1,1.14],[60.0,29.0,0,1.20],[68.0,29.2,2,1.16]
+    ];
+    parkingFieldTrees.forEach(p=>placeTamariskVisualV35(p[0],p[1],p[2],p[3],'tamarisk_parking_field',0.65));
+    [[62.6,24.4,1,1.05],[65.0,24.7,2,1.10],[67.6,24.8,2,1.10],[69.3,25.2,0,1.04],[63.4,26.8,1,1.08],[64.0,28.1,0,1.08],[67.0,28.0,2,1.05],[71.8,28.6,1,1.06],[73.6,29.1,2,1.02]].forEach(p=>placeTamariskVisualV35(p[0],p[1],p[2],p[3],'tamarisk_parking_field',0.60));
+    const parkingGrass=[];
+    for(let gx=57; gx<=74; gx+=2.2){
+        for(let gy=22; gy<=29; gy+=2.0){
+            parkingGrass.push([gx+.35+((gx+gy)%3)*.12,gy+.42,choice([12,30,31]),.34+((gx+gy)%4)*.035]);
+        }
+    }
+    parkingGrass.forEach(g=>placeGrassTuftV35(g[0],g[1],g[2],g[3],'parking_field_grass_v35',1.04));
+
+    // V35-B: tamerici lungo i confini liberi nord/est/ovest, esclusi pineta, spiaggia e zone occupate.
+    const borderTrees=[
+        [4.3,4.2,0,1.12],[8.8,5.0,1,1.22],[13.7,4.5,2,1.14],[18.8,5.2,0,1.18],
+        [52.5,3.8,1,1.18],[58.6,4.6,2,1.10],[76.2,23.2,0,1.18],[76.0,33.0,1,1.24],
+        [76.3,43.8,2,1.15],[75.6,53.0,0,1.16],[74.8,62.4,1,1.10],[3.4,8.5,2,1.14],
+        [3.1,13.6,0,1.18],[3.0,66.4,1,1.08],[7.2,70.2,2,1.12]
+    ];
+    borderTrees.forEach(p=>placeTamariskV35(p[0],p[1],p[2],p[3],'tamarisk_border_free',1.15));
+
+    // V35-C: seconda quinta verde dietro le palme sul lato pineta della main road, tratto statua -> fontana.
+    const pinetaWallRoadTrees=[
+        [36.8,37.6,0,1.15],[36.5,41.2,1,1.26],[37.1,45.0,2,1.16],[36.6,48.8,0,1.22],
+        [37.2,52.4,1,1.16],[37.5,56.3,2,1.20],[38.0,59.4,0,1.10]
+    ];
+    pinetaWallRoadTrees.forEach(p=>placeTamariskV35(p[0],p[1],p[2],p[3],'tamarisk_pineta_wall_road',1.10));
+}
+
+function inferWallDecalFaceV35(x,y,preferred){
+    // V35: una decal testuale deve sapere su quale faccia del muro e' affissa.
+    // La priorita' preferisce il lato libero/calpestabile: cosi' il cartello resta stampato sul muro
+    // e non eredita il flip della texture organica della siepe.
+    if(preferred) return preferred;
+    const faces=[['north',0,-1],['south',0,1],['west',-1,0],['east',1,0]];
+    for(const f of faces){
+        const nx=x+f[1], ny=y+f[2];
+        if(inBounds(nx,ny) && map[ny][nx]===0 && fMap[ny][nx]!==2) return f[0];
+    }
+    return 'south';
+}
+function setWallAdDecalV35(x,y,texId,label,preferredFace,flip){
+    // V35: pubblicita' affissa come decal face-aware, non sprite billboard.
+    // Usa una coordinata texture propria nel wallcasting per evitare scritte specchiate.
+    if(!inBounds(x,y) || map[y][x]!==1 || cMap[y][x]>0) return false;
+    wallDecalMap[y][x]={tex:texId,label:label||'wall_decal',face:inferWallDecalFaceV35(x,y,preferredFace),flip:!!flip};
+    return true;
+}
+function getWallDecalTexX(face, rawTX, manualFlip){
+    // V36: il verso di lettura del testo si decide per faccia, non con il tX ribaltato della siepe.
+    let tx=rawTX;
+    if(face==='north' || face==='south' || face==='east') tx=texW-rawTX-1;
+    if(face==='west') tx=rawTX;
+    if(manualFlip) tx=texW-tx-1;
+    return clamp(tx,0,texW-1);
+}
+function placeWallAdvertisementsV33(){
+    // V35: le pubblicita' restano stampate sui muri lunghi, ma sono face-aware.
+    // Scritte e immagini non si ribaltano piu' con il tX della siepe.
+    const ads=[
+        [40,20,57,'decal_pineta_gelato','north'], [48,20,58,'decal_pineta_pizza','north'],
+        [56,29,59,'decal_barrier_patatine','south'], [66,29,60,'decal_barrier_tris','south'],
+        [34,46,57,'decal_west_pineta_gelato','east'], [34,56,58,'decal_west_pineta_pizza','east']
+    ];
+    ads.forEach(a=>setWallAdDecalV35(a[0],a[1],a[2],a[3],a[4],false));
+}
+function placeDirectionSignV34(x,y,texId,kind){
+    const ix=Math.floor(x), iy=Math.floor(y);
+    if(!inBounds(ix,iy) || map[iy][ix]!==0 || roadMask[iy][ix] || objectBlock[iy][ix] || fMap[iy][ix]===2) return false;
+    return placeSprite(x,y,texId,{hScale:.92,wScale:.72,groundSink:2.45,noRoad:true,blocking:false,kind:kind||'direction_sign'});
+}
+function placeDirectionalSignsV34(){
+    // Cartelli orientativi billboard: devono essere leggibili e vicini agli ingressi, senza bloccare porte/strade.
+    const signs=[
+        [35.1,10.8,61,'direction_sign_reception'],
+        [24.0,10.8,62,'direction_sign_bar'],
+        [33.1,27.2,63,'direction_sign_pineta'],
+        [50.6,43.9,64,'direction_sign_camper'],
+        [58.2,60.7,65,'direction_sign_bagni'],
+        [41.2,68.4,66,'direction_sign_spiaggia'],
+        [66.4,20.8,67,'direction_sign_parcheggio'],
+        [8.2,21.0,68,'direction_sign_tende'],
+        [26.4,47.5,69,'direction_sign_yoga']
+    ];
+    signs.forEach(s=>placeDirectionSignV34(s[0],s[1],s[2],s[3]));
+}
+function placeSouthRoadPalmsV34(){
+    // V34: molte palme curate sul lato ovest della main road dalla statua verso sud.
+    // Lascia aria da statua/obelisco e fontana, e non tocca la carreggiata.
+    const palms=[
+        [39.2,39.4,1.58],[39.0,43.0,1.72],[39.6,46.8,1.50],[38.8,50.5,1.68],
+        [39.5,54.3,1.55],[39.2,58.1,1.76],[40.2,60.4,1.42]
+    ];
+    palms.forEach(p=>{
+        const ix=Math.floor(p[0]), iy=Math.floor(p[1]);
+        if(inBounds(ix,iy) && map[iy][ix]===0 && !roadMask[iy][ix] && fMap[iy][ix]!==2 && cMap[iy][ix]===0 && !objectBlock[iy][ix] && distToRoad(p[0],p[1],3.4)>1.25){
+            placePalm(p[0],p[1],p[2]);
+        }
+    });
+}
+function placePineAt(x,y,h,w){
+    return placeSprite(x,y,9,{hScale:h||2.05,wScale:w||1.02,nature:true,groundSink:2,blocking:true,blockRadius:.42,noRoad:true,kind:'pine'});
+}
+
+function placeBorderPineWall(points, jitter){
+    // V22: quinta piena di pini interni davanti ai muri-cespuglio della pineta.
+    points.forEach((p,i)=>{
+        const x=p[0]+(rnd()-.5)*(jitter||.28), y=p[1]+(rnd()-.5)*(jitter||.28);
+        const ix=Math.floor(x), iy=Math.floor(y);
+        if(inBounds(ix,iy) && zoneMask[iy][ix]==='pineta' && map[iy][ix]===0 && cMap[iy][ix]===0 && !safeHuman[iy][ix] && !objectBlock[iy][ix] && distToRoad(x,y,3.2)>1.05){
+            placePineAt(x,y,1.82+(i%3)*.18+rnd()*.34,.96+rnd()*.10);
+        }
+    });
+}
+function placeSymmetricPot(x,y,idx,kind){
+    const texId=[14,34,35][idx%3];
+    return placeSprite(x,y,texId,{hScale:.72,wScale:.78,groundSink:2.2,noRoad:true,blocking:true,blockRadius:.28,kind:kind||'symmetric_pot'});
+}
+function placeRoadsidePalmPot(x,y,sideX,sideY,idx){
+    // V18: arredo geometrico post-camper. Solo ai lati della main road, mai sulla carreggiata.
+    const px=x+sideX, py=y+sideY;
+    if(inBounds(Math.floor(px),Math.floor(py)) && map[Math.floor(py)][Math.floor(px)]===0 && distToRoad(px,py,3.6)>1.55) {
+        placePalm(px,py,1.42+(idx%2)*.18);
+    }
+    const vx=x-sideX*.72, vy=y-sideY*.72;
+    if(inBounds(Math.floor(vx),Math.floor(vy)) && map[Math.floor(vy)][Math.floor(vx)]===0 && distToRoad(vx,vy,3.2)>1.25) {
+        const texId=[14,34,35][idx%3];
+        placeSprite(vx,vy,texId,{hScale:.78,wScale:.82,groundSink:2.2,noRoad:true,blocking:true,blockRadius:.30,kind:'roadside_pot'});
+    }
+}
+
+
+function generateWorld(){
+    roofSegments.length = 0;
+    for(let y=0;y<mapH;y++) for(let x=0;x<mapW;x++){
+        let floor=1, zone='erba';
+        if(y>=SEA_Y){ floor=2; zone='mare'; }
+        else if(y>=68){ floor=0; zone='spiaggia'; }
+        else if(y>=63){ floor=9; zone='fascia_palme'; }
+        else if(x<=34 && y>=16 && y<=62){ floor=8; zone='pineta'; }
+        fMap[y][x]=floor; zoneMask[y][x]=zone;
+    }
+    // Confini laterali e nord: il sud in zona mare resta aperto visivamente.
+    for(let x=0;x<mapW;x++){ setWall(x,0,1); }
+    for(let y=0;y<mapH;y++){ setWall(0,y,1); setWall(mapW-1,y,1); }
+    for(let x=1;x<mapW-1;x++) clearWall(x,mapH-1);
+
+    // Strada principale V27: solo spina dorsale. I bivi umani vengono reincisi dopo le stanze.
+    carveEngineeredMainRoadV25();
+
+    // Reception.
+    buildClosedRoom(36,2,44,8,2,5,7,[{x:39,y:8,w:3,dir:'h'}]);
+    placeSprite(36.4,9.4,14,{allowRoof:true,hScale:.9,blocking:true,blockRadius:.35,noRoad:true});
+    placeSprite(44.6,9.4,34,{allowRoof:true,hScale:.9,blocking:true,blockRadius:.35,noRoad:true});
+    markNoNatureDisk(40,9,7);
+    // V23: insegna ricollocata. Sta davanti/laterale alla strada, non sopra la carreggiata e non troppo vicina all'ingresso.
+    placeSprite(46.6,13.2,47,{hScale:1.95,wScale:1.72,groundSink:2.35,noRoad:true,blocking:true,blockRadius:.48,kind:'camping_imperio_sign'});
+
+    // Bar/gazebo: area umana separata nel campo nord-ovest, fuori dalla stanza pineta.
+    setRectFloor(8,6,22,15,1); setZoneRect(8,6,22,15,'bar_field');
+    setRectFloor(10,8,20,14,5); setRectCeil(10,8,20,14,7); setZoneRect(10,8,20,14,'bar');
+    for(let y=5;y<=16;y++) for(let x=7;x<=23;x++) if(inBounds(x,y)) { noNature[y][x]=1; roadMask[y][x]=0; }
+    for(let y=8;y<=14;y++) for(let x=10;x<=20;x++) markHuman(x,y);
+    [[10.5,8.5],[20.5,8.5],[10.5,14.5],[20.5,14.5]].forEach(p=>placeSprite(p[0],p[1],18,{allowRoof:true,groundSink:2,blocking:true,blockRadius:.25}));
+    placeSprite(13.2,11.0,15,{allowRoof:true}); placeSprite(15.8,11.0,15,{allowRoof:true}); placeSprite(16.4,13.0,17,{allowRoof:true});
+    placeSprite(10.0,15.7,34,{hScale:.76,blocking:true,blockRadius:.30,noRoad:true});
+    placeSprite(21.3,15.2,35,{hScale:.76,blocking:true,blockRadius:.30,noRoad:true});
+    placeSprite(18.8,15.6,24,{hScale:.64,noRoad:true});
+    placeFlowerPatch(8.5,11.5,3.2,18); placeFlowerPatch(22.0,12.0,3.2,18);
+    // V30: dehors bar all'aperto a NORD del gazebo, come da correzione utente.
+    // In V29 erano a sud, nella fascia poi contaminata dal bordo pineta: errore registrato nei TXT.
+    [[11.8,6.35],[15.4,6.05],[19.0,6.35]].forEach(p=>placeCafeSet(p[0],p[1]));
+    [[9.2,6.7,14],[21.5,6.7,34],[12.7,5.45,35],[18.2,5.45,14]].forEach((p,i)=>placeSprite(p[0],p[1],p[2],{hScale:.78,wScale:.82,groundSink:2.3,noRoad:true,blocking:true,blockRadius:.28,kind:'bar_dehors_pot'}));
+    placeBarDehorsGreeneryV32();
+    // V27: il bivio del bar viene inciso dopo la zona bar, così non viene cancellato dai reset safeHuman/noNature.
+    carveBarBranchV27();
+
+
+    // Parcheggio nord-est V25: schema architettonico dichiarativo.
+    // Stalli asfaltati scuri, corsia centrale e griglia di manovra colore strada, auto centrate negli stalli.
+    setRectFloor(63,7,75,18,11); setZoneRect(63,7,75,18,'parking');
+    for(let y=7;y<=18;y++) for(let x=63;x<=75;x++){
+        noNature[y][x]=1; roadMask[y][x]=0; objectBlock[y][x]=0;
+        if(map[y][x]===0) clearWall(x,y);
+    }
+    fenceRect(63,7,75,18,[{x:68,y:18,w:3,dir:'h'}]);
+
+    // V28: bivio parcheggio pulito e dichiarativo. Non usa più carvePath né ventagli diagonali.
+    carveParkingBranchV27();
+    // V28 anti-regressione: se qualche segmento precedente ha lasciato ghiaia davanti al recinto sud,
+    // la rimuoviamo tranne nel varco reale x68..70. Così la main road non sembra schiantarsi sul muro del parcheggio.
+    for(let x=63; x<=75; x++){
+        if(x>=68 && x<=70) continue;
+        for(let y=18; y<=18; y++){
+            if(inBounds(x,y) && map[y][x]===0){ roadMask[y][x]=0; if(fMap[y][x]===4) setFloor(x,y,1); }
+        }
+    }
+
+    // Griglia interna: corsia centrale verticale + corsie orizzontali tra le file.
+    // Le corsie sono colore strada, ma i centri delle auto restano sempre su floor 11.
+    for(let y=8;y<=17;y++) for(let x=68;x<=70;x++){ setFloor(x,y,4); markRoad(x,y); noNature[y][x]=1; clearWall(x,y); }
+    [9,11,13,15].forEach(yy=>{ for(let x=64;x<=74;x++){ setFloor(x,yy,4); markRoad(x,yy); noNature[yy][x]=1; clearWall(x,yy); } });
+
+    // Stalli auto laterali: ripristinati sopra la griglia nei rettangoli di sosta, cosi' le auto sono parcheggiate sull'asfalto.
+    [8,10,12,14,16].forEach(yy=>{ for(let x=64;x<=66;x++) setFloor(x,yy,11); });
+    [8,10,12,14].forEach(yy=>{ for(let x=72;x<=74;x++) setFloor(x,yy,11); });
+
+    // V26: rimossi gli sprite delle strisce parcheggio. La griglia e' disegnata solo dal pavimento/corsie floor 4.
+
+    // 9 auto: ogni coordinata e' legata a uno stallo, mai alla corsia centrale o al fondo del viottolo.
+    [[65.5,8.45,43],[65.5,10.45,44],[65.5,12.45,45],[65.5,14.45,48],[65.5,16.45,49],
+     [73.5,8.45,49],[73.5,10.45,43],[73.5,12.45,44],[73.5,14.45,45]].forEach(p=>placeCar(p[0],p[1],p[2],1.08,.66));
+
+    // Quattro vasi agli angoli interni visivi: non sulla corsia, non sulle auto, simmetrici rispetto al rettangolo.
+    [[64.25,8.15],[74.75,8.15],[64.25,17.75],[74.75,17.75]].forEach((p,i)=>placeSymmetricPot(p[0],p[1],i,'parking_corner_pot'));
+
+    // V29: nuova sala giochi coperta/aperta a nord-est della reception.
+    // Biliardo e ping-pong stanno sotto tettoia, non piu' come cartelloni in campo aperto.
+    buildOpenRoofArea(50,6,58,13,5,7,'game_room');
+    paintRoadRect(53,14,55,16,4); // piccolo accesso geometrico dalla main road alla sala giochi
+    placeGameTable(52.8,9.2,50,'billiard_table');
+    placeGameTable(55.6,11.2,51,'pingpong_table');
+    placeSprite(50.8,13.7,34,{hScale:.74,wScale:.78,groundSink:2.3,noRoad:true,blocking:true,blockRadius:.28,kind:'game_room_pot'});
+    placeSprite(58.2,13.6,35,{hScale:.74,wScale:.78,groundSink:2.3,noRoad:true,blocking:true,blockRadius:.28,kind:'game_room_pot'});
+    // Campi esterni vivi V26: piu' espansi sul fondo/nord-est, tenuti a distanza dalla main road con sanity finale.
+    placeFlowerPatch(57.0,8.4,3.7,32); placeGrassPatch(56.5,15.8,3.8,30);
+    placeFlowerPatch(74.0,23.5,6.3,62); placeGrassPatch(76.5,14.0,4.2,34);
+    decorativeCluster(75.0,24.0,5.8,54,[{tex:7,h:.72,w:1.0},{tex:25,h:.78,w:1.05},{tex:26,h:.74,w:1.0},{tex:12,h:.45,w:.70},{tex:30,h:.50,w:.72},{tex:31,h:.48,w:.72},{tex:27,h:.48,w:.70},{tex:28,h:.48,w:.70}],(z,f)=>z==='erba'||f===1||f===10);
+
+    // Pineta chiusa e più piena: niente fiori/cespugli da prato, più massa verticale di pini.
+    for(let y=16;y<=62;y++) for(let x=2;x<=35;x++){
+        const wavyWest=x<=2+((y*7)%3), wavyEast=x>=34-((y*5)%2), wavyNorth=y<=16+((x*3)%3), wavySouth=y>=61-((x*5)%3);
+        if(wavyWest||wavyEast||wavyNorth||wavySouth) setWall(x,y,1);
+    }
+    for(let yy=24;yy<=27;yy++) for(let xx=32;xx<=35;xx++) clearWall(xx,yy);
+    // V27: bivio pineta dichiarativo verso porta. Il sentiero interno resta organico solo dentro la stanza.
+    carvePinetaBranchV27();
+    // V31: il sentiero viola viene reinciso dopo yoga/piazzole, così non si rovina né attraversa la sala yoga.
+    // Barriera cespuglio dopo la porta pineta: allunga la lettura della main road e impedisce la discesa troppo diretta verso mare.
+    for(let hx=35; hx<=74; hx++){
+        const hy=29 + ((hx % 9) >= 5 ? 1 : 0);
+        for(let dy=0; dy<=1; dy++){
+            const yy=hy+dy;
+            if(!inBounds(hx,yy) || roadMask[yy][hx]) continue;
+            setWall(hx,yy,1); noNature[yy][hx]=1; zoneMask[yy][hx]='barrier_hedge';
+        }
+    }
+
+    // Area yoga separata, senza natura sotto tettoia.
+    hedgeRect(10,43,23,54,[{x:23,y:47,w:3,dir:'v'}]);
+    setZoneRect(10,43,23,54,'yoga_room');
+    setRectFloor(13,45,20,52,5); setRectCeil(13,45,20,52,7);
+    for(let y=42;y<=55;y++) for(let x=9;x<=24;x++) if(inBounds(x,y)) noNature[y][x]=1;
+    for(let y=45;y<=52;y++) for(let x=13;x<=20;x++) markHuman(x,y);
+    [[13.5,45.5],[20.5,45.5],[13.5,52.5],[20.5,52.5]].forEach(p=>placeSprite(p[0],p[1],18,{allowRoof:true,groundSink:2,blocking:true,blockRadius:.25}));
+    [[14.5,47.1],[16.6,47.5],[18.7,47.9],[15.1,50.2],[18.0,50.8]].forEach(p=>placeSprite(p[0],p[1],20,{allowRoof:true,hScale:.86,groundSink:2}));
+    placeSprite(19.4,46.6,23,{allowRoof:true,hScale:.95}); placeSprite(13.0,46.8,35,{allowRoof:true,hScale:.78});
+    // Microfix V17: la terra non deve attraversare la stanza yoga né schiantarsi sui muri; deve arrivare alla porta est.
+    for(let y=43;y<=54;y++) for(let x=10;x<=23;x++){
+        if(!inBounds(x,y)) continue;
+        roadMask[y][x]=0;
+        if(map[y][x]===0 && fMap[y][x]===4) setFloor(x,y,8);
+    }
+    setRectFloor(13,45,20,52,5); setRectCeil(13,45,20,52,7);
+    for(let yy=47; yy<=49; yy++){ clearWall(23,yy); setFloor(23,yy,4); markRoad(23,yy); }
+    clearRoadDisk(24.6,48.0,1.22,4);
+    carvePath([[28,36],[26,42],[24,48]],4,.92);
+    for(let y=45;y<=52;y++) for(let x=13;x<=20;x++){ roadMask[y][x]=0; setFloor(x,y,5); markHuman(x,y); }
+
+    // Camper: stanza verde curata. Prima stanza/porta, poi strada allineata; niente effetto ramo troncato.
+    hedgeRect(52,37,77,57,[{x:52,y:45,w:4,dir:'v'}]);
+    setZoneRect(52,37,77,57,'camper_room');
+    for(let y=38;y<=56;y++) for(let x=53;x<=76;x++) { if(map[y][x]===0) setFloor(x,y,1); }
+    clearRoadDisk(51.0,46.5,1.35,4);                                 // piazzola porta, ora non più blob enorme
+    // V27: ramo camper e viabilità interna dichiarativi, senza carvePath organico.
+    carveCamperBranchV27();
+    carveCamperInternalRoadV27();
+    // V27: mantiene il buffer verde fra strada principale e parete camper, lasciando aperto il ramo porta.
+    for(let yy=36; yy<=43; yy++) for(let xx=49; xx<=51; xx++){
+        if(!inBounds(xx,yy)) continue;
+        if(zoneMask[yy][xx]!=='camper_room' && map[yy][xx]===0 && !objectBlock[yy][xx]){ roadMask[yy][xx]=0; if(fMap[yy][xx]===4) setFloor(xx,yy,1); }
+    }
+    // V27: nessun ulteriore blob sul ramo camper; il raccordo è già geometrico.
+    const plots=[{x:55,y:39},{x:66,y:39},{x:56,y:50},{x:68,y:51}];
+    plots.forEach((p,idx)=>{
+        setRectFloor(p.x,p.y,p.x+4,p.y+3,6);
+        markNoNatureDisk(p.x+2.2,p.y+1.8,2.4);
+        placeSprite(p.x+2.4,p.y+2.0,10,{hScale:1.06,wScale:1.12,groundSink:2,blocking:true,blockRadius:.75});
+        if(idx%2===0) placeSprite(p.x+.45,p.y+3.15,24,{hScale:.68,noRoad:true});
+    });
+    // Aiuole/cespugli ordinati da giardiniere: bordi, angoli, coppie; mai vicino alla strada.
+    placeCamperHedgeLine([[54,39,.78],[58,38.8,.76],[63,38.8,.76],[72,39.2,.76],[75,42,.80],[75,45,.80],[75,54,.78],[70,55.4,.76],[64,55.2,.76],[59,55.3,.76],[54,54.6,.76],[54,50.5,.74]]);
+    placeCamperHedgeLine([[53.4,41.2,.72],[53.3,52.2,.72],[76.0,47.0,.72],[76.0,50.0,.72],[61.0,39.0,.68],[67.0,55.8,.68]]);
+    // Palme solo come accenti ai margini, non sulla corsia.
+    [[55.0,55.7,1.45],[74.5,39.8,1.50],[73.6,55.0,1.30],[60.2,38.6,1.35]].forEach(p=>{ if(distToRoad(p[0],p[1],3.0)>2.2) placePalm(p[0],p[1],p[2]); });
+    // Erba/fiori camper, ma controllati e fuori dalla corsia.
+    decorativeCluster(64,47,10,36,[{tex:12,h:.45},{tex:30,h:.48},{tex:31,h:.44}],(z,f)=>z==='camper_room'&&distToRoad(arguments[0]||0,arguments[1]||0,0)>999);
+    placeFlowerPatch(60,53,5.0,24);
+
+    // Viale fiorito: archi laterali e vasi ai lati, non sulla spina calpestabile.
+    const roadCenters=[[49.2,42.0],[52.5,42.6],[55.7,43.8],[58.8,45.1]];
+    roadCenters.forEach((p,i)=>{
+        const dx=1.25, dy=0.95;
+        placePathSideArch(p[0],p[1],dx,dy);
+        placePotLine([[p[0]-1.7,p[1]-1.2],[p[0]+1.7,p[1]+1.2]]);
+    });
+    placeFlowerPatch(53,43,6.5,58);
+
+    // V20: tratto camper -> fontana. Palme e vasi non casuali: una quinta ordinata da giardiniere,
+    // vicina ai muri-cespuglio ma con passo regolare e senza invadere la carreggiata.
+    [[48.1,42.0,1.30],[47.2,48.7,1.38],[45.8,55.2,1.34],[49.6,58.9,1.42]].forEach(p=>{
+        if(inBounds(Math.floor(p[0]),Math.floor(p[1])) && map[Math.floor(p[1])][Math.floor(p[0])]===0 && !roadMask[Math.floor(p[1])][Math.floor(p[0])] && distToRoad(p[0],p[1],3.4)>1.20) placePalm(p[0],p[1],p[2]);
+    });
+    const orderedHedgePots=[
+        // V27: vasi del corridoio riposizionati dopo la rete stradale dichiarativa.
+        // La fila sud e' arretrata per non essere scartata dal distToRoad; quella nord resta solo nei varchi liberi della barriera.
+        [54.2,31.6,34],[56.8,31.6,35],[64.6,31.6,35],[67.2,31.6,14],
+        [50.8,36.8,35],[53.4,36.8,14],[56.0,36.8,34],[58.6,36.8,35],[61.2,36.8,14],[63.8,36.8,34],[66.4,36.8,35],[69.0,36.8,14],[71.6,36.8,34]
+    ];
+    orderedHedgePots.forEach(p=>{
+        const ix=Math.floor(p[0]), iy=Math.floor(p[1]);
+        if(inBounds(ix,iy) && map[iy][ix]===0 && !roadMask[iy][ix] && distToRoad(p[0],p[1],3.6)>0.85){
+            placeSprite(p[0],p[1],p[2],{hScale:.76,wScale:.80,groundSink:2.45,noRoad:true,blocking:true,blockRadius:.28,kind:'ordered_chokepoint_pot'});
+        }
+    });
+    // V29: statua di marmo alla fine del corridoio dei vasi, prima della svolta verso fontana.
+    placeStatue(40.55,34.65);
+    placeSouthRoadPalmsV34();
+
+    // Fontana e bivio: bugfix reale. Prima piazzetta, poi sprite, poi blocco collisione.
+    fillDisk(44.5,63.2,4.4,(x,y)=>{ clearWall(x,y); setFloor(x,y,4); markRoad(x,y); zoneMask[y][x]='fontana'; noNature[y][x]=1; objectBlock[y][x]=0; });
+    fillDisk(44.5,63.2,1.65,(x,y)=>{ setFloor(x,y,3); noNature[y][x]=1; roadMask[y][x]=0; objectBlock[y][x]=0; });
+    const fountainOk = placeSprite(44.5,63.15,38,{hScale:1.55,wScale:1.42,groundSink:2,allowWall:true,noRoad:true,kind:'fountain'});
+    reserveDisk(44.5,63.2,.95);
+    // V21: rimossi anche i vasi presso fontana/main road verso mare; i vasi ordinati vivono nella strettoia barriera-camper.
+
+    // Bagni separati, lontani dalla spiaggia e senza ombrelloni attorno. Docce con frame gocciolanti ripristinati.
+    hedgeRect(59,58,76,70,[{x:59,y:62,w:3,dir:'v'}]);
+    setZoneRect(59,58,76,70,'bath_garden');
+    for(let y=59;y<=69;y++) for(let x=60;x<=75;x++) if(map[y][x]===0) setFloor(x,y,10);
+    buildClosedRoom(64,61,73,68,3,3,3,[{x:64,y:63,w:2,dir:'v'}]);
+    [[66.0,63.0],[70.0,63.0],[66.0,66.0],[70.0,66.0]].forEach(p=>placeSprite(p[0],p[1],16,{allowRoof:true,groundSink:2,hScale:1.04,wScale:1.02,kind:'shower'}));
+    placeFlowerPatch(62.5,60.5,4.0,34); placePotLine([[61.0,60.5],[61.0,68.0],[75.0,60.8],[75.0,68.2]]);
+    // V27: raccordo bagni e accesso spiaggia vengono reincisi dopo fontana/bagni, per non essere cancellati dai giardini.
+    carveBathBranchV27();
+    // V27 safety: il raccordo bagni non deve riattivare roadMask/objectBlock sotto la fontana.
+    fillDisk(44.5,63.2,1.65,(x,y)=>{ setFloor(x,y,3); noNature[y][x]=1; roadMask[y][x]=0; objectBlock[y][x]=0; });
+    reserveDisk(44.5,63.2,.95);
+    carveBeachAccessV27();
+
+    // Fascia pre-spiaggia morbida: nessun muro davanti o oltre il mare; solo vegetazione laterale e dune.
+    for(let x=2;x<78;x++){
+        const ridge=66+((x*13+3)%3);
+        if(Math.abs(x-43)<=5) continue;
+        if(x>58 && x<77) continue;
+        if(x>=33 && x<=53) continue; // corridoio visivo verso mare aperto
+        if(rnd()>.50) { setWall(x,ridge,1); setFloor(x,ridge,9); }
+    }
+    for(let x=5;x<76;x+=8) if(Math.abs(x-43)>5 && !(x>58&&x<77)) placePalm(x+.3,66.0+(rnd()-.5)*1.2,1.35+rnd()*.45);
+    placeGrassPatch(24,64,9,56); placeGrassPatch(54,66,8,40); placeFlowerPatch(35,66,7,30);
+
+    // Mare non calpestabile, spiaggia pulita: arredi solo su sabbia asciutta e distante da muri/bagni.
+    for(let x=1;x<mapW-1;x++) for(let y=SEA_Y;y<mapH;y++) { clearWall(x,y); setFloor(x,y,2); zoneMask[y][x]='mare'; }
+    for(let y=70;y<=76;y+=3) for(let x=5;x<75;x+=7){
+        if(Math.abs(x-43)<=4) continue;
+        const ox=(rnd()-.5)*1.1, oy=(rnd()-.5)*.45;
+        if(rnd()>.24 && canBeachFurniture(x+.5+ox,y+.35+oy)){
+            placeSprite(x+.5+ox,y+.35+oy,8,{hScale:.9,groundSink:2,blocking:true,blockRadius:.45});
+            if(canBeachFurniture(x+1.8+ox,y+.65+oy)) placeSprite(x+1.8+ox,y+.65+oy,11,{hScale:.70,groundSink:2,blocking:true,blockRadius:.35});
+        }
+    }
+
+    // Piazzole tenda più piccole e più verdi.
+    const clearings=[{x:8.5,y:23.0,r:2.1,t:21},{x:19.2,y:25.8,r:2.0,t:36},{x:12.0,y:36.2,r:2.2,t:22},{x:27.0,y:42.5,r:2.0,t:21},{x:5.8,y:58.0,r:1.65,t:null},{x:24.0,y:56.0,r:2.0,t:22},{x:29.2,y:53.7,r:1.9,t:36}];
+    clearings.forEach(c=>{
+        const cx=Math.floor(c.x), cy=Math.floor(c.y);
+        if(!inBounds(cx,cy) || zoneMask[cy][cx]==='yoga_room' || zoneMask[cy][cx]==='bar' || zoneMask[cy][cx]==='camper_room' || safeHuman[cy][cx] || cMap[cy][cx]>0) return;
+        fillDisk(c.x,c.y,c.r,(x,y)=>{ if(zoneMask[y][x]==='yoga_room' || safeHuman[y][x] || cMap[y][x]>0) return; clearWall(x,y); setFloor(x,y,6); zoneMask[y][x]='piazzola_pineta'; });
+        markNoNatureDisk(c.x,c.y,c.r*.64);
+        if(c.t) placeSprite(c.x+.15,c.y+.1,c.t,{hScale:.92,wScale:1.04,groundSink:2.8,blocking:true,blockRadius:.55,noRoad:true,kind:'tent'});
+        if(rnd()>.35) placeSprite(c.x-1.1,c.y+1.0,24,{hScale:.64,groundSink:2,noRoad:true,kind:'camp_stool'});
+    });
+
+    // V31: ripristino dopo le piazzole. Prima si creano le aree, poi si incide il sentiero e poi si agganciano i muri annotati.
+    carvePinetaScenicTrailV31();
+    buildAnnotatedHedgesV31();
+    // V33: nuovi elementi artistici su mappa reale: tamerici e pubblicita' sui muri lunghi.
+    placeTamariskGroveV33();
+    placeTamariskLandscapeV35();
+    placeWallAdvertisementsV33();
+    placeDirectionalSignsV34();
+
+    // Botanica pineta: densità molto aumentata, soprattutto ai margini. Solo pini, pigne, aghi/erba bassa.
+    const pineSeeds=[
+        [5,18],[9,18],[14,18],[20,18],[27,19],[32,21],
+        [4,23],[8,24],[13,24],[19,25],[25,25],[31,26],
+        [5,29],[10,30],[16,31],[22,31],[29,32],[33,34],
+        [4,36],[9,37],[15,38],[21,39],[28,39],[32,42],
+        [5,45],[11,46],[18,46],[25,47],[31,49],
+        [4,53],[8,55],[14,56],[20,57],[26,57],[31,58],
+        [3,32],[3,42],[33,52],[33,57],[6,60],[30,60]
+    ];
+    pineSeeds.forEach(seed=>{
+        const cx=seed[0]+(rnd()-.5)*1.25, cy=seed[1]+(rnd()-.5)*1.25;
+        if(placePineAt(cx,cy,1.82+rnd()*.88,.96+rnd()*.18)){
+            decorativeCluster(cx,cy,2.8,10,[{tex:40,h:.28,w:.45},{tex:41,h:.34,w:.75},{tex:12,h:.38,w:.66},{tex:30,h:.40,w:.72}],(z,f)=>z==='pineta'||z==='piazzola_pineta');
+        }
+    });
+    // Rinforzo finale controllato: posizioni già distanti dalla strada/radure, per dare vera massa da pineta.
+    [[5.5,17.5],[26.5,17.5],[6.5,18.5],[32.5,18.5],[17.5,19.5],[9.5,20.5],[19.5,20.5],[6.5,21.5],[16.5,21.5],[26.5,21.5],[15.5,22.5],[25.5,22.5],[10.5,23.5],[27.5,23.5],[7.5,24.5],[21.5,24.5],[8.5,25.5],[27.5,25.5],[12.5,26.5],[26.5,26.5]].forEach(p=>{
+        if(distToRoad(p[0],p[1],2.8)>1.65) placePineAt(p[0],p[1],1.68+rnd()*.48,.94+rnd()*.12);
+    });
+    // V18: identità pineta più forte vicino ai muri-cespuglio. Alberi dentro il bordo, non sul muro né sulla strada.
+    const borderPines=[];
+    for(let yy=18; yy<=59; yy+=4){ borderPines.push([4.4,yy+.35]); borderPines.push([32.0,yy+.15]); }
+    for(let xx=6; xx<=31; xx+=4){ borderPines.push([xx+.25,18.4]); borderPines.push([xx+.05,59.2]); }
+    borderPines.forEach(p=>{
+        const ix=Math.floor(p[0]), iy=Math.floor(p[1]);
+        if(inBounds(ix,iy) && zoneMask[iy][ix]==='pineta' && distToRoad(p[0],p[1],3.0)>1.45 && !safeHuman[iy][ix] && cMap[iy][ix]===0){
+            placePineAt(p[0]+(rnd()-.5)*.45,p[1]+(rnd()-.5)*.45,1.78+rnd()*.58,.94+rnd()*.12);
+        }
+    });
+    // V21: ulteriore rinforzo interno lungo i muri-cespuglio della pineta: identita' bosco molto piu' chiara.
+    const denseInnerWallPines=[];
+    for(let yy=19; yy<=59; yy+=3){ denseInnerWallPines.push([5.7,yy+.2]); denseInnerWallPines.push([31.0,yy+.1]); }
+    for(let xx=7; xx<=30; xx+=3){ denseInnerWallPines.push([xx+.15,19.7]); denseInnerWallPines.push([xx+.1,58.2]); }
+    denseInnerWallPines.forEach(p=>{
+        const ix=Math.floor(p[0]), iy=Math.floor(p[1]);
+        if(inBounds(ix,iy) && zoneMask[iy][ix]==='pineta' && distToRoad(p[0],p[1],3.0)>1.25 && !safeHuman[iy][ix] && cMap[iy][ix]===0 && !objectBlock[iy][ix]){
+            placePineAt(p[0]+(rnd()-.5)*.38,p[1]+(rnd()-.5)*.38,1.62+rnd()*.52,.92+rnd()*.12);
+        }
+    });
+
+    // V22: fila piena e intera di pini dentro la pineta, davanti ai muri-cespuglio di fine mappa.
+    // Serve a mascherare il limite e dare atmosfera di vera stanza boscosa.
+    const fullPineWall=[];
+    for(let yy=18; yy<=60; yy+=2){ fullPineWall.push([4.7,yy+.10]); fullPineWall.push([31.7,yy+.05]); }
+    for(let xx=6; xx<=31; xx+=2){ fullPineWall.push([xx+.10,18.8]); fullPineWall.push([xx+.05,59.0]); }
+    // Seconda linea sfalsata nei punti larghi, per evitare effetto fila povera e piatta.
+    for(let yy=20; yy<=58; yy+=4){ fullPineWall.push([7.0,yy+.22]); fullPineWall.push([29.2,yy+.18]); }
+    for(let xx=8; xx<=29; xx+=4){ fullPineWall.push([xx+.22,21.0]); fullPineWall.push([xx+.18,56.8]); }
+    placeBorderPineWall(fullPineWall,.34);
+    // V23: qualche pino in piu' nel cuore della pineta, non solo sui bordi, mantenendo libere strade/radure.
+    const midPineFill=[[11.8,21.8],[16.8,23.2],[23.2,23.6],[7.8,31.5],[18.6,33.6],[26.2,35.0],[9.8,41.8],[16.6,43.0],[30.2,45.5],[12.4,49.8],[21.4,50.8],[27.8,50.0],[17.0,55.0]];
+    midPineFill.forEach((p,i)=>{
+        const ix=Math.floor(p[0]), iy=Math.floor(p[1]);
+        if(inBounds(ix,iy) && zoneMask[iy][ix]==='pineta' && map[iy][ix]===0 && !roadMask[iy][ix] && !safeHuman[iy][ix] && cMap[iy][ix]===0 && !objectBlock[iy][ix] && distToRoad(p[0],p[1],3.0)>1.35){
+            placePineAt(p[0]+(rnd()-.5)*.35,p[1]+(rnd()-.5)*.35,1.72+rnd()*.50,.94+rnd()*.12);
+        }
+    });
+    decorativeCluster(8,28,6.0,44,[{tex:40,h:.30,w:.48},{tex:41,h:.35,w:.78},{tex:12,h:.38,w:.68},{tex:30,h:.40,w:.72}],(z,f)=>z==='pineta'||z==='piazzola_pineta');
+    decorativeCluster(21,34,6.2,44,[{tex:40,h:.30,w:.48},{tex:41,h:.35,w:.78},{tex:12,h:.38,w:.68},{tex:30,h:.40,w:.72}],(z,f)=>z==='pineta'||z==='piazzola_pineta');
+    decorativeCluster(14,52,6.5,48,[{tex:40,h:.30,w:.48},{tex:41,h:.35,w:.78},{tex:12,h:.38,w:.68},{tex:30,h:.40,w:.72}],(z,f)=>z==='pineta'||z==='piazzola_pineta');
+
+    // Prato e bordi strada: fiori a macchie, evitando carreggiata, camere chiuse e pineta.
+    placeFlowerPatch(35,16,5.6,40); placeFlowerPatch(45,25,5.4,34); placeFlowerPatch(38,43,5.2,32); placeFlowerPatch(47,59,5.0,34);
+    for(let y=1;y<68;y++) for(let x=1;x<79;x++){
+        if(map[y][x]!==0 || cMap[y][x]!==0 || safeHuman[y][x] || roadMask[y][x] || noNature[y][x] || objectBlock[y][x]) continue;
+        const z=zoneMask[y][x];
+        if((z==='erba'||z==='fascia_palme'||z==='bar_field') && rnd()>.974) placeSprite(x+rnd(),y+rnd(),choice([12,13,27,28,29,30]),{hScale:.42+rnd()*.18,nature:true,groundSink:2});
+        if(z==='camper_room' && rnd()>.986 && distToRoad(x+.5,y+.5,3.0)>2.3) placeSprite(x+rnd(),y+rnd(),choice([12,30,31]),{hScale:.38+rnd()*.14,nature:true,groundSink:2});
+        if(z==='pineta' && rnd()>.982) placeSprite(x+rnd(),y+rnd(),choice([40,41,12,30]),{hScale:.28+rnd()*.18,nature:true,groundSink:2});
+    }
+    // Sanity V21/V26: rimuove eventuali micro-flora troppo vicine alla main road/fontana e qualunque vecchio sprite linee parcheggio.
+    // Il caso segnalato del fiore vicino alla fontana nasceva da patch floreali prossime alla strada: qui si chiude la falla.
+    for(let i=sprites.length-1;i>=0;i--){
+        const s=sprites[i], ix=Math.floor(s.x), iy=Math.floor(s.y);
+        if(!inBounds(ix,iy)) continue;
+        const isFlora=s.nature && (s.tex===12 || s.tex===13 || s.tex===27 || s.tex===28 || s.tex===29 || s.tex===30 || s.tex===31 || s.tex===7 || s.tex===25 || s.tex===26);
+        if(s.kind==='parking_line'){ sprites.splice(i,1); continue; }
+        // V31: il sentiero viola viene inciso dopo le piazzole; eventuali sgabelli/tende finiti sopra al nuovo tracciato vanno rimossi.
+        if(roadMask[iy][ix] && (s.kind==='camp_stool' || s.kind==='tent')) { sprites.splice(i,1); continue; }
+        if(isFlora && (roadMask[iy][ix] || zoneMask[iy][ix]==='fontana' || distToRoad(s.x,s.y,2.6)<.95)) sprites.splice(i,1);
+        if(isFlora && s.x>66 && s.y>19 && s.y<31 && distToRoad(s.x,s.y,3.2)<2.8) sprites.splice(i,1);
+    }
+    // Sanity V17/V25: nessun roadMask deve restare sotto muri o ostacoli solidi dopo le modifiche a stanze/porte.
+    for(let y=0;y<mapH;y++) for(let x=0;x<mapW;x++){
+        if(map[y][x]>0 || objectBlock[y][x]) roadMask[y][x]=0;
+    }
+    // V26: preserva griglia parcheggio solo a pavimento e garantisce auto negli stalli asfaltati + vasi agli angoli interni.
+    sprites.forEach(sp=>{
+        if(sp.kind==='parked_car'){
+            const ix=Math.floor(sp.x), iy=Math.floor(sp.y);
+            if(inBounds(ix,iy) && zoneMask[iy][ix]==='parking' && fMap[iy][ix]!==11) setFloor(ix,iy,11);
+        }
+        if(sp.kind==='parking_corner_pot'){
+            const ix=Math.floor(sp.x), iy=Math.floor(sp.y);
+            if(inBounds(ix,iy) && zoneMask[iy][ix]==='parking' && fMap[iy][ix]!==11) setFloor(ix,iy,11);
+        }
+    });
+    // V58: infrastruttura pavimenti morbidi. Solo mappe visuali derivate: non modificano roadMask, fMap, collisioni o accessibilità.
+    buildFloorVisualMaps();
+}
+
+generateWorld();
+
+let posX=40.5, posY=10.0;
+let dirX=0.0, dirY=1.0;
+let planeX=-0.90, planeY=0.0;
+let ZBuffer=new Float32Array(screenW);
+let WallTopBuffer=new Int16Array(screenW);
+let WallBottomBuffer=new Int16Array(screenW);
+let WallOwnerBuffer=new Uint8Array(screenW); // V44: diagnostica owner muro; NON dà più permessi al tetto di attraversare pareti.
+let CeilingDepthBuffer=new Float32Array(screenW * Math.ceil(screenH/2 + 4));
+let CeilingOwnerBuffer=new Uint8Array(screenW * Math.ceil(screenH/2 + 4)); // V44: owner del soffitto/coperura inferiore per non bucare il tetto esterno dello stesso edificio.
+let CeilingColumnHasDepth=new Uint8Array(screenW);
+const keys={};
+window.addEventListener('keydown',e=>{ keys[e.key.toLowerCase()]=true; });
+window.addEventListener('keyup',e=>{ keys[e.key.toLowerCase()]=false; });
+let lastTime=0;
+function isWalkable(y,x){ const ix=Math.floor(x), iy=Math.floor(y); if(iy<0||iy>=mapH||ix<0||ix>=mapW) return false; if(fMap[iy][ix]===2) return false; if(objectBlock[iy][ix]) return false; return map[iy][ix]===0; }
+function moveWithSliding(dx,dy){
+    const radius=.18; const nx=posX+dx, ny=posY+dy;
+    if(isWalkable(posY,nx+Math.sign(dx)*radius) && isWalkable(posY-radius,nx) && isWalkable(posY+radius,nx)) posX=nx;
+    else { const slide=dy*.58; if(isWalkable(posY+slide,posX)) posY+=slide; }
+    if(isWalkable(ny+Math.sign(dy)*radius,posX) && isWalkable(ny,posX-radius) && isWalkable(ny,posX+radius)) posY=ny;
+    else { const slide=dx*.58; if(isWalkable(posY,posX+slide)) posX+=slide; }
+}
+function updatePlayer(ft){
+    const ms=5.2*ft, rs=2.0*ft;
+    if(keys['w']||keys['arrowup']) moveWithSliding(dirX*ms,dirY*ms);
+    if(keys['s']||keys['arrowdown']) moveWithSliding(-dirX*ms,-dirY*ms);
+    if(keys['d']||keys['arrowright']){ const oldDirX=dirX, oldPlaneX=planeX; dirX=dirX*Math.cos(rs)-dirY*Math.sin(rs); dirY=oldDirX*Math.sin(rs)+dirY*Math.cos(rs); planeX=planeX*Math.cos(rs)-planeY*Math.sin(rs); planeY=oldPlaneX*Math.sin(rs)+planeY*Math.cos(rs); }
+    if(keys['a']||keys['arrowleft']){ const oldDirX=dirX, oldPlaneX=planeX; dirX=dirX*Math.cos(-rs)-dirY*Math.sin(-rs); dirY=oldDirX*Math.sin(-rs)+dirY*Math.cos(-rs); planeX=planeX*Math.cos(-rs)-planeY*Math.sin(-rs); planeY=oldPlaneX*Math.sin(-rs)+planeY*Math.cos(-rs); }
+}
+function isOutdoors(){ const ix=clamp(Math.floor(posX),0,mapW-1), iy=clamp(Math.floor(posY),0,mapH-1); return cMap[iy][ix]===0 && zoneMask[iy][ix]!=='bath_garden' && zoneMask[iy][ix]!=='yoga_room' && zoneMask[iy][ix]!=='bar'; }
+function shouldDrawSeaHorizon(){ return isOutdoors() && posY>58 && dirY>.36; }
+function drawBackdrop(time){
+    const g=ctx.createLinearGradient(0,0,0,screenH/2);
+    g.addColorStop(0,'#63c9f1'); g.addColorStop(.55,'#a8d8f7'); g.addColorStop(1,'#d6edf3');
+    ctx.fillStyle=g; ctx.fillRect(0,0,screenW,screenH/2+8);
+}
+function spriteAnchorSink(s, spSize){
+    // V20: ancoraggio per categoria piu' stabile da lontano.
+    // Il minimo non e' fisso/duro: combina una quota proporzionale e una quota base,
+    // cosi' tende, vasi e sprite bassi non sembrano nascere sopra il terreno a lunga distanza.
+    const k=s.kind||'';
+    let base=clamp(1.05 + spSize*.038, 1.65, 12.8);
+    let mul=s.groundSink||1;
+    if(k==='tent') mul*=1.42;
+    else if(k==='camper') mul*=1.18;
+    else if(k==='pine' || k==='palm') mul*=1.10;
+    else if(k==='ordered_hedge_pot' || k==='ordered_chokepoint_pot' || k==='roadside_pot' || k==='fountain' || k==='parking_pot') mul*=1.14;
+    else if(k==='parked_car') mul*=1.20;
+    else if(k==='billiard_table' || k==='pingpong_table' || k==='outdoor_game_table') mul*=1.18;
+    else if(k==='parking_line') mul*=1.55;
+    else if(k==='shower') mul*=1.08;
+    return base*mul;
+}
+function spriteContactShadowAlpha(sprite, spSize){
+    const k=sprite.kind||'';
+    if(k==='pinecone' || k==='needles') return 0;
+    if(k==='tent') return .28;
+    if(k==='pine' || k==='palm') return .20;
+    if(k==='camper' || k==='fountain') return .18;
+    if(k==='ordered_hedge_pot' || k==='ordered_chokepoint_pot' || k==='roadside_pot' || k==='parking_pot') return .16;
+    if(k==='parked_car') return .20;
+    if(k==='billiard_table' || k==='pingpong_table' || k==='outdoor_game_table') return .17;
+    if(k==='parking_line') return .06;
+    return spSize>18 ? .13 : .08;
+}
+function resetCeilingDepthBuffer(){ CeilingDepthBuffer.fill(0); CeilingOwnerBuffer.fill(0); CeilingColumnHasDepth.fill(0); }
+function setCeilingDepthAt(px, py, dist, ownerId){
+    if(px<0 || px>=screenW || py<0 || py>=CeilingDepthBuffer.length/screenW) return;
+    const idx=(py|0)*screenW+(px|0);
+    const old=CeilingDepthBuffer[idx];
+    if(old===0 || dist<old){ CeilingDepthBuffer[idx]=dist; CeilingOwnerBuffer[idx]=ownerId||0; }
+    CeilingColumnHasDepth[px|0]=1;
+}
+function ceilingSpriteClipY(stripe, y0, y1, spriteDist, sprite){
+    // Se lo sprite è sotto lo stesso tetto non lo tagliamo: serve a nascondere alberi/oggetti esterni dietro tettoie,
+    // non a mangiare colonne, tappetini o arredi interni.
+    if(sprite.underRoof || !CeilingColumnHasDepth[stripe] || y0>screenH/2+3) return y0;
+    const maxRows=Math.ceil(screenH/2 + 4);
+    const top=clamp(Math.floor(y0),0,maxRows-1);
+    const bottom=clamp(Math.ceil(Math.min(y1,screenH/2+3)),0,maxRows-1);
+    let clip=y0;
+    for(let yy=top; yy<=bottom; yy++){
+        const d=CeilingDepthBuffer[yy*screenW+stripe];
+        if(d>0 && spriteDist>d+.06) clip=Math.max(clip, yy+2);
+    }
+    return clip;
+}
+
+function drawWorld(time){
+    ctx.clearRect(0,0,screenW,screenH); drawBackdrop(time); resetCeilingDepthBuffer(); WallTopBuffer.fill(screenH); WallBottomBuffer.fill(-1); WallOwnerBuffer.fill(0);
+    const rayDirX0=dirX-planeX, rayDirY0=dirY-planeY, rayDirX1=dirX+planeX, rayDirY1=dirY+planeY;
+    for(let y=Math.floor(screenH/2)+1;y<screenH;y+=2){
+        const p=y-screenH/2, posZ=.5*screenH, rowDist=posZ/p;
+        const fStepX=rowDist*(rayDirX1-rayDirX0)/screenW, fStepY=rowDist*(rayDirY1-rayDirY0)/screenW;
+        let fX=posX+rowDist*rayDirX0, fY=posY+rowDist*rayDirY0;
+        let curFloorColor=null,curCeil=-1,curCeilOwner=-1,startX=0,startXCeil=0; const ceilY=screenH-y;
+        for(let x=0;x<screenW;x+=2){
+            const cX=Math.floor(fX), cY=Math.floor(fY); let type=0,typeC=0;
+            if(cY>=SEA_Y) type=2;
+            else if(cX>=0&&cX<mapW&&cY>=0&&cY<mapH){ type=fMap[cY][cX]; typeC=cMap[cY][cX]; }
+            else if(cY>=SEA_Y) type=2; else type=1;
+            const floorColor=getFloorColorAt(cX,cY,fX,fY,type,rowDist);
+            const ceilOwner=(typeC>0 && cX>=0&&cX<mapW&&cY>=0&&cY<mapH) ? ceilingOwnerMap[cY][cX] : 0;
+            if(typeC>0){
+                setCeilingDepthAt(x,ceilY,rowDist,ceilOwner);
+                setCeilingDepthAt(x+1,ceilY,rowDist,ceilOwner);
+                setCeilingDepthAt(x,ceilY+1,rowDist,ceilOwner);
+                setCeilingDepthAt(x+1,ceilY+1,rowDist,ceilOwner);
+            }
+            if(floorColor!==curFloorColor){ if(curFloorColor!==null){ ctx.fillStyle=curFloorColor; ctx.fillRect(startX,y,x-startX,2); } curFloorColor=floorColor; startX=x; }
+            if(typeC!==curCeil || ceilOwner!==curCeilOwner){
+                if(curCeil>0){ if(isModernCoverOwner(curCeilOwner)) drawModernCoverCeilingSegment(startXCeil,ceilY,x-startXCeil,curCeilOwner,curCeil,rowDist); else drawCeilingSegment(startXCeil,ceilY,x-startXCeil,curCeil,rowDist); }
+                curCeil=typeC; curCeilOwner=ceilOwner; startXCeil=x;
+            }
+            fX+=fStepX*2; fY+=fStepY*2;
+        }
+        if(curFloorColor!==null){ ctx.fillStyle=curFloorColor; ctx.fillRect(startX,y,screenW-startX,2); }
+        if(curCeil>0){ if(isModernCoverOwner(curCeilOwner)) drawModernCoverCeilingSegment(startXCeil,ceilY,screenW-startXCeil,curCeilOwner,curCeil,rowDist); else drawCeilingSegment(startXCeil,ceilY,screenW-startXCeil,curCeil,rowDist); }
+        const fog=clamp(rowDist/32,0,1); ctx.fillStyle=`rgba(96, 201, 236, ${fog*.68})`; ctx.fillRect(0,y,screenW,2); if(curCeil>0 && !isModernCoverOwner(curCeilOwner)) ctx.fillRect(0,ceilY,screenW,2);
+    }
+    for(let x=0;x<screenW;x++){
+        const camX=2*x/screenW-1, rDirX=dirX+planeX*camX, rDirY=dirY+planeY*camX;
+        let mapX=Math.floor(posX), mapY=Math.floor(posY), sDistX, sDistY; const dDistX=Math.abs(1/(rDirX||.00001)), dDistY=Math.abs(1/(rDirY||.00001));
+        let stepX,stepY,hit=0,side=0;
+        if(rDirX<0){ stepX=-1; sDistX=(posX-mapX)*dDistX; } else { stepX=1; sDistX=(mapX+1.0-posX)*dDistX; }
+        if(rDirY<0){ stepY=-1; sDistY=(posY-mapY)*dDistY; } else { stepY=1; sDistY=(mapY+1.0-posY)*dDistY; }
+        while(hit===0 && mapY<mapH && mapY>=0 && mapX<mapW && mapX>=0){ if(sDistX<sDistY){ sDistX+=dDistX; mapX+=stepX; side=0; } else { sDistY+=dDistY; mapY+=stepY; side=1; } if(rDirY>0 && mapY>=SEA_Y){ break; } if(map[mapY]&&map[mapY][mapX]>0) hit=1; }
+        if(hit){
+            const perpDist=(side===0)?(mapX-posX+(1-stepX)/2)/rDirX:(mapY-posY+(1-stepY)/2)/rDirY; ZBuffer[x]=perpDist;
+            const baseLineH=Math.floor(screenH/Math.max(.001,perpDist));
+            const wallH=wallVisualHeight(mapX,mapY,map[mapY][mapX]);
+            const lineH=Math.max(1,Math.floor(baseLineH*wallH));
+            const wallBottom=Math.floor(screenH/2 + baseLineH/2); // ancora a terra: l'edificio cresce verso l'alto
+            const drawS=Math.floor(wallBottom-lineH); const drawStartFixed=Math.max(0,drawS); const wallBottomFixed=Math.min(screenH,wallBottom); const actH=wallBottomFixed-drawStartFixed;
+            WallTopBuffer[x]=drawStartFixed; WallBottomBuffer[x]=wallBottomFixed; WallOwnerBuffer[x]=roofOwnerIdForWallTex(map[mapY][mapX]);
+            let wallX=(side===0)?posY+perpDist*rDirY:posX+perpDist*rDirX; wallX-=Math.floor(wallX); const rawTX=Math.floor(wallX*texW); let tX=rawTX; if(side===0&&rDirX>0)tX=texW-tX-1; if(side===1&&rDirY<0)tX=texW-tX-1; const hitFace=(side===0?(stepX>0?'west':'east'):(stepY>0?'north':'south'));
+            const img=getTex(map[mapY][mapX],time);
+            const wallTexHit=map[mapY][mapX];
+            const modernVisualWall = isModernBuildingWallTex(wallTexHit);
+            const modernNearWallGuard = shouldUseModernNearWallGuard(perpDist, wallTexHit);
+            if(img&&actH>0){
+                const srcYWall=clamp(Math.floor((drawStartFixed-drawS)*texH/Math.max(1,lineH)),0,texH-1);
+                const srcHWall=clamp(Math.ceil(actH*texH/Math.max(1,lineH)),1,texH-srcYWall);
+                ctx.drawImage(img,tX,srcYWall,1,srcHWall,x,drawStartFixed,1,actH);
+                // V54: i muri moderni sono tornati al wallcasting classico. Il tetto inclinato usa lo ZBuffer generato qui.
+                const decal=wallDecalMap[mapY] && wallDecalMap[mapY][mapX];
+                if(decal && (!decal.face || decal.face===hitFace)){
+                    const adImg=getTex(decal.tex,time);
+                    if(adImg){
+                        const dTop=Math.floor(drawS + lineH*.25);
+                        const dH=Math.max(1, Math.floor(lineH*.43));
+                        const dY0=clamp(dTop, drawStartFixed, screenH);
+                        const dY1=clamp(dTop+dH, drawStartFixed, wallBottomFixed);
+                        if(dY1>dY0){
+                            const srcY=clamp(Math.floor((dY0-dTop)*texH/Math.max(1,dH)),0,texH-1);
+                            const srcH=clamp(Math.ceil((dY1-dY0)*texH/Math.max(1,dH)),1,texH-srcY);
+                            const decalTX=getWallDecalTexX(decal.face||hitFace, rawTX, decal.flip);
+                            ctx.drawImage(adImg,decalTX,srcY,1,srcH,x,dY0,1,dY1-dY0);
+                        }
+                    }
+                }
+                if(side===1){ctx.fillStyle='rgba(0,0,0,.36)';ctx.fillRect(x,drawStartFixed,1,actH);}
+                drawExistingWallFogOverlay(x,drawStartFixed,1,actH,perpDist);
+            }
+        } else { ZBuffer[x]=1000; WallTopBuffer[x]=screenH; WallBottomBuffer[x]=-1; WallOwnerBuffer[x]=0; }
+    }
+    drawRoofLayer2_5D(time);
+    sprites.forEach(s=>{ s.dist=(posX-s.x)**2+(posY-s.y)**2; }); sprites.sort((a,b)=>b.dist-a.dist);
+    sprites.forEach(s=>{
+        const spX=s.x-posX, spY=s.y-posY; const invDet=1.0/(planeX*dirY-dirX*planeY); const transX=invDet*(dirY*spX-dirX*spY); const transY=invDet*(-planeY*spX+planeX*spY); if(transY<=0) return;
+        const spScreenX=Math.floor((screenW/2)*(1+transX/transY)); const spSize=Math.abs(Math.floor(screenH/transY)); const spriteHeight=Math.floor(spSize*(s.hScale||1)); const spriteWidth=Math.floor(spSize*(s.wScale||1));
+        const drawSX=Math.max(0,Math.floor(-spriteWidth/2+spScreenX)); const drawEX=Math.min(screenW-1,Math.floor(spriteWidth/2+spScreenX)); const baseY=screenH/2+spSize/2; const anchorSink=spriteAnchorSink(s,spSize); const startY=Math.round(baseY-spriteHeight+anchorSink);
+        const img=getTex(s.tex,time); if(!img) return;
+        const endY=startY+spriteHeight;
+        const shadowAlpha=spriteContactShadowAlpha(s,spSize);
+        if(shadowAlpha>0 && transY>0.85){
+            const shY=clamp(Math.round(baseY + Math.min(5, anchorSink*.38)),0,screenH-1);
+            const shH=clamp(Math.round(spSize*.030),1,4);
+            const softInset=Math.max(1,Math.floor(spriteWidth*.16));
+            ctx.fillStyle='rgba(0,0,0,'+shadowAlpha.toFixed(3)+')';
+            for(let stripe=drawSX+softInset; stripe<drawEX-softInset; stripe+=2){
+                if(stripe>=0 && stripe<screenW && transY<ZBuffer[stripe]) ctx.fillRect(stripe,shY,2,shH);
+            }
+        }
+        for(let stripe=drawSX;stripe<drawEX;stripe++){
+            if(transY<ZBuffer[stripe]){
+                let texX=Math.floor((stripe-(-spriteWidth/2+spScreenX))*texW/Math.max(1,spriteWidth)); texX=clamp(texX,0,texW-1);
+                let destY0=Math.max(startY,0);
+                let destY1=Math.min(endY,screenH);
+                destY0=ceilingSpriteClipY(stripe,destY0,destY1,transY,s);
+                if(destY1<=destY0) continue;
+                const sy=clamp(Math.floor((destY0-startY)*texH/Math.max(1,spriteHeight)),0,texH-1);
+                const sh=clamp(Math.ceil((destY1-destY0)*texH/Math.max(1,spriteHeight)),1,texH-sy);
+                ctx.drawImage(img,texX,sy,1,sh,stripe,destY0,1,destY1-destY0);
+            }
+        }
+    });
+}
+function drawMiniMap(){
+    const scale=Math.min(128/mapW,128/mapH); miniCtx.clearRect(0,0,128,128); miniCtx.save(); miniCtx.beginPath(); miniCtx.arc(64,64,63,0,Math.PI*2); miniCtx.clip();
+    for(let y=0;y<mapH;y++) for(let x=0;x<mapW;x++){ miniCtx.fillStyle=map[y][x]?'#1b331d':miniColors[fMap[y][x]]; miniCtx.fillRect(Math.floor(x*scale),Math.floor(y*scale),Math.ceil(scale),Math.ceil(scale)); }
+    miniCtx.fillStyle='#fffbcc'; miniCtx.beginPath(); miniCtx.arc(posX*scale,posY*scale,3,0,Math.PI*2); miniCtx.fill(); miniCtx.strokeStyle='#fffbcc'; miniCtx.lineWidth=2; miniCtx.beginPath(); miniCtx.moveTo(posX*scale,posY*scale); miniCtx.lineTo((posX+dirX*3)*scale,(posY+dirY*3)*scale); miniCtx.stroke(); miniCtx.restore();
+}
+function zoneAtPlayer(){ const x=clamp(Math.floor(posX),0,mapW-1), y=clamp(Math.floor(posY),0,mapH-1); return zoneMask[y][x]||'erba'; }
+function gameLoop(time){ const ft=Math.min(.05,(time-lastTime)/1000||0); lastTime=time; updatePlayer(ft); drawWorld(time); drawMiniMap(); debugLine.textContent=`X ${posX.toFixed(2)} / Y ${posY.toFixed(2)} · zona: ${zoneAtPlayer()} · sprite: ${sprites.length} · map ${mapW}x${mapH} · asset ID: ${Object.keys(ASSET_MANIFEST).length}`; requestAnimationFrame(gameLoop); }
+
+window.__PERLA_DEBUG__ = { map, fMap, cMap, zoneMask, roadMask, noNature, objectBlock, sprites, roofSegments, ASSET_MANIFEST, wallDecalMap, wallHeightMap, roadSoftEdgeMap, trailSoftEdgeMap, floorNoiseMap, floorDecalMap, floorOutlineMap, floorVisualColorMap, floorSubTileColorMap, floorNearSubTileColorMap, floorMicroDecalMap, floorVisualStats, buildFloorVisualMaps, buildFloorVisualColorMap, buildFloorDecalMap, buildFloorSubTileColorMap, buildFloorNearSubTileColorMap, resetFloorVisualMaps, getFloorColorAt, computeFloorVisualColor, floorHash2D, floorNoiseSigned, mixColorHex, mixFloorQuantized, floorNeedsSubTileColor, organicTrailMask, regularRoadMask, applyOrganicTrailSubTile, applyHumanRoadSubTile, applyFloorDecalAt, inferWallDecalFaceV35, getWallDecalTexX, wallVisualHeight, drawRoofRimColumn, drawCeilingSegment, isModernCoverOwner, drawRoofLayer2_5D, drawGabledRoof2_5D, drawModernBuildingSolid2_5D, collectModernWallFaces, collectModernRoofFaces, drawRoofPoly, roofVisibleAt, playerInsideRoof, modernInsideDepth, shouldDrawModernExteriorRoof, shouldUseModernNearWallGuard, drawModernCoverCeilingSegment, getModernCoverForOwner, drawSlopedRoofLayer2_5D, drawSlopedRoofGableCaps2_5D, slopedRoofGableCapsFor, slopedRoofGableCapFacesCamera, slopedRoofEdgeZAt, slopedRoofPlanesFor, slopedRoofPixelVisible, drawWorld, WallTopBuffer, WallBottomBuffer, WallOwnerBuffer, CeilingOwnerBuffer, ceilingOwnerMap, isWalkable, shouldDrawSeaHorizon, distToRoad, ceilingSpriteClipY, CeilingDepthBuffer, CeilingColumnHasDepth, setPlayerForDebug(x,y,dx,dy){ posX=x; posY=y; if(typeof dx==='number' && typeof dy==='number'){ const len=Math.hypot(dx,dy)||1; dirX=dx/len; dirY=dy/len; planeX=-dirY*.90; planeY=dirX*.90; } } };
+loadAssets().then(()=>{ loading.classList.add('hidden'); requestAnimationFrame(gameLoop); }).catch(err=>{ loading.innerHTML=`<div><strong>Errore caricamento asset</strong><br><span class="muted">${String(err.message||err)}</span><br><br>Avvia con AVVIA_GIOCO_WINDOWS_SENZA_PYTHON.bat.</div>`; console.error(err); });
+
+})();
+</script>
+</body>
+</html>

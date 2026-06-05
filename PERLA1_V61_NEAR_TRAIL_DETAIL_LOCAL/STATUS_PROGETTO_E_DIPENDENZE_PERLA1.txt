@@ -1,0 +1,1972 @@
+STATUS PROGETTO E DIPENDENZE PERLA1
+===================================
+Progetto: Camping Sole, Mare & Zanzare
+Modulo: Motore esplorazione raycasting 2.5D PERLA1
+Versione: V61_NEAR_TRAIL_DETAIL
+
+ULTIMO AGGIORNAMENTO V61
+------------------------
+Build prodotta: PERLA1_V61_NEAR_TRAIL_DETAIL_LOCAL.zip.
+Base reale: PERLA1_V60_TRUE_SOFT_TRAILS_LOCAL.zip.
+
+Scopo:
+- migliorare ulteriormente i sentieri dopo feedback positivo sulla V60;
+- portare i trail vicini a risoluzione sub-tile 8x8;
+- aggiungere decal/texture pavimento piatti più ricchi;
+- aumentare leggermente il noise perché V59/V60 hanno confermato che aiuta;
+- mantenere logica/collisioni/tetti/sprite/occlusione intatti.
+
+File modificati:
+- 01_GIOCO_PRONTO_LOCAL_TEST/index.html
+- METODO_LAVORO_ANTI_REGRESSIONE_PERLA1.txt
+- STATUS_PROGETTO_E_DIPENDENZE_PERLA1.txt
+- AVVIA_GIOCO_WINDOWS_SENZA_PYTHON.bat
+- AVVIA_GIOCO_SERVER_POWERSHELL.ps1
+
+Patch reali completate:
+1. floorNearSubTileColorMap: nuovo dettaglio 8x8 precomputato solo per trail/bordi/decal utili da vicino.
+2. getFloorColorAt(..., rowDist): usa 8x8 solo entro FLOOR_NEAR_DETAIL_DIST, altrimenti resta 4x4/colore cella.
+3. floorMicroDecalMap: secondo livello di micro texture piatte, senza sprite e senza drawImage.
+4. Decal arricchiti: trail_needles, trail_specks, trail_mottle, road_pebbles, road_dust_flecks, sand_footprints, sand_shells, shower_water, grass_wear.
+5. Noise pavimento aumentato con prudenza e ancora quantizzato.
+6. organicTrailMask resa più fine/frastagliata per usare bene l'8x8 vicino.
+
+Sistemi preservati:
+- roadMask/fMap logici e collisioni intatti;
+- walkability intatta;
+- wallcasting e spritecasting intatti;
+- CeilingDepthBuffer, CeilingColumnHasDepth, CeilingOwnerBuffer, ceilingSpriteClipY preservati;
+- wallDecalMap e getWallDecalTexX preservati;
+- tetti Sloped Sector Casting preservati;
+- gable caps preservati;
+- fog storico drawExistingWallFogOverlay preservato;
+- nessun roofFogCache/roofFoggedColor reintrodotto;
+- nessun soffit_band.
+
+Metriche V61 rilevate nel runtime mock:
+- stage: V61_NEAR_TRAIL_DETAIL;
+- map 80x88;
+- sprites 976;
+- roofSegments 2;
+- wallDecals 6;
+- spriteRoad 0;
+- spriteSea 0;
+- roadBlocked 0;
+- fontana 1;
+- docce 4;
+- parkingCars 9;
+- roadSoftOnSea 0;
+- roadSoftInsideCMap 0;
+- trailInYoga 0;
+- pinetaFlowers 0;
+- genericBushesPineta 0;
+- decalCells 656;
+- microDecalCells 1471;
+- nearSubTileCells 1495;
+- nearSubTileSlots 120704;
+- nearSubTileRes 8;
+- nearDetailDist 9.5;
+- fillRects mock 1345;
+- drawImages extra 0.
+
+Nota performance:
+- Il costo extra è soprattutto maggiore varietà colore/fillRect, non sprite/drawImage.
+- L'8x8 è precomputato; drawWorld fa lookup colore.
+- Se su browser reale/dispositivo debole risultasse troppo pesante, la leva prudente è abbassare FLOOR_NEAR_DETAIL_DIST o restringere floorNeedsNearSubTileColor().
+
+STORICO V60 - TRUE SOFT TRAILS
+------------------------------
+Base reale V60: PERLA1_V59_FLOOR_SOFT_RENDER_LOCAL.zip.
+Scopo storico V60: completare internamente V60A/V60B/V60C/V60D per ridurre davvero l'effetto quadrato dei sentieri, senza alterare logica/collisioni e senza abbattere le performance.
+
+File modificati:
+- 01_GIOCO_PRONTO_LOCAL_TEST/index.html
+- METODO_LAVORO_ANTI_REGRESSIONE_PERLA1.txt
+- STATUS_PROGETTO_E_DIPENDENZE_PERLA1.txt
+- AVVIA_GIOCO_WINDOWS_SENZA_PYTHON.bat
+- AVVIA_GIOCO_SERVER_POWERSHELL.ps1
+
+Patch reali completate:
+1. V60A - Bordo sub-tile per sentieri: aggiunta maschera organica 4x4 precomputata per celle trail/bordo trail. Il sentiero resta tile-based nella logica ma non viene più colorato come quadrato pieno ai bordi.
+2. V60B - Trail organic breakup: aggiunta irregolarità controllata su bordi e interno del sentiero pineta tramite organicTrailMask(), floorNoiseSigned() e mix quantizzato. Nessun fiore/cespuglio generico in pineta.
+3. V60C - Separazione main road/trail: la strada umana usa regularRoadMask() più ordinata e polverosa; il sentiero pineta usa maschera più irregolare, terrosa e naturale.
+4. V60D - Decal pavimento leggeri: aggiunti decal procedurali piatti tramite floorDecalMap, non sprite: trail_needles/trail_specks, road_pebbles, sand_footprints, shower_water. Questi dettagli cambiano solo il colore del pavimento e non toccano ZBuffer, spritecasting o collisioni.
+
+Ottimizzazione importante:
+- La prima idea sub-tile calcolata direttamente in getFloorColorAt() era troppo costosa.
+- La V60 finale precomputa floorSubTileColorMap 4x4 solo per celle che ne hanno bisogno.
+- drawWorld() ora fa solo lookup colore, mantenendo il render loop leggero.
+- fillRects mock passano da 830 circa V59 a 981 circa V60 nello stesso harness (+18% circa); tempo mock medio +40% in Node/fake canvas, ma senza nuovo spritecasting e senza drawImage aggiuntivi. Il browser reale resta il riferimento.
+
+Nuove funzioni/dati principali:
+- floorSubTileColorMap;
+- floorMixCache;
+- smoothstep();
+- mixFloorQuantized();
+- buildFloorDecalMap();
+- boundaryDistanceToDifferentKind();
+- proximityToNeighborKind();
+- organicTrailMask();
+- regularRoadMask();
+- applyOrganicTrailSubTile();
+- applyHumanRoadSubTile();
+- applyFloorDecalAt();
+- floorNeedsSubTileColor();
+- computeFloorSubTileColor();
+- buildFloorSubTileColorMap().
+
+Scelte conservative:
+- roadMask non modificata.
+- fMap non modificata per ottenere effetti grafici.
+- map/collisioni/walkability intatte.
+- cMap, ceilingOwnerMap, CeilingDepthBuffer, CeilingColumnHasDepth e ceilingSpriteClipY non indeboliti.
+- Tetti V57 preservati: drawRoofLayer2_5D() chiama drawSlopedRoofLayer2_5D() + drawSlopedRoofGableCaps2_5D().
+- Fog storico unificato preservato: drawExistingWallFogOverlay() resta l'unico overlay fog per muri/falde/testate.
+- Nessun roofFogCache o roofFoggedColor reintrodotto.
+- Nessun soffit_band.
+- Nessun nuovo asset obbligatorio.
+- Nessun nuovo sprite pavimento.
+
+Check V60 eseguiti:
+- node --check OK.
+- runtime mock/generateWorld/drawWorld OK.
+- ZIP integrity OK.
+- Asset PNG manifest 72/72 presenti, missing 0.
+- map 80x88.
+- sprites 976.
+- roofSegments 2.
+- wallDecals 6.
+- decalNoFace 0.
+- spriteRoad 0.
+- spriteSea 0.
+- roadBlocked 0.
+- fontana 1.
+- docce 4.
+- parkingCars 9.
+- parkingLineSprites 0.
+- roadSoftOnSea 0.
+- roadSoftInsideCMap 0.
+- trailInYoga 0.
+- pinetaFlowers 0.
+- genericBushesPineta 0.
+- roofFogCache assente.
+- roofFoggedColor assente.
+- soffit_band assente.
+- Sloped Roof Casting preservato.
+
+Metriche V60 floorVisualStats:
+- stage V60_TRUE_SOFT_TRAILS.
+- noiseCells 6400.
+- roadSoftCells 931.
+- trailSoftCells 127.
+- outlineCells 1515.
+- decalCells 513.
+- trailDecals 94.
+- sandFootprints 101.
+- showerWater 22.
+- roadPebbles 296.
+- colorCells 7040.
+- uniqueFloorColors 257.
+- subTileCells 1104.
+- subTileSlots 31728.
+- uniqueSubTileColors 388.
+
+Risultato atteso in browser:
+- sentieri pineta meno quadrati sui bordi;
+- centro sentiero leggibile ma bordi più spezzati/terrosi;
+- strada principale ancora umana e ordinata, non frastagliata come il trail;
+- dettagli piatti a terra più vivi senza nuovi sprite;
+- tetti/fog/occlusione invariati.
+
+Limite onesto:
+- La logica resta tile-based. La V60 maschera il quadrato visivamente tramite sub-tile 4x4; non trasforma il motore in renderer texture splat/pixel-perfect. Se nel browser reale il bordo risultasse ancora troppo geometrico, il prossimo passo sarebbe aumentare risoluzione sub-tile a 8x8 solo sui trail vicini o introdurre texture/floor decals più ricchi, ma con nuovo check performance.
+
+STORICO PRECEDENTE
+------------------
+ULTIMO AGGIORNAMENTO V59
+------------------------
+Base reale: PERLA1_V58_FLOOR_SOFTMAPS_INFRA_LOCAL.zip.
+Scopo: completare internamente Microstep 3A/3B/3C/3D dei pavimenti morbidi, collegando le softmap V58 al floorcasting reale senza abbattere le performance e senza toccare tetti, fog, spritecasting, wallcasting o collisioni.
+
+File modificati:
+- 01_GIOCO_PRONTO_LOCAL_TEST/index.html
+- METODO_LAVORO_ANTI_REGRESSIONE_PERLA1.txt
+- STATUS_PROGETTO_E_DIPENDENZE_PERLA1.txt
+- AVVIA_GIOCO_WINDOWS_SENZA_PYTHON.bat
+- AVVIA_GIOCO_SERVER_POWERSHELL.ps1
+
+Microstep completati in V59:
+1. Microstep 3A - getFloorColorAt(): aggiunta funzione centrale di colore pavimento visuale.
+2. Microstep 3B - collegamento al floorcasting: drawWorld() non usa piu' solo floorColors[type] per i pavimenti, ma segmenta per colore visuale restituito da getFloorColorAt().
+3. Microstep 3C - ottimizzazione/quantizzazione: i colori vengono precomputati in floorVisualColorMap a fine generateWorld(); il render loop legge soltanto stringhe colore gia' pronte. Il noise e' quantizzato e non usa Math.random().
+4. Microstep 3D - revisione e check: runtime mock, sintassi, zip integrity, asset manifest e metriche anti-regressione.
+
+Modifiche tecniche in index.html:
+- Aggiornati titolo, loading e pannello UI a V59.
+- Aggiunta floorVisualColorMap.
+- Aggiunti helper:
+  - floorRenderBaseColor();
+  - floorLightColorFor();
+  - floorDarkColorFor();
+  - roadDustColorFor();
+  - trailDirtColorFor();
+  - floorNoiseStrength();
+  - applyQuantizedFloorNoise();
+  - computeFloorVisualColor();
+  - buildFloorVisualColorMap();
+  - getFloorColorAt().
+- buildFloorVisualMaps() ora costruisce anche floorVisualColorMap e produce stage V59_SOFT_RENDER.
+- drawWorld() conserva y+=2/x+=2 ma raggruppa i segmenti pavimento per curFloorColor, non solo per tipo fMap.
+- window.__PERLA_DEBUG__ espone floorVisualColorMap, getFloorColorAt, computeFloorVisualColor e buildFloorVisualColorMap.
+
+Scelte conservative:
+- roadMask non modificata.
+- fMap non modificata.
+- Nessuna modifica a map/collisioni/walkability.
+- Nessuna modifica a cMap, ceilingOwnerMap, CeilingDepthBuffer, CeilingColumnHasDepth, ceilingSpriteClipY.
+- Nessuna modifica a wallcasting, spritecasting, wallDecalMap o getWallDecalTexX.
+- Nessuna modifica ai tetti V57: Sloped Roof Casting, gable caps e fog unificato preservati.
+- Nessun fog parallelo reintrodotto: roofFogCache e roofFoggedColor restano assenti.
+- Nessun pixel-per-pixel pesante: colore precomputato e quantizzato.
+
+Check V59 eseguiti:
+- node --check OK.
+- runtime mock/generateWorld/drawWorld OK.
+- ZIP integrity OK.
+- Asset PNG manifest 72/72 presenti, missing 0.
+- map 80x88.
+- sprites 976.
+- roofSegments 2.
+- floorVisualStats.stage V59_SOFT_RENDER.
+- floorVisualStats.noiseCells 6400.
+- floorVisualStats.roadSoftCells 931.
+- floorVisualStats.trailSoftCells 127.
+- floorVisualStats.outlineCells 1515.
+- floorVisualStats.colorCells 7040.
+- uniqueFloorColors 257.
+- floorVisualColorMap celle popolate 7040.
+- roadSoftOnSea 0.
+- roadSoftInsideCMap 0.
+- trailInYoga 0.
+- spriteRoad 0.
+- spriteSea 0.
+- roadBlocked 0.
+- fontana 1.
+- docce 4.
+- parkingCars 9.
+- parkingLineSprites 0.
+- wallDecals 6.
+- decalNoFace 0.
+- roofFogCache assente.
+- roofFoggedColor assente.
+- drawWorld funzione presente.
+- getFloorColorAt funzione presente.
+
+Check performance mock:
+- V58 mock: fillRects 8961, drawImages 1249, fillStyleSets 3285.
+- V59 mock: fillRects 9508, drawImages 1249, fillStyleSets 3832.
+Interpretazione: incremento fillRects circa +6% e fillStyleSets circa +17% nel mock, accettabile per una prima attivazione visuale perche' il costo dei mix colore e' stato spostato fuori dal render loop. Il test browser reale resta necessario per confermare resa/prestazioni effettive.
+
+Risultato atteso in browser:
+- ghiaia/strade meno piatte;
+- bordo strada piu' polveroso e meno stampato;
+- pineta piu' terrosa/organica sui bordi sentiero;
+- transizioni fra biomi meno rigide;
+- nessuna griglia nera e nessun outline globale;
+- tetti/fog/occlusione invariati.
+
+STORICO PRECEDENTE
+------------------
+ULTIMO AGGIORNAMENTO V58
+------------------------
+Base reale: PERLA1_V57_SLOPED_ROOF_UNIFIED_FOG_LOCAL.zip.
+Scopo: Microstep 2 pavimenti morbidi, cioè infrastruttura sicura per road/trail soft edge e noise pavimento senza ancora trasformare pesantemente la resa del floorcasting.
+
+File modificati:
+- 01_GIOCO_PRONTO_LOCAL_TEST/index.html
+- METODO_LAVORO_ANTI_REGRESSIONE_PERLA1.txt
+- STATUS_PROGETTO_E_DIPENDENZE_PERLA1.txt
+
+Modifiche tecniche in index.html:
+- Aggiornati titolo, loading e pannello UI a V58.
+- Aggiunte mappe visuali derivate:
+  - roadSoftEdgeMap;
+  - trailSoftEdgeMap;
+  - floorNoiseMap;
+  - floorDecalMap;
+  - floorOutlineMap.
+- Aggiunti helper deterministici:
+  - FLOOR_VISUAL_SEED;
+  - floorHash2D();
+  - floorNoiseSigned();
+  - mixColorHex();
+  - resetFloorVisualMaps();
+  - isPinetaTrailCell();
+  - isHumanRoadCell();
+  - isTrailRoadCell();
+  - canReceiveFloorSoftEdge();
+  - buildRoadSoftEdgeMap();
+  - buildTrailSoftEdgeMap();
+  - buildFloorNoiseMap();
+  - buildFloorOutlineMap();
+  - buildFloorVisualMaps().
+- buildFloorVisualMaps() viene chiamata alla fine di generateWorld(), dopo le sanity finali che puliscono roadMask sotto muri/ostacoli e preservano parcheggio/auto.
+- window.__PERLA_DEBUG__ espone le nuove mappe e floorVisualStats.
+
+Scelte conservative:
+- roadMask non modificata per ottenere effetti grafici.
+- fMap non modificata per ottenere effetti grafici.
+- Nessuna modifica a collisioni/walkability.
+- Nessuna modifica a wallcasting, spritecasting, CeilingDepthBuffer, ceilingSpriteClipY.
+- Nessuna modifica ai tetti V57: Sloped Roof Casting e gable caps preservati.
+- Nessun fog parallelo reintrodotto: roofFogCache e roofFoggedColor restano assenti.
+- Floor renderer ancora compatibile col comportamento V57; le mappe V58 preparano il Microstep 3/4.
+
+Check V58 eseguiti:
+- node --check OK.
+- runtime mock/generateWorld OK.
+- ZIP integrity OK.
+- Asset PNG manifest 72/72 presenti, missing 0.
+- map 80x88.
+- sprites 976.
+- roofSegments 2.
+- floorVisualStats.stage V58_SOFTMAPS_INFRA.
+- floorVisualStats.noiseCells 6400.
+- floorVisualStats.roadSoftCells 931.
+- floorVisualStats.trailSoftCells 127.
+- floorVisualStats.outlineCells 1515.
+- roadSoftOnSea 0.
+- roadSoftInsideCMap 0.
+- trailInYoga 0.
+- spriteRoad 0.
+- spriteSea 0.
+- roadBlocked 0.
+- fontana 1.
+- docce 4.
+- parkingCars 9.
+- parkingLineSprites 0.
+- wallDecals 6.
+- decalNoFace 0.
+
+Prossimo step consigliato:
+Microstep 3/4: collegare in modo controllato le mappe V58 al floorcasting tramite funzione colore visuale tipo getFloorColorAt(), mantenendo y+=2/x+=2, segmentazione per colore quantizzato e nessun pixel-per-pixel pesante.
+
+BASE TECNICA STORICA / NOTE PRECEDENTI
+--------------------------------------
+BASE TECNICA ATTUALE
+--------------------
+- Vanilla JavaScript.
+- Rendering su singolo canvas HTML.
+- Nessuna libreria 3D nel core raycasting.
+- Asset PNG reali caricati da assets/raycast/.
+- Launcher locale inclusi:
+  - AVVIA_GIOCO_WINDOWS_SENZA_PYTHON.bat
+  - AVVIA_GIOCO_SERVER_POWERSHELL.ps1
+- Struttura principale:
+  - 01_GIOCO_PRONTO_LOCAL_TEST/index.html
+  - 01_GIOCO_PRONTO_LOCAL_TEST/assets/raycast/*.png
+
+SISTEMI NEL FILE index.html
+---------------------------
+1. ASSET_MANIFEST:
+   Mappa ID texture/sprite -> PNG o frame PNG.
+   Frame multipli usati per animazioni semplici, ad esempio docce e palme.
+
+2. Mappe dati:
+   - map: muri/collisioni solide;
+   - fMap: pavimenti/biomi;
+   - cMap: soffitti/tettoie/interni;
+   - zoneMask: nome zona logica;
+   - roadMask: strada libera;
+   - noNature: divieto flora casuale;
+   - safeHuman: area umana/edificio;
+   - objectBlock: blocchi collisione sprite.
+
+3. Rendering:
+   - drawBackdrop: cielo/gradiente;
+   - floorcasting/ceiling-casting;
+   - wallcasting con ZBuffer;
+   - spritecasting ordinato per distanza;
+   - V19: occlusione verticale soffitti/sprite tramite CeilingDepthBuffer + clipping stripe-by-stripe;
+   - minimappa debug.
+
+4. Movimento:
+   - WASD/frecce;
+   - collisione con sliding leggero;
+   - mare non calpestabile.
+
+MAPPA ATTUALE
+-------------
+- Dimensione: 80x88.
+- Reception a nord-centro.
+- Bar fuori pineta nel campo nord-ovest, collegato da bivio.
+- Pineta chiusa/intima con molti pini, pigne, aghi/erba bassa, tende e accesso yoga; dopo la porta pineta è stata aggiunta una barriera cespuglio estesa verso est per rendere la main road più lunga/tortuosa.
+- Yoga separata dentro bioma pini, senza natura sotto tettoia; sentiero sterrato riallineato alla porta est e ripulito dall'interno stanza.
+- Camper come stanza verde curata, con strada riallineata alla porta e siepi geometriche ai bordi; ramo esterno corretto per non schiantarsi contro muro/cespuglio.
+- Viale fiorito verso camper con archi laterali e vasi.
+- Fontana visibile come sprite su piazzetta al bivio.
+- Bagni/docce in stanza separata.
+- Spiaggia e mare a sud, mare non calpestabile e senza muro/cespuglio oltre l'acqua.
+
+CAMBIAMENTI V16
+---------------
+1. Pineta:
+   - aumentata fortemente la densità pini;
+   - pini soprattutto ai margini e nelle profondità;
+   - mantenute radure/tende/yoga;
+   - vietati fiori e cespugli generici in pineta.
+
+2. Camper:
+   - tolto effetto cespugli casuali;
+   - introdotte siepi geometriche da area curata;
+   - siepi/oggetti lontani dalla strada;
+   - strada riallineata alla porta della stanza camper;
+   - aggiunto piazzale ingresso per evitare effetto strada troncata.
+
+3. Fontana:
+   - corretta causa reale invisibilità: il disco centrale veniva marcato objectBlock prima di placeSprite;
+   - ora la fontana viene piazzata come sprite prima della collisione;
+   - aumentata scala/contrasto asset per leggibilità.
+
+4. Docce:
+   - ripristinati frame con gocciolamento visibile da V13;
+   - animazione più leggibile con ciclo frame più rapido.
+
+5. Palme:
+   - asset bitmap V15/V14 preservati per evitare regressione non richiesta;
+   - corretto uso/posizionamento solo dove necessario.
+
+6. Documentazione:
+   - aggiunto METODO_LAVORO_ANTI_REGRESSIONE_PERLA1.txt;
+   - aggiunto STATUS_PROGETTO_E_DIPENDENZE_PERLA1.txt.
+
+DIPENDENZE E VINCOLI
+--------------------
+- Il core non deve usare Three.js/Babylon/model-viewer.
+- Futuri boss/dialoghi devono stare in overlay DOM/RPG separato.
+- Non usare sprite o fiori dentro edifici/tettoie.
+- Non mettere arredi spiaggia nel mare o nei bagni.
+- Non reintrodurre isole screen-space appiccicate allo schermo.
+- Non reintrodurre muro sud/cespuglio oltre il mare.
+
+PROSSIMI PASSI POSSIBILI
+------------------------
+- Test visivo V16 in browser.
+- Rifinitura artistica palme/erba/fiori/camper solo dopo conferma che layout e regressioni sono risolti.
+- In seguito: sound design spaziale, trigger eventi, overlay RPG/dialoghi, JSON esterno.
+
+
+CAMBIAMENTI V17
+---------------
+1. Strade -> porte:
+   - corretto sentiero yoga: non attraversa più la stanza e non punta contro il muro; arriva al varco/porta est.
+   - corretto raccordo camper: il ramo dalla main road viene riallineato alla porta, poi prosegue internamente nella stanza camper.
+
+2. Main road più tortuosa:
+   - ridisegnata la main road dopo l'area pineta con andamento più lungo verso est e ritorno verso sud.
+   - aggiunta barriera cespuglio dopo la porta pineta, estesa verso est, senza bloccare la strada.
+
+3. Preservazioni intenzionali:
+   - fontana V16 preservata.
+   - docce gocciolanti V16 preservate.
+   - mare aperto senza muro sud preservato.
+   - bar fuori pineta preservato.
+   - pineta senza fiori/cespugli generici preservata.
+
+CHECK V17 DA MANTENERE
+----------------------
+- roadMask sotto muri/ostacoli = 0 dopo generateWorld.
+- yogaRoadWall = 0.
+- camperRoadWall = 0.
+- fontana sprite = 1.
+- docce sprite = 4.
+- screen-space islands = 0.
+
+
+RISULTATO CHECK V17
+-------------------
+- node --check: OK.
+- runtime smoke test con DOM/Image mock: OK.
+- asset mancanti: 0.
+- roadMask sotto muri/ostacoli: 0.
+- yogaRoadWall: 0.
+- camperRoadWall: 0.
+- camperRoadBlocked: 0.
+- reachYogaDoor: true.
+- reachCamperDoor: true.
+- reachBeach: true.
+- reachFontana: true.
+- barriera cespuglio dopo porta pineta presente.
+- fontana e docce preservate.
+
+CAMBIAMENTI V18
+---------------
+Versione: V43_ROOF_OWNER_CLIPPING
+Base: V17_ROAD_DOORS_MAINROAD_LOGIC reale.
+
+1. Barriera cespuglio / main road:
+   - estesa molto più a est la barriera cespuglio dopo la porta pineta: max x circa 74.
+   - ridisegnata la main road con curva più lunga/tortuosa verso est e ritorno verso sud.
+   - preservate raggiungibilità spiaggia, fontana, camper e yoga.
+
+2. Tenda nello yoga:
+   - corretta causa reale: una piazzola tenda era dentro coordinate yoga_room.
+   - rimossa la piazzola invadente e spostata fuori dalla sala yoga.
+   - aggiunto guard di generazione piazzole contro yoga_room/bar/camper_room/safeHuman/cMap.
+
+3. Pineta:
+   - aggiunti molti più pini in prossimità dei bordi/muri-cespuglio.
+   - preservata regola: no fiori e no cespugli generici in pineta.
+   - pineta ora più leggibile come stanza di pini, con pigne/aghi/erba bassa/tende/yoga.
+
+4. Sprite/prospettiva:
+   - introdotto ancoraggio sprite per categoria tramite spriteAnchorSink().
+   - migliorato contatto a terra, soprattutto per tende, senza introdurre occlusione verticale dei soffitti.
+   - l'occlusione verticale dei soffitti sugli sprite resta cantiere separato e non è stata implementata in V18.
+
+5. Main road post-camper:
+   - aggiunte palme ordinate e alcuni vasi ai lati della main road nel tratto dopo camper.
+   - posizionamento geometrico da area curata, mai sulla carreggiata.
+   - rimossi i due vasi sud brutti davanti alla spiaggia/fontana bassa.
+
+PRESERVAZIONI V18
+-----------------
+- Fontana V16/V17 preservata e visibile come sprite.
+- Docce gocciolanti preservate.
+- Mare aperto senza muro sud/cespuglio oltre l'acqua preservato.
+- Bar fuori pineta preservato.
+- Texture cespugli organica preservata.
+- Nessuna isola screen-space reintrodotta.
+
+RISULTATO CHECK V18
+-------------------
+- node --check: OK.
+- runtime smoke test con DOM/Image mock: OK.
+- asset mancanti: 0.
+- sprite totali: 691.
+- pineCount in pineta: 71.
+- borderPineCount in pineta: 49.
+- tentsInYoga: 0.
+- flowersInPineta: 0.
+- bushesInPineta: 0.
+- fountain sprite: 1.
+- shower sprite: 4.
+- roadsidePots: 2.
+- palmsPostCamper: 4.
+- southPotsRemoved: 0.
+- barrierMaxX: 74.
+- roadUnder muri/ostacoli: 0.
+- yogaRoadWall: 0.
+- camperRoadWall: 0.
+- spritesOnRoad: 0.
+- spritesInSea: 0.
+- beachBad: 0.
+- natureUnderRoof: 0.
+- camperHedgeNearRoad: 0.
+- reachYogaDoor: true.
+- reachCamperDoor: true.
+- reachBeach: true.
+- reachFontana: true.
+
+
+CAMBIAMENTI V19
+---------------
+1. Renderer sprite/soffitti:
+   - aggiunto CeilingDepthBuffer, una mappa di profondita' parziale per la meta' alta dello schermo popolata durante il ceiling-casting;
+   - aggiunto CeilingColumnHasDepth per evitare lavoro inutile sulle colonne senza soffitto;
+   - aggiunta funzione setCeilingDepthAt;
+   - aggiunta funzione ceilingSpriteClipY;
+   - gli sprite esterni dietro un soffitto vengono tagliati verticalmente nella parte coperta dalla tettoia;
+   - gli sprite sotto tetto (underRoof) non vengono tagliati, per preservare arredi interni e colonne.
+
+2. placeSprite:
+   - ogni sprite ora memorizza underRoof in base al cMap della cella di nascita.
+
+3. Elementi preservati:
+   - fontana V16/V18 preservata;
+   - docce gocciolanti preservate;
+   - mare aperto V15+ preservato;
+   - pineta pulita e densa V18 preservata;
+   - bar fuori pineta preservato;
+   - main road e routing V18 preservati;
+   - nessun asset PNG rigenerato o sostituito in questa patch.
+
+4. Nota tecnica:
+   - questa non e' ancora una fisica/settori 3D completa. E' un sistema di occlusione verticale dedicato al raycaster attuale, compatibile con canvas 2D e molto meno invasivo di un motore a portali/settori.
+
+
+CAMBIAMENTI V20
+---------------
+Base: V19_CEILING_SPRITE_OCCLUSION reale.
+
+1. Main road / area camper:
+   - ridisegnato il tratto dopo la barriera cespuglio pineta;
+   - la main road ora curva a nord/ovest della stanza camper invece di puntare contro il suo muro-cespuglio;
+   - il ramo camper resta separato e arriva alla porta, senza effetto strada troncata.
+
+2. Vasi tratto camper -> fontana:
+   - rimossi i vasi sparsi del tratto post-camper;
+   - aggiunta fila ordinata di vasi vicino ai muri-cespuglio, con passo regolare e senza invadere la carreggiata;
+   - preservata la rimozione dei due vasi brutti davanti alla spiaggia.
+
+3. Ancoraggio sprite:
+   - rifinita spriteAnchorSink() per categoria;
+   - aggiunta spriteContactShadowAlpha() e contatto/ombra procedurale leggero per migliorare la percezione a distanza;
+   - intervento conservativo: nessun asset PNG rigenerato, nessun cambio alla logica di occlusione soffitti.
+
+4. Preservazioni:
+   - occlusione verticale V19 preservata;
+   - fontana e docce gocciolanti preservate;
+   - pineta densa V18/V19 preservata;
+   - mare aperto senza muro sud preservato;
+   - bar fuori pineta preservato.
+
+
+CAMBIAMENTI V21
+---------------
+Base: V20_MAINROAD_CURVE_ORDERED_POTS_ANCHOR reale.
+
+1. Vasi main road:
+   - rimossi i vasi ordinati dal tratto vicino a fontana/mare;
+   - spostati nella strettoia fra il nuovo muro-cespuglio esteso dalla pineta e il muro dell'area camper;
+   - passo regolare, posizione vicino ai muri/limiti, non sulla carreggiata.
+
+2. Pineta:
+   - aggiunto ulteriore rinforzo di pini interni vicino ai muri-cespuglio;
+   - mantenuto divieto di fiori e cespugli generici in pineta;
+   - preservati pigne, aghi/erba bassa, tende, yoga e occlusione soffitti.
+
+3. Fiore su main road vicino fontana:
+   - aggiunto sanity finale che rimuove micro-flora su roadMask, zona fontana o troppo vicino alla main road;
+   - obiettivo: nessun fiore/ciuffo sulla strada o appena dentro la piazzetta fontana.
+
+4. Spiaggia sud:
+   - mappa estesa solo verso sud: mapH 80 -> 88;
+   - SEA_Y spostato a 80;
+   - spiaggia piu' profonda e ariosa;
+   - mare resta non calpestabile e aperto, senza muro sud/cespuglio oltre acqua.
+
+5. Nuova sezione parcheggio nord-est:
+   - creata area autonoma su parte del campo vuoto nord-est;
+   - aggiunto asfalto, stalli, tre auto sprite variate e recinto di legno;
+   - collegamento tramite piccolo bivio dalla main road;
+   - asset nuovi: wall_fence_wood.png, car_red.png, car_blue.png, car_yellow.png, parking_line.png.
+
+6. Preservazioni:
+   - occlusione verticale soffitti V19 preservata;
+   - ancoraggio sprite V20 preservato e aggiornato per auto/linee/vasi parcheggio;
+   - fontana e docce gocciolanti preservate;
+   - mare aperto preservato;
+   - bar fuori pineta, camper, yoga e main road V20 preservati salvo i punti richiesti.
+
+
+CHECKPOINT V22_PINETA_PARKING_ROAD_SIGN
+---------------------------------------
+Base: V21 reale.
+Interventi:
+- Aggiunta fila piena/continua di pini dentro la pineta, vicino ai muri-cespuglio di confine, per mascherare il limite e aumentare atmosfera.
+- Parcheggio nord-est ridotto e reso piu' ordinato: 9 auto, quattro vasi simmetrici agli angoli, recinto preservato, due toni di asfalto per stalli e viottolo interno.
+- Campi esterni al parcheggio arricchiti con fiori, cespugli ed erba, lasciando il parcheggio compatto.
+- Main road regolarizzata con curve piu' graduali e meno zig-zag, mantenendo collegamenti e tortuosita' logica.
+- Aumentati i vasi nel corridoio fra barriera nuova e muro camper.
+- Aggiunta insegna grande 'CAMPING IMPERIO' davanti alla reception con grafica pixel art.
+Nuovi asset: sign_camping_imperio.png, car_green.png, car_white.png.
+Da preservare: occlusione soffitti V19, ancoraggio V20, mare aperto, fontana, docce gocciolanti, bar fuori pineta, parcheggio compatto V22.
+
+
+CAMBIAMENTI V23
+---------------
+Base: V22_PINETA_PARKING_ROAD_SIGN reale.
+
+1. Cartello Camping Imperio:
+   - ricollocato fuori dalla carreggiata, piu' distante dall'ingresso reception;
+   - resta davanti/laterale alla strada, non sopra roadMask.
+
+2. Main road / camper:
+   - corretta curva dopo barriera pineta per evitare effetto strada che si schianta sul muro camper;
+   - aggiunta pulizia dei monconi visuali e rinforzo curva esterna, senza rompere porta camper o raggiungibilita'.
+
+3. Parcheggio nord-est:
+   - geometria resa piu' ordinata;
+   - viottolo obliquo di accesso allargato;
+   - mini-strade interne color ghiaia/strada disegnano la griglia fra gli stalli;
+   - 9 auto tutte negli stalli laterali, nessuna nel fondo del viottolo;
+   - quattro vasi simmetrici agli angoli;
+   - aggiunti nuovi asset `billiard_table.png` e `pingpong_table.png`, piazzati fuori dalla parete ovest del parcheggio.
+
+4. Pineta:
+   - aggiunti altri pini nel cuore della stanza, oltre alla quinta lungo i muri;
+   - preservati niente fiori/cespugli generici in pineta.
+
+CHECK V23
+---------
+- node --check: OK.
+- runtime metrics con DOM/Image mock: OK.
+- asset PNG referenziati/presenti: 54/54.
+- map: 80x88.
+- sprites: 967.
+- sign = 1, signOnRoad = 0.
+- roadBlocked = 0, roadOnCamperWall = 0, roadStub = 0.
+- reachFontanaAround/reachBeach/reachCamperDoor/reachParking = true.
+- parkingCars = 9, parkingCenterCars = 0, parkingCornerPots = 4.
+- billiard_table = 1, pingpong_table = 1.
+- pinetaPines = 189, middlePinetaPines = 22.
+- spriteRoad = 0, spriteSea = 0.
+- occlusione soffitti, fontana, docce gocciolanti, mare aperto e bar fuori pineta preservati.
+
+
+CHECKPOINT V24_MAINROAD_ENGINEERED_PARKING_ASPHALT
+--------------------------------------------------
+Base: V23 reale.
+Interventi:
+- Main road ridisegnata nel tratto critico barriera pineta -> camper -> mare con percorso piu' geometrico, segmenti puliti e curve ampie.
+- Allargata la curva critica prima del tratto camper/mare, evitando la strozzatura visiva a 1 tile.
+- Reincisa la curva finale dopo la costruzione della stanza camper, mantenendo roadBlocked = 0 e nessun moncone contro il muro.
+- Parcheggio corretto: le auto sono sugli stalli/asfalto floor 11, non sul colore strada floor 4.
+- Mini-strade/corsia parcheggio mantenute al centro con colore strada, senza passare sotto i centri auto.
+- Quattro vasi riposizionati agli angoli interni precisi del parcheggio: (64.5,8.5), (74.5,8.5), (64.5,17.5), (74.5,17.5).
+- Sanity finale aggiunto per garantire floor 11 sotto parked_car e parking_corner_pot.
+Preservati: occlusione soffitti V19, ancoraggio V20, mare aperto, fontana, docce gocciolanti, bar fuori pineta, pineta piena, parcheggio V23 con 9 auto, biliardo e ping pong.
+
+CHECK V24
+---------
+- node --check: OK.
+- runtime metrics con DOM/Image mock: OK.
+- asset PNG referenziati/presenti: invariati rispetto V23.
+- parkingCars = 9.
+- parkingCenterCars = 0.
+- parkingCornerPots = 4.
+- carOnNonAsphalt = 0.
+- parkingPotBad = 0.
+- roadBlocked = 0.
+- roadOnCamperWall = 0.
+- roadStub = 0.
+- reachFontanaAround/reachBeach/reachCamperDoor/reachParking = true.
+- spriteRoad = 0, spriteSea = 0.
+
+
+CAMBIAMENTI V25
+---------------
+1. Main road:
+   - sostituito il tratto principale costruito con carvePath/curve a punti con una geometria dichiarativa dedicata: carveEngineeredMainRoadV25().
+   - la strada usa segmenti rettilinei, raccordi ampi e larghezza piu' costante.
+   - il tratto vicino al muro camper non viene piu' reinciso con un ramo diagonale distruttivo; resta un buffer verde fra main road e parete camper, mentre il ramo verso la porta camper resta separato.
+
+2. Parcheggio:
+   - ricostruito come schema architettonico: stalli asfaltati scuri, corsia centrale e corsie orizzontali colore strada, linee basse di stallo.
+   - le 9 auto sono centrate nei rettangoli di stallo e non nella corsia/viottolo.
+   - la griglia colore strada e' preservata, non cancellata per far passare il check auto.
+   - i 4 vasi sono riposizionati come angoli interni visivi simmetrici.
+
+3. Preservazioni:
+   - occlusione verticale soffitti V19 preservata;
+   - ancoraggio sprite V20 preservato;
+   - fontana, docce gocciolanti, mare aperto, bar fuori pineta, pineta densa e parcheggio giochi ovest preservati.
+
+CHECK V25
+---------
+- node --check OK;
+- runtime smoke OK;
+- asset mancanti 0;
+- roadBlocked 0;
+- roadOnCamperWall 0;
+- greenBufferCamper presente;
+- parkingCars 9;
+- carOnNonAsphalt 0;
+- parkingGridCells > 0;
+- parkingCornerPots 4;
+- spriteRoad 0;
+- spriteSea 0.
+
+
+================================================================================
+AGGIORNAMENTO V26 - ROAD/PARKING REFINEMENT ANTI-REGRESSIONE
+================================================================================
+Base reale: PERLA1_V25_ENGINEERED_ROAD_PARKING_GRID_LOCAL.zip.
+Intervento mirato e non espansivo:
+- Rimossi visivamente gli sprite parking_line: la griglia del parcheggio deve vivere nel pavimento/corsie, non in billboard bassi brutti.
+- Main road ristretta dopo la sovracorrezione V25: carreggiata media 3 tile, raccordi controllati, non blob larghi.
+- Nodo parcheggio corretto: main road prima prosegue lineare, poi bivio secondario verticale/ordinato verso il parcheggio; rimosso il carvePath diagonale a ventaglio.
+- Vasi del corridoio barriera pineta / muro camper ripristinati su due file laterali, perché in V25 venivano scartati dalla road troppo larga.
+- Biliardo e ping pong spostati più vicino alla main road dopo il cartello, ma fuori carreggiata.
+- Campo fiori/cespugli/erba a fianco del parcheggio espanso verso il fondo, mantenendo distanza dalla main road.
+
+Errori precedenti da ricordare e non ripetere:
+1) V25 aveva sostituito un problema di strada irregolare con una strada troppo larga: sicurezza collisione non equivale a buona progettazione visiva.
+2) Il bivio parcheggio non doveva usare carvePath diagonale; nelle aree umane i bivi devono essere dichiarativi e geometrici.
+3) Gli sprite parking_line erano ridondanti e brutti dopo la creazione della griglia a pavimento.
+4) I vasi del corridoio sono spariti perché la main road V25 invadeva o sfiorava le loro coordinate e il filtro noRoad/distToRoad li scartava.
+
+Regola aggiornata:
+Per main road/parcheggio prima si disegna la gerarchia: spina dorsale principale -> bivi secondari -> corsie/griglie -> arredi ai lati.
+Mai decorare prima di avere larghezza, buffer e destinazioni stabili.
+
+
+================================================================================
+CHECKPOINT V27_ROAD_NETWORK_CLEANUP
+================================================================================
+Base: V26 reale.
+Intervento:
+- Bonifica della rete stradale umana: la spina dorsale della main road resta geometrica, ma ora anche i bivi umani sono dichiarativi.
+- Aggiunte funzioni dedicate: carveBarBranchV27, carveParkingBranchV27, carvePinetaBranchV27, carveCamperBranchV27, carveCamperInternalRoadV27, carveBathBranchV27, carveBeachAccessV27.
+- Rimossi dai bivi umani i vecchi carvePath responsabili di innesti irregolari e diagonali a scaletta.
+- Il bivio bar viene reinciso dopo la costruzione dell'area bar; il bivio pineta dopo la stanza pineta; il ramo camper dopo la stanza camper; il raccordo bagni/spiaggia dopo fontana/bagni.
+- Riposizionati i vasi del corridoio: 13 vasi ordinati, compatibili con la nuova road dichiarativa.
+
+Preservati:
+- Parcheggio V26 con 9 auto, griglia a pavimento e nessuno sprite parking_line.
+- Tavoli biliardo/ping pong vicino alla main road.
+- Fontana visibile, docce gocciolanti, mare aperto, bar fuori pineta, occlusione soffitti, ancoraggio sprite.
+
+Check V27:
+- node --check OK.
+- runtime metrics con DOM/Image mock OK.
+- asset mancanti 0.
+- roadBlocked = 0.
+- usesCarvePathHuman = 0.
+- reachBar/reachPineta/reachCamper/reachParking/reachBath/reachBeach = true.
+- parkingLineSprites = 0.
+- parkingCars = 9.
+- orderedChokepointPots = 13.
+- spriteSea = 0.
+- spriteRoad = 0, inclusa fontana: il raccordo bagni non deve riattivare roadMask sotto la fontana.
+
+
+CHECKPOINT V28_ROAD_TOPOLOGY_FIX
+--------------------------------
+Base reale: V27_ROAD_NETWORK_CLEANUP.
+Obiettivo: correggere topologia reale della rete stradale, non solo raggiungibilita' a piedi.
+
+Interventi:
+- Main road ridisegnata nel nodo parcheggio: non corre piu' davanti al recinto sud e non sembra schiantarsi contro il muro.
+- Bivio parcheggio mantenuto come ramo verticale secondario verso la porta reale x68..70.
+- Rimosse/neutralizzate eventuali celle roadMask davanti ai tratti di recinto parcheggio che non sono porta.
+- Bivio pineta esteso e collegato davvero alla spina principale: ora roadReachPineta passa su roadMask senza attraversare prato.
+- Preservati: parcheggio con 9 auto e griglia pavimento, fontana, docce gocciolanti, mare aperto, occlusione soffitti, ancoraggio sprite, bar fuori pineta, pineta densa, corridoio/vasi, camper e accessi principali.
+
+Check V28:
+- node --check OK.
+- runtime smoke/metrics OK.
+- roadBlocked = 0.
+- roadOnWall = 0.
+- parkingFenceRoad = 0.
+- roadReachPineta = true.
+- roadReachParking = true.
+- roadReachCamper = true.
+- roadReachBath = true.
+- roadReachBeach = true.
+- roadGapPineta = true.
+- spriteRoad = 0, spriteSea = 0.
+- parkingCars = 9, parkingLineSprites = 0.
+- fontana = 1, docce = 4.
+
+Nota per futuri lavori:
+Non fidarsi piu' dei soli check reachArea. Ogni accesso umano deve avere anche un check roadReach dedicato su roadMask.
+
+
+CHECKPOINT V29_PINETA_SALA_GIOCHI_BAR_STATUA
+--------------------------------------------
+Base: V28_ROAD_TOPOLOGY_FIX reale.
+Interventi completati:
+- Aggiunti due nuovi muri-cespuglio interni/scenici in pineta, evitando di tagliare roadMask/sentiero.
+- Prolungato il sentiero interno della pineta verso sud-ovest come da segno viola dello screenshot.
+- Creata nuova sala giochi aperta con tettoia a nord-est della reception, con floor/ceiling dedicati e accesso geometrico dalla main road.
+- Spostati biliardo e ping-pong dentro la sala giochi.
+- Migliorati gli asset billiard_table.png e pingpong_table.png con prospettiva, gambe, ombra/contatto e dettagli, per ridurre l'effetto cartellone.
+- Aggiunti nuovi asset cafe_table_chairs.png e marble_statue.png, registrati in ASSET_MANIFEST.
+- Aggiunti tavoli/sedie e vasi ordinati davanti al bar esterno.
+- Aggiunta statua di marmo alla fine del corridoio dei vasi prima della svolta verso fontana.
+- Fontana spostata da x=43.5 a x=44.5 per centrarla sulla spina prospettica della main road verso spiaggia; anche accesso spiaggia centrato su x=43..45.
+- Preservati: road topology V28, parcheggio 9 auto/griglia senza sprite linee, mare aperto, docce gocciolanti, occlusione soffitti, pineta densa, bar fuori pineta.
+
+Nuovi asset:
+- cafe_table_chairs.png
+- marble_statue.png
+Asset aggiornati:
+- billiard_table.png
+- pingpong_table.png
+
+Check V29 eseguiti:
+- node --check OK.
+- runtime mock/metrics OK.
+- asset PNG referenziati/presenti OK.
+- game_roomCells 72.
+- gameRoomTables 2.
+- barOutdoorTables 3.
+- marbleStatue 1.
+- fountain coordinate [44.5,63.15].
+- parkingLineSprites 0.
+- spriteRoad 0.
+- spriteSea 0.
+- roadBlocked 0.
+- roadOnWall 0.
+- roadReachPineta/Parking/Camper/Bath/Beach/Bar/GameRoom true.
+
+
+CHECKPOINT V30_MAP_COORDS_BAR_STATUE_FIX
+----------------------------------------
+Base: V29 reale.
+Interventi completati:
+- Corretti i due muri-cespuglio rossi usando coordinate coerenti con lo screenshot/minimappa: segmento alto x33..50 y31..32, segmento basso ovest x2..8 y52..53. Rimossi i segmenti sbagliati V29 interni alla pineta/yoga.
+- Aggiunti guard contro roadMask, safeHuman, cMap e zone umane per impedire nuovi muri dentro yoga/bar/sala giochi.
+- Spostato il dehors del bar a nord del gazebo: 3 tavolini/sedie e 4 vasi ornamentali ordinati nella piazzetta nord, non piu' nella fascia sud davanti alla pineta.
+- Ridisegnato marble_statue.png: statua piu' alta, affilata, ombreggiata, con pedestal, corpo verticale e dettagli di profondita'. Aggiornata anche la scala di placeStatue a hScale 1.82.
+- Preservati: sala giochi, biliardo/ping-pong migliorati, fontana centrata, road topology V28/V29, parcheggio 9 auto senza parking_line, mare aperto, docce gocciolanti, occlusione soffitti.
+
+Check V30:
+- node --check OK.
+- runtime mock/metrics OK.
+- roadBlocked 0.
+- spriteRoad 0.
+- spriteSea 0.
+- cafeTables 3.
+- barDehorsPots 4.
+- marbleStatue 1.
+- gameRoomTables 2.
+- redHighWallCells presenti.
+- redLowWallCells presenti.
+- roadReachBar/Pineta/GameRoom/Beach true.
+
+
+CHECKPOINT V31 - ANNOTATED HEDGES / CAFE TRAIL FIX
+--------------------------------------------------
+Base reale: V30_MAP_COORDS_BAR_STATUE_FIX.
+Scopo: correggere l'errore residuo sui due muri rossi annotati, ripristinare il sentiero viola in pineta e migliorare lo sprite dei tavolini bar.
+Interventi:
+- rimossi i segmenti V30 generici x33..50/y31..32 e x2..8/y52..53;
+- aggiunto prolungamento reale del muro est della pineta: celle x35..64, y31..32, agganciate alla parete/guida del percorso e non su roadMask;
+- aggiunto prolungamento del muro sud/ovest dell'area yoga: celle x3..10, y54..55, senza entrare nella zona yoga e senza tagliare tende;
+- ripristinato il sentiero viola tramite carvePinetaScenicTrailV31(), reinciso dopo le piazzole e disegnato attorno allo yoga, non dentro lo yoga;
+- spostata una piccola piazzola senza tenda che interferiva col nuovo muro yoga;
+- migliorato cafe_table_chairs.png: tavolo/sedie più bassi e prospettici, ombrellone più alto, più aria sopra la testa;
+- placeCafeSet aggiornato con hScale/wScale/groundSink coerenti per il nuovo asset;
+- sanity finale: rimuove camp_stool/tent finiti su roadMask quando il sentiero viene reinciso dopo le piazzole.
+Preservati: fontana, docce gocciolanti, mare aperto, parcheggio 9 auto, sala giochi, occlusione soffitti, ancoraggio sprite, bar a nord con 3 tavolini e 4 vasi.
+Check V31: node --check OK; asset referenziati/presenti 56/56; roadBlocked 0; spriteRoad 0; spriteSea 0; cafeTables 3; barDehorsPots 4; trailCells 74; trailInYoga 0; eastPinetaWallExtension 59 celle; yogaWallExtension 12 celle; roadReachBar/Pineta/GameRoom/Beach true; fountain 1; showers 4; parkingCars 9; parkingLineSprites 0.
+
+
+CHECKPOINT V32_TARGET_HEDGES_BAR_GREEN_FIX
+------------------------------------------
+Base reale: V31_ANNOTATED_HEDGES_CAFE_TRAIL_LOCAL.
+Scopo: correggere davvero i due muri rossi fuori target della V31 e arricchire l'area esterna del bar senza toccare il resto.
+
+Interventi completati:
+- Rimossi esplicitamente i label/celle errati V31: v31_east_pineta_wall_extension e v31_yoga_wall_extension.
+- Ricreato il muro rosso alto come prolungamento coerente del muro est/nord della pineta verso il bivio: coordinate V32 x34..51, y20..21, label v32_east_pineta_wall_extension.
+- Ricreato il muro rosso basso come prolungamento ovest del muro superiore dell'area yoga: coordinate V32 x2..9, y42..43, label v32_yoga_wall_extension.
+- Preservato il sentiero viola interno della pineta: trailCells 74, trailInYoga 0.
+- Arricchita l'area bar esterna a nord/ovest con 12 ciuffi d'erba ordinati e 3 cespugli lontani, senza metterli sulla strada o dentro i tavolini.
+- Non sono stati modificati asset, rete stradale, parcheggio, mare, fontana, docce, sala giochi o occlusione soffitti.
+
+Check V32:
+- node --check OK.
+- runtime metrics/mock OK.
+- integrita' ZIP OK.
+- asset PNG referenziati/presenti 56/56.
+- oldWrongEast 0.
+- oldWrongYoga 0.
+- v32East 36 celle.
+- v32Yoga 16 celle.
+- v32EastRoad 0.
+- v32YogaRoad 0.
+- cafeTables 3.
+- barDehorsPots 4.
+- barGrass 12.
+- barBush 3.
+- roadBlocked 0.
+- spriteRoad 0.
+- spriteSea 0.
+- roadReachBar/Pineta/GameRoom/Beach/Parking true.
+- fontana 1, docce 4, parcheggio auto 9, parkingLineSprites 0.
+- CeilingDepthBuffer/ceilingSpriteClipY preservati.
+
+Errori registrati e chiusi:
+- V31 usava coordinate fuori target e label presenti come falso successo; V32 rimuove quei label e crea nuovi muri secondo coordinate ricavate dallo screenshot.
+- V31 non arricchiva il dehors bar con flora ambientale; V32 aggiunge vegetazione controllata vicino ai muri nord/ovest.
+
+
+================================================================================
+AGGIORNAMENTO V33 - TAMERICI, PUBBLICITA MURI LUNGHI, STATUA A COORDINATE
+================================================================================
+- Base: V32 reale.
+- V33 sposta statua marmo a x40.55/y34.65.
+- Aggiunti asset tamarisk_0/1/2: gruppo fitto a ovest reception e pochi esemplari sparsi su erba/prati/margini muri lunghi.
+- Aggiunti asset pubblicitari ad_gelato/ad_pizza/ad_patatine/ad_tris e posizionati solo su/accanto a muri cespugliosi lunghi, max 2 per muro.
+- Preservati: muri target V32, sentiero viola, bar dehors, sala giochi, fontana, docce, mare aperto, parcheggio e rete stradale.
+
+================================================================================
+CHECKPOINT V34 - SIGNAGE, PALME MAIN ROAD E PUBBLICITA' A MURO
+================================================================================
+Build prodotta: PERLA1_V34_SIGNAGE_PALMS_WALL_DECALS_LOCAL.zip
+Base reale: PERLA1_V33_TAMARISKS_WALL_ADS_LOCAL.zip
+
+Interventi eseguiti:
+1) Palme lato ovest main road sud:
+   - aggiunta quinta ordinata di palme dal tratto dopo la statua verso sud.
+   - Le palme sono sul lato ovest della main road, non sulla carreggiata.
+   - Mantenuta distanza da statua e fontana.
+
+2) Pubblicita' sui muri lunghi:
+   - Convertite da sprite billboard a decal/wall overlay tramite wallDecalMap.
+   - Rendering agganciato al wallcasting: la pubblicita' resta stampata sulla cella muro e non ruota verso il giocatore.
+   - Asset ad_gelato/ad_pizza/ad_patatine/ad_tris ridisegnati con testo utile "VAI AL BAR" e immagine riconoscibile.
+
+3) Cartelli direzionali billboard:
+   - Aggiunti 9 cartelli: RECEPTION, BAR, PINETA, CAMPER, BAGNI, SPIAGGIA, PARK, TENDE, YOGA.
+   - Sono sprite billboard non bloccanti, messi vicino agli ingressi senza stare sulla strada o nel mare.
+
+4) Asset nuovi V34:
+   - sign_reception.png
+   - sign_bar.png
+   - sign_pineta.png
+   - sign_camper.png
+   - sign_bagni.png
+   - sign_spiaggia.png
+   - sign_parcheggio.png
+   - sign_tende.png
+   - sign_yoga.png
+   - Ridisegnati gli asset pubblicitari ad_*.png.
+
+Check V34 eseguiti:
+- node --check OK.
+- runtime metrics/mock OK.
+- render smoke test OK.
+- asset mancanti: 0.
+- wallAdSprites: 0.
+- wallDecals: 6.
+- wallDecalsOnRoad: 0.
+- wallDecalsNotWall: 0.
+- directionSigns: 9.
+- directionSignsRoad: 0.
+- directionSignsSea: 0.
+- palmsSouthRoadWest: 7.
+- palmNearStatue: 0.
+- palmNearFountain: 0.
+- spriteRoad: 0.
+- spriteSea: 0.
+- fontana/docce/parcheggio/tavolini/tamerici preservati.
+================================================================================
+
+
+================================================================================
+CHECKPOINT V35 - TAMERICI CAMPO PARCHEGGIO + DECAL NON SPECCHIATE
+================================================================================
+Base reale: PERLA1_V34_SIGNAGE_PALMS_WALL_DECALS_LOCAL.zip
+Interventi:
+- Corretto il sistema di decal pubblicitari sui muri: ora `wallDecalMap` salva anche la faccia del muro; il wallcasting disegna la decal solo sulla faccia colpita corretta e usa `decalTX` separato dal `tX` della siepe per evitare scritte specchiate.
+- Aggiunto campo verde/tamerici vicino al parcheggio, dall'altro lato della main road e in prossimita' del lungo muro-cespuglio esteso da pineta.
+- Aggiunti ciuffi d'erba nel campo verde del parcheggio.
+- Aggiunte tamerici sui confini liberi nord/est/ovest, evitando pineta, spiaggia e aree occupate.
+- Aggiunte tamerici appoggiate al muro pineta lato main road nel tratto statua -> fontana, dietro la linea delle palme V34.
+Preservati: main road, parcheggio, cartelli direzionali, bar/dehors, fontana, docce, occlusione soffitti, mare aperto, sala giochi e pineta.
+
+CHECK FINALE V35:
+- node --check: OK
+- runtime metrics/mock: OK
+- asset PNG mancanti: 0
+- sprite su strada: 0
+- sprite in mare: 0
+- tamerici totali: 43
+- tamerici campo parcheggio: 10
+- ciuffi erba campo parcheggio: 9
+- tamerici confini liberi: 12
+- tamerici muro pineta lato main road: 7
+- tamerici su strada/mare/tettoie/non-erba: 0
+- wall decal come sprite: 0
+- wall decal face-aware: 6
+- decal senza face: 0
+- decal su strada/non muro: 0
+- cartelli direzionali: 9
+- fontana/docce/parcheggio/bar/sala giochi/mare aperto preservati.
+
+
+CAMBIAMENTI V36 - BUILDING HEIGHT / ROOF CAP / DECAL DIRECTION
+---------------------------------------------------------------
+Base: V35_TAMARISKS_DECAL_FIX reale.
+
+1. Decal pubblicitari sui muri:
+   - corretta la causa reale del testo che partiva da destra e finiva a sinistra;
+   - introdotta getWallDecalTexX(face, rawTX, manualFlip), separata dal tX della texture siepe;
+   - le pubblicita' restano decal nel wallcasting, non tornano sprite billboard;
+   - il sistema face-aware V35 resta preservato, ma ora decide anche il verso di campionamento del testo.
+
+2. Edifici piu' alti:
+   - aggiunta wallHeightMap parallela alla mappa;
+   - buildClosedRoom marca i muri degli edifici chiusi con altezza extra moderata;
+   - il wallcasting ancora i muri a terra e li fa crescere verso l'alto, senza modificare collisioni o routing;
+   - muri-cespuglio e recinti restano altezza normale.
+
+3. Tetti/fasce piu' realistiche:
+   - aggiunto roof cap/fascia superiore colorata e spessa sui muri degli edifici alti;
+   - colonne delle tettoie aperte leggermente alzate in modo automatico quando texId=18 e allowRoof=true;
+   - occlusione verticale soffitti/sprite V19 preservata.
+
+RISULTATO CHECK V36
+-------------------
+- node --check: OK.
+- runtime metrics/mock: OK.
+- render smoke test: OK.
+- integrita' ZIP: OK.
+- asset mancanti: 0.
+- wallDecals: 6.
+- wallAdSprites: 0.
+- decalNoFace: 0.
+- getWallDecalTexX presente.
+- buildingTall: 55.
+- roofedBuildingWallTall: 55.
+- hedgeTall: 0.
+- fenceTall: 0.
+- spriteRoad: 0.
+- spriteSea: 0.
+- fontana/docce/parcheggio/cartelli/tamerici/bar/sala giochi preservati.
+
+
+================================================================================
+CHECKPOINT V37 - BUILDING ROOF RIM / THICK DECORATED ROOFS
+================================================================================
+Build: PERLA1_V37_THICK_DECORATED_ROOFS_LOCAL.zip
+Base: V36 reale.
+Interventi:
+- Aggiunto `drawRoofRimColumn()` nel wallcasting: tetti degli edifici chiusi più spessi, colorati, con tegole, listello e gronda/ombra.
+- Sostituito il cap sottile V36 con bordo tetto più leggibile e ancorato alla facciata.
+- Aggiunto `drawCeilingSegment()` per rendere le tettoie/gazebo meno anonime tramite travetti/fasce leggere.
+- Il sistema intelligente di occlusione soffitti sugli sprite è stato preservato: nessun refactor di `CeilingDepthBuffer`, `CeilingColumnHasDepth`, `ceilingSpriteClipY()`.
+- Decal pubblicitari: preservata soluzione V36 `getWallDecalTexX()` per testo non invertito.
+Da verificare a occhio in gioco:
+- Gli edifici chiusi devono leggere come strutture più alte con tetto vero, non striscia.
+- I gazebo sono migliorati ma restano volutamente leggeri per non rompere clipping/occlusione.
+
+
+
+================================================================================
+CHECKPOINT V39 - STABLE TEXTURE ROOFS / ROLLBACK GRONDA MOBILE V37
+================================================================================
+Build: PERLA1_V39_STABLE_TEXTURE_ROOFS_LOCAL.zip
+Base reale: PERLA1_V37_THICK_DECORATED_ROOFS_LOCAL.zip
+Nota: V38 e' stata trattata come fase interna di stabilizzazione/rollback dell'overlay tetto V37; la consegna finale richiesta e' V39 completa.
+
+Problema reale risolto:
+- V37 aveva check tecnici positivi ma resa tetti respinta: gronda mobile in avvicinamento/allontanamento, tetto percepito come scivolato dietro alla parete, primo muro di appoggio scoperto.
+- Causa tecnica: `drawRoofRimColumn()` disegnava fascia, tegole, listello e gronda come overlay per colonna derivato da `baseLineH`/proiezione/distanza. L'elemento non aveva footprint reale e non era parte della texture campionata dal raycaster.
+
+Interventi V39:
+1. Stabilizzazione tetti edificio:
+   - disattivata la resa operativa di `drawRoofRimColumn()`; la funzione resta come compatibilita'/debug ma non disegna piu' overlay dinamici.
+   - rimossa la chiamata operativa nel wallcasting: nessun tetto/gronda dinamica viene piu' disegnata sopra la parete.
+   - ridotta l'altezza edificio extra a valore piu' prudente (`buildingWallHeightForTex` 1.14 per tex 2/3), evitando facciate troppo stirate.
+
+2. Nuovi asset texture-stable:
+   - aggiunto `wall_wood_reception_roof_v39.png`.
+   - aggiunto `wall_tile_bath_roof_v39.png`.
+   - aggiornato ASSET_MANIFEST ID 2 e 3 per usare le nuove texture con fascia tetto/tegole/trim/ombra gia' disegnati nel PNG.
+   - il tetto ora e' parte della texture della parete, quindi segue il wallcasting normale e non puo' muoversi come overlay screen-space indipendente.
+
+3. Tettoie/gazebo conservativi:
+   - `drawCeilingSegment()` reso piu' prudente: niente pattern screen-space vistosi, solo resa leggera e stabile.
+   - preservati `CeilingDepthBuffer`, `CeilingColumnHasDepth`, `ceilingSpriteClipY()`.
+
+4. Preservazioni intenzionali:
+   - decal pubblicitari preservati come wall overlay face-aware con `getWallDecalTexX()`.
+   - nessun cambio a rete stradale, mare, fontana, docce, parcheggio, bar, pineta, sala giochi, tamerici, cartelli direzionali o routing.
+   - nessun refactor generale del renderer.
+
+RISULTATO CHECK V39
+-------------------
+- node --check: OK.
+- runtime mock/metrics: OK.
+- asset PNG nel manifest presenti: 72/72; PNG totali su disco: 74 (include le 2 texture originali non piu' referenziate e le 2 nuove V39).
+- asset mancanti: 0.
+- sprite totali: 976.
+- fontana: 1.
+- docce: 4.
+- parkingCars: 9.
+- parkingLineSprites: 0.
+- spriteRoad: 0.
+- spriteSea: 0.
+- wallDecals: 6.
+- decalNoFace: 0.
+- wallAdSprites: 0.
+- directionSigns: 9.
+- tallHedge: 0.
+- tallFence: 0.
+- tallBuildings: 55.
+- roof/ceiling cells: 356.
+- CeilingDepthBuffer/CeilingColumnHasDepth/ceilingSpriteClipY presenti.
+- ASSET_MANIFEST ID 2 -> `wall_wood_reception_roof_v39.png`.
+- ASSET_MANIFEST ID 3 -> `wall_tile_bath_roof_v39.png`.
+- chiamata operativa a `drawRoofRimColumn(x,drawStartFixed,...)`: assente.
+- integrita' ZIP: OK.
+
+File modificati rispetto a V37:
+- `01_GIOCO_PRONTO_LOCAL_TEST/index.html`.
+- `01_GIOCO_PRONTO_LOCAL_TEST/assets/raycast/wall_wood_reception_roof_v39.png` nuovo.
+- `01_GIOCO_PRONTO_LOCAL_TEST/assets/raycast/wall_tile_bath_roof_v39.png` nuovo.
+- `METODO_LAVORO_ANTI_REGRESSIONE_PERLA1.txt` aggiornato.
+- `STATUS_PROGETTO_E_DIPENDENZE_PERLA1.txt` aggiornato.
+
+Nota prudente:
+- La correzione V39 punta a eliminare l'instabilita' visiva del sistema tetti V37. Non introduce vera geometria 3D/overhang, perche' sarebbe una modifica rischiosa al raycaster, al clipping soffitti e allo spritecasting. Il risultato e' intenzionalmente conservativo e texture-stable.
+
+
+
+================================================================================
+CHECKPOINT V40 - ROOF LAYER 2.5D DEDICATO / TETTI A VOLUME
+================================================================================
+Build: PERLA1_V40_ROOF_LAYER_2_5D_LOCAL.zip
+Base reale: PERLA1_V39_STABLE_TEXTURE_ROOFS_LOCAL.zip
+
+Premessa onesta:
+- V37 aveva introdotto una gronda procedurale nel wallcasting (`drawRoofRimColumn`) che tecnicamente passava i check ma visivamente si muoveva in avvicinamento/allontanamento.
+- V39 ha disattivato quella gronda e ha reso il tetto texture-stable, ma ha fallito il problema principale: il tetto era ancora una faccia verticale, sottile, simile a un foglio, e sembrava scivolato dietro al muro.
+- V40 passa quindi dalla soluzione texture/cap a Soluzione B: layer tetto 2.5D dedicato.
+
+Interventi V40:
+1. Roof layer dedicato:
+   - aggiunta struttura `roofSegments` separata da `map`, `cMap`, `wallHeightMap` e `sprites`.
+   - aggiunta `registerClosedBuildingRoof()` per registrare un footprint tetto degli edifici chiusi reali.
+   - `buildClosedRoom()` registra automaticamente roof segment per wallTex 2/3 con ceilType valido.
+   - sulla mappa corrente vengono registrati 2 roof segment: reception e bagni/docce.
+
+2. Proiezione 2.5D in coordinate mondo:
+   - aggiunta `projectRoofPoint(wx, wy, wz)`, che proietta punti mondo con altezza Z propria.
+   - aggiunta `drawRoofPoly()` per poligoni tetto proiettati, non legati a `lineH`.
+   - aggiunta `drawGabledRoof2_5D()` con falde, colmo, fascia/gronda frontale e laterale.
+   - aggiunta `drawRoofLayer2_5D(time)` con ordinamento far-to-near e culling distanza prudente.
+   - il layer viene disegnato dopo il wallcasting e prima dello spritecasting.
+
+3. Rimozione dipendenza tetto dalle texture muro:
+   - ASSET_MANIFEST ID 2 torna a `wall_wood_reception.png`.
+   - ASSET_MANIFEST ID 3 torna a `wall_tile_bath.png`.
+   - Le texture V39 restano nello ZIP come asset non referenziati per tracciabilita', ma non sono piu' la soluzione tetto principale.
+
+4. Preservazioni intenzionali:
+   - `drawRoofRimColumn()` resta no-op/debug e non viene richiamato operativamente.
+   - `getWallDecalTexX()` e `wallDecalMap` face-aware preservati.
+   - `CeilingDepthBuffer`, `CeilingColumnHasDepth`, `ceilingSpriteClipY()` preservati senza refactor.
+   - Nessun cambio a roadMask, main road, mare, fontana, docce, parcheggio, bar, pineta, sala giochi, tamerici o cartelli direzionali.
+
+RISULTATO CHECK V40
+-------------------
+- node --check: OK.
+- runtime mock/metrics: OK.
+- render smoke mock: OK, drawWorld eseguito con canvas mock e screenOps > 3000.
+- asset PNG nel manifest presenti: 72/72.
+- asset mancanti: 0.
+- ZIP integrity: OK.
+- sprite totali: 976.
+- roofSegments: 2 (reception, bath).
+- fontana: 1.
+- docce: 4.
+- parkingCars: 9.
+- parkingLineSprites: 0.
+- spriteRoad: 0.
+- spriteSea: 0.
+- wallDecals: 6.
+- decalNoFace: 0.
+- wallAdSprites: 0.
+- directionSigns: 9.
+- tallHedge: 0.
+- tallFence: 0.
+- tallBuildings: 55.
+- roof/ceiling cells: 356.
+- tamerici su strada/mare/tettoie/non-erba: 0.
+- CeilingDepthBuffer/CeilingColumnHasDepth/ceilingSpriteClipY presenti.
+- ASSET_MANIFEST ID 2 -> `wall_wood_reception.png`.
+- ASSET_MANIFEST ID 3 -> `wall_tile_bath.png`.
+- `drawRoofLayer2_5D` presente ed esposto nel debug.
+- integrita' ZIP: OK.
+
+Nota prudente:
+- V40 e' il primo passaggio strutturale corretto verso tetti con volume: non e' una gronda screen-space e non e' una texture muro. E' un layer geometrico 2.5D separato.
+- La resa finale va comunque valutata nel browser reale dall'utente, perche' il check mock garantisce stabilita' tecnica e assenza regressioni, non giudizio estetico definitivo.
+================================================================================
+
+
+
+================================================================================
+CHECKPOINT V41 INTERNA - ROOF LAYER DEPTH-AWARE / NO TRAPASSO MURI-SOFFITTI
+================================================================================
+Base reale: PERLA1_V40_ROOF_LAYER_2_5D_LOCAL.zip.
+Consegna richiesta: non consegnare V41 separata; usare V41 come fase interna e consegnare V42 completa.
+
+Problema reale corretto:
+- V40 aveva un roof layer 2.5D separato dal wallcasting, quindi finalmente volumetrico.
+- Però `drawRoofPoly()` proiettava i vertici e poi usava `ctx.fill()` sull'intero poligono. Il tetto veniva disegnato dopo floor/ceiling/wallcasting e prima degli sprite, ma senza depth test.
+- Risultato: tetti visibili attraverso muri, soffitti piatti e tettoie.
+
+Interventi V41 interna:
+1. Buffer verticali muro:
+   - aggiunti `WallTopBuffer` e `WallBottomBuffer`;
+   - popolati durante il wallcasting insieme a `ZBuffer`;
+   - servono a distinguere il caso corretto "tetto sopra il top del muro" dal caso errato "tetto dietro la fascia verticale del muro".
+
+2. Test visibilità tetto:
+   - aggiunta `roofVisibleAt(px, py, depth)`;
+   - verifica ZBuffer solo nella fascia verticale del muro;
+   - verifica `CeilingDepthBuffer`/`CeilingColumnHasDepth` quando un soffitto/tettoia è più vicino nella stessa porzione di schermo.
+
+3. Rasterizzazione depth-aware:
+   - `drawRoofPoly()` non usa più fill libero del poligono;
+   - il poligono viene rasterizzato per colonne e segmenti verticali;
+   - ogni pixel/segmento viene disegnato solo se passa `roofVisibleAt()`.
+
+4. Linee tetto depth-aware:
+   - aggiunta `drawRoofLineDepth()`;
+   - colmo, trim e listelli non sono più stroke globali che possono attraversare muri/soffitti.
+
+Preservazioni V41:
+- nessun cambio a roadMask/topologia strade;
+- nessun cambio a mare, fontana, docce, parcheggio, bar, pineta, sala giochi, tamerici;
+- decal pubblicitari face-aware preservati;
+- occlusione soffitti/sprite V19 preservata.
+
+
+================================================================================
+CHECKPOINT V42 - ROOF DEPTH + VARIED PITCH / TETTI DIFFERENZIATI
+================================================================================
+Build: PERLA1_V42_ROOF_DEPTH_VARIED_LOCAL.zip
+Base reale: V40 con V41 interna applicata.
+
+Interventi estetici V42:
+1. Tetti meno schiacciati:
+   - reception: `ridgeZ` aumentato a 1.86, `eaveZ` 1.05, overhang 0.58;
+   - bagni/docce: `ridgeZ` aumentato a 1.70, `eaveZ` 1.03, overhang 0.38.
+
+2. Tetti non tutti uguali:
+   - reception con colmo asse X, più largo e più alto;
+   - bagni/docce con colmo asse Y, più compatto e meno sporgente;
+   - palette e trim differenziati;
+   - numero/asse dei listelli differenziato tramite `trimSteps`.
+
+3. Manifest texture coerente:
+   - ASSET_MANIFEST ID 2 resta `wall_wood_reception.png`;
+   - ASSET_MANIFEST ID 3 resta `wall_tile_bath.png`;
+   - le texture V39 restano eventuale traccia storica nello ZIP, ma non sono usate per fingere il tetto.
+
+Risultato atteso:
+- tetto ancora geometrico 2.5D, non texture muro;
+- meno piatto e meno uniforme della V40;
+- non disegnato sopra muri/soffitti più vicini grazie a depth/clipping;
+- sistemi storici preservati.
+
+CHECK V42 ESEGUITI
+------------------
+- node --check: OK.
+- runtime mock/metrics: OK.
+- render smoke mock multi-view: OK.
+- ZIP integrity: OK.
+- asset PNG nel manifest presenti: 72/72.
+- asset mancanti: 0.
+- sprite totali: 976.
+- roofSegments: 2.
+- roofSegments parametri differenziati:
+  - reception axis=x, eaveZ=1.05, ridgeZ=1.86, overhang=0.58;
+  - bath axis=y, eaveZ=1.03, ridgeZ=1.70, overhang=0.38.
+- roofVisibleAt presente.
+- WallTopBuffer/WallBottomBuffer presenti.
+- drawRoofLineDepth presente.
+- fontana: 1.
+- docce: 4.
+- parkingCars: 9.
+- parkingLineSprites: 0.
+- spriteRoad: 0.
+- spriteSea: 0.
+- wallDecals: 6.
+- decalNoFace: 0.
+- wallAdSprites: 0.
+- directionSigns: 9.
+- pinetaFlowers: 0.
+- pinetaGenericBushes: 0.
+- tamerici su strada/mare/tettoie/non-erba: 0.
+- CeilingDepthBuffer/CeilingColumnHasDepth/ceilingSpriteClipY presenti.
+
+Nota prudente:
+- Questa patch corregge il difetto strutturale V40: il tetto non viene più disegnato come fantasma sopra la scena.
+- La valutazione estetica finale resta da fare nel browser reale, ma la pipeline ora è molto più corretta: geometria roof layer + depth/clipping + parametri estetici differenziati.
+================================================================================
+
+
+CAMBIAMENTI V43_ROOF_OWNER_CLIPPING
+-----------------------------------
+Base: V42_ROOF_DEPTH_VARIED reale.
+Obiettivo: correggere sparizione tetti vicino/rotazione e linee del soffitto visibili attraverso il tetto.
+
+Interventi tecnici:
+- aggiunta ceilingOwnerMap: proprietario semantico dei soffitti per cella mondo;
+- aggiunto roofOwnerIdForWallTex() e setCeilOwner();
+- buildClosedRoom ora assegna owner ai ceiling interni di reception e bagni;
+- aggiunto CeilingOwnerBuffer parallelo a CeilingDepthBuffer;
+- aggiunto WallOwnerBuffer parallelo a WallTopBuffer/WallBottomBuffer;
+- setCeilingDepthAt ora salva anche owner del soffitto più vicino;
+- roofVisibleAt(px, py, depth, roof) ora è owner-aware:
+  - soffitti/muri esterni davanti continuano a occludere;
+  - soffitto interno dello stesso edificio non buca il tetto visto da fuori;
+  - il giocatore dentro l'edificio continua a non vedere il roof layer;
+  - gli sprite mantengono il clipping classico tramite CeilingDepthBuffer;
+- aggiunto near-plane clipping per roof poly/line:
+  - roofWorldToCamera();
+  - projectRoofCameraPoint();
+  - clipRoofCameraPoly();
+  - projectRoofPolyPoints();
+  - projectRoofLinePoints();
+- drawRoofPoly continua a rasterizzare a colonne, ma non scarta più l'intera falda se un solo vertice è vicino/dietro il piano camera.
+
+Sistemi preservati:
+- decal pubblicitari face-aware;
+- CeilingDepthBuffer / CeilingColumnHasDepth / ceilingSpriteClipY;
+- roadMask e rete stradale;
+- mare aperto;
+- fontana;
+- docce animate;
+- parcheggio 9 auto;
+- cartelli direzionali 9;
+- pineta senza fiori/cespugli generici;
+- bar, sala giochi, tamerici.
+
+Stato check V43:
+- node --check OK;
+- smoke runtime mock OK;
+- roofSegments = 2;
+- ceilingOwnerMap popolata;
+- CeilingOwnerBuffer presente;
+- WallOwnerBuffer presente;
+- asset manifest invariato e senza missing;
+- anti-regressione principali preservati.
+
+
+================================================================================
+CHECKPOINT V44 - UNIFIED COVER / WALLS ALWAYS OCCLUDE ROOF
+================================================================================
+Build: PERLA1_V44_UNIFIED_COVER_WALL_OCCLUSION_LOCAL.zip
+Base reale: PERLA1_V43_ROOF_OWNER_CLIPPING_LOCAL.zip.
+
+Problema reale affrontato:
+- V43 faceva ancora sparire presto i tetti in alcune rotazioni/avvicinamenti.
+- Peggio: l'eccezione owner-aware poteva permettere al tetto di trapassare pareti interne/laterali dello stesso edificio visto da fuori.
+- Il modello era ancora troppo separato: roof esterno e soffitto interno combattevano tramite eccezioni.
+
+Decisione architetturale V44:
+- Adottato modello "copertura unificata": tetto esterno e soffitto interno sono due facce della stessa copertura.
+- Da fuori: roof layer 2.5D visibile, ma tutte le pareti occludono sempre se sono davanti.
+- Da dentro: roof layer esterno non disegnato; resta visibile il soffitto cMap; clipping sprite V19 resta invariato.
+
+Interventi codice:
+- `roofVisibleAt(px, py, depth, roof)` riscritto nella parte muro:
+  - rimosso il permesso `wallOwner===ownerId`;
+  - se `ZBuffer` indica un muro davanti e il pixel tetto cade nella fascia `WallTopBuffer/WallBottomBuffer`, il muro occlude sempre.
+- `CeilingOwnerBuffer` resta usato solo per non far bucare il tetto esterno dal soffitto interno dello stesso edificio quando il giocatore e' fuori.
+- `eaveZ`, `ridgeZ`, `fasciaLowZ` alzati: reception e bagni hanno falde sopra la quota parete 1.10, quindi non sono piu' ancorati sotto/al limite del muro.
+- `WallOwnerBuffer` resta esposto/debug ma non concede attraversamento pareti.
+
+Sistemi preservati:
+- `CeilingDepthBuffer`, `CeilingColumnHasDepth`, `ceilingSpriteClipY()` preservati;
+- sprite clipping soffitti non indebolito;
+- wall decals face-aware preservati;
+- roadMask/rete stradale non modificati;
+- mare, fontana, docce, parcheggio, bar, pineta, sala giochi, tamerici e cartelli non modificati.
+
+Parametri roof V44:
+- reception: axis=x, eaveZ=1.18, ridgeZ=2.05, fasciaLowZ=1.10, overhang=0.58;
+- bagni/docce: axis=y, eaveZ=1.16, ridgeZ=1.92, fasciaLowZ=1.08, overhang=0.38.
+
+
+CHECK V44 ESEGUITI
+------------------
+- node --check: OK.
+- runtime mock/metrics: OK.
+- asset PNG nel manifest presenti: 72/72.
+- asset mancanti: 0.
+- map size: 80x88.
+- sprite totali: 976.
+- roofSegments: 2.
+- roofVisibleAt: regola pareti-sempre-davanti presente.
+- eccezione `wallOwner===ownerId`: assente.
+- CeilingDepthBuffer/CeilingColumnHasDepth/CeilingOwnerBuffer/WallTopBuffer/WallBottomBuffer presenti.
+- ceilingOwnerMap popolata: 143 celle.
+- fontana: 1.
+- docce: 4.
+- parkingCars: 9.
+- directionSigns: 9.
+- parkingLineSprites: 0.
+- spriteRoad: 0.
+- spriteSea: 0.
+- wallDecals: 6.
+- decalNoFace: 0.
+- pinetaFlowers: 0.
+- pinetaGenericBushes: 0.
+- tamerici: 43.
+- tamerici su strada/mare/tettoie/non-erba: 0.
+- tallHedge: 0.
+- tallFence: 0.
+
+Nota prudente:
+- V44 non promette perfezione estetica assoluta: corregge il paradosso architetturale V43 e rende il modello piu' coerente.
+- Il test browser reale resta necessario per valutare se la parete ora occlude correttamente il tetto senza farlo sparire troppo presto.
+================================================================================
+
+
+================================================================================
+CHECKPOINT V45 - UNIFIED COVER UNDERSIDE / SOTTOTETTO 2.5D
+================================================================================
+Build: PERLA1_V45_UNIFIED_COVER_UNDERSIDE_LOCAL.zip
+Base reale: PERLA1_V44_UNIFIED_COVER_WALL_OCCLUSION_LOCAL.zip.
+
+Problema reale affrontato:
+- V44 ha migliorato l'occlusione pareti/tetto, ma da fuori il soffitto/sottotetto risultava assente: il modello pratico era ancora troppo binario, fuori=tetto esterno e dentro=soffitto cMap.
+- La richiesta corretta era: il soffitto deve restare parte integrante della copertura; da fuori non deve coprire le pareti, ma deve essere presente dove geometricamente visibile e occluso dalle pareti quando sono davanti.
+
+Decisione architetturale V45:
+- Mantenuto il modello di copertura unificata, ma reso più reale nel codice.
+- Aggiunta la faccia inferiore/sottotetto nel roof layer 2.5D, separata dal vecchio `drawCeilingSegment()` ma compatibile con esso.
+- Il ceiling cMap resta attivo per interni, tettoie e clipping sprite; non viene rimosso né indebolito.
+- Le pareti continuano a vincere sempre sulla copertura tramite `roofVisibleAt()`.
+
+Interventi codice:
+- Palette roof estese con `soffit` e `soffitLine`.
+- `registerClosedBuildingRoof()` ora salva `undersideZ` e `undersideSteps` per reception e bagni.
+- `drawGabledRoof2_5D()` ora disegna:
+  - falde superiori;
+  - fascia/gronda;
+  - faccia inferiore/sottotetto come poligono 2.5D `layer:'soffit'`;
+  - linee/listelli sottotetto con `drawRoofLineDepth()`.
+- Il sottotetto usa `drawRoofPoly()`, quindi eredita near-plane clipping, depth test contro pareti e test selettivo contro CeilingOwnerBuffer.
+- Aggiunto debug helper `setPlayerForDebug()` per smoke render multi-view senza influire sul gameplay.
+
+Parametri V45:
+- reception: axis=x, eaveZ=1.18, ridgeZ=2.05, fasciaLowZ=1.10, undersideZ=1.075, overhang=0.58;
+- bagni/docce: axis=y, eaveZ=1.16, ridgeZ=1.92, fasciaLowZ=1.08, undersideZ=1.055, overhang=0.38.
+
+Sistemi preservati:
+- `CeilingDepthBuffer`, `CeilingColumnHasDepth`, `CeilingOwnerBuffer`, `ceilingSpriteClipY()` presenti;
+- clipping sprite soffitti preservato;
+- wall decals face-aware preservati;
+- roadMask/rete stradale non modificati;
+- mare, fontana, docce, parcheggio, bar, pineta, sala giochi, tamerici e cartelli non modificati.
+
+CHECK V45 ESEGUITI
+------------------
+- node --check: OK.
+- runtime mock/metrics: OK.
+- render smoke multi-view: OK.
+- ZIP integrity: OK.
+- asset PNG nel manifest presenti: 72/72.
+- asset mancanti: 0.
+- map size: 80x88.
+- sprite totali: 976.
+- roofSegments: 2.
+- roofSegments con `undersideZ` e `soffit`: 2/2.
+- `layer:'soffit'` presente in `drawGabledRoof2_5D()`.
+- `wallOwner===ownerId` / `sameOwner`: assenti.
+- CeilingDepthBuffer/CeilingColumnHasDepth/CeilingOwnerBuffer/WallTopBuffer/WallBottomBuffer presenti.
+- ceilingOwnerMap popolata: 143 celle.
+- fontana: 1.
+- docce: 4.
+- parkingCars: 9.
+- directionSigns: 9.
+- parkingLineSprites: 0.
+- spriteRoad: 0.
+- spriteSea: 0.
+- wallDecals: 6.
+- decalNoFace: 0.
+- pinetaFlowers: 0.
+- pinetaGenericBushes: 0.
+- tamerici: 43.
+- tamerici su strada/mare/tettoie/non-erba: 0.
+- tallHedge: 0.
+- tallFence: 0.
+
+Nota prudente:
+- V45 risolve nel codice la mancanza della faccia inferiore della copertura da fuori, senza sacrificare l'occlusione sprite.
+- Il test browser reale resta necessario per giudicare quanto sottotetto risulti esteticamente visibile nelle singole angolazioni.
+================================================================================
+
+
+
+================================================================================
+CHECKPOINT V46 - EXTERIOR SOFFIT BANDS / SOTTOGRONDA ESTERNA REALE
+================================================================================
+Build: PERLA1_V46_EXTERIOR_SOFFIT_BANDS_LOCAL.zip
+Base reale: PERLA1_V45_UNIFIED_COVER_UNDERSIDE_LOCAL.zip.
+
+Problema reale affrontato:
+- In V45 il sottotetto era stato aggiunto nel roof layer, ma come un'unica lastra orizzontale piena sopra tutta la stanza.
+- Quella lastra era quasi tutta dietro alle pareti e veniva giustamente occlusa; quindi, da fuori, il soffitto/sottotetto continuava a sembrare assente.
+- Da dentro il roof layer restava spento e si vedeva ancora il soffitto cMap storico, quindi l'unificazione era ancora incompleta sul piano percettivo.
+
+Decisione architetturale V46:
+- Conservato il modello copertura unificata, ma corretta la geometria della faccia inferiore esterna.
+- Il sottotetto visibile da fuori non e' piu' una lastra interna: e' una sottogronda a quattro bande nello spazio di overhang esterno alle pareti.
+- Le pareti continuano a occludere sempre la copertura quando sono davanti; nessun ritorno del permesso same-owner.
+- Da dentro l'edificio resta visibile il soffitto cMap storico; il clipping sprite resta invariato.
+
+Interventi codice:
+- `drawGabledRoof2_5D()` riscritto nella parte sottotetto:
+  - rimossa la `underside` piena sull'intero rettangolo;
+  - aggiunto array `soffitBands`;
+  - aggiunte bande nord/sud/ovest/est calcolate fra bounds roof (`x0/y0/x3/y3`) e footprint muro (`x1/y1/x2+1/y2+1`);
+  - le bande sono disegnate con `drawRoofPoly()` depth-aware;
+  - le linee del sottotetto sono limitate alle bande esterne e usano `drawRoofLineDepth()`.
+- Ordine painter interno modificato: falde superiori -> sottogronda esterna -> fasce/gronde -> linee.
+- Aggiornati titolo/UI a V46.
+
+Sistemi preservati:
+- `CeilingDepthBuffer`, `CeilingColumnHasDepth`, `CeilingOwnerBuffer`, `ceilingSpriteClipY()` presenti;
+- clipping sprite soffitti preservato;
+- wall decals face-aware preservati;
+- roadMask/rete stradale non modificati;
+- mare, fontana, docce, parcheggio, bar, pineta, sala giochi, tamerici e cartelli non modificati.
+
+CHECK V46 ESEGUITI
+------------------
+- node --check / parse script: OK.
+- runtime mock/metrics: OK.
+- render smoke multi-view via mock: OK.
+- asset PNG nel manifest presenti: 72/72.
+- asset mancanti: 0.
+- map size: 80x88.
+- sprite totali: 976.
+- roofSegments: 2.
+- `soffitBands` presente in `drawGabledRoof2_5D()`.
+- vecchia `layer:'soffit'` piena rimossa; presente `layer:'soffit_band'`.
+- `wallOwner===ownerId` / `sameOwner`: assenti.
+- CeilingDepthBuffer/CeilingColumnHasDepth/CeilingOwnerBuffer/WallTopBuffer/WallBottomBuffer presenti.
+- ceilingOwnerMap popolata: 143 celle.
+- fontana: 1.
+- docce: 4.
+- parkingCars: 9.
+- directionSigns: 9.
+- parkingLineSprites: 0.
+- spriteRoad: 0.
+- spriteSea: 0.
+- wallDecals: 6.
+- decalNoFace: 0.
+- pinetaFlowers: 0.
+- pinetaGenericBushes: 0.
+- tamerici: 43.
+- tallHedge: 0.
+- tallFence: 0.
+- ZIP integrity: OK.
+
+Nota prudente:
+- V46 corregge la causa reale del fallimento V45: la geometria del sottotetto non era esterna alle pareti.
+- La valutazione estetica finale resta da fare in browser reale: la sottogronda deve ora comparire soprattutto dagli angoli/lati in cui l'overhang e' visibile e non occluso dalle pareti.
+================================================================================
+
+CAMBIAMENTI V48_MODERN_ROOF_BLOCK_REBUILD
+----------------------------------------
+Base: V46_EXTERIOR_SOFFIT_BANDS reale.
+Scopo: correggere il problema persistente dei due soffitti visivi. In V46 il soffitto interno visibile proveniva ancora dal vecchio cMap/drawCeilingSegment, mentre il roof layer moderno disegnava solo una sottogronda esterna. Questo non era un tetto unificato.
+
+Interventi:
+1. Aggiunta funzione isModernCoverOwner(owner) per identificare le coperture moderne degli edifici chiusi: reception owner 1 e bagni/docce owner 2.
+2. Floor/ceiling casting modificato: per le celle cMap con owner moderno 1/2 si continua a popolare CeilingDepthBuffer/CeilingOwnerBuffer, ma non si chiama più drawCeilingSegment. Il vecchio soffitto non è più fonte visiva per questi edifici.
+3. drawGabledRoof2_5D riscritto come blocco unico:
+   - fuori edificio: falde superiori, sottogronda esterna a bande, fasce/gronde e linee depth-aware;
+   - dentro edificio: niente early return; viene disegnato l'intradosso interno come faccia inferiore del roof block moderno.
+4. roofVisibleAt ignora il CeilingDepthBuffer dello stesso owner solo per il disegno del roof block: cMap resta buffer di sicurezza per sprite, ma non buca la copertura moderna.
+5. Pareti sempre davanti alla copertura se più vicine; nessuna eccezione wallOwner/sameOwner reintrodotta.
+
+Preservazioni:
+- roadMask, mare, fontana, docce, parcheggio, bar, pineta, sala giochi, tamerici e decal non modificati.
+- CeilingDepthBuffer, CeilingOwnerBuffer, CeilingColumnHasDepth e ceilingSpriteClipY preservati.
+- Manifest asset invariato; nessun asset PNG rigenerato.
+
+Check V48:
+- node --check OK;
+- runtime mock/metrics OK;
+- render smoke multi-view mock OK;
+- asset manifest 72/72 presenti, missing 0;
+- map 80x88;
+- sprites 976;
+- roofSegments 2;
+- modern cover cMap cells 143;
+- legacy cMap cells 213;
+- fontana 1;
+- docce 4;
+- parkingCars 9;
+- directionSigns 9;
+- spriteRoad 0;
+- spriteSea 0;
+- wallDecals 6;
+- decalNoFace 0.
+
+
+CHECKPOINT V48 — MODERN_ROOF_BLOCK_REBUILD
+------------------------------------------
+Base reale: V47_UNIFIED_SOLID_ROOF_BLOCK.
+Scopo: correggere il fallimento V47 in cui, nonostante l’intenzione di blocco unico, il tetto
+moderno restava spezzato: fuori guscio/fasce, dentro intradosso rettangolare depth-testato dopo
+i muri; risultato: soffitto che spariva dentro e striscia marroncina/fascia isolata visibile fuori.
+
+Decisione tecnica V48:
+- ModernRoofBlock resta l’unica fonte visiva della copertura per owner moderni 1/2
+  (reception e bagni/docce);
+- cMap resta solo maschera spaziale e dato tecnico per buffer/occlusione sprite;
+- l’intradosso moderno viene renderizzato nel ceiling-pass con drawModernCoverCeilingSegment(),
+  usando palette.soffit del roofSegment e non drawCeilingSegment legacy;
+- drawGabledRoof2_5D() non disegna più l’intradosso interno rettangolare e non usa più soffitBands;
+- drawGabledRoof2_5D() ora disegna solo guscio esterno fuori dall’edificio: due falde + quattro
+  fasce/gronde verticali, con una sola linea di colmo molto contenuta;
+- quando il player è dentro l’edificio, il guscio esterno non viene disegnato ma l’intradosso
+  moderno è comunque visibile perché arriva dal ceiling-pass prima dei muri;
+- pareti sempre davanti al guscio esterno se più vicine; nessuna eccezione sameOwner/wallOwner.
+
+File modificati rispetto a V47:
+- 01_GIOCO_PRONTO_LOCAL_TEST/index.html;
+- AVVIA_GIOCO_WINDOWS_SENZA_PYTHON.bat;
+- AVVIA_GIOCO_SERVER_POWERSHELL.ps1;
+- METODO_LAVORO_ANTI_REGRESSIONE_PERLA1.txt;
+- STATUS_PROGETTO_E_DIPENDENZE_PERLA1.txt.
+
+Stato check V48:
+- node --check: OK;
+- runtime mock/metrics: OK;
+- asset manifest 72/72 presenti, missing 0;
+- roofSegments 2;
+- modern cMap cells 143, legacy cMap cells 213;
+- drawModernCoverCeilingSegment presente;
+- drawCeilingSegment non usato per owner moderni;
+- soffitBands/layer:'soffit_band'/intradosso rettangolare V47 assenti;
+- sprites 976; fontana 1; docce 4; parkingCars 9; directionSigns 9;
+- spriteRoad 0; spriteSea 0; wallDecals 6; decalNoFace 0;
+- CeilingDepthBuffer, CeilingColumnHasDepth, CeilingOwnerBuffer e ceilingSpriteClipY preservati.
+
+
+CHECKPOINT V49 — ANCHORED_UNIFIED_ROOF_BLOCK
+--------------------------------------------
+Base reale: V48_MODERN_ROOF_BLOCK_REBUILD.
+Scopo: risolvere i tre difetti comprovati dagli screenshot utente dopo V48:
+1. tetto moderno visivamente sospeso/galleggiante sopra il bordo superiore delle pareti;
+2. sparizione di mezza falda durante rotazione camera a causa del clipping per-colonna troppo cieco contro ZBuffer/WallTopBuffer;
+3. cambio netto di materiale/tipologia entrando nell’edificio, perché guscio esterno e ceiling-pass moderno usavano rese cromatiche separate.
+
+Interventi V49:
+- registerClosedBuildingRoof ora crea un ModernRoofBlock con wallTopZ derivato da buildingWallHeightForTex(wallTex);
+- eaveZ è saldato a wallTopZ con piccolo epsilon;
+- fasciaLowZ scende sotto wallTopZ per coprire il giunto e rimuovere il gap/galleggiamento;
+- palette esterna/interna unificata: soffit è la faccia in ombra dello stesso materiale rosso/arancio del tetto, non un secondo soffitto legno/marrone;
+- projectRoofCameraPoint conserva z;
+- drawRoofPoly interpola z e passa layer/z a roofVisibleAt;
+- roofVisibleAt diventa surface-aware: roof_top sopra il wallTopZ del proprio supporto non viene più tagliato brutalmente dal muro di appoggio; fascia nel piccolo giunto superiore può sovrapporsi per ancorare il tetto; pareti diverse o realmente davanti continuano a occludere;
+- ridge/trim line indipendenti rimosse da drawGabledRoof2_5D per evitare strisce isolate;
+- drawModernCoverCeilingSegment usa la stessa palette materiale del roof block;
+- cMap resta solo maschera/buffer tecnico per occlusione sprite, non sorgente visiva legacy per owner moderni.
+
+Preservazioni:
+- roadMask, mare, fontana, docce, parcheggio, bar, pineta, sala giochi, tamerici e decal non modificati;
+- CeilingDepthBuffer, CeilingColumnHasDepth, CeilingOwnerBuffer e ceilingSpriteClipY preservati;
+- asset manifest invariato.
+
+Check V49:
+- node --check OK;
+- runtime mock/metrics OK;
+- asset manifest 72/72 presenti, missing 0;
+- roofSegments 2;
+- wallTopZ presente; eaveZ agganciato al wallTopZ; fasciaLowZ sotto wallTopZ;
+- soffitBands/layer:'soffit_band'/intradosso rettangolare V47 assenti;
+- ridge line indipendente rimossa;
+- sprites 976; fontana 1; docce 4; parkingCars 9; directionSigns 9;
+- spriteRoad 0; spriteSea 0; wallDecals 6; decalNoFace 0.
+
+
+CHECKPOINT V50 — MODERN_BUILDING_SOLID
+--------------------------------------
+Base reale: V49_ANCHORED_UNIFIED_ROOF_BLOCK.
+
+Motivo della patch:
+- V49 era ancora visivamente fallita: tetto brutto/lastrone, ancora separato dal wallcasting, sparizione falde in rotazione e resa non abbastanza solida.
+- Decisione dopo analisi: non continuare a rattoppare il roof layer separato. Per reception e bagni/docce, muri e tetto diventano un ModernBuildingSolid unico.
+
+Interventi V50:
+- aggiunto isModernBuildingWallTex(t);
+- registerClosedBuildingRoof ora registra dati ModernBuildingSolid con modernSolid:true, wallTopZ, thickness, overhang, palette unica per muri/tetto/intradosso;
+- aggiunti collectModernWallFaces(), collectModernRoofFaces(), drawModernBuildingSolid2_5D();
+- drawGabledRoof2_5D resta wrapper compatibile ma delega al ModernBuildingSolid;
+- il wallcasting classico continua a colpire wallTex 2/3 per ZBuffer/collisione, ma non li pittura più visivamente;
+- i muri moderni visivi sono generati come facce del ModernBuildingSolid, includendo aperture/porte tramite lettura reale delle celle map;
+- il tetto esterno è generato come parte dello stesso set di facce del solido;
+- l'intradosso moderno nel ceiling-pass resta derivato dalla palette del ModernBuildingSolid;
+- cMap resta buffer tecnico per sprite clipping;
+- nessun ritorno di soffitBands, layer soffit_band, intradosso rettangolare V47 o trim/ridge line indipendenti.
+
+Check V50:
+- node --check OK;
+- runtime mock/metrics OK;
+- asset manifest 72/72 presenti;
+- asset missing 0;
+- sprites 976; roofSegments 2; modern cMap cells 143; legacy cMap cells 213;
+- fontana 1; docce 4; parkingCars 9; directionSigns 9;
+- spriteRoad 0; spriteSea 0; wallDecals 6; decalNoFace 0;
+- drawModernBuildingSolid2_5D presente; collectModernWallFaces presente; wallcastingSkipsModern true;
+- drawCeilingSegment non usato per owner moderni; soffitBands/layer soffit_band/const interior assenti.
+
+Nota onesta:
+- Chromium locale/file/http risulta bloccato dalla policy ambiente, quindi il test estetico browser reale resta da confermare dall'utente.
+- Questa patch cambia architettura visiva, non è un microfix: eventuali rifiniture estetiche dovranno partire dal nuovo ModernBuildingSolid e non tornare al roof layer separato.
+
+
+CHECKPOINT V51 — MODERN_BUILDING_SOLID_ENTRY_GUARD
+--------------------------------------------------
+Base reale: V50_MODERN_BUILDING_SOLID.
+
+Motivo della patch:
+- V50 ha finalmente reso reception e bagni/docce un ModernBuildingSolid visivo unico, ma restavano tre difetti reali:
+  1. da distanza zero contro parete moderna si poteva vedere attraverso il muro, perché il wallcasting non pitturava più wallTex 2/3 e le facce poligonali possono essere tagliate dal near-plane;
+  2. la gronda/fascia spariva troppo presto entrando;
+  3. la falda esterna spariva troppo presto entrando, perché collectModernRoofFaces dipendeva da un booleano inside.
+
+Interventi V51:
+- aggiunto modernInsideDepth(r), che misura quanto il player è davvero dentro il footprint edificio;
+- aggiunto shouldDrawModernExteriorRoof(r), che mantiene visibile il guscio esterno in zona ingresso/soglia e lo spegne solo quando il player è più profondamente dentro;
+- aggiunto shouldUseModernNearWallGuard(perpDist, wallTex), safety fallback limitato: il wallcasting pittura wallTex moderni solo molto vicino alla parete per tappare buchi da near-plane;
+- drawModernBuildingSolid2_5D ora usa shouldDrawModernExteriorRoof(r) invece del semplice if(!inside);
+- il wallcasting normale resta saltato per muri moderni a distanza ordinaria, quindi ModernBuildingSolid resta fonte visiva primaria;
+- verificata una sola chiamata a drawRoofLayer2_5D per frame;
+- launcher aggiornati a V51.
+
+Preservazioni:
+- nessun asset PNG modificato o rigenerato;
+- roadMask, mare, fontana, docce, parcheggio, bar, pineta, sala giochi, tamerici e decal non modificati;
+- CeilingDepthBuffer, CeilingColumnHasDepth, CeilingOwnerBuffer e ceilingSpriteClipY preservati;
+- cMap resta buffer tecnico; drawCeilingSegment non viene usato per owner moderni.
+
+Check V51:
+- node --check OK;
+- runtime mock OK;
+- logic check: outside/entry/deep per shouldDrawModernExteriorRoof = true/true/false su reception;
+- near wall guard: true per wallTex moderno a distanza .4, false a distanza .9 e false su wallTex non moderno;
+- manifest PNG 72/72 presenti, missing 0;
+- sprites 976; roofSegments 2;
+- fontana 1; docce 4; parkingCars 9; directionSigns 9;
+- spriteRoad 0; spriteSea 0; wallDecals 6; decalNoFace 0;
+- shouldUseModernNearWallGuard presente; shouldDrawModernExteriorRoof presente; modernInsideDepth presente;
+- drawRoofLayer2_5D chiamato una sola volta nel drawWorld.
+
+Nota prudente:
+- V51 è patch mirata sui tre difetti residui della V50, non ricostruzione totale.
+- La validazione estetica definitiva resta il test browser dell'utente.
+
+
+CAMBIAMENTI V52_MODERN_BUILDING_SOLID_HARDENING
+-----------------------------------------------
+Base: V51 reale, con ModernBuildingSolid gia' funzionante ma ancora rudimentale.
+Difetti segnalati dall'utente e corretti in modo mirato:
+1. Gronda/fascia che spariva ruotando da vicino:
+   - ROOF_NEAR_PLANE ridotto da 0.08 a 0.045 per evitare tagli anticipati sulle facce vicine;
+   - fascia/tetto mantengono layer dedicato e sono parte del blocco unico.
+2. Copertura esterna che sembrava accorciarsi entrando:
+   - entryRoofKeep aumentato in modo prudente: reception 2.65, bagni 2.10;
+   - il roof esterno resta visibile piu' a lungo nella zona ingresso.
+3. Piccola visione attraverso parete quando si sbatte contro il muro:
+   - shouldUseModernNearWallGuard ora attiva il fallback raycast tecnico fino a 1.22 unita', solo per wallTex moderni 2/3;
+   - il fallback e' sicurezza da vicino, non ritorno al vecchio wallcasting come fonte primaria.
+4. Cielo visibile attraverso il lato del tetto da lontano:
+   - collectModernRoofFaces aggiunge testate triangolari roof_cap per chiudere le estremita' dei tetti a capanna;
+   - aggiunto colore gable nella palette roof.
+Preservazioni:
+- ModernBuildingSolid resta la fonte visiva primaria per reception e bagni/docce;
+- cMap resta tecnico per CeilingDepthBuffer/CeilingOwnerBuffer/ceilingSpriteClipY;
+- drawCeilingSegment non viene usato per owner moderni;
+- nessun ritorno di soffitBands, layer soffit_band o intradosso rettangolare separato.
+
+
+CAMBIAMENTI V54 - SLOPED ROOF CASTING
+-------------------------------------
+Base reale: V52, scelta come base non regressiva rispetto alla V53.
+Scopo: applicare il parere tecnico ricevuto: tornare al wallcasting classico per i muri moderni e aggiungere un modulo Sloped Sector Casting per le falde inclinate su un solo asse.
+Interventi:
+- I muri moderni wallTex 2/3 tornano ad essere pitturati sempre dal wallcasting classico, quindi scrivono ZBuffer e non dipendono piu' da facce poligonali vicino-camera.
+- drawRoofLayer2_5D ora chiama drawSlopedRoofLayer2_5D.
+- Aggiunti slopedRoofPlanesFor(), slopedRoofPixelVisible(), drawSlopedRoofLayer2_5D().
+- Le falde sono calcolate come piani lineari: z = a*x + b*y + c, con split sul colmo.
+- Ogni pixel/slice della falda controlla lo ZBuffer del wallcasting e viene nascosta se cade dentro/sotto un muro davanti.
+- drawModernCoverCeilingSegment reso stabile cromaticamente, senza shading dinamico da rowDist.
+- Il vecchio renderer ModernBuildingSolid poligonale resta nel file come fallback/debug ma non e' piu' chiamato dalla pipeline principale.
+Preservazioni:
+- cMap, CeilingDepthBuffer, CeilingOwnerBuffer, CeilingColumnHasDepth e ceilingSpriteClipY preservati.
+- Strade, mare, fontana, docce, parcheggio, pineta, bar, tamerici e decal non toccati.
+Nota: V54 e' un cambio architetturale mirato al tetto; va verificato nel browser reale per resa estetica, ma rimuove alla radice painter sorting e poligoni tetto separati.
+
+
+CAMBIAMENTI V55 - SLOPED ROOF GABLE CAPS + FIX DECAL GELATO
+------------------------------------------------------------
+Base reale: V54_SLOPED_ROOF_CASTING.
+Scopo: chiudere l'unico difetto visivo residuo evidente della V54, cioe' il lato/testata frontale del tetto da cui si vedeva ancora il cielo quando la camera era frontale, e correggere il decal del gelato con cono rovesciato.
+
+Interventi tecnici:
+1. Confermata l'architettura corretta scoperta in V54:
+   - muri moderni wallTex 2/3 renderizzati dal wallcasting classico;
+   - falde moderne renderizzate con Sloped Sector Casting;
+   - niente ritorno a ModernBuildingSolid poligonale come renderer principale.
+
+2. Aggiunte testate triangolari del tetto:
+   - slopedRoofEdgeZAt(r, wx, wy): calcola la quota triangolare sul bordo della falda;
+   - slopedRoofGableCapsFor(r): genera le due testate del tetto per ogni roofSegment;
+   - slopedRoofGableCapFacesCamera(cap): evita di disegnare il retro della testata;
+   - drawSlopedRoofGableCaps2_5D(time): disegna le testate colonna-per-colonna/slice verticali rispettando ZBuffer e WallTopBuffer.
+
+3. drawRoofLayer2_5D(time) ora esegue:
+   - drawSlopedRoofLayer2_5D(time);
+   - drawSlopedRoofGableCaps2_5D(time);
+
+4. Fix asset:
+   - assets/raycast/ad_gelato.png ridisegnato in modo leggibile;
+   - cono corretto con base larga sotto le palline e punta verso il basso.
+
+5. Documentazione e launcher:
+   - titolo/UI aggiornati a V56;
+   - launcher BAT/PowerShell aggiornati a V56;
+   - METODO_LAVORO_ANTI_REGRESSIONE_PERLA1.txt aggiornato con regola definitiva: in questo raycaster i tetti si fanno con Sloped Sector Casting, non con poligoni sovrapposti.
+
+Check V55:
+- node --check OK;
+- runtime smoke OK;
+- drawWorld mock OK;
+- roofSegments = 2;
+- sloped planes = 2+2;
+- gable caps = 2+2;
+- asset manifest 72/72 presenti;
+- missing asset = 0;
+- sprites = 976;
+- wallDecals = 6;
+- spriteRoad = 0;
+- spriteSea = 0;
+- fontana = 1;
+- docce = 4;
+- parkingCars = 9;
+- soffitBands/layer soffit_band assenti;
+- wallcasting dei muri moderni attivo.
+
+Nota: test estetico finale nel browser reale sempre necessario, ma la patch V55 e' mirata e coerente con l'architettura Sloped Sector Casting ormai approvata come direzione definitiva.
+
+CAMBIAMENTI V56 - SLOPED ROOF FULL GABLE + FOG
+----------------------------------------------
+Base: V55_SLOPED_ROOF_GABLE_CAPS reale.
+Scopo: correggere due difetti residui del nuovo sistema corretto Sloped Sector Casting:
+1. la faccia interna/dietro della testata del tetto spariva ancora, lasciando vedere cielo nel triangolo quando si guardava frontalmente dentro l'ingresso;
+2. falde e testate del tetto non rispettavano la nebbia/distanza come le pareti, risultando troppo piatte e sature da lontano.
+
+Interventi:
+- slopedRoofGableCapFacesCamera ora restituisce sempre true: entrambe le testate del tetto sono candidate come chiusure reali del volume; l'occlusione resta affidata allo ZBuffer dei muri raycastati, non a un culling front/back troppo aggressivo.
+- Aggiunti in V56 roofFogCache e roofFoggedColor(color, dist), con blending quantizzato verso il colore fog usato dalle pareti.
+- NOTA V57: questa soluzione V56 e' stata poi riconosciuta come metodologicamente sporca perche' duplicava il fog storico del motore.
+- In V57 roofFogCache/roofFoggedColor sono stati rimossi e sostituiti dall'overlay fog comune del wallcasting.
+- drawRoofLayer2_5D mantiene la pipeline corretta: falde inclinate + gable caps, tutto a slice/raycast.
+
+Preservazioni:
+- muri moderni wallTex 2/3 restano nel wallcasting classico;
+- cMap/CeilingDepthBuffer/CeilingOwnerBuffer/CeilingColumnHasDepth/ceilingSpriteClipY preservati;
+- niente ritorno a BuildingSolid poligonale, soffitBands o layer soffit_band;
+- decal gelato corretto da V55 preservato.
+
+CHECKPOINT V57 — SLOPED ROOF UNIFIED FOG
+----------------------------------------
+Base: V56 reale.
+Scopo: eliminare il fog parallelo introdotto per i tetti e riusare il fog storico già perfetto del wallcasting anche su falde e testate.
+Interventi:
+- Rimossi `roofFogCache` e `roofFoggedColor()`.
+- Aggiunta funzione unica `drawExistingWallFogOverlay(x,y,w,h,dist)`, che usa la stessa formula storica dei muri: `rgba(86,204,242, clamp(dist/25,0,1))`.
+- Il wallcasting usa ora la funzione comune al posto dell'inline locale, senza cambiare formula.
+- `drawSlopedRoofLayer2_5D()` disegna colore base del tetto e applica overlay fog comune.
+- `drawSlopedRoofGableCaps2_5D()` disegna colore base della testata e applica overlay fog comune.
+- Restano confermati: muri moderni wallTex 2/3 nel wallcasting classico; tetti volumetrici solo con Sloped Sector Casting; niente BuildingSolid/poligoni/painter sorting come fonte tetti.
