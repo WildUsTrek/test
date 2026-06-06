@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Camping Sole, Mare & Zanzare - PERLA1 V66 Mobile Optimizer</title>
+    <title>Camping Sole, Mare & Zanzare - PERLA1 V90 Pergola Edge Quality Fix</title>
     <style>
         :root { --panel: rgba(20,16,12,.88); --gold:#f1c40f; --sand:#f5d99e; --perla-vv-left:0px; --perla-vv-top:0px; --perla-vv-width:100vw; --perla-vv-height:100dvh; }
         body { margin:0; min-height:100vh; background:radial-gradient(circle at 50% 0%,#183b4a 0%,#07090d 55%,#000 100%); color:white; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; display:flex; flex-direction:column; align-items:center; overflow-x:hidden; }
@@ -88,11 +88,11 @@
     </style>
 </head>
 <body>
-    <h2>Camping Sole, Mare & Zanzare - PERLA1 V66</h2>
+    <h2>Camping Sole, Mare & Zanzare - PERLA1 V90</h2>
     <div id="game-container">
         <canvas id="screen" width="800" height="450"></canvas>
         <canvas id="mini-map" width="128" height="128"></canvas>
-        <div id="loading"><div><strong>Caricamento asset PERLA1 V66...</strong><br><span class="muted">Usa il launcher locale PowerShell/BAT per evitare problemi da file://.</span></div></div>
+        <div id="loading"><div><strong>Caricamento asset PERLA1 V90...</strong><br><span class="muted">Usa il launcher locale PowerShell/BAT per evitare problemi da file://.</span></div></div>
     </div>
     <div id="mobile-controls" aria-label="Controlli touch PERLA1">
         <div class="touch-cluster touch-cluster-left">
@@ -116,7 +116,7 @@
     </div>
     <div class="ui-panel">
         <strong>COMANDI:</strong> Desktop [W][A][S][D] o Frecce. Smartphone: pad CAMMINA + pad GIRA, oppure tieni premuto lo schermo.<br>
-        <span class="alert">V66: debug mobile + ottimizzazione visualViewport, floor LOD, sprite culling e minimappa mobile.</span><br>
+        <span class="alert">V90: pergola V89 ottimizzata con bordi stabili e qualità recuperata.</span><br>
         <span class="muted" id="debugLine">posizione...</span>
     </div>
 
@@ -178,7 +178,7 @@ miniCtx.imageSmoothingEnabled = false;
 const loading = document.getElementById('loading');
 const debugLine = document.getElementById('debugLine');
 
-const PERLA_BUILD_ID = 'PERLA1_V66_MOBILE_OPTIMIZER';
+const PERLA_BUILD_ID = 'PERLA1_V90_PERGOLA_EDGE_QUALITY_FIX';
 const PERLA_MOBILE_DEBUG_ENABLED = true; // V66: switch test. Mettere false per nascondere completamente il bottone debug.
 const perlaDebugWidget = document.getElementById('perla-debug-widget');
 const perlaDebugButton = document.getElementById('perlaDebugCopyBtn');
@@ -238,7 +238,11 @@ let planeScale = cameraPlaneScaleForMode(currentViewportMode);
 let verticalProjectionScale = cameraVerticalScaleForMode(currentViewportMode);
 let projectionH = screenH * verticalProjectionScale;
 const texW = 64, texH = 64;
-const mapW = 80, mapH = 88;
+const WEST_EXPAND_V74 = 30;
+const LEGACY_SOURCE_W_V74 = 120;
+const mapW = LEGACY_SOURCE_W_V74 + WEST_EXPAND_V74, mapH = 88;
+const PERLA_DISPLAY_X_OFFSET_V74 = WEST_EXPAND_V74;
+function displayWorldX_V74(x){ return x - PERLA_DISPLAY_X_OFFSET_V74; }
 const SEA_Y = 80;
 const ASSET_BASE = 'assets/raycast/';
 
@@ -251,11 +255,17 @@ const ASSET_MANIFEST = {
     25:['bush_dark.png'], 26:['bush_flower.png'], 27:['flower_red.png'], 28:['flower_purple.png'], 29:['flower_white.png'],
     30:['grass_soft.png'], 31:['grass_reed.png'], 32:['palm_tall_0.png','palm_tall_1.png'], 33:['palm_dwarf_0.png','palm_dwarf_1.png'],
     34:['pot_red.png'], 35:['pot_purple.png'], 36:['tent_green.png'],
-    37:['flower_arch_left_0.png','flower_arch_left_1.png'], 39:['flower_arch_right_0.png','flower_arch_right_1.png'], 38:['fountain.png'],
+    37:['flower_arch_left_0.png','flower_arch_left_1.png'], 39:['flower_arch_right_0.png','flower_arch_right_1.png'], 38:['fountain_0.png','fountain_1.png','fountain_2.png'],
     40:['pinecone.png'], 41:['pine_needles.png'],
     42:['wall_fence_wood.png'], 43:['car_red.png'], 44:['car_blue.png'], 45:['car_yellow.png'], 46:['parking_line.png'], 47:['sign_camping_imperio.png'], 48:['car_green.png'], 49:['car_white.png'], 50:['billiard_table.png'], 51:['pingpong_table.png'], 52:['cafe_table_chairs.png'], 53:['marble_statue.png'],
     54:['tamarisk_0.png'], 55:['tamarisk_1.png'], 56:['tamarisk_2.png'], 57:['ad_gelato.png'], 58:['ad_pizza.png'], 59:['ad_patatine.png'], 60:['ad_tris.png'],
-    61:['sign_reception.png'], 62:['sign_bar.png'], 63:['sign_pineta.png'], 64:['sign_camper.png'], 65:['sign_bagni.png'], 66:['sign_spiaggia.png'], 67:['sign_parcheggio.png'], 68:['sign_tende.png'], 69:['sign_yoga.png']
+    61:['sign_reception.png'], 62:['sign_bar.png'], 63:['sign_pineta.png'], 64:['sign_camper.png'], 65:['sign_bagni.png'], 66:['sign_spiaggia.png'], 67:['sign_parcheggio.png'], 68:['sign_tende.png'], 69:['sign_yoga.png'],
+    70:['barbecue_long_0.png','barbecue_long_1.png','barbecue_long_2.png'], 71:['sign_barbecue.png'],
+    72:['ad_barbecue_0.png'], 73:['ad_barbecue_1.png'], 74:['ad_barbecue_2.png'], 75:['ad_barbecue_3.png'], 76:['sign_casa.png'],
+    77:['campfire_0.png','campfire_1.png','campfire_2.png'], 78:['moss_rock.png'],
+    79:['ad_parcheggio_p.png'],
+    80:['ivy_flowers_wall_a.png'], 81:['ivy_flowers_wall_b.png'], 82:['ivy_flowers_wall_corner.png'], 83:['ivy_flowers_wall_hanging.png'],
+    84:['lake_rowboat.png']
 };
 const tex = {};
 function loadImage(src) {
@@ -318,7 +328,11 @@ const FLOOR_FAR_SUB_TILE_RES = 4;
 const FLOOR_NEAR_SUB_TILE_RES = 8;
 const FLOOR_NEAR_DETAIL_DIST = 9.5;
 let floorVisualStats = null;
+let v74WorldStats = {};
 let floorMixCache = Object.create(null); // V60: cache colori quantizzati per maschere sub-tile/decal, evita mix ripetuti nel render loop.
+
+const SEA_WAVE_COLORS_V67 = ['#1b78b2','#1f86bd','#2796c8','#35a8d3','#5bbedd']; // V67: mare animato leggero, palette quantizzata per non esplodere i fillStyle.
+const SEA_FOAM_COLORS_V67 = ['#9edbe8','#bfeef5','#dffcff'];
 
 // V65: profiler leggero runtime. Scrive solo array rolling piccoli e viene esportato su richiesta.
 const perlaPerfStats = {
@@ -387,7 +401,8 @@ function mixFloorQuantized(a,b,t,steps){
     const key=a+'|'+b+'|'+q;
     return floorMixCache[key] || (floorMixCache[key]=mixColorHex(a,b,q));
 }
-function inBounds(x,y){ return x>=0 && x<mapW && y>=0 && y<mapH; }
+let legacyBoundsLimitV72 = 80; // V72: durante la generazione storica le funzioni legacy vedono ancora la vecchia larghezza.
+function inBounds(x,y){ return x>=0 && x<Math.min(mapW, legacyBoundsLimitV72||mapW) && y>=0 && y<mapH; }
 function setFloor(x,y,t){ if(inBounds(x,y)) fMap[y][x]=t; }
 function setWall(x,y,t){ if(inBounds(x,y)) map[y][x]=t; }
 function clearWall(x,y){ if(inBounds(x,y)) { map[y][x]=0; wallHeightMap[y][x]=1.0; } }
@@ -1125,8 +1140,9 @@ function buildFloorVisualColorMap(){
     return { cells, uniqueColors:Object.keys(unique).length };
 }
 function buildFloorDecalMap(){
-    // V61: decal piatti/procedurali più ricchi. Restano colore del pavimento: zero sprite, zero collisioni, zero ZBuffer.
+    // V67: decal piatti/procedurali più ricchi. Restano colore del pavimento: zero sprite, zero collisioni, zero ZBuffer.
     let cells=0, microCells=0, trailNeedles=0, trailMottle=0, sandFootprints=0, sandShells=0, showerWater=0, roadPebbles=0, roadDustFlecks=0, grassWear=0;
+    let welcomeMats=0, groundArrows=0, signBaseWear=0, sandRipples=0, seaFoamEdge=0, beachPebbles=0, waterDrips=0, barbecuePatio=0, barbecueAsh=0, barbecueCoals=0, lakeSandSoft=0, lakeGrassSoft=0;
     for(let y=0;y<mapH;y++) for(let x=0;x<mapW;x++){
         floorMicroDecalMap[y][x]=null;
         if(fMap[y][x]===2 || cMap[y][x]!==0 || map[y][x]!==0){ floorDecalMap[y][x]=null; continue; }
@@ -1136,23 +1152,53 @@ function buildFloorDecalMap(){
         let decal=null, micro=null;
         const trailEdge=trailSoftEdgeMap[y][x]||0;
         const roadEdge=roadSoftEdgeMap[y][x]||0;
-        if(isTrailRoadCell(x,y) && h>.34){ decal='trail_needles'; trailNeedles++; }
+        const isBeach=(fMap[y][x]===0 || fMap[y][x]===9) && y>=66 && y<SEA_Y;
+        const lakeD=secretLakeEllipseDistanceV78(x+.5,y+.5,7.8,5.3);
+        if(zoneMask[y][x]==='secret_lake_sand'){ decal='lake_sand_soft_v78'; lakeSandSoft++; }
+        else if((fMap[y][x]===1 || fMap[y][x]===8 || fMap[y][x]===10) && lakeD<1.28 && lakeD>.92 && cMap[y][x]===0){ decal='lake_grass_sand_soft_v78'; lakeGrassSoft++; }
+        else if(isTrailRoadCell(x,y) && h>.34){ decal='trail_needles'; trailNeedles++; }
         else if(trailEdge>.18 && h>.50){ decal='trail_specks'; trailNeedles++; }
         else if((isHumanRoadCell(x,y) || roadEdge>.28) && h>.72){ decal='road_pebbles'; roadPebbles++; }
-        else if((fMap[y][x]===0 || fMap[y][x]===9) && y>=66 && y<SEA_Y && h>.84){ decal='sand_footprints'; sandFootprints++; }
+        else if(isBeach && y>=SEA_Y-2 && h>.40){ decal='seafoam_edge'; seaFoamEdge++; }
+        else if(isBeach && h>.90){ decal='sand_footprints'; sandFootprints++; }
+        else if(isBeach && h>.76){ decal='sand_ripples'; sandRipples++; }
         else if(zoneMask[y][x]==='bath_garden'){
-            if(h>.82){ decal='shower_water'; showerWater++; }
+            if(h>.58){ decal='shower_water'; showerWater++; }
+        }
+        else if(zoneMask[y][x]==='barbecue_area'){
+            if(h>.58){ decal='bbq_patio'; barbecuePatio++; }
+            if(h2>.62){ micro='bbq_coal_specks'; barbecueCoals++; }
         }
         if((isTrailRoadCell(x,y) || trailEdge>.22 || fMap[y][x]===8) && h2>.56){ micro='trail_mottle'; trailMottle++; }
         else if((isHumanRoadCell(x,y) || roadEdge>.18) && h2>.58){ micro='road_dust_flecks'; roadDustFlecks++; }
-        else if((fMap[y][x]===0 || fMap[y][x]===9) && y>=66 && y<SEA_Y && h2>.90){ micro='sand_shells'; sandShells++; }
+        else if(isBeach && h2>.86){ micro='sand_shells'; sandShells++; }
+        else if(isBeach && h2>.73){ micro='beach_pebbles'; beachPebbles++; }
+        else if(zoneMask[y][x]==='bath_garden' && h2>.46){ micro='water_drips'; waterDrips++; }
+        else if(zoneMask[y][x]==='barbecue_area' && h2>.45){ micro='bbq_ash'; barbecueAsh++; }
         else if((trailEdge>.18 || roadEdge>.18) && (fMap[y][x]===1 || fMap[y][x]===10 || fMap[y][x]===8) && h3>.62){ micro='grass_wear'; grassWear++; }
         floorDecalMap[y][x]=decal;
         floorMicroDecalMap[y][x]=micro;
         if(decal) cells++;
         if(micro) microCells++;
     }
-    return { cells, microCells, trailNeedles, trailMottle, sandFootprints, sandShells, showerWater, roadPebbles, roadDustFlecks, grassWear };
+    function forceFloorDecalCell(x,y,decal,micro){
+        if(!inBounds(x,y) || fMap[y][x]===2 || cMap[y][x]!==0 || map[y][x]!==0) return false;
+        if(!floorDecalMap[y][x] && decal) cells++;
+        if(!floorMicroDecalMap[y][x] && micro) microCells++;
+        floorDecalMap[y][x]=decal || floorDecalMap[y][x];
+        floorMicroDecalMap[y][x]=micro || floorMicroDecalMap[y][x];
+        return true;
+    }
+    // Zerbino reception: davanti alla porta, come decal a terra, non collisione.
+    [[39,9],[40,9],[41,9],[40,10]].forEach(([x,y])=>{ if(forceFloorDecalCell(x,y,'mat_reception','mat_fibers')) welcomeMats++; });
+    // Base sporca dei cartelli: extra texture a terra sotto/presso i billboard direzionali.
+    [[35,11],[24,11],[33,27],[51,44],[58,61],[41,68],[66,21],[8,21],[26,48]].forEach(([x,y])=>{ if(forceFloorDecalCell(x,y,'sign_base_wear',null)) signBaseWear++; });
+    // Frecce leggere a terra: orientamento funzionale ma consumato, per non sostituire i cartelli verticali.
+    [[36,10,'arrow_n'],[30,12,'arrow_w'],[50,43,'arrow_e'],[58,61,'arrow_e'],[42,68,'arrow_s'],[66,21,'arrow_n'],[25,46,'arrow_w'],[10,22,'arrow_w'],[74,35,'arrow_e']].forEach(([x,y,d])=>{ if(forceFloorDecalCell(x,y,d,'paint_wear')) groundArrows++; });
+    // V68: area barbecue narrativa. Pietre/terra battuta/carbone restano decal floor, non sprite verticali.
+    [[75,34],[76,34],[77,34],[74,35],[75,35],[76,35],[77,35],[78,35],[75,36],[76,36],[77,36]].forEach(([x,y])=>{ if(forceFloorDecalCell(x,y,'bbq_patio','bbq_ash')) { barbecuePatio++; barbecueAsh++; } });
+    [[76,35],[77,35],[76,36]].forEach(([x,y])=>{ if(forceFloorDecalCell(x,y,'bbq_coals','bbq_coal_specks')) { barbecueCoals++; } });
+    return { cells, microCells, trailNeedles, trailMottle, sandFootprints, sandShells, showerWater, roadPebbles, roadDustFlecks, grassWear, welcomeMats, groundArrows, signBaseWear, sandRipples, seaFoamEdge, beachPebbles, waterDrips, barbecuePatio, barbecueAsh, barbecueCoals, lakeSandSoft, lakeGrassSoft };
 }
 
 function floorTypeBaseVisualColor(type){ return floorRenderBaseColor(type); }
@@ -1242,6 +1288,44 @@ function applyHumanRoadSubTile(color,x,y,fx,fy,type){
     }
     return color;
 }
+
+function floorArrowMaskV67(dir,fx,fy){
+    // Maschera freccia direzionale in coordinate normalizzate. Ritorna 0/1/2 = niente/vernice/contorno.
+    let u=fx, v=fy;
+    if(dir==='s'){ v=1-fy; }
+    else if(dir==='e'){ u=fy; v=fx; }
+    else if(dir==='w'){ u=1-fy; v=1-fx; }
+    const shaft=(Math.abs(u-.5)<.070 && v>.42 && v<.86);
+    const head=(v>.18 && v<.48 && Math.abs(u-.5)<(.30-(v-.18)*.50));
+    const outerShaft=(Math.abs(u-.5)<.105 && v>.39 && v<.88);
+    const outerHead=(v>.14 && v<.52 && Math.abs(u-.5)<(.36-(v-.14)*.56));
+    if(shaft || head) return 2;
+    if(outerShaft || outerHead) return 1;
+    return 0;
+}
+function animatedSeaColorAtV67(cellX,cellY,worldX,worldY,rowDist,time){
+    // V67: acqua viva ma economica. Palette quantizzata = pochi fillStyle, nessun asset animato.
+    const t=(time||0)*0.001;
+    const wx=Number.isFinite(worldX)?worldX:cellX, wy=Number.isFinite(worldY)?worldY:cellY;
+    const w1=Math.sin(wx*.72 + wy*.18 + t*2.25);
+    const w2=Math.sin(wx*1.37 - wy*.31 + t*1.35);
+    const w3=Math.sin((wx+wy)*.42 - t*1.85);
+    const wave=(w1*.48 + w2*.32 + w3*.20 + 1) * .5;
+    let idx=clamp(Math.floor(wave*SEA_WAVE_COLORS_V67.length),0,SEA_WAVE_COLORS_V67.length-1);
+    let color=SEA_WAVE_COLORS_V67[idx];
+    const localY=wy-Math.floor(wy);
+    const shore=(cellY===SEA_Y || (wy>=SEA_Y && wy<SEA_Y+1.15));
+    if(shore){
+        const foamPulse=(Math.sin(wx*1.7 + t*3.2)+1)*.5;
+        const foamBand=1-smoothstep(.20,.78,localY);
+        if(foamBand*foamPulse>.28){
+            const fi=clamp(Math.floor((foamBand*foamPulse)*SEA_FOAM_COLORS_V67.length),0,SEA_FOAM_COLORS_V67.length-1);
+            color=mixFloorQuantized(color,SEA_FOAM_COLORS_V67[fi],clamp(foamBand*.42,0,.42),6);
+        }
+    }
+    if(rowDist<10 && wave>.78) color=mixFloorQuantized(color,'#8ad9e8',.12,6);
+    return color;
+}
 function applyOneFloorDecal(color,decal,x,y,fx,fy,type){
     if(!decal) return color;
     const hx=floorHash2D(x*23+Math.floor(fx*12),y*29+Math.floor(fy*12),FLOOR_VISUAL_SEED^0xDEC0);
@@ -1270,10 +1354,92 @@ function applyOneFloorDecal(color,decal,x,y,fx,fy,type){
     } else if(decal==='sand_shells'){
         const dx=fx-.5, dy=fy-.5;
         if(dx*dx+dy*dy<.018 && hx>.45) return mixFloorQuantized(color,'#ead59f',.16,5);
+    } else if(decal==='beach_pebbles'){
+        const p1=(fx-.25)*(fx-.25)+(fy-.62)*(fy-.62);
+        const p2=(fx-.70)*(fx-.70)+(fy-.35)*(fy-.35);
+        if((p1<.010 || p2<.007) && hx>.25) return mixFloorQuantized(color,'#a88958',.18,5);
+    } else if(decal==='sand_ripples'){
+        const r=Math.abs(Math.sin((fy*5.5 + x*.13 + hx*.18)*Math.PI));
+        if(r>.88 && fx>.08 && fx<.92) return mixFloorQuantized(color,'#f1d6a0',.13,5);
+        if(r<.08 && fx>.12 && fx<.88) return mixFloorQuantized(color,'#caa060',.08,5);
+    } else if(decal==='seafoam_edge'){
+        const band=Math.abs(fy-.18 - Math.sin((fx*4.0+x*.19)*Math.PI)*.035);
+        if(band<.055 || hx>.82) return mixFloorQuantized(color,'#e5fbff',.22,5);
+        if(fy<.32) return mixFloorQuantized(color,'#bddde1',.08,5);
     } else if(decal==='shower_water'){
         const dx=fx-.5, dy=fy-.5;
-        if(dx*dx+dy*dy<.09) return mixFloorQuantized(color,'#7fb7bd',.18,5);
-        if(hx>.86) return mixFloorQuantized(color,'#93c6ca',.09,5);
+        const d=dx*dx+dy*dy;
+        if(d<.105) return mixFloorQuantized(color,'#72b7c4',.22,5);
+        if(Math.abs(Math.sqrt(d)-.36)<.035) return mixFloorQuantized(color,'#b9ecf0',.15,5);
+        if(hx>.72) return mixFloorQuantized(color,'#93c6ca',.11,5);
+    } else if(decal==='water_drips'){
+        const streak=Math.abs(fx-(.25+hx*.50));
+        if(streak<.025 && fy>.10 && fy<.92) return mixFloorQuantized(color,'#9ed7dd',.12,5);
+        if(hx>.82) return mixFloorQuantized(color,'#d6ffff',.07,5);
+    } else if(decal==='mat_reception'){
+        const inside=fx>.08 && fx<.92 && fy>.16 && fy<.84;
+        const border=inside && (fx<.17 || fx>.83 || fy<.25 || fy>.75);
+        if(border) return mixFloorQuantized(color,'#3d2615',.38,6);
+        if(inside){
+            const stripe=Math.abs(Math.sin((fx*5.5+hx*.2)*Math.PI));
+            return mixFloorQuantized(color, stripe>.80 ? '#9c6b37' : '#6d4624', .42,6);
+        }
+    } else if(decal==='mat_fibers'){
+        if(fx>.12 && fx<.88 && fy>.20 && fy<.80 && hx>.58) return mixFloorQuantized(color,'#d0a06a',.10,5);
+    } else if(decal==='paint_wear'){
+        if(hx>.66) return mixFloorQuantized(color,'#f3e0a2',.10,5);
+        if(hx<.12) return mixFloorQuantized(color,'#7c6543',.07,5);
+    } else if(decal==='sign_base_wear'){
+        const dx=fx-.5, dy=fy-.54;
+        const d=dx*dx+dy*dy;
+        if(d<.19) return mixFloorQuantized(color,'#6d5a38',.12,5);
+        if(Math.abs(Math.sqrt(d)-.48)<.03) return mixFloorQuantized(color,'#c8b07a',.06,5);
+    } else if(decal==='bbq_patio'){
+        const edge=(fx<.12 || fx>.88 || fy<.12 || fy>.88);
+        const stone=((Math.floor(fx*4)+Math.floor(fy*4)+x+y)&1)===0;
+        if(edge) return mixFloorQuantized(color,'#5b4a39',.22,5);
+        return mixFloorQuantized(color, stone ? '#9b8465' : '#7d6548', .20,5);
+    } else if(decal==='bbq_ash'){
+        const dx=fx-.52, dy=fy-.48;
+        const d=dx*dx+dy*dy;
+        if(d<.13) return mixFloorQuantized(color,'#4c4740',.20,5);
+        if(hx>.72) return mixFloorQuantized(color,'#b8aa91',.10,5);
+    } else if(decal==='bbq_coals'){
+        const dx=fx-.50, dy=fy-.50;
+        const d=dx*dx+dy*dy;
+        if(d<.11) return mixFloorQuantized(color,'#2a1d16',.34,5);
+        if(hx>.72) return mixFloorQuantized(color,'#d25b2f',.20,5);
+    } else if(decal==='bbq_coal_specks'){
+        if(hx>.78) return mixFloorQuantized(color,'#201513',.22,5);
+        if(hx<.08) return mixFloorQuantized(color,'#e19a43',.12,5);
+    } else if(decal==='lake_sand_soft_v78'){
+        const wx=x+fx, wy=y+fy;
+        const d=secretLakeEllipseDistanceV78(wx,wy,7.8,5.3);
+        const wobble=(floorHash2D(Math.floor(wx*5),Math.floor(wy*5),FLOOR_VISUAL_SEED^0x5A78)-.5)*.18 + Math.sin((wx*.72+wy*.31))*0.035;
+        if(d>1.00+wobble){
+            const edge=clamp((d-(.96+wobble))/.32,0,1);
+            return mixFloorQuantized(color,'#62713c',edge*.48,6);
+        }
+        if(d<.67+wobble*.25){
+            const inner=clamp(((.72+wobble*.25)-d)/.20,0,1);
+            return mixFloorQuantized(color,'#b9c79e',inner*.20,6);
+        }
+        if(hx>.63) return mixFloorQuantized(color,'#f0d49a',.14,5);
+        if(hx<.10) return mixFloorQuantized(color,'#b8945d',.08,5);
+    } else if(decal==='lake_grass_sand_soft_v78'){
+        const wx=x+fx, wy=y+fy;
+        const d=secretLakeEllipseDistanceV78(wx,wy,7.8,5.3);
+        const wobble=(floorHash2D(Math.floor(wx*6),Math.floor(wy*6),FLOOR_VISUAL_SEED^0x6B78)-.5)*.22 + Math.cos((wx*.44-wy*.61))*0.045;
+        if(d<1.18+wobble){
+            const sand=clamp(((1.20+wobble)-d)/.38,0,1);
+            return mixFloorQuantized(color,'#d9bc78',sand*.42,6);
+        }
+        if(hx>.88) return mixFloorQuantized(color,'#c9ad6c',.10,5);
+    } else if(decal && decal.indexOf('arrow_')===0){
+        const dir=decal.slice(6);
+        const mask=floorArrowMaskV67(dir,fx,fy);
+        if(mask===2) return mixFloorQuantized(color,'#f1df9a',.46,6);
+        if(mask===1) return mixFloorQuantized(color,'#6f5733',.14,6);
     }
     return color;
 }
@@ -1347,7 +1513,24 @@ function buildFloorNearSubTileColorMap(){
     }
     return { cells, slots, uniqueNearSubColors:Object.keys(unique).length };
 }
-function getFloorColorAt(cellX,cellY,worldX,worldY,baseType,rowDist){
+function secretLakeEllipseDistanceV78(wx,wy,rx,ry){
+    const dx=(wx-129.0)/(rx||7.8), dy=(wy-42.0)/(ry||5.3);
+    return Math.sqrt(dx*dx+dy*dy);
+}
+function softenSecretLakeWaterEdgeV78(color,cellX,cellY,worldX,worldY){
+    if(!inBounds(cellX,cellY) || zoneMask[cellY][cellX]!=='secret_lake') return color;
+    const d=secretLakeEllipseDistanceV78(worldX,worldY,5.6,3.9);
+    const h=floorHash2D(Math.floor(worldX*8),Math.floor(worldY*8),FLOOR_VISUAL_SEED^0x78A7);
+    const edge=clamp((d-.78)/.28,0,1);
+    if(edge>.62) return mixFloorQuantized(color, h>.48?'#d8bd80':'#b6c7a0', edge*.18, 6);
+    if(h>.84 && d>.62) return mixFloorQuantized(color,'#dffcff',.10,5);
+    return color;
+}
+function getFloorColorAt(cellX,cellY,worldX,worldY,baseType,rowDist,time){
+    if(baseType===2){
+        const water=animatedSeaColorAtV67(cellX,cellY,worldX,worldY,rowDist,time);
+        return softenSecretLakeWaterEdgeV78(water,cellX,cellY,worldX,worldY);
+    }
     if(!inBounds(cellX,cellY)) return floorRenderBaseColor(baseType);
     const fx=clamp(worldX-cellX,0,0.9999), fy=clamp(worldY-cellY,0,0.9999);
     const near=floorNearSubTileColorMap[cellY][cellX];
@@ -1372,7 +1555,8 @@ function buildFloorVisualMaps(){
     const colorStats=buildFloorVisualColorMap();
     const subTileStats=buildFloorSubTileColorMap();
     const nearSubTileStats=buildFloorNearSubTileColorMap();
-    floorVisualStats={ stage:'V66_MOBILE_OPTIMIZER', noiseCells, roadSoftCells, trailSoftCells, outlineCells, decalCells:decalStats.cells, microDecalCells:decalStats.microCells, trailDecals:decalStats.trailNeedles, trailMottle:decalStats.trailMottle, sandFootprints:decalStats.sandFootprints, sandShells:decalStats.sandShells, showerWater:decalStats.showerWater, roadPebbles:decalStats.roadPebbles, roadDustFlecks:decalStats.roadDustFlecks, grassWear:decalStats.grassWear, colorCells:colorStats.cells, uniqueFloorColors:colorStats.uniqueColors, subTileCells:subTileStats.cells, subTileSlots:subTileStats.slots, uniqueSubTileColors:subTileStats.uniqueSubColors, nearSubTileCells:nearSubTileStats.cells, nearSubTileSlots:nearSubTileStats.slots, uniqueNearSubTileColors:nearSubTileStats.uniqueNearSubColors, nearSubTileRes:FLOOR_NEAR_SUB_TILE_RES, nearDetailDist:FLOOR_NEAR_DETAIL_DIST };
+    floorVisualStats={ stage:'V90_PERGOLA_EDGE_QUALITY_FIX', noiseCells, roadSoftCells, trailSoftCells, outlineCells, decalCells:decalStats.cells, microDecalCells:decalStats.microCells, trailDecals:decalStats.trailNeedles, trailMottle:decalStats.trailMottle, sandFootprints:decalStats.sandFootprints, sandShells:decalStats.sandShells, showerWater:decalStats.showerWater, roadPebbles:decalStats.roadPebbles, roadDustFlecks:decalStats.roadDustFlecks, grassWear:decalStats.grassWear, welcomeMats:decalStats.welcomeMats, groundArrows:decalStats.groundArrows, signBaseWear:decalStats.signBaseWear, sandRipples:decalStats.sandRipples, seaFoamEdge:decalStats.seaFoamEdge, beachPebbles:decalStats.beachPebbles, waterDrips:decalStats.waterDrips, barbecuePatio:decalStats.barbecuePatio, barbecueAsh:decalStats.barbecueAsh, barbecueCoals:decalStats.barbecueCoals, lakeSandSoft:decalStats.lakeSandSoft, lakeGrassSoft:decalStats.lakeGrassSoft, realIvyArch:false, ivyPergolaV79:true, ivyPergolaV80:false, ivyPergolaV81:false, ivyPergolaV82:false, ivyPergolaV83:false, ivyPergolaV84:false, ivyPergolaV86:true, ivyPergolaV87:true, ivyPergolaV88:true, ivyPergolaV89:true, ivyPergolaV90:true, lakeBoatV82:false, lakeBoatV83:true, lakeBoatV88:true, lakeBoatV89:true, animatedSea:true, animatedFountain:true, colorCells:colorStats.cells, uniqueFloorColors:colorStats.uniqueColors, subTileCells:subTileStats.cells, subTileSlots:subTileStats.slots, uniqueSubTileColors:subTileStats.uniqueSubColors, nearSubTileCells:nearSubTileStats.cells, nearSubTileSlots:nearSubTileStats.slots, uniqueNearSubTileColors:nearSubTileStats.uniqueNearSubColors, nearSubTileRes:FLOOR_NEAR_SUB_TILE_RES, nearDetailDist:FLOOR_NEAR_DETAIL_DIST };
+    if(v74WorldStats) Object.assign(floorVisualStats, v74WorldStats);
     return floorVisualStats;
 }
 function markBlocked(x,y){ if(inBounds(x,y)) objectBlock[y][x]=1; }
@@ -1398,7 +1582,7 @@ function placeSprite(x,y,texId,opts){
     if(opts.noRoad && roadMask[iy][ix]) return false;
     if(opts.nature && (cMap[iy][ix]!==0 || safeHuman[iy][ix] || roadMask[iy][ix] || noNature[iy][ix] || fMap[iy][ix]===2)) return false;
     if(opts.blocking && objectBlock[iy][ix]) return false;
-    sprites.push({x,y,tex:texId,hScale:opts.hScale||1,wScale:opts.wScale||1,groundSink:opts.groundSink||1,kind:opts.kind||'',nature:!!opts.nature,blocking:!!opts.blocking,underRoof:cMap[iy][ix]!==0});
+    sprites.push({x,y,tex:texId,hScale:opts.hScale||1,wScale:opts.wScale||1,groundSink:opts.groundSink||1,kind:opts.kind||'',nature:!!opts.nature,blocking:!!opts.blocking,blockRadius:opts.blockRadius||.55,underRoof:cMap[iy][ix]!==0});
     if(opts.blocking) reserveDisk(x,y,opts.blockRadius||.55);
     return true;
 }
@@ -1619,28 +1803,36 @@ function buildOpenRoofArea(x1,y1,x2,y2,floorType,ceilType,zone){
     }
     [[x1+.5,y1+.5],[x2+.5,y1+.5],[x1+.5,y2+.5],[x2+.5,y2+.5]].forEach(p=>placeSprite(p[0],p[1],18,{allowRoof:true,groundSink:2,blocking:true,blockRadius:.25,kind:zone+'_column'}));
 }
+const BAR_TABLES_ROW_V70 = [[11.8,3.80],[15.4,3.80],[19.0,3.80]];
 function placeCafeSet(x,y){
-    // V31: sprite dehors più alto e prospettico. L'ombrellone non deve sembrare basso/giocattolo.
+    // V31/V70: sprite dehors alto e prospettico. In V70 i tre tavolini stanno in riga pulita a Y=3.80.
+    markNoNatureDisk(x,y,1.35);
     return placeSprite(x,y,52,{hScale:1.08,wScale:1.04,groundSink:2.75,noRoad:true,blocking:true,blockRadius:.44,kind:'bar_outdoor_table'});
 }
 function placeBarDehorsGreeneryV32(){
-    // V32: area bar piu' viva, ma ordinata. Vegetazione solo a nord/ovest del dehors,
-    // lontana dai tavolini e dalla strada; non blocca gli accessi.
+    // V69/V70: clearance severa. Il dehors deve respirare: decori solo come cornice nord/ovest,
+    // lontani dai tavolini in riga a Y=3.80, non in mezzo alle sedute.
+    const barTables=BAR_TABLES_ROW_V70;
+    function farFromBarTables(x,y,minDist){
+        for(const t of barTables){ if(Math.hypot(x-t[0],y-t[1]) < minDist) return false; }
+        return true;
+    }
     const grasses=[
-        [8.7,5.2,30,.48],[9.8,5.0,12,.42],[11.2,4.9,29,.44],[13.0,5.0,30,.46],
-        [17.5,4.9,12,.42],[20.8,5.2,30,.48],[22.2,5.8,29,.44],
-        [7.0,7.5,12,.44],[6.8,9.1,30,.46],[6.8,10.9,29,.42],[7.1,12.7,12,.44],[7.5,14.2,30,.46]
+        // V70: cornice nord/ovest ancora più esterna; niente decoro vicino alla nuova fila Y=3.80.
+        [4.2,2.55,30,.44],[5.6,2.45,12,.40],[22.7,2.50,29,.42],[23.35,4.95,30,.44],
+        // linea ovest, molto laterale rispetto al dehors
+        [3.95,6.4,12,.42],[3.85,9.4,30,.46],[3.85,12.4,29,.42],[4.05,15.2,12,.44],[5.1,16.0,30,.44]
     ];
     grasses.forEach(g=>{
         const ix=Math.floor(g[0]), iy=Math.floor(g[1]);
-        if(inBounds(ix,iy) && map[iy][ix]===0 && !roadMask[iy][ix] && !objectBlock[iy][ix]){
+        if(inBounds(ix,iy) && map[iy][ix]===0 && !roadMask[iy][ix] && !objectBlock[iy][ix] && farFromBarTables(g[0],g[1],4.7)){
             placeSprite(g[0],g[1],g[2],{hScale:g[3],wScale:.70,groundSink:2,noRoad:true,kind:'bar_dehors_grass'});
         }
     });
-    const distantBushes=[[7.0,5.7,25,.62],[6.7,14.8,7,.66],[22.5,5.6,26,.58]];
+    const distantBushes=[[3.7,5.8,25,.60],[4.1,15.9,7,.66],[23.8,2.35,26,.56]];
     distantBushes.forEach(b=>{
         const ix=Math.floor(b[0]), iy=Math.floor(b[1]);
-        if(inBounds(ix,iy) && map[iy][ix]===0 && !roadMask[iy][ix] && !objectBlock[iy][ix]){
+        if(inBounds(ix,iy) && map[iy][ix]===0 && !roadMask[iy][ix] && !objectBlock[iy][ix] && farFromBarTables(b[0],b[1],4.9)){
             placeSprite(b[0],b[1],b[2],{hScale:b[3],wScale:.82,groundSink:2.2,noRoad:true,blocking:false,kind:'bar_distant_bush'});
         }
     });
@@ -1733,8 +1925,9 @@ function placeTamariskLandscapeV35(){
 
     // V35-B: tamerici lungo i confini liberi nord/est/ovest, esclusi pineta, spiaggia e zone occupate.
     const borderTrees=[
-        [4.3,4.2,0,1.12],[8.8,5.0,1,1.22],[13.7,4.5,2,1.14],[18.8,5.2,0,1.18],
-        [52.5,3.8,1,1.18],[58.6,4.6,2,1.10],[76.2,23.2,0,1.18],[76.0,33.0,1,1.24],
+        // V70: gli esemplari del bar seguono la nuova fila tavolini Y=3.80 e restano su cornice lontana.
+        [3.1,6.2,0,1.12],[3.2,10.0,1,1.20],[3.3,14.2,2,1.16],[23.9,2.2,0,1.12],
+        [52.5,3.8,1,1.18],[58.6,4.6,2,1.10],[76.2,23.2,0,1.18],[77.2,31.2,1,1.20],
         [76.3,43.8,2,1.15],[75.6,53.0,0,1.16],[74.8,62.4,1,1.10],[3.4,8.5,2,1.14],
         [3.1,13.6,0,1.18],[3.0,66.4,1,1.08],[7.2,70.2,2,1.12]
     ];
@@ -1775,6 +1968,17 @@ function getWallDecalTexX(face, rawTX, manualFlip){
     if(manualFlip) tx=texW-tx-1;
     return clamp(tx,0,texW-1);
 }
+function placeBarbecueWallDecalV69(){
+    // V69: banner BARBECUE molto grande, diviso in 4 celle sul muro dietro la micro-area.
+    // Resta wallDecalMap face-aware: niente billboard e niente testi specchiati.
+    const banner=[
+        [79,33,72,'decal_barbecue_fire_left','west'],
+        [79,34,73,'decal_barbecue_text_1','west'],
+        [79,35,74,'decal_barbecue_text_2','west'],
+        [79,36,75,'decal_barbecue_fire_right','west']
+    ];
+    banner.forEach(a=>setWallAdDecalV35(a[0],a[1],a[2],a[3],a[4],false));
+}
 function placeWallAdvertisementsV33(){
     // V35: le pubblicita' restano stampate sui muri lunghi, ma sono face-aware.
     // Scritte e immagini non si ribaltano piu' con il tX della siepe.
@@ -1784,6 +1988,7 @@ function placeWallAdvertisementsV33(){
         [34,46,57,'decal_west_pineta_gelato','east'], [34,56,58,'decal_west_pineta_pizza','east']
     ];
     ads.forEach(a=>setWallAdDecalV35(a[0],a[1],a[2],a[3],a[4],false));
+    placeBarbecueWallDecalV69();
 }
 function placeDirectionSignV34(x,y,texId,kind){
     const ix=Math.floor(x), iy=Math.floor(y);
@@ -1819,7 +2024,19 @@ function placeSouthRoadPalmsV34(){
         }
     });
 }
+function canPlacePinetaPineV68(x,y){
+    const ix=Math.floor(x), iy=Math.floor(y);
+    if(!inBounds(ix,iy)) return false;
+    const z=zoneMask[iy][ix]||'';
+    if(z.indexOf('pineta')>=0 || z==='piazzola_pineta'){
+        // V68: non riduciamo la massa di pini, ma li teniamo decisi lontani da porta/ingresso e sentiero.
+        if(distToRoad(x,y,3.6)<2.05) return false;
+        if(x>29.2 && y>22.5 && y<35.5) return false; // porta/varco est pineta
+    }
+    return true;
+}
 function placePineAt(x,y,h,w){
+    if(!canPlacePinetaPineV68(x,y)) return false;
     return placeSprite(x,y,9,{hScale:h||2.05,wScale:w||1.02,nature:true,groundSink:2,blocking:true,blockRadius:.42,noRoad:true,kind:'pine'});
 }
 
@@ -1848,6 +2065,1215 @@ function placeRoadsidePalmPot(x,y,sideX,sideY,idx){
         const texId=[14,34,35][idx%3];
         placeSprite(vx,vy,texId,{hScale:.78,wScale:.82,groundSink:2.2,noRoad:true,blocking:true,blockRadius:.30,kind:'roadside_pot'});
     }
+}
+
+function setBarbecueFloorV68(x,y,kind){
+    if(!inBounds(x,y) || map[y][x]!==0 || fMap[y][x]===2 || cMap[y][x]!==0) return false;
+    if(roadMask[y][x]) return false;
+    setFloor(x,y,kind==='stone'?3:6);
+    zoneMask[y][x]='barbecue_area';
+    noNature[y][x]=1;
+    return true;
+}
+function placeBarbecueAvenueTamarisksV71(){
+    // V71: correzione reale. In V70 i tamerici erano stati messi troppo vicino al barbecue,
+    // coprendo visivamente lo sprite e il grande decal BARBECUE. Ora stanno sul rettilineo
+    // statua -> barbecue, negli spazi liberi tra i vasi del corridoio, con fascia di rispetto
+    // severa davanti al banner/decal e all'area fuoco.
+    const row=[
+        // lato statua / inizio rettilineo: bordi nord/sud, non centro carreggiata
+        [43.50,32.50,0,.82],
+        [49.50,36.50,1,.78],
+        // varchi centrali fra le due file di vasi del rettilineo
+        [59.50,32.50,2,.82],
+        [62.50,36.50,0,.78],
+        [68.50,32.50,1,.80],
+        [72.50,36.50,2,.76]
+    ];
+    row.forEach(p=>{
+        const x=p[0], y=p[1], ix=Math.floor(x), iy=Math.floor(y);
+        if(!inBounds(ix,iy)) return;
+        if(map[iy][ix]!==0 || cMap[iy][ix]!==0 || fMap[iy][ix]===2 || objectBlock[iy][ix]) return;
+        // Non coprire mai barbecue, banner o muro decal: nessun tamerice oltre x 73.35 nel settore BBQ.
+        if(x>73.35 && y>=32.0 && y<=37.0) return;
+        // Restano decorazioni visuali/non bloccanti lungo il rettilineo, quindi non alterano la strada.
+        const texId=54+(p[2]%3);
+        const sp=placeSprite(x,y,texId,{hScale:p[3],wScale:.72+(p[2]%3)*.04,groundSink:2.28,noRoad:true,blocking:false,kind:'barbecue_avenue_tamarisk_v71'});
+        if(sp) markNoNatureDisk(x,y,.58);
+    });
+}
+function placeBarbecueStoryAreaV68(){
+    // V68: piccola area barbecue narrativa nel prato dopo la curva, centrata sul punto utente X 76.61 / Y 35.06.
+    // Non tocca roadMask, non crea muro, non invade camper: è una piazzola dettagliata ma leggera.
+    const cells=[
+        [75,33,'dirt'],[76,33,'dirt'],[77,33,'dirt'],
+        [74,34,'dirt'],[75,34,'stone'],[76,34,'stone'],[77,34,'stone'],[78,34,'dirt'],
+        [74,35,'dirt'],[75,35,'stone'],[76,35,'stone'],[77,35,'stone'],[78,35,'dirt'],
+        [75,36,'dirt'],[76,36,'stone'],[77,36,'dirt']
+    ];
+    cells.forEach(c=>setBarbecueFloorV68(c[0],c[1],c[2]));
+    markNoNatureDisk(76.6,35.05,2.35);
+    // V70: barbecue lungo animato. Fiamme/braci/fumo sono nei frame asset, non in logiche runtime pesanti.
+    placeSprite(76.55,35.05,70,{hScale:.96,wScale:2.22,groundSink:2.55,noRoad:true,blocking:true,blockRadius:.50,kind:'story_barbecue_long_animated'});
+    placeBarbecueAvenueTamarisksV71();
+    // Segnale narrativo e piccolo contorno arredato, tutto fuori carreggiata.
+    placeSprite(74.35,33.85,71,{hScale:.92,wScale:.70,groundSink:2.38,noRoad:true,blocking:false,kind:'story_barbecue_sign'});
+    [[75.1,36.25,24,.58],[78.1,35.85,24,.58],[74.55,35.15,12,.38],[78.2,34.25,31,.40],[75.25,33.65,34,.62],[78.05,33.75,35,.62]].forEach(p=>{
+        const ix=Math.floor(p[0]), iy=Math.floor(p[1]);
+        if(inBounds(ix,iy) && map[iy][ix]===0 && !roadMask[iy][ix] && !objectBlock[iy][ix] && fMap[iy][ix]!==2){
+            placeSprite(p[0],p[1],p[2],{hScale:p[3],wScale:.74,groundSink:2.25,noRoad:true,blocking:p[2]===34||p[2]===35,blockRadius:.24,kind:p[2]===24?'barbecue_stool':'barbecue_border_decor'});
+        }
+    });
+}
+
+
+function setSecretGroundV72(x,y,floorType,zoneName,asRoad){
+    if(!inBounds(x,y)) return false;
+    clearWall(x,y);
+    cMap[y][x]=0; setCeilOwner(x,y,0); wallDecalMap[y][x]=null; wallHeightMap[y][x]=1.0;
+    setFloor(x,y,floorType);
+    zoneMask[y][x]=zoneName||'secret_east_grove';
+    noNature[y][x]=0;
+    safeHuman[y][x]=0;
+    objectBlock[y][x]=0;
+    if(asRoad) markRoad(x,y); else roadMask[y][x]=0;
+    return true;
+}
+function setSecretHedgeWallV72(x,y,zoneName){
+    if(!inBounds(x,y)) return false;
+    setWall(x,y,1);
+    cMap[y][x]=0; setCeilOwner(x,y,0); wallHeightMap[y][x]=1.0;
+    zoneMask[y][x]=zoneName||'secret_hedge_wall';
+    noNature[y][x]=1;
+    safeHuman[y][x]=0;
+    objectBlock[y][x]=0;
+    roadMask[y][x]=0;
+    return true;
+}
+function carveSecretDiskV72(cx,cy,r,floorType,zoneName,asRoad){
+    fillDisk(cx,cy,r,(x,y)=>setSecretGroundV72(x,y,floorType,zoneName,asRoad));
+}
+function carveSecretPathV72(points,width,floorType,zoneName){
+    for(let i=0;i<points.length-1;i++){
+        const a=points[i], b=points[i+1];
+        const steps=Math.max(Math.abs(b[0]-a[0]),Math.abs(b[1]-a[1]))*5+1;
+        for(let s=0;s<=steps;s++){
+            const t=s/steps;
+            const x=a[0]+(b[0]-a[0])*t, y=a[1]+(b[1]-a[1])*t;
+            carveSecretDiskV72(x,y,width||.92,floorType||4,zoneName||'secret_path',true);
+        }
+    }
+}
+function carveSecretEllipsePathV72(cx,cy,rx,ry,width){
+    const pts=[];
+    for(let i=0;i<=96;i++){
+        const a=(Math.PI*2*i)/96;
+        pts.push([cx+Math.cos(a)*rx, cy+Math.sin(a)*ry]);
+    }
+    carveSecretPathV72(pts,width||.92,4,'secret_lake_path');
+}
+function paintSecretEllipseV72(cx,cy,rx,ry,floorType,zoneName){
+    for(let y=Math.floor(cy-ry-1); y<=Math.ceil(cy+ry+1); y++){
+        for(let x=Math.floor(cx-rx-1); x<=Math.ceil(cx+rx+1); x++){
+            if(!inBounds(x,y)) continue;
+            const dx=(x+.5-cx)/rx, dy=(y+.5-cy)/ry;
+            if(dx*dx+dy*dy<=1) setSecretGroundV72(x,y,floorType,zoneName,false);
+        }
+    }
+}
+function canPlaceSecretPineV72(x,y){
+    const ix=Math.floor(x), iy=Math.floor(y);
+    if(!inBounds(ix,iy)) return false;
+    if(map[iy][ix]!==0 || cMap[iy][ix]!==0 || safeHuman[iy][ix] || roadMask[iy][ix] || objectBlock[iy][ix] || noNature[iy][ix]) return false;
+    if(fMap[iy][ix]===2 || zoneMask[iy][ix]==='secret_lake' || zoneMask[iy][ix]==='secret_beach' || zoneMask[iy][ix]==='secret_beach_water') return false;
+    // distanza generosa da sentieri/lago/maze: la zona deve essere fitta ma sempre percorribile su mobile.
+    if(distToRoad(x,y,3.2)<1.55) return false;
+    return true;
+}
+function placeSecretPineV72(x,y,variant){
+    if(!canPlaceSecretPineV72(x,y)) return false;
+    const ok=placeSprite(x,y,9,{hScale:1.62+(variant%5)*.16,wScale:.92+(variant%4)*.04,nature:true,groundSink:2,blocking:true,blockRadius:.42,noRoad:true,kind:'secret_grove_pine_v72'});
+    if(ok && ((variant%3)===0)){
+        const dx=((variant%2)?-.55:.55), dy=((variant%4)-1.5)*.22;
+        const ix=Math.floor(x+dx), iy=Math.floor(y+dy);
+        if(inBounds(ix,iy) && map[iy][ix]===0 && !roadMask[iy][ix] && fMap[iy][ix]!==2 && !objectBlock[iy][ix]){
+            placeSprite(x+dx,y+dy,(variant%2)?40:41,{hScale:.30,wScale:.60,groundSink:2,nature:true,noRoad:true,blocking:false,kind:'secret_grove_floor_detail_v72'});
+        }
+    }
+    return ok;
+}
+function placeSecretGrovePinesV72(){
+    // V73.1: pineta est molto piu' fitta sui bordi. I pini di cornice ignorano solo il noNature
+    // della futura CASA/campo se la cella e' sicura, ma non invadono sentieri, acqua, casa o labirinto.
+    let idx=0;
+    function canBorderPine(x,y){
+        const ix=Math.floor(x), iy=Math.floor(y);
+        if(!inBounds(ix,iy)) return false;
+        const z=zoneMask[iy][ix]||'';
+        if(map[iy][ix]!==0 || cMap[iy][ix]!==0 || objectBlock[iy][ix] || roadMask[iy][ix]) return false;
+        if(fMap[iy][ix]===2 || z==='secret_lake' || z==='secret_lake_sand' || z==='secret_home_clearing' || z==='secret_flower_field' || z.indexOf('secret_maze')===0 || z.indexOf('secret_beach')===0) return false;
+        if(distToRoad(x,y,2.0)<.95) return false;
+        return true;
+    }
+    function placeBorderPine(x,y,variant){
+        if(!canBorderPine(x,y)) return false;
+        const sp=placeSprite(x,y,9,{hScale:1.52+(variant%6)*.11,wScale:.88+(variant%4)*.045,nature:false,groundSink:2,blocking:true,blockRadius:.34,noRoad:true,kind:'secret_grove_border_pine_v73'});
+        if(sp && (variant%5===0)){
+            const dx=(variant%2?-.45:.45), dy=((variant%3)-1)*.18;
+            const ix=Math.floor(x+dx), iy=Math.floor(y+dy);
+            if(inBounds(ix,iy) && map[iy][ix]===0 && !roadMask[iy][ix] && !objectBlock[iy][ix] && fMap[iy][ix]!==2){
+                placeSprite(x+dx,y+dy,(variant%2)?40:41,{hScale:.28,wScale:.56,groundSink:2,nature:true,noRoad:true,blocking:false,kind:'secret_grove_floor_detail_v72'});
+            }
+        }
+        return sp;
+    }
+    const border=[];
+    // File fitte vicino ai muri, leggermente sfalsate: non sul sentiero anulare.
+    for(let x=83.1;x<=116.4;x+=1.65){ border.push([x,24.4]); border.push([x,55.7]); }
+    for(let x=84.0;x<=115.2;x+=2.15){ border.push([x,26.4]); border.push([x,53.8]); }
+    for(let y=25.2;y<=56.2;y+=1.75){ border.push([82.7,y]); border.push([116.3,y]); }
+    for(let y=27.0;y<=54.5;y+=2.35){ border.push([84.7,y]); border.push([114.1,y]); }
+    // Masse interne, piu' rade ma numerose.
+    for(let y=28.0;y<=53.5;y+=2.65){
+        for(let x=85.3;x<=114.5;x+=2.80){
+            const h=floorHash2D(Math.floor(x*11),Math.floor(y*13),733);
+            if(h<.38) continue;
+            border.push([x+(h-.5)*.62, y+(floorHash2D(Math.floor(x*7),Math.floor(y*9),734)-.5)*.62]);
+        }
+    }
+    border.forEach(p=>placeBorderPine(p[0],p[1],idx++));
+    // Mantiene anche alcuni pini 'naturali' V72 nelle aree libere, dove passano i vincoli piu' severi.
+    const accents=[[86,30],[89,33],[112,29],[115,34],[85,47],[88,52],[113,50],[110,55],[92,26],[106,26],[92,56],[106,56]];
+    accents.forEach(p=>placeSecretPineV72(p[0],p[1],idx++));
+}
+
+
+function buildSecretMazeV72(){
+    // V73: labirinto sud rifatto, piu' lungo e meno banale. Solo muri cespuglio.
+    // Corridoi ampi con width ~.92 per restare giocabili su mobile.
+    for(let y=53;y<=78;y++) for(let x=82;x<=110;x++) setSecretHedgeWallV72(x,y,'secret_maze_hedge');
+    const main=[
+        [98,52.1],[98,55],[86,55],[86,58],[105,58],[105,61],[90,61],[90,64],
+        [108,64],[108,67],[84,67],[84,70],[101,70],[101,73],[89,73],[89,76],
+        [106,76],[106,73],[110.2,73]
+    ];
+    carveSecretPathV72(main,.92,4,'secret_maze_path');
+    // Vicoli ciechi: sembrano soluzioni plausibili ma non portano alla spiaggia.
+    [
+        [[86,58],[83,58],[83,62],[87,62]],
+        [[105,61],[109,61],[109,55]],
+        [[90,64],[94,64],[94,56],[92,56]],
+        [[108,67],[110,67],[110,70]],
+        [[84,70],[82,70],[82,75],[85,75]],
+        [[101,70],[101,66],[97,66],[97,63]],
+        [[89,73],[86,73],[86,78]],
+        [[98,55],[98,53],[102,53]],
+        [[95,61],[95,69],[92,69]],
+        [[103,76],[103,78],[98,78]]
+    ].forEach(branch=>carveSecretPathV72(branch,.82,4,'secret_maze_deadend'));
+    // Richiude bordi esterni: apertura nord d'ingresso e uscita est verso spiaggia.
+    for(let x=82;x<=110;x++){ if(!(x>=97&&x<=99)) setSecretHedgeWallV72(x,53,'secret_maze_hedge'); }
+    for(let x=82;x<=110;x++) setSecretHedgeWallV72(x,78,'secret_maze_hedge');
+    for(let y=53;y<=78;y++) setSecretHedgeWallV72(82,y,'secret_maze_hedge');
+    for(let y=53;y<=78;y++){ if(!(y>=72&&y<=74)) setSecretHedgeWallV72(110,y,'secret_maze_hedge'); }
+    // Riapre il passaggio finale verso la spiaggia.
+    carveSecretPathV72([[109.5,73],[111.0,73]],.90,4,'secret_beach_gate');
+}
+
+function buildSecretBeachV72(){
+    // V73: spiaggia segreta resta isolata, ma si raccorda al labirinto piu' lungo.
+    for(let y=66;y<=79;y++) for(let x=110;x<=118;x++) setSecretHedgeWallV72(x,y,'secret_beach_wall');
+    for(let y=67;y<=78;y++) for(let x=111;x<=117;x++) setSecretGroundV72(x,y,0,'secret_beach',false);
+    carveSecretPathV72([[109.5,73],[111.4,73]],.92,0,'secret_beach_gate');
+    for(let y=75;y<=78;y++) for(let x=113;x<=117;x++) setSecretGroundV72(x,y,2,'secret_beach_water',false);
+    for(let x=111;x<=117;x++) setSecretHedgeWallV72(x,79,'secret_beach_wall');
+    for(let y=66;y<=79;y++) setSecretHedgeWallV72(118,y,'secret_beach_wall');
+    [[111.3,69.2,8,1.02],[112.8,69.6,11,.72],[115.4,71.4,8,.94],[114.0,72.3,11,.68]].forEach(p=>{
+        const ix=Math.floor(p[0]), iy=Math.floor(p[1]);
+        if(inBounds(ix,iy) && map[iy][ix]===0 && fMap[iy][ix]!==2 && !objectBlock[iy][ix]) placeSprite(p[0],p[1],p[2],{hScale:p[3],groundSink:2,blocking:true,blockRadius:.38,noRoad:true,kind:'secret_beach_furniture_v72'});
+    });
+}
+
+
+function restoreLegacyMapInvariantV72(){
+    // V72 anti-regressione: l'allargamento di mapW non deve alterare la mappa storica.
+    // Queste celle sono la fascia pre-spiaggia/vecchio bordo rimessa esattamente come V71,
+    // perché alcuni helper legacy a ridosso dell'ex bordo est/nord-est diventano sensibili a mapW più grande.
+    const cells=[
+        [3,66,0,null],[18,66,1,null],[24,66,0,null],[30,66,1,null],
+        [4,67,1,null],[7,67,1,null],[13,67,0,null],[28,67,1,null],[55,67,0,null],
+        [2,68,0,0],[11,68,1,9],[23,68,0,0],[26,68,1,9],[29,68,1,9],[56,68,1,9],[77,68,0,0]
+    ];
+    cells.forEach(c=>{
+        const x=c[0], y=c[1];
+        if(!inBounds(x,y)) return;
+        if(c[2]) setWall(x,y,1); else clearWall(x,y);
+        if(c[3]!==null) setFloor(x,y,c[3]);
+        if(c[2]) roadMask[y][x]=0;
+    });
+}
+
+function buildSecretNorthFlowerFieldV73(){
+    // V73: campo nord per futura raccolta pietre. Fiori/cespugli permessi qui, non nella pineta storica.
+    for(let y=6;y<=21;y++) for(let x=81;x<=118;x++) setSecretGroundV72(x,y,10,'secret_flower_field',false);
+    for(let x=81;x<=118;x++){ setSecretHedgeWallV72(x,5,'secret_north_wall'); setSecretHedgeWallV72(x,22,'secret_outer_wall'); }
+    for(let y=5;y<=22;y++){ setSecretHedgeWallV72(80,y,'secret_outer_wall'); setSecretHedgeWallV72(118,y,'secret_outer_wall'); }
+    // Porta nord dalla pineta al campo. Parte dal sentiero circolare del lago.
+    for(let x=97;x<=101;x++){ setSecretGroundV72(x,22,4,'secret_north_gate',true); setSecretGroundV72(x,21,4,'secret_north_gate',true); }
+    carveSecretPathV72([[99.0,33.7],[99.0,28.0],[99.0,22.0],[99.0,15.0]],.92,4,'secret_north_path');
+    // Fiori e cespugli come raccolta estetica, niente pietre per ora.
+    const flora=[];
+    for(let y=8.5;y<=19.5;y+=2.25){
+        for(let x=84.5;x<=115.0;x+=3.0){
+            const h=floorHash2D(Math.floor(x*10),Math.floor(y*10),901);
+            if(h>.30) flora.push([x+(h-.5)*.55,y+(floorHash2D(Math.floor(x*3),Math.floor(y*5),902)-.5)*.55,h]);
+        }
+    }
+    flora.forEach((p,i)=>{
+        const ix=Math.floor(p[0]), iy=Math.floor(p[1]);
+        if(!inBounds(ix,iy) || map[iy][ix]!==0 || roadMask[iy][ix] || objectBlock[iy][ix]) return;
+        const h=p[2];
+        let texId = h>.78 ? 26 : (h>.60 ? 25 : [13,27,28,29][i%4]);
+        const blocking = texId===25 || texId===26;
+        placeSprite(p[0],p[1],texId,{hScale:blocking?.72:.38,wScale:blocking?.76:.52,groundSink:2.2,nature:true,noRoad:true,blocking:false,blockRadius:.20,kind:blocking?'secret_flower_field_bush_v73':'secret_flower_field_flower_v73'});
+    });
+}
+function paintSecretLakeSandV73(){
+    // Sabbia attorno all'acqua, con il sentiero ancora ampio e distante.
+    paintSecretEllipseV72(99.0,42.0,7.8,5.3,0,'secret_lake_sand');
+    paintSecretEllipseV72(99.0,42.0,5.6,3.9,2,'secret_lake');
+}
+function buildSecretHomeClearingV73(){
+    // Piazzola CASA a est, non attaccata al muro: futura base del protagonista.
+    paintSecretEllipseV72(112.0,41.5,4.9,3.1,6,'secret_home_clearing');
+    markNoNatureDisk(112.0,41.5,5.2);
+    carveSecretPathV72([[110.2,41.5],[108.0,40.5],[105.8,39.0]],.74,6,'secret_home_path');
+    placeSprite(111.4,37.9,76,{hScale:1.05,wScale:.76,groundSink:2.35,noRoad:true,blocking:false,kind:'secret_home_sign_casa_v73'});
+    [[113.8,39.4,24,.55],[109.2,43.8,31,.34],[114.6,43.8,34,.62],[110.2,39.1,35,.58]].forEach(p=>{
+        const ix=Math.floor(p[0]), iy=Math.floor(p[1]);
+        if(inBounds(ix,iy) && map[iy][ix]===0 && !roadMask[iy][ix] && fMap[iy][ix]!==2 && !objectBlock[iy][ix]){
+            placeSprite(p[0],p[1],p[2],{hScale:p[3],wScale:.72,groundSink:2.25,noRoad:true,blocking:p[2]===34||p[2]===35,blockRadius:.22,kind:'secret_home_decor_v73'});
+        }
+    });
+}
+function buildEasternSecretZoneV72(){
+    legacyBoundsLimitV72 = mapW;
+    // Vecchia mappa: resta intatta salvo moncone gia' stabilito, nuova porta Y27 e sentierino di ingresso.
+    [[74,29],[74,30]].forEach(([x,y])=>{
+        if(inBounds(x,y) && map[y][x]===1 && zoneMask[y][x]==='barrier_hedge'){
+            clearWall(x,y); setFloor(x,y,1); zoneMask[y][x]='erba'; roadMask[y][x]=0; noNature[y][x]=0;
+        }
+    });
+    // Ricrea vecchia frontiera est x79: chiude anche la porta V72 sbagliata y37/y38.
+    for(let y=1;y<mapH;y++) setWall(79,y,1);
+    // Nuova porta ampia a Y27 circa, vicino al vecchio confine est. Non tocca il decal BARBECUE x79 y33..36.
+    [26,27,28].forEach(y=>setSecretGroundV72(79,y,4,'secret_gate_y27',true));
+    carveSecretPathV72([[70.8,31.0],[73.5,29.8],[76.4,28.2],[79.4,27.2]],.98,4,'secret_gate_approach_y27');
+
+    // Grande area est: pineta + lago + labirinto + spiaggia. La stanza resta murata ai lati.
+    for(let y=22;y<=79;y++) for(let x=80;x<=118;x++) setSecretGroundV72(x,y,1,'secret_east_grove',false);
+    for(let x=80;x<=118;x++){ setSecretHedgeWallV72(x,22,'secret_outer_wall'); setSecretHedgeWallV72(x,79,'secret_outer_wall'); }
+    for(let y=22;y<=79;y++){ setSecretHedgeWallV72(80,y,'secret_outer_wall'); setSecretHedgeWallV72(118,y,'secret_outer_wall'); }
+    // Apertura interna corrispondente alla porta nuova.
+    [26,27,28].forEach(y=>setSecretGroundV72(80,y,4,'secret_gate_y27',true));
+    carveSecretPathV72([[79.5,27.2],[84.0,27.4],[89.0,31.2]],.98,4,'secret_entry_path_y27');
+
+    // Campo nord sopra il vecchio muro nord della pineta nuova.
+    buildSecretNorthFlowerFieldV73();
+
+    // Sentiero circolare distante dal lago, sabbia vicina all'acqua, casa a est.
+    carveSecretEllipsePathV72(99.0,42.0,11.8,8.4,.92);
+    paintSecretLakeSandV73();
+    buildSecretHomeClearingV73();
+
+    // Collegamenti interni: ingresso -> anello, anello -> campo nord, anello -> labirinto.
+    carveSecretPathV72([[89.0,31.2],[92.5,34.5],[91.2,38.0]],.92,4,'secret_entry_path_y27');
+    carveSecretPathV72([[99.0,50.4],[99.0,52.4],[98.0,53.4]],.90,4,'secret_south_path');
+
+    buildSecretMazeV72();
+    buildSecretBeachV72();
+    placeSecretGrovePinesV72();
+}
+
+function restorePinetaPineMassV68(){
+    // Aggiunge massa lontana da ingresso e sentiero, compensando i pini non più piazzati vicino al passaggio.
+    const extra=[
+        [6.8,27.8],[11.2,27.6],[15.8,28.8],[20.8,29.4],[27.4,29.8],
+        [6.2,34.2],[12.6,34.8],[18.0,36.4],[24.8,37.2],
+        [7.0,44.4],[13.8,45.0],[20.8,45.8],[28.0,47.2],
+        [6.4,51.8],[12.8,53.2],[19.0,54.0],[27.0,55.4],
+        [9.6,57.2],[23.6,58.0],[29.6,55.8]
+    ];
+    extra.forEach((p,i)=>{ if(distToRoad(p[0],p[1],3.4)>2.15) placePineAt(p[0]+(rnd()-.5)*.28,p[1]+(rnd()-.5)*.28,1.70+rnd()*.46,.94+rnd()*.11); });
+    const extraDeep=[
+        [5.5,18.5],[9.5,18.5],[13.5,18.5],[17.5,18.5],[21.5,18.5],[25.5,18.5],
+        [6.5,20.5],[11.5,20.5],[16.5,20.5],[22.5,20.5],[27.5,20.5],
+        [5.5,31.5],[11.5,32.5],[17.5,32.5],[23.5,33.5],
+        [6.5,38.5],[13.5,39.5],[20.5,40.5],[27.5,41.5],
+        [5.5,48.5],[11.5,49.5],[18.5,50.5],[25.5,51.5],
+        [6.5,56.5],[12.5,57.5],[20.5,57.5],[28.5,57.5]
+    ];
+    extraDeep.forEach((p,i)=>{ if(distToRoad(p[0],p[1],3.6)>2.20) placePineAt(p[0]+(rnd()-.5)*.22,p[1]+(rnd()-.5)*.22,1.58+rnd()*.40,.92+rnd()*.10); });
+}
+
+
+// V74 — espansione controllata a ovest + rifinitura pinete.
+function v74DefaultFloorForY(y){ return y>=SEA_Y ? 2 : (y>=68 ? 0 : (y>=63 ? 9 : 1)); }
+function v74DefaultZoneForY(y){ return y>=SEA_Y ? 'mare' : (y>=68 ? 'spiaggia' : (y>=63 ? 'fascia_palme' : 'erba')); }
+function shiftExistingWorldEastV74(){
+    const off=WEST_EXPAND_V74, srcW=LEGACY_SOURCE_W_V74;
+    // Emula il vecchio bordo est della V73 prima di copiare: con mapW piu' grande, quel bordo non nasce piu' da solo.
+    for(let y=0;y<mapH;y++){
+        if(srcW-1>=0){ map[y][srcW-1]=1; zoneMask[y][srcW-1]=zoneMask[y][srcW-1]||'legacy_east_border_v74'; }
+    }
+    const saved=[];
+    for(let y=0;y<mapH;y++){
+        saved[y]={
+            map:Array.from(map[y].slice(0,srcW)), fMap:Array.from(fMap[y].slice(0,srcW)), cMap:Array.from(cMap[y].slice(0,srcW)),
+            ceilingOwnerMap:Array.from(ceilingOwnerMap[y].slice(0,srcW)), safeHuman:Array.from(safeHuman[y].slice(0,srcW)), roadMask:Array.from(roadMask[y].slice(0,srcW)),
+            noNature:Array.from(noNature[y].slice(0,srcW)), objectBlock:Array.from(objectBlock[y].slice(0,srcW)), wallHeightMap:Array.from(wallHeightMap[y].slice(0,srcW)),
+            zoneMask:zoneMask[y].slice(0,srcW), wallDecalMap:wallDecalMap[y].slice(0,srcW)
+        };
+        map[y].fill(0); fMap[y].fill(v74DefaultFloorForY(y)); cMap[y].fill(0); ceilingOwnerMap[y].fill(0); safeHuman[y].fill(0); roadMask[y].fill(0); noNature[y].fill(0); objectBlock[y].fill(0); wallHeightMap[y].fill(1.0);
+        for(let x=0;x<mapW;x++){ zoneMask[y][x]=v74DefaultZoneForY(y); wallDecalMap[y][x]=null; }
+    }
+    for(let y=0;y<mapH;y++){
+        const row=saved[y];
+        for(let x=0;x<srcW;x++){
+            const dx=x+off;
+            map[y][dx]=row.map[x]; fMap[y][dx]=row.fMap[x]; cMap[y][dx]=row.cMap[x]; ceilingOwnerMap[y][dx]=row.ceilingOwnerMap[x];
+            safeHuman[y][dx]=row.safeHuman[x]; roadMask[y][dx]=row.roadMask[x]; noNature[y][dx]=row.noNature[x]; objectBlock[y][dx]=row.objectBlock[x]; wallHeightMap[y][dx]=row.wallHeightMap[x];
+            zoneMask[y][dx]=row.zoneMask[x]; wallDecalMap[y][dx]=row.wallDecalMap[x];
+        }
+    }
+    sprites.forEach(sp=>{ sp.x+=off; });
+    roofSegments.forEach(r=>{
+        ['x0','x1','x2','x3'].forEach(k=>{ if(typeof r[k]==='number') r[k]+=off; });
+        if(Array.isArray(r.doors)) r.doors.forEach(d=>{ if(typeof d.x==='number') d.x+=off; });
+    });
+    // Nuovi confini fisici dopo lo shift.
+    for(let x=0;x<mapW;x++){ map[0][x]=1; }
+    for(let y=0;y<mapH;y++){ map[y][0]=1; map[y][mapW-1]=1; }
+    for(let x=1;x<mapW-1;x++) clearWall(x,mapH-1);
+}
+function markBlockedDiskOnlyV74(cx,cy,r){
+    fillDisk(cx,cy,r,(x,y)=>{ objectBlock[y][x]=1; });
+}
+function rebuildObjectBlockFromSpritesV74(){
+    for(let y=0;y<mapH;y++) objectBlock[y].fill(0);
+    sprites.forEach(sp=>{ if(sp.blocking) markBlockedDiskOnlyV74(sp.x,sp.y,sp.blockRadius||.55); });
+    for(let y=0;y<mapH;y++) for(let x=0;x<mapW;x++){ if(map[y][x]>0) roadMask[y][x]=0; }
+}
+function zoneIsPathOrDoorV74(z){ return z && (z.indexOf('path')>=0 || z.indexOf('gate')>=0 || z.indexOf('trail')>=0 || z.indexOf('door')>=0); }
+function cleanupEastGrovePinesNearPathsV74(){
+    for(let i=sprites.length-1;i>=0;i--){
+        const s=sprites[i]; const k=s.kind||'';
+        if(k.indexOf('secret_grove')<0 || k.indexOf('pine')<0) continue;
+        const ix=Math.floor(s.x), iy=Math.floor(s.y); if(!inBounds(ix,iy)) continue;
+        const z=zoneMask[iy][ix]||'';
+        const nearPath=roadMask[iy][ix] || zoneIsPathOrDoorV74(z) || z==='secret_home_clearing' || z==='secret_lake_sand' || distToRoad(s.x,s.y,2.8)<1.75;
+        const nearPortal=(s.x>108 && s.x<113 && s.y>24 && s.y<30) || (s.x>124 && s.x<134 && s.y>20 && s.y<25) || (s.x>138 && s.y>37 && s.y<46);
+        if(nearPath || nearPortal) sprites.splice(i,1);
+    }
+    rebuildObjectBlockFromSpritesV74();
+}
+function canPlaceEastBorderPineV74(x,y){
+    const ix=Math.floor(x), iy=Math.floor(y); if(!inBounds(ix,iy)) return false;
+    const z=zoneMask[iy][ix]||'';
+    if(map[iy][ix]!==0 || cMap[iy][ix]!==0 || objectBlock[iy][ix] || roadMask[iy][ix] || fMap[iy][ix]===2) return false;
+    if(z==='secret_lake'||z==='secret_lake_sand'||z==='secret_home_clearing'||z==='secret_flower_field'||z.indexOf('secret_maze')===0||z.indexOf('secret_beach')===0) return false;
+    if(zoneIsPathOrDoorV74(z) || distToRoad(x,y,3.2)<1.85) return false;
+    if((x<113 && y<31) || (x>125&&x<134&&y<25) || (x>137&&y>37&&y<46)) return false;
+    return true;
+}
+function placeEastGroveWallPinesV74(){
+    let n=0;
+    const pts=[];
+    for(let y=24;y<=77;y+=2){ pts.push([112.4,y+.15]); pts.push([146.2,y+.45]); }
+    for(let y=25;y<=76;y+=4){ pts.push([114.6,y+.55]); pts.push([144.0,y+.05]); }
+    for(let x=114;x<=145;x+=2){ pts.push([x+.25,24.3]); pts.push([x+.55,76.6]); }
+    for(let x=116;x<=143;x+=4){ pts.push([x+.35,26.4]); pts.push([x+.15,74.5]); }
+    pts.forEach((p,i)=>{
+        const x=p[0]+((floorHash2D(Math.floor(p[0]*3),Math.floor(p[1]*3),74)-.5)*.44);
+        const y=p[1]+((floorHash2D(Math.floor(p[0]*5),Math.floor(p[1]*5),75)-.5)*.44);
+        if(canPlaceEastBorderPineV74(x,y)){
+            if(placeSprite(x,y,9,{hScale:1.60+(i%7)*.09,wScale:.90+(i%5)*.035,nature:false,groundSink:2,blocking:true,blockRadius:.36,noRoad:true,kind:'secret_grove_wall_pine_v74'})) n++;
+        }
+    });
+    return n;
+}
+function placeEastGroveGroundDetailsV74(){
+    let n=0;
+    for(let y=23;y<=78;y++) for(let x=111;x<=147;x++){
+        const z=zoneMask[y][x]||'';
+        if(map[y][x]!==0 || roadMask[y][x] || objectBlock[y][x] || fMap[y][x]===2 || z==='secret_lake'||z==='secret_lake_sand'||z==='secret_home_clearing'||z==='secret_flower_field'||z.indexOf('secret_maze')===0||z.indexOf('secret_beach')===0) continue;
+        if(distToRoad(x+.5,y+.5,2.8)<1.1) continue;
+        const h=floorHash2D(x,y,174);
+        if(h>.58){
+            const texId=h>.87?41:(h>.72?40:(h>.64?12:30));
+            if(placeSprite(x+.18+floorHash2D(x,y,175)*.64,y+.16+floorHash2D(x,y,176)*.66,texId,{hScale:.25+floorHash2D(x,y,177)*.18,wScale:.48+floorHash2D(x,y,178)*.28,groundSink:2,nature:false,noRoad:true,blocking:false,kind:'secret_grove_floor_litter_v74'})) n++;
+        }
+    }
+    return n;
+}
+function placeHomeCampfireV74(){
+    // La casa V73 era a x112 prima dello shift; dopo WEST_EXPAND_V74 e' a x142.
+    placeSprite(141.2,44.35,77,{hScale:.84,wScale:.78,groundSink:2.42,noRoad:true,blocking:false,kind:'secret_home_animated_campfire_v74'});
+}
+function placeBarTableGrassV74(){
+    const row=BAR_TABLES_ROW_V70.map(p=>[p[0]+WEST_EXPAND_V74,p[1]]);
+    let n=0;
+    row.forEach((p,idx)=>{
+        [[-.95,.72],[.92,.65],[-.55,-.65],[.58,-.72],[0,1.05]].forEach((d,j)=>{
+            const x=p[0]+d[0]+(floorHash2D(idx,j,271)-.5)*.18, y=p[1]+d[1]+(floorHash2D(idx,j,272)-.5)*.18;
+            const ix=Math.floor(x), iy=Math.floor(y); if(!inBounds(ix,iy) || map[iy][ix]!==0 || roadMask[iy][ix] || cMap[iy][ix]!==0 || fMap[iy][ix]===2) return;
+            if(placeSprite(x,y,(j%3===0)?31:((j%2)?30:12),{hScale:.28+floorHash2D(idx,j,273)*.12,wScale:.52,groundSink:2,nature:false,noRoad:true,blocking:false,kind:'bar_table_low_grass_v74'})) n++;
+        });
+    });
+    return n;
+}
+function setWestPinetaGroundV74(x,y,floorType,zoneName,road){ setSecretGroundV72(x,y,floorType||8,zoneName||'pineta2_west',!!road); }
+function setWestPinetaWallV74(x,y,zoneName){ if(!inBounds(x,y)) return; setWall(x,y,1); setFloor(x,y,8); zoneMask[y][x]=zoneName||'pineta2_wall'; noNature[y][x]=1; roadMask[y][x]=0; objectBlock[y][x]=0; }
+function canPlaceWestPineV74(x,y){
+    const ix=Math.floor(x), iy=Math.floor(y); if(!inBounds(ix,iy)) return false;
+    const z=zoneMask[iy][ix]||'';
+    if(map[iy][ix]!==0 || cMap[iy][ix]!==0 || objectBlock[iy][ix] || roadMask[iy][ix] || fMap[iy][ix]===2) return false;
+    if(z!=='pineta2_west' && z!=='pineta2_underwood') return false;
+    if(distToRoad(x,y,3.0)<1.85) return false;
+    if(x>25 && y>29 && y<37) return false; // aria ampia attorno alla porta.
+    return true;
+}
+function buildWestPineta2V74(){
+    // Nuova stanza ovest: chiusa ai quattro lati, collegata alla vecchia pineta da una porta ampia.
+    for(let y=18;y<=61;y++) for(let x=1;x<=29;x++) setWestPinetaGroundV74(x,y,8,'pineta2_west',false);
+    for(let x=1;x<=29;x++){ setWestPinetaWallV74(x,17,'pineta2_wall'); setWestPinetaWallV74(x,62,'pineta2_wall'); }
+    for(let y=17;y<=62;y++){ setWestPinetaWallV74(0,y,'pineta2_wall'); setWestPinetaWallV74(30,y,'pineta2_wall'); }
+    // Porta ampia: vecchia pineta attorno a coordinate logiche X 5.26 / Y 32.53 = actual x 35.26 dopo shift.
+    [31,32,33,34].forEach(y=>{ setWestPinetaGroundV74(30,y,4,'pineta2_gate',true); setWestPinetaGroundV74(29,y,4,'pineta2_gate',true); });
+    carveSecretPathV72([[35.3,32.5],[33.0,32.7],[30.4,32.8]],1.05,4,'pineta2_branch_from_old_trail');
+    // Sentiero a S ampio dentro pineta2.
+    carveSecretPathV72([[29.2,32.8],[25.0,32.6],[21.5,25.4],[13.2,24.7],[7.8,31.2],[12.2,39.7],[23.0,43.0],[25.0,52.0],[16.0,56.0],[7.4,52.2]],1.12,4,'pineta2_s_path');
+    fillDisk(7.4,52.2,2.35,(x,y)=>{ if(map[y][x]===0){ setFloor(x,y,6); zoneMask[y][x]='pineta2_moss_rock_clearing'; roadMask[y][x]=0; noNature[y][x]=1; } });
+    placeSprite(6.2,52.1,78,{hScale:1.35,wScale:1.18,groundSink:2.25,noRoad:true,blocking:true,blockRadius:.55,kind:'pineta2_mossy_boulder_v74'});
+    let pines=0, details=0;
+    const pts=[];
+    for(let y=20;y<=60;y+=2){ pts.push([2.6,y+.2]); pts.push([27.7,y+.45]); }
+    for(let y=21;y<=59;y+=4){ pts.push([5.0,y+.55]); pts.push([25.0,y+.05]); }
+    for(let x=4;x<=27;x+=2){ pts.push([x+.25,19.4]); pts.push([x+.45,59.4]); }
+    for(let x=6;x<=25;x+=4){ pts.push([x+.35,21.6]); pts.push([x+.15,57.2]); }
+    pts.forEach((p,i)=>{
+        const x=p[0]+((floorHash2D(Math.floor(p[0]*4),Math.floor(p[1]*4),274)-.5)*.42);
+        const y=p[1]+((floorHash2D(Math.floor(p[0]*6),Math.floor(p[1]*6),275)-.5)*.42);
+        if(canPlaceWestPineV74(x,y)){
+            if(placeSprite(x,y,9,{hScale:1.58+(i%8)*.09,wScale:.88+(i%5)*.04,nature:false,groundSink:2,blocking:true,blockRadius:.36,noRoad:true,kind:'pineta2_wall_pine_v74'})) pines++;
+        }
+    });
+    for(let y=19;y<=60;y++) for(let x=2;x<=28;x++){
+        if(!canPlaceWestPineV74(x+.5,y+.5) && (roadMask[y][x] || objectBlock[y][x])) continue;
+        if(map[y][x]!==0 || roadMask[y][x] || fMap[y][x]===2 || zoneMask[y][x]==='pineta2_moss_rock_clearing') continue;
+        if(distToRoad(x+.5,y+.5,2.6)<1.05) continue;
+        const h=floorHash2D(x,y,374);
+        if(h>.64){
+            const texId=h>.88?41:(h>.75?40:(h>.69?12:30));
+            if(placeSprite(x+.2+floorHash2D(x,y,375)*.6,y+.18+floorHash2D(x,y,376)*.62,texId,{hScale:.24+floorHash2D(x,y,377)*.18,wScale:.50,groundSink:2,nature:false,noRoad:true,blocking:false,kind:'pineta2_floor_litter_v74'})) details++;
+        }
+    }
+    v74WorldStats.pineta2Pines=pines; v74WorldStats.pineta2Details=details;
+}
+function cleanupOldPinetaWestGatePinesV74(){
+    let removed=0;
+    for(let i=sprites.length-1;i>=0;i--){
+        const s=sprites[i]; const k=s.kind||'';
+        if(s.tex!==9 && k.indexOf('pine')<0) continue;
+        const ix=Math.floor(s.x), iy=Math.floor(s.y); if(!inBounds(ix,iy)) continue;
+        const z=zoneMask[iy][ix]||'';
+        if(z==='pineta2_branch_from_old_trail' || (s.x>29 && s.x<36.5 && s.y>30.5 && s.y<35.5 && distToRoad(s.x,s.y,2.2)<1.35)){
+            sprites.splice(i,1); removed++;
+        }
+    }
+    v74WorldStats.oldGatePinesRemoved=removed;
+}
+
+
+// V75 — densità pinete, percorso a S obbligato, bivio leggibile e colonne yoga ripristinate.
+function isV75PineSprite(sp){
+    const k=sp.kind||'';
+    return sp.tex===9 || k.indexOf('pine')>=0;
+}
+function removeSpritesByKindContainsV75(part){
+    let removed=0;
+    for(let i=sprites.length-1;i>=0;i--){
+        if((sprites[i].kind||'').indexOf(part)>=0){ sprites.splice(i,1); removed++; }
+    }
+    return removed;
+}
+function canPlaceEastLakePineV75(x,y){
+    const ix=Math.floor(x), iy=Math.floor(y); if(!inBounds(ix,iy)) return false;
+    const z=zoneMask[iy][ix]||'';
+    if(map[iy][ix]!==0 || cMap[iy][ix]!==0 || objectBlock[iy][ix] || roadMask[iy][ix] || fMap[iy][ix]===2) return false;
+    if(z==='secret_lake' || z==='secret_lake_sand' || z==='secret_home_clearing' || z==='secret_flower_field') return false;
+    if(z.indexOf('secret_maze')===0 || z.indexOf('secret_beach')===0) return false;
+    if(zoneIsPathOrDoorV74(z) || distToRoad(x,y,3.0)<1.45) return false;
+    const dx=x-129.0, dy=y-42.0, d=Math.sqrt(dx*dx+dy*dy);
+    if(d<7.6 || d>17.4) return false; // fascia scenica: intorno al lago, non sopra sabbia/sentiero.
+    if((x>137&&y>37&&y<46) || (x<113&&y<31) || (x>125&&x<134&&y<25)) return false;
+    return true;
+}
+function addEastGroveLakeAndWallPinesV75(){
+    let lake=0, wall=0, details=0;
+    // Fascia scenica attorno al lago, arretrata da sabbia e sentiero circolare.
+    for(let i=0;i<168;i++){
+        const ang=(i/168)*Math.PI*2;
+        const ring=(i%4===0?8.6:(i%4===1?10.7:(i%4===2?13.1:15.6)));
+        const rx=ring*(1.02+((i%5)-2)*.025), ry=ring*.70*(1+((i%7)-3)*.018);
+        const x=129.0+Math.cos(ang)*rx + (floorHash2D(i,3,751)-.5)*.52;
+        const y=42.0+Math.sin(ang)*ry + (floorHash2D(i,4,752)-.5)*.52;
+        if(canPlaceEastLakePineV75(x,y)){
+            if(placeSprite(x,y,9,{hScale:1.50+(i%7)*.10,wScale:.86+(i%5)*.035,nature:false,groundSink:2,blocking:true,blockRadius:.34,noRoad:true,kind:'secret_grove_lake_pine_v75'})) lake++;
+        }
+    }
+    // Ulteriore densità vicino ai muri della stanza, lasciando aria a porte/casa/campo nord.
+    const pts=[];
+    for(let y=24;y<=77;y+=1){
+        if(y%2===0){ pts.push([111.7,y+.25]); pts.push([147.0,y+.55]); }
+        if(y%4===1){ pts.push([114.0,y+.40]); pts.push([144.5,y+.15]); }
+    }
+    for(let x=113;x<=146;x+=1){
+        if(x%2===0){ pts.push([x+.35,23.5]); pts.push([x+.20,78.0]); }
+        if(x%5===0){ pts.push([x+.55,25.6]); pts.push([x+.35,75.6]); }
+    }
+    pts.forEach((p,i)=>{
+        const x=p[0]+(floorHash2D(i,1,753)-.5)*.38;
+        const y=p[1]+(floorHash2D(i,2,754)-.5)*.38;
+        if(canPlaceEastBorderPineV74(x,y)){
+            if(placeSprite(x,y,9,{hScale:1.56+(i%8)*.10,wScale:.86+(i%4)*.04,nature:false,groundSink:2,blocking:true,blockRadius:.34,noRoad:true,kind:'secret_grove_extra_wall_pine_v75'})) wall++;
+        }
+    });
+    for(let y=24;y<=78;y++) for(let x=111;x<=147;x++){
+        const z=zoneMask[y][x]||'';
+        if(map[y][x]!==0 || roadMask[y][x] || objectBlock[y][x] || fMap[y][x]===2) continue;
+        if(z==='secret_lake'||z==='secret_lake_sand'||z==='secret_home_clearing'||z==='secret_flower_field'||z.indexOf('secret_maze')===0||z.indexOf('secret_beach')===0) continue;
+        if(distToRoad(x+.5,y+.5,3.0)<.95) continue;
+        const h=floorHash2D(x,y,755);
+        if(h>.49){
+            const texId=h>.88?41:(h>.70?40:(h>.59?31:30));
+            if(placeSprite(x+.15+floorHash2D(x,y,756)*.70,y+.15+floorHash2D(x,y,757)*.70,texId,{hScale:.22+floorHash2D(x,y,758)*.20,wScale:.46+floorHash2D(x,y,759)*.25,groundSink:2,nature:false,noRoad:true,blocking:false,kind:'secret_grove_extra_litter_v75'})) details++;
+        }
+    }
+    Object.assign(v74WorldStats,{v75LakePines:lake,v75EastExtraWallPines:wall,v75EastExtraDetails:details});
+}
+function carveOldPinetaBranchToWestV75(){
+    // Collegamento leggibile dal sentiero storico pre-yoga verso la porta della pineta2.
+    const pts=[[58.0,36.0],[54.0,35.3],[49.0,34.4],[43.5,33.6],[38.0,33.0],[34.0,32.8],[30.2,32.8]];
+    carveSecretPathV72(pts,1.12,4,'pineta2_branch_from_old_trail_v75');
+    let removed=0, details=0;
+    for(let i=sprites.length-1;i>=0;i--){
+        const s=sprites[i];
+        if(!isV75PineSprite(s)) continue;
+        if(s.x>=29 && s.x<=59.5 && s.y>=30 && s.y<=38.8 && distToRoad(s.x,s.y,2.8)<1.55){
+            sprites.splice(i,1); removed++;
+        }
+    }
+    rebuildObjectBlockFromSpritesV74();
+    // Bordi bassi del bivio: leggibilità senza chiudere il passaggio mobile.
+    for(let i=0;i<pts.length;i++){
+        const p=pts[i];
+        [[0,.98],[0,-.98],[.75,.65],[-.75,-.65]].forEach((d,j)=>{
+            const x=p[0]+d[0]+(floorHash2D(i,j,760)-.5)*.35;
+            const y=p[1]+d[1]+(floorHash2D(i,j,761)-.5)*.35;
+            const ix=Math.floor(x), iy=Math.floor(y); if(!inBounds(ix,iy)) return;
+            if(map[iy][ix]!==0 || roadMask[iy][ix] || cMap[iy][ix]!==0 || objectBlock[iy][ix] || safeHuman[iy][ix]) return;
+            if(placeSprite(x,y,(j%2)?40:41,{hScale:.25+floorHash2D(i,j,762)*.14,wScale:.48,groundSink:2,nature:false,noRoad:true,blocking:false,kind:'pineta2_branch_litter_v75'})) details++;
+        });
+    }
+    Object.assign(v74WorldStats,{v75BranchPinesRemoved:removed,v75BranchLitter:details});
+}
+function removeOldPineta2PinesForV75(){
+    let removed=0;
+    for(let i=sprites.length-1;i>=0;i--){
+        const k=sprites[i].kind||'';
+        if(k.indexOf('pineta2_wall_pine_v74')>=0){ sprites.splice(i,1); removed++; }
+    }
+    v74WorldStats.v75OldPineta2PinesRemoved=removed;
+    rebuildObjectBlockFromSpritesV74();
+}
+function canPlaceWestPineV75(x,y,strictPath){
+    const ix=Math.floor(x), iy=Math.floor(y); if(!inBounds(ix,iy)) return false;
+    const z=zoneMask[iy][ix]||'';
+    if(map[iy][ix]!==0 || cMap[iy][ix]!==0 || objectBlock[iy][ix] || roadMask[iy][ix] || fMap[iy][ix]===2) return false;
+    if(z!=='pineta2_west' && z!=='pineta2_underwood') return false;
+    if(zoneIsPathOrDoorV74(z) || z==='pineta2_moss_rock_clearing') return false;
+    if(distToRoad(x,y,3.2)<(strictPath?1.72:1.42)) return false;
+    if(x>25.5 && y>29 && y<37) return false; // porta ampia e aria d'ingresso.
+    if(x<10.2 && y>49.2 && y<55.6) return false; // aria davanti al masso muschioso.
+    return true;
+}
+function densifyWestPineta2AndForceSPathV75(){
+    removeOldPineta2PinesForV75();
+    let wall=0, blocker=0, details=0;
+    const wallPts=[];
+    for(let y=19;y<=61;y+=1){ wallPts.push([2.25,y+.15]); wallPts.push([27.95,y+.45]); }
+    for(let y=20;y<=60;y+=2){ wallPts.push([4.35,y+.52]); wallPts.push([25.65,y+.12]); }
+    for(let x=3;x<=28;x+=1){ wallPts.push([x+.22,19.15]); wallPts.push([x+.42,60.85]); }
+    for(let x=5;x<=26;x+=2){ wallPts.push([x+.35,21.25]); wallPts.push([x+.10,58.55]); }
+    wallPts.forEach((p,i)=>{
+        const x=p[0]+(floorHash2D(i,1,764)-.5)*.34;
+        const y=p[1]+(floorHash2D(i,2,765)-.5)*.34;
+        if(canPlaceWestPineV75(x,y,true)){
+            if(placeSprite(x,y,9,{hScale:1.60+(i%9)*.085,wScale:.86+(i%5)*.035,nature:false,groundSink:2,blocking:true,blockRadius:.43,noRoad:true,kind:'pineta2_dense_wall_pine_v75'})) wall++;
+        }
+    });
+    // Riempimento interno: blocca i tagli fra le curve della S, lasciando il corridoio ampio.
+    for(let y=19;y<=60;y++) for(let x=2;x<=28;x++){
+        if(!canPlaceWestPineV75(x+.5,y+.5,true)) continue;
+        const nearWall=(x<=5||x>=25||y<=22||y>=57);
+        const h=floorHash2D(x,y,766);
+        const shouldPine = nearWall ? h>.22 : h>.38;
+        if(shouldPine){
+            const px=x+.20+floorHash2D(x,y,767)*.60, py=y+.18+floorHash2D(x,y,768)*.62;
+            if(canPlaceWestPineV75(px,py,true)){
+                if(placeSprite(px,py,9,{hScale:1.42+floorHash2D(x,y,769)*.48,wScale:.82+floorHash2D(x,y,770)*.12,nature:false,groundSink:2,blocking:true,blockRadius:.46,noRoad:true,kind:'pineta2_s_blocker_pine_v75'})) blocker++;
+            }
+        }
+    }
+    // Dettagli bassi più ricchi, solo dove non disturbano il corridoio.
+    for(let y=19;y<=60;y++) for(let x=2;x<=28;x++){
+        const z=zoneMask[y][x]||'';
+        if(map[y][x]!==0 || roadMask[y][x] || objectBlock[y][x] || fMap[y][x]===2 || z==='pineta2_moss_rock_clearing') continue;
+        if(distToRoad(x+.5,y+.5,2.8)<.95) continue;
+        const h=floorHash2D(x,y,771);
+        if(h>.46){
+            const texId=h>.88?41:(h>.72?40:(h>.58?31:30));
+            if(placeSprite(x+.18+floorHash2D(x,y,772)*.64,y+.15+floorHash2D(x,y,773)*.66,texId,{hScale:.23+floorHash2D(x,y,774)*.21,wScale:.46+floorHash2D(x,y,775)*.22,groundSink:2,nature:false,noRoad:true,blocking:false,kind:'pineta2_rich_litter_v75'})) details++;
+        }
+    }
+    Object.assign(v74WorldStats,{v75Pineta2WallPines:wall,v75Pineta2BlockerPines:blocker,v75Pineta2ExtraDetails:details});
+}
+function restoreYogaCanopyColumnsV75(){
+    let removed=0;
+    for(let i=sprites.length-1;i>=0;i--){
+        const s=sprites[i];
+        if(s.tex===18 && s.x>=42.5 && s.x<=51.5 && s.y>=44.5 && s.y<=53.5){ sprites.splice(i,1); removed++; }
+    }
+    rebuildObjectBlockFromSpritesV74();
+    let placed=0;
+    [[43.5,45.5],[50.5,45.5],[43.5,52.5],[50.5,52.5]].forEach(p=>{
+        if(placeSprite(p[0],p[1],18,{allowRoof:true,groundSink:2,blocking:true,blockRadius:.25,kind:'yoga_canopy_column_v75'})) placed++;
+    });
+    Object.assign(v74WorldStats,{v75YogaColumnsRemoved:removed,v75YogaColumnsRestored:placed});
+}
+function cleanupWestPinesTooCloseToSPathV75(){
+    let removed=0;
+    for(let i=sprites.length-1;i>=0;i--){
+        const s=sprites[i]; const k=s.kind||'';
+        if(k.indexOf('pineta2')<0 || k.indexOf('pine')<0) continue;
+        if(distToRoad(s.x,s.y,4)<1.55){ sprites.splice(i,1); removed++; }
+    }
+    v74WorldStats.v75Pineta2PinesRemovedNearPath=removed;
+    rebuildObjectBlockFromSpritesV74();
+}
+function cleanupSpritesOnRoadV75(){
+    let removed=0;
+    for(let i=sprites.length-1;i>=0;i--){
+        const s=sprites[i]; const ix=Math.floor(s.x), iy=Math.floor(s.y); if(!inBounds(ix,iy)) continue;
+        if(!roadMask[iy][ix]) continue;
+        const k=s.kind||'';
+        if(k==='yoga_canopy_column_v75' || k==='pineta2_mossy_boulder_v74' || k==='secret_home_animated_campfire_v74') continue;
+        // Rimuove solo decorazioni finite sopra sentieri/strade, non strutture narrative.
+        if(!s.blocking || k.indexOf('litter')>=0 || k==='' || k.indexOf('floor')>=0 || k.indexOf('grass')>=0){
+            sprites.splice(i,1); removed++;
+        }
+    }
+    v74WorldStats.v75RoadSpritesRemoved=removed;
+    rebuildObjectBlockFromSpritesV74();
+}
+
+
+// V76 — rifinitura CASA, campo nord e decal parcheggio.
+function canPlaceV76GroundDecor(x,y,zonePrefix){
+    const ix=Math.floor(x), iy=Math.floor(y); if(!inBounds(ix,iy)) return false;
+    const z=zoneMask[iy][ix]||'';
+    if(zonePrefix && z.indexOf(zonePrefix)!==0) return false;
+    if(map[iy][ix]!==0 || cMap[iy][ix]!==0 || roadMask[iy][ix] || objectBlock[iy][ix] || fMap[iy][ix]===2) return false;
+    return true;
+}
+function placeHomePinesV76(){
+    // Pini scenici vicino alla piazzola CASA e in linea lungo il muro est, lasciando libera la piazzola, il falò e il sentiero.
+    const pinePts=[
+        [139.25,36.15,1.50],[136.65,46.35,1.46],
+        [146.75,35.85,1.58],[146.95,47.25,1.62],[145.40,49.45,1.52],[147.05,51.40,1.44],
+        [144.50,35.00,1.50],[147.00,33.50,1.46],[143.50,50.50,1.42],[137.70,47.80,1.40]
+    ];
+    let placed=0;
+    pinePts.forEach((p,i)=>{
+        const x=p[0], y=p[1], ix=Math.floor(x), iy=Math.floor(y);
+        if(!inBounds(ix,iy)) return;
+        const z=zoneMask[iy][ix]||'';
+        if(map[iy][ix]!==0 || cMap[iy][ix]!==0 || roadMask[iy][ix] || objectBlock[iy][ix] || fMap[iy][ix]===2) return;
+        if(z==='secret_home_clearing' || zoneIsPathOrDoorV74(z) || z==='secret_lake_sand' || z==='secret_lake' || z.indexOf('secret_maze')===0) return;
+        if(distToRoad(x,y,3.1)<1.18) return;
+        if(placeSprite(x,y,9,{hScale:p[2],wScale:.86+(i%3)*.035,nature:false,groundSink:2,blocking:true,blockRadius:.34,noRoad:true,kind:'secret_home_wall_pine_v76'})) placed++;
+    });
+    v74WorldStats.v76HomePines=placed;
+}
+function placeNorthFieldTamarisksV76(){
+    // Tamerici qua e là nel campo di raccolta nord: scenici, non bloccanti, lontani dal sentierino.
+    const pts=[
+        [117.8,10.8,0,1.04],[124.6,17.1,1,1.08],[130.8,11.6,2,1.02],
+        [137.4,18.1,0,1.06],[143.8,13.0,1,1.03],[121.6,14.2,2,.98]
+    ];
+    let placed=0;
+    pts.forEach((p,i)=>{
+        const x=p[0], y=p[1], ix=Math.floor(x), iy=Math.floor(y); if(!inBounds(ix,iy)) return;
+        const z=zoneMask[iy][ix]||'';
+        if(z!=='secret_flower_field') return;
+        if(map[iy][ix]!==0 || cMap[iy][ix]!==0 || roadMask[iy][ix] || objectBlock[iy][ix] || fMap[iy][ix]===2) return;
+        if(distToRoad(x,y,3.2)<1.05) return;
+        if(placeSprite(x,y,54+(p[2]%3),{hScale:p[3],wScale:.72+(p[2]%3)*.04,groundSink:2.25,nature:false,noRoad:true,blocking:false,kind:'secret_north_field_tamarisk_v76'})) placed++;
+    });
+    v74WorldStats.v76NorthFieldTamarisks=placed;
+}
+function placeParkingPDecalV76(){
+    // Dopo WEST_EXPAND_V74, il vecchio parcheggio x63..75 è a x93..105. Il varco sud è x98..100; il decal va su un muro laterale, face south.
+    // I muri del parcheggio usano wallTex 42 (recinto legno), quindi non passa da setWallAdDecalV35 che accetta solo map==1.
+    const candidates=[[101,18],[97,18],[105,12],[93,12]];
+    let placed=false;
+    for(const c of candidates){
+        const x=c[0], y=c[1];
+        if(inBounds(x,y) && map[y][x]>0 && cMap[y][x]===0){
+            wallDecalMap[y][x]={tex:79,label:'decal_parking_p_v76',face:'south',flip:false};
+            placed=true; break;
+        }
+    }
+    v74WorldStats.v76ParkingPDecal=placed;
+}
+function applyV76GroveHomeParkingPolish(){
+    placeHomePinesV76();
+    placeNorthFieldTamarisksV76();
+    placeParkingPDecalV76();
+    rebuildObjectBlockFromSpritesV74();
+    for(let y=0;y<mapH;y++) for(let x=0;x<mapW;x++) if(map[y][x]>0 || objectBlock[y][x]) roadMask[y][x]=0;
+}
+
+
+// V77 — coordinate gameplay, arco edera/fiori e pini obbligatori.
+function worldXFromGameplayV77(gameplayX){
+    return gameplayX + PERLA_DISPLAY_X_OFFSET_V74;
+}
+function gameplayXFromWorldV77(worldX){
+    return worldX - PERLA_DISPLAY_X_OFFSET_V74;
+}
+function setIvyWallDecalV77(x,y,texId,label,face){
+    if(!inBounds(x,y) || map[y][x]!==1) return false;
+    wallDecalMap[y][x]={tex:texId,label:label||'decal_ivy_flowers_v77',face:face||inferWallDecalFaceV35(x,y),flip:false};
+    return true;
+}
+function placeIvyFlowerArchV77(){
+    // Coordinate richieste dall'utente in gameplay:
+    // arco/fascia edera-fiori tra X 55..67 circa, Y 30.50 e Y 37.
+    // Dopo l'espansione ovest V74 si converte con X codice = X gameplay + 30.
+    let top=0, bottom=0, corners=0;
+    const gx1=55, gx2=67;
+    const x1=Math.round(worldXFromGameplayV77(gx1));
+    const x2=Math.round(worldXFromGameplayV77(gx2));
+    // Fascia superiore: muro cespuglio storico y30, faccia sud verso corridoio.
+    for(let x=x1; x<=x2; x++){
+        const isCorner=(x===x1 || x===x2);
+        if(setIvyWallDecalV77(x,30,isCorner?82:((x%2)?80:81),'decal_ivy_arch_top_v77','south')) top++;
+    }
+    // Fascia inferiore: muro camper y37, faccia nord verso corridoio.
+    for(let x=x1; x<=x2; x++){
+        const isCorner=(x===x1 || x===x2);
+        if(setIvyWallDecalV77(x,37,isCorner?82:((x%2)?81:80),'decal_ivy_arch_bottom_v77','north')) bottom++;
+    }
+    // Accenti pendenti/corner solo dove esiste muro vicino al vertice alto; non creano collisioni.
+    [x1,x2].forEach((x,i)=>{
+        if(setIvyWallDecalV77(x,30,83,'decal_ivy_arch_hanging_corner_v77','south')) corners++;
+    });
+    v74WorldStats.v77IvyTop=top;
+    v74WorldStats.v77IvyBottom=bottom;
+    v74WorldStats.v77IvyCorners=corners;
+    v74WorldStats.v77IvyArchGameplay={x1:gx1,x2:gx2,yTop:30.5,yBottom:37};
+    v74WorldStats.v77IvyArchInternal={x1,x2,yTop:30,yBottom:37};
+}
+function forcePlacePineV77(gameplayX,y,variant){
+    const x=worldXFromGameplayV77(gameplayX);
+    const ix=Math.floor(x), iy=Math.floor(y);
+    if(!inBounds(ix,iy)) return false;
+    // Richiesta utente: questi 7 pini sono obbligatori anche se violano regole automatiche.
+    // Bypassiamo placeSprite per non farli scartare da road/noNature/objectBlock.
+    sprites.push({x,y,tex:9,hScale:1.58+(variant%4)*.10,wScale:.88+(variant%3)*.04,groundSink:2,kind:'forced_user_pine_v77',nature:false,blocking:true,blockRadius:.48,underRoof:cMap[iy][ix]!==0});
+    objectBlock[iy][ix]=1; noNature[iy][ix]=1; roadMask[iy][ix]=0;
+    reserveDisk(x,y,.48);
+    return true;
+}
+function placeForcedUserPinesV77(){
+    const pts=[
+        [97.37,35.51],[103.00,36.60],[105.90,38.29],[117.49,39.99],
+        [117.61,41.20],[117.51,43.52],[116.06,38.59]
+    ];
+    let placed=0;
+    pts.forEach((p,i)=>{ if(forcePlacePineV77(p[0],p[1],i)) placed++; });
+    v74WorldStats.v77ForcedPines=placed;
+    v74WorldStats.v77ForcedPineGameplayCoords=pts.map(p=>({x:p[0],y:p[1]}));
+    v74WorldStats.v77ForcedPineInternalCoords=pts.map(p=>({x:+worldXFromGameplayV77(p[0]).toFixed(2),y:p[1]}));
+}
+function applyV77IvyArchAndCoordinateGuidePatch(){
+    placeIvyFlowerArchV77();
+    placeForcedUserPinesV77();
+    rebuildObjectBlockFromSpritesV74();
+    // Dopo i pini obbligatori, la roadMask non deve restare sotto oggetti bloccanti o muri.
+    for(let y=0;y<mapH;y++) for(let x=0;x<mapW;x++) if(map[y][x]>0 || objectBlock[y][x]) roadMask[y][x]=0;
+}
+
+
+// V78 — sabbia lago morbida, arco alto visibile edera/fiori, 4 pini obbligatori extra.
+function placeHighIvyArchV78(){
+    // V77 era una fascia decal su muro: V78 aggiunge un vero elemento alto e visibile nel corridoio, non bloccante.
+    const xs=[55.7,57.5,59.3,61.1,62.9,64.7,66.4];
+    let overhead=0, hanging=0;
+    xs.forEach((gx,i)=>{
+        const x=worldXFromGameplayV77(gx);
+        if(placeSprite(x,32.40,84,{hScale:1.52,wScale:2.22,groundSink:-5.75,blocking:false,noRoad:true,kind:'ivy_overhead_arch_v78'})) overhead++;
+    });
+    [[55.15,31.25],[67.05,31.25],[55.15,36.25],[67.05,36.25]].forEach((p,i)=>{
+        if(placeSprite(worldXFromGameplayV77(p[0]),p[1],85,{hScale:1.82,wScale:.92,groundSink:-5.35,blocking:false,noRoad:false,kind:'ivy_arch_hanging_high_v78'})) hanging++;
+    });
+    v74WorldStats.v78HighIvyArchSprites=overhead;
+    v74WorldStats.v78HighIvyHangingSprites=hanging;
+    v74WorldStats.v78HighIvyArchGameplay={x1:55,x2:67,yMid:32.4,yTop:30.5,yBottom:37};
+}
+function forcePlacePineV78(gameplayX,y,variant){
+    const x=worldXFromGameplayV77(gameplayX);
+    const ix=Math.floor(x), iy=Math.floor(y);
+    if(!inBounds(ix,iy)) return false;
+    sprites.push({x,y,tex:9,hScale:1.60+(variant%4)*.10,wScale:.88+(variant%3)*.04,groundSink:2,kind:'forced_user_pine_v78',nature:false,blocking:true,blockRadius:.48,underRoof:cMap[iy][ix]!==0});
+    objectBlock[iy][ix]=1; noNature[iy][ix]=1; roadMask[iy][ix]=0;
+    reserveDisk(x,y,.48);
+    return true;
+}
+function placeForcedUserPinesV78(){
+    const pts=[[107.29,39.10],[107.26,45.05],[117.79,37.62],[117.29,44.40]];
+    let placed=0;
+    pts.forEach((p,i)=>{ if(forcePlacePineV78(p[0],p[1],i)) placed++; });
+    v74WorldStats.v78ForcedPines=placed;
+    v74WorldStats.v78ForcedPineGameplayCoords=pts.map(p=>({x:p[0],y:p[1]}));
+    v74WorldStats.v78ForcedPineInternalCoords=pts.map(p=>({x:+worldXFromGameplayV77(p[0]).toFixed(2),y:p[1]}));
+}
+function applyV78LakeSoftArchFix(){
+    placeHighIvyArchV78();
+    placeForcedUserPinesV78();
+    rebuildObjectBlockFromSpritesV74();
+    for(let y=0;y<mapH;y++) for(let x=0;x<mapW;x++) if(map[y][x]>0 || objectBlock[y][x]) roadMask[y][x]=0;
+}
+
+
+// V79 — sostituzione archetti billboard con pergola vegetale continua e 3 pini obbligatori.
+const IVY_PERGOLA_V79 = {
+    x0: worldXFromGameplayV77(55.0),
+    x1: worldXFromGameplayV77(67.2),
+    // V86: un blocco in piu' verso nord e un blocco in piu' verso sud, come richiesto.
+    // Mantiene il sistema V79 stabile, ma aumenta il footprint senza reintrodurre i tentativi V80-V84.
+    y0: 29.35,
+    y1: 38.10,
+    z: 1.30,
+    maxDist: 42
+};
+function isInsideIvyPergolaV79(wx, wy){
+    return wx>=IVY_PERGOLA_V79.x0 && wx<=IVY_PERGOLA_V79.x1 && wy>=IVY_PERGOLA_V79.y0 && wy<=IVY_PERGOLA_V79.y1;
+}
+function removeBadHighIvyArchSpritesV79(){
+    let removed=0;
+    for(let i=sprites.length-1;i>=0;i--){
+        const k=sprites[i].kind||'';
+        if(k.indexOf('ivy_overhead_arch_v78')>=0 || k.indexOf('ivy_arch_hanging_high_v78')>=0){
+            sprites.splice(i,1); removed++;
+        }
+    }
+    v74WorldStats.v79RemovedBillboardArchSprites=removed;
+    return removed;
+}
+function ivyPergolaTrellisColorV86(wx, wy){
+    // V88: UNA SOLA rete protetta. La vecchia doppia lettura campionata viene ridotta.
+    // Resta dentro il metodo stabile V79/V86: nessuna geometria nuova, nessun layer 3D separato.
+    const gx=wx-IVY_PERGOLA_V79.x0;
+    const gy=wy-IVY_PERGOLA_V79.y0;
+    const stepX=.82;
+    const stepY=.78;
+    const mx=((gx%stepX)+stepX)%stepX;
+    const my=((gy%stepY)+stepY)%stepY;
+    const dx=Math.min(mx,stepX-mx);
+    const dy=Math.min(my,stepY-my);
+    const borderX=(wx<IVY_PERGOLA_V79.x0+.18 || wx>IVY_PERGOLA_V79.x1-.18);
+    const borderY=(wy<IVY_PERGOLA_V79.y0+.18 || wy>IVY_PERGOLA_V79.y1-.18);
+    // Linee piu' fini e piu' scure della V87, ma con una soglia ancora abbastanza ampia
+    // da non spezzarsi col campionamento mobile/desktop.
+    const line=(dx<.086 || dy<.086 || borderX || borderY);
+    const joint=(dx<.105 && dy<.105);
+    if(borderX || borderY) return 'rgba(39,49,43,.76)';
+    if(joint) return 'rgba(26,35,31,.78)';
+    if(line) return 'rgba(31,42,37,.70)';
+    return null;
+}
+function ivyPergolaLeafHoleV87(wx, wy, time){
+    // V87: i buchi appartengono SOLO al fogliame. Non governano la rete.
+    const t=(time||0)*0.00012;
+    const coarse=floorHash2D(Math.floor(wx*1.05), Math.floor(wy*1.00), 1871);
+    const mid=floorHash2D(Math.floor(wx*2.15), Math.floor(wy*2.05), 1872);
+    const fine=floorHash2D(Math.floor(wx*4.35), Math.floor(wy*4.10), 1873);
+    const flow=Math.sin(wx*1.38 + wy*1.74 + t*.25) + .55*Math.sin(wx*2.12 - wy*.91 - t*.5);
+    // Fori grandi organici, meno frequenti: aprono il fogliame e lasciano vedere la rete.
+    if(coarse<.135 && Math.abs(flow)<.86) return true;
+    if(coarse<.235 && mid<.30 && Math.abs(flow)<.54) return true;
+    // Piccoli fori aggiuntivi, come micro-trasparenze fra foglie; mai usati per bucare la rete.
+    if(mid<.165 && fine<.215 && Math.abs(flow)<.92) return true;
+    if(fine<.045 && coarse<.56) return true;
+    return false;
+}
+function ivyPergolaLeafColorV86(wx, wy, time){
+    // V88: il layer foglie NON disegna piu' rami scuri tipo vecchia rete rotta.
+    // Le trasparenze appartengono solo al fogliame; la rete protetta e' un layer distinto.
+    if(ivyPergolaLeafHoleV87(wx, wy, time)) return null;
+    const t=(time||0)*0.00010;
+    const mid=floorHash2D(Math.floor(wx*2.05), Math.floor(wy*1.85), 1792);
+    const fine=floorHash2D(Math.floor(wx*3.35), Math.floor(wy*3.10), 1794);
+    const flow=Math.sin(wx*1.62 + wy*2.18 + Math.sin(t)*.12) + .62*Math.sin(wx*2.45 - wy*.74 - t*.45);
+    // Fiori pochi e leggibili; niente micro-puntinismo continuo.
+    if(mid>.974 && fine>.38) return 'rgba(248,205,96,.82)';
+    if(mid>.949 && fine>.32) return 'rgba(235,119,181,.80)';
+    if(mid>.927 && fine>.44) return 'rgba(232,244,184,.72)';
+    // Foglie/edera: masse leggere, senza righe scure che sembrano una seconda rete rotta.
+    if(flow>.82) return 'rgba(50,135,66,.62)';
+    if(flow<-.78) return 'rgba(25,96,55,.59)';
+    return 'rgba(38,120,62,.57)';
+}
+// Compatibilità debug/storico: il nome V79 resta, ma in V86 delega al modello a 2 layer.
+function ivyPergolaColorV79(wx, wy, time){
+    return ivyPergolaLeafColorV86(wx, wy, time);
+}
+
+function ivyPergolaScreenBoundsV89(){
+    // V90: mantiene l'ottimizzazione V89 ma rende la bbox piu' generosa e stabile.
+    // Motivo: in V89 il taglio era troppo preciso e poteva far sparire una riga prima del tempo.
+    // Non crea geometria nuova: limita solo lo scan al rettangolo proiettato reale + margine anti-pop.
+    const samples=9;
+    let minX=screenW, maxX=-1, minY=screenH, maxY=-1, visible=0, nearest=999;
+    for(let yi=0; yi<samples; yi++){
+        const ty=yi/(samples-1);
+        const wy=IVY_PERGOLA_V79.y0+(IVY_PERGOLA_V79.y1-IVY_PERGOLA_V79.y0)*ty;
+        for(let xi=0; xi<samples; xi++){
+            const tx=xi/(samples-1);
+            const wx=IVY_PERGOLA_V79.x0+(IVY_PERGOLA_V79.x1-IVY_PERGOLA_V79.x0)*tx;
+            const p=projectRoofPoint(wx, wy, IVY_PERGOLA_V79.z);
+            if(!p || p.d<=ROOF_NEAR_PLANE || p.d>IVY_PERGOLA_V79.maxDist+4) continue;
+            visible++;
+            nearest=Math.min(nearest,p.d);
+            minX=Math.min(minX,p.x); maxX=Math.max(maxX,p.x);
+            minY=Math.min(minY,p.y); maxY=Math.max(maxY,p.y);
+        }
+    }
+    if(!visible) return null;
+    const marginX = currentViewportMode==='desktop' ? 38 : 50;
+    // V90: margine Y piu' largo, soprattutto verso il basso, per evitare la riga di cielo sotto la pergola.
+    const marginTop = currentViewportMode==='desktop' ? 40 : 54;
+    const marginBottom = currentViewportMode==='desktop' ? 62 : 82;
+    // V90: cap piu' generoso della V89 (.54). Il footprint e slopedRoofPixelVisible continuano a impedire overdraw reale.
+    const yCap=Math.floor(screenH*(currentViewportMode==='desktop' ? .60 : .64));
+    const x0=clamp(Math.floor(minX-marginX),0,screenW-1);
+    const x1=clamp(Math.ceil(maxX+marginX),0,screenW);
+    const y0=clamp(Math.floor(minY-marginTop),0,yCap);
+    const y1=clamp(Math.ceil(maxY+marginBottom),0,yCap);
+    if(x1<=x0 || y1<=y0) return null;
+    const areaRatio=((x1-x0)*(y1-y0))/Math.max(1,screenW*Math.max(1,yCap));
+    return {x0,x1,y0,y1,yCap,visible,nearest,areaRatio,marginX,marginTop,marginBottom};
+}
+
+function drawIvyPergolaHangingV79(time){
+    const yEdges=[IVY_PERGOLA_V79.y0+.34, IVY_PERGOLA_V79.y1-.34];
+    let count=0;
+    for(let xi=0; xi<=8; xi++){
+        const wx=IVY_PERGOLA_V79.x0 + (IVY_PERGOLA_V79.x1-IVY_PERGOLA_V79.x0)*(xi/8);
+        for(let ei=0; ei<yEdges.length; ei++){
+            const jitter=(((xi+ei)%3)-1)*.07;
+            const wy=yEdges[ei] + jitter;
+            const zTop=1.17, zBot=0.84 - ((xi+ei)%3)*.045;
+            const a=projectRoofPoint(wx,wy,zTop), b=projectRoofPoint(wx,wy,zBot);
+            if(!a || !b || a.d>IVY_PERGOLA_V79.maxDist) continue;
+            const sx=Math.round((a.x+b.x)*.5);
+            if(sx<0 || sx>=screenW) continue;
+            const y0=clamp(Math.round(a.y),0,screenH-1), y1=clamp(Math.round(b.y),0,screenH-1);
+            const yy0=Math.min(y0,y1), yy1=Math.max(y0,y1);
+            if(!slopedRoofPixelVisible(sx,yy0,a.d)) continue;
+            if(ZBuffer[sx] && a.d>ZBuffer[sx]+.04 && yy0>=WallTopBuffer[sx]-1) continue;
+            ctx.strokeStyle=(xi%3===0)?'rgba(231,112,174,.70)':((xi%3===1)?'rgba(240,196,96,.66)':'rgba(29,99,52,.70)');
+            ctx.lineWidth=2;
+            ctx.beginPath();
+            ctx.moveTo(a.x,a.y);
+            ctx.lineTo(b.x,b.y);
+            ctx.stroke();
+            count++;
+        }
+    }
+    return count;
+}
+function drawIvyPergolaLayerV79(time, drawStats){
+    const t0 = (drawStats && typeof performance!=='undefined') ? performance.now() : 0;
+    const cx=(IVY_PERGOLA_V79.x0+IVY_PERGOLA_V79.x1)*.5, cy=(IVY_PERGOLA_V79.y0+IVY_PERGOLA_V79.y1)*.5;
+    if(Math.hypot(posX-cx,posY-cy)>IVY_PERGOLA_V79.maxDist+6) return;
+    const bounds=ivyPergolaScreenBoundsV89();
+    if(!bounds){ if(drawStats){ drawStats.pergolaSkippedV89=true; } return; }
+    let leafPixels=0, holes=0, trellisPixels=0, scanSamples=0, fogCalls=0;
+    const z=IVY_PERGOLA_V79.z;
+    // V90: conserva l'ottimizzazione V89, ma limita il LOD aggressivo.
+    // I campioni piu' grossi vanno bene come densita', ma non devono rendere grossolani i bordi.
+    let stepX=currentViewportMode==='desktop'?3:4;
+    let stepY=currentViewportMode==='desktop'?3:4;
+    // V90: LOD soprattutto orizzontale. Il passo verticale viene limitato a un massimo moderato,
+    // cosi' il bordo non torna a righe grossolane ma non perdiamo il guadagno FPS della V89.
+    if(bounds.areaRatio>.34){ stepX+=1; }
+    if(bounds.areaRatio>.58){ stepX+=1; }
+    if(currentViewportMode!=='desktop' && bounds.areaRatio>.50){ stepX+=1; }
+    if(bounds.areaRatio>.42){ stepY+=1; }
+    if(currentViewportMode!=='desktop' && bounds.areaRatio>.70){ stepY+=1; }
+    const xStart=Math.max(0, Math.floor(bounds.x0/stepX)*stepX);
+    const xEnd=Math.min(screenW, Math.ceil(bounds.x1/stepX)*stepX + stepX);
+    const yStart=Math.max(0, Math.floor(bounds.y0/stepY)*stepY - stepY*2);
+    const yEnd=Math.min(bounds.yCap||Math.floor(screenH*.66), Math.ceil(bounds.y1/stepY)*stepY + stepY*3);
+    const rayDirX0=dirX-planeX, rayDirY0=dirY-planeY, rayDirX1=dirX+planeX, rayDirY1=dirY+planeY;
+    for(let sy=yStart; sy<yEnd; sy+=stepY){
+        const screenSlope=(sy+.5-screenH*.5)/projectionH;
+        if(screenSlope>=-.0001) continue;
+        const dist=(.5-z)/screenSlope;
+        if(dist<=ROOF_NEAR_PLANE || dist>IVY_PERGOLA_V79.maxDist) continue;
+        const fStepX=dist*(rayDirX1-rayDirX0)/screenW, fStepY=dist*(rayDirY1-rayDirY0)/screenW;
+        let wx=posX+dist*rayDirX0 + fStepX*xStart;
+        let wy=posY+dist*rayDirY0 + fStepY*xStart;
+        for(let sx=xStart; sx<xEnd; sx+=stepX){
+            scanSamples++;
+            if(isInsideIvyPergolaV79(wx,wy) && slopedRoofPixelVisible(sx,sy,dist)){
+                const trellis=ivyPergolaTrellisColorV86(wx,wy);
+                const leaf=ivyPergolaLeafColorV86(wx,wy,time);
+                let drew=false;
+                if(leaf){
+                    ctx.fillStyle=leaf;
+                    ctx.fillRect(sx,sy,stepX,stepY);
+                    leafPixels++;
+                    drew=true;
+                } else {
+                    holes++;
+                }
+                if(trellis){
+                    ctx.fillStyle=trellis;
+                    ctx.fillRect(sx,sy,stepX,stepY);
+                    trellisPixels++;
+                    drew=true;
+                }
+                if(drew){
+                    drawExistingWallFogOverlay(sx,sy,stepX,stepY,dist);
+                    fogCalls++;
+                }
+            }
+            wx+=fStepX*stepX; wy+=fStepY*stepX;
+        }
+    }
+    const hanging=drawIvyPergolaHangingV79(time);
+    if(drawStats){
+        drawStats.pergolaPixelsV79=leafPixels;
+        drawStats.pergolaHolesV79=holes;
+        drawStats.pergolaHangingV79=hanging;
+        drawStats.pergolaTrellisV86=trellisPixels;
+        drawStats.pergolaTwoLayerV86=true;
+        drawStats.pergolaProtectedMeshV87=true;
+        drawStats.pergolaSingleProtectedMeshV88=true;
+        drawStats.pergolaOptimizedV89=true;
+        drawStats.pergolaEdgeQualityV90=true;
+        drawStats.pergolaScanSamplesV89=scanSamples;
+        drawStats.pergolaFogCallsV89=fogCalls;
+        drawStats.pergolaBBoxV89={x0:xStart,x1:xEnd,y0:yStart,y1:yEnd,yCap:bounds.yCap,areaRatio:+bounds.areaRatio.toFixed(3),stepX,stepY,visible:bounds.visible,nearest:+bounds.nearest.toFixed(2),marginX:bounds.marginX,marginTop:bounds.marginTop,marginBottom:bounds.marginBottom};
+        if(t0) drawStats.pergolaMsV89=+(performance.now()-t0).toFixed(3);
+    }
+}
+
+function forcePlacePineV79(gameplayX,y,variant){
+    const x=worldXFromGameplayV77(gameplayX);
+    const ix=Math.floor(x), iy=Math.floor(y);
+    if(!inBounds(ix,iy)) return false;
+    sprites.push({x,y,tex:9,hScale:1.58+(variant%4)*.10,wScale:.88+(variant%3)*.04,groundSink:2,kind:'forced_user_pine_v79',nature:false,blocking:true,blockRadius:.48,underRoof:cMap[iy][ix]!==0});
+    objectBlock[iy][ix]=1; noNature[iy][ix]=1; roadMask[iy][ix]=0;
+    reserveDisk(x,y,.48);
+    return true;
+}
+function placeForcedUserPinesV79(){
+    const pts=[[94.72,37.38],[107.00,38.06],[117.04,42.23]];
+    let placed=0;
+    pts.forEach((p,i)=>{ if(forcePlacePineV79(p[0],p[1],i)) placed++; });
+    v74WorldStats.v79ForcedPines=placed;
+    v74WorldStats.v79ForcedPineGameplayCoords=pts.map(p=>({x:p[0],y:p[1]}));
+    v74WorldStats.v79ForcedPineInternalCoords=pts.map(p=>({x:+worldXFromGameplayV77(p[0]).toFixed(2),y:p[1]}));
+}
+function applyV79IvyPergolaFix(){
+    removeBadHighIvyArchSpritesV79();
+    placeForcedUserPinesV79();
+    v74WorldStats.v86IvyPergola={xGameplay0:55,xGameplay1:67.2,y0:29.35,y1:38.10,z:IVY_PERGOLA_V79.z,mode:'V87_V79_METHOD_PROTECTED_MESH_LEAF_HOLES_ONLY'};
+    rebuildObjectBlockFromSpritesV74();
+    for(let y=0;y<mapH;y++) for(let x=0;x<mapW;x++) if(map[y][x]>0 || objectBlock[y][x]) roadMask[y][x]=0;
+}
+
+
+function placeSecretLakeBoatV83(){
+    // V83: barchetta di profilo/laterale e più bassa sull'acqua: deve galleggiare, non volare.
+    const x=worldXFromGameplayV77(99.0), y=42.0;
+    const ix=Math.floor(x), iy=Math.floor(y);
+    if(!inBounds(ix,iy)) return false;
+    if(zoneMask[iy][ix]!=='secret_lake' && fMap[iy][ix]!==2) return false;
+    const ok=placeSprite(x,y,84,{hScale:.68,wScale:1.58,groundSink:4.75,blocking:false,noRoad:true,kind:'secret_lake_rowboat_v89'});
+    if(ok){ v74WorldStats.v83LakeBoat={placed:true,xGameplay:99.0,y:42.0,xInternal:+x.toFixed(2),mode:'side_profile_volume_balanced_v89'}; }
+    return ok;
+}
+function applyV83PergolaAndBoatFix(){
+    placeSecretLakeBoatV83();
+    v74WorldStats.v83Pergola={mode:'protected_continuous_trellis_organic_foliage', noBillboardArch:true, noProceduralPixelNoise:true, footprintGameplay:{x0:55,x1:67.2,y0:29.35,y1:38.10}};
+    rebuildObjectBlockFromSpritesV74();
+    for(let y=0;y<mapH;y++) for(let x=0;x<mapW;x++) if(map[y][x]>0 || objectBlock[y][x]) roadMask[y][x]=0;
+}
+function applyV84PergolaV81StabilizedFix(){
+    // V84: mantiene la barca V83 ma sostituisce la pergola instabile con sistema V81 stabilizzato.
+    placeSecretLakeBoatV83();
+    v74WorldStats.v84Pergola={mode:'v81_stabilized_protected_continuous_trellis_no_blobs', noBillboardArch:true, noScreenSpacePolygons:true, noHeavyBlobFoliage:true, footprintGameplay:{x0:55,x1:67.2,y0:29.35,y1:38.10}};
+    rebuildObjectBlockFromSpritesV74();
+    for(let y=0;y<mapH;y++) for(let x=0;x<mapW;x++) if(map[y][x]>0 || objectBlock[y][x]) roadMask[y][x]=0;
+}
+
+function applyV75PinetaDensityPathAndYogaFix(){
+    carveOldPinetaBranchToWestV75();
+    addEastGroveLakeAndWallPinesV75();
+    densifyWestPineta2AndForceSPathV75();
+    cleanupWestPinesTooCloseToSPathV75();
+    restoreYogaCanopyColumnsV75();
+    cleanupSpritesOnRoadV75();
+    rebuildObjectBlockFromSpritesV74();
+    for(let y=0;y<mapH;y++) for(let x=0;x<mapW;x++) if(map[y][x]>0 || objectBlock[y][x]) roadMask[y][x]=0;
+}
+
+function applyV74WorldExpansionAndPolish(){
+    shiftExistingWorldEastV74();
+    cleanupEastGrovePinesNearPathsV74();
+    const eastPines=placeEastGroveWallPinesV74();
+    const eastDetails=placeEastGroveGroundDetailsV74();
+    placeHomeCampfireV74();
+    const barGrass=placeBarTableGrassV74();
+    buildWestPineta2V74();
+    cleanupOldPinetaWestGatePinesV74();
+    applyV75PinetaDensityPathAndYogaFix();
+    applyV76GroveHomeParkingPolish();
+    applyV77IvyArchAndCoordinateGuidePatch();
+    applyV78LakeSoftArchFix();
+    applyV79IvyPergolaFix();
+    placeSecretLakeBoatV83();
+    v74WorldStats.v86Pergola={mode:'V90_PERGOLA_EDGE_QUALITY_FIX', footprintGameplay:{x0:55,x1:67.2,y0:29.35,y1:38.10}, boatV83Preserved:true};
+    // RoadMask non deve restare sotto muri/oggetti dopo shift e nuove stanze.
+    for(let y=0;y<mapH;y++) for(let x=0;x<mapW;x++) if(map[y][x]>0 || objectBlock[y][x]) roadMask[y][x]=0;
+    Object.assign(v74WorldStats,{v74EastWallPines:eastPines,v74EastGroundDetails:eastDetails,v74BarTableGrass:barGrass,westExpand:WEST_EXPAND_V74,v75Active:true});
 }
 
 
@@ -1890,8 +3316,9 @@ function generateWorld(){
     placeFlowerPatch(8.5,11.5,3.2,18); placeFlowerPatch(22.0,12.0,3.2,18);
     // V30: dehors bar all'aperto a NORD del gazebo, come da correzione utente.
     // In V29 erano a sud, nella fascia poi contaminata dal bordo pineta: errore registrato nei TXT.
-    [[11.8,6.35],[15.4,6.05],[19.0,6.35]].forEach(p=>placeCafeSet(p[0],p[1]));
-    [[9.2,6.7,14],[21.5,6.7,34],[12.7,5.45,35],[18.2,5.45,14]].forEach((p,i)=>placeSprite(p[0],p[1],p[2],{hScale:.78,wScale:.82,groundSink:2.3,noRoad:true,blocking:true,blockRadius:.28,kind:'bar_dehors_pot'}));
+    BAR_TABLES_ROW_V70.forEach(p=>placeCafeSet(p[0],p[1]));
+    // V70: vasi dehors ricalibrati sulla nuova fila a Y=3.80: solo cornice lontana nord/ovest/est.
+    [[3.95,6.7,14],[4.15,10.2,34],[4.55,14.2,35],[24.1,2.45,14]].forEach((p,i)=>placeSprite(p[0],p[1],p[2],{hScale:.78,wScale:.82,groundSink:2.3,noRoad:true,blocking:true,blockRadius:.28,kind:'bar_dehors_pot'}));
     placeBarDehorsGreeneryV32();
     // V27: il bivio del bar viene inciso dopo la zona bar, così non viene cancellato dai reset safeHuman/noNature.
     carveBarBranchV27();
@@ -2044,6 +3471,7 @@ function generateWorld(){
             placeSprite(p[0],p[1],p[2],{hScale:.76,wScale:.80,groundSink:2.45,noRoad:true,blocking:true,blockRadius:.28,kind:'ordered_chokepoint_pot'});
         }
     });
+    placeBarbecueStoryAreaV68();
     // V29: statua di marmo alla fine del corridoio dei vasi, prima della svolta verso fontana.
     placeStatue(40.55,34.65);
     placeSouthRoadPalmsV34();
@@ -2082,6 +3510,10 @@ function generateWorld(){
 
     // Mare non calpestabile, spiaggia pulita: arredi solo su sabbia asciutta e distante da muri/bagni.
     for(let x=1;x<mapW-1;x++) for(let y=SEA_Y;y<mapH;y++) { clearWall(x,y); setFloor(x,y,2); zoneMask[y][x]='mare'; }
+    // V72: nuova ala est segreta. Chiamata dopo il mare, così il nuovo perimetro sud resta chiuso.
+    buildEasternSecretZoneV72();
+    // V72: ripristino invarianti della mappa storica dopo espansione est.
+    restoreLegacyMapInvariantV72();
     for(let y=70;y<=76;y+=3) for(let x=5;x<75;x+=7){
         if(Math.abs(x-43)<=4) continue;
         const ox=(rnd()-.5)*1.1, oy=(rnd()-.5)*.45;
@@ -2172,6 +3604,7 @@ function generateWorld(){
     decorativeCluster(8,28,6.0,44,[{tex:40,h:.30,w:.48},{tex:41,h:.35,w:.78},{tex:12,h:.38,w:.68},{tex:30,h:.40,w:.72}],(z,f)=>z==='pineta'||z==='piazzola_pineta');
     decorativeCluster(21,34,6.2,44,[{tex:40,h:.30,w:.48},{tex:41,h:.35,w:.78},{tex:12,h:.38,w:.68},{tex:30,h:.40,w:.72}],(z,f)=>z==='pineta'||z==='piazzola_pineta');
     decorativeCluster(14,52,6.5,48,[{tex:40,h:.30,w:.48},{tex:41,h:.35,w:.78},{tex:12,h:.38,w:.68},{tex:30,h:.40,w:.72}],(z,f)=>z==='pineta'||z==='piazzola_pineta');
+    restorePinetaPineMassV68();
 
     // Prato e bordi strada: fiori a macchie, evitando carreggiata, camere chiuse e pineta.
     placeFlowerPatch(35,16,5.6,40); placeFlowerPatch(45,25,5.4,34); placeFlowerPatch(38,43,5.2,32); placeFlowerPatch(47,59,5.0,34);
@@ -2209,13 +3642,15 @@ function generateWorld(){
             if(inBounds(ix,iy) && zoneMask[iy][ix]==='parking' && fMap[iy][ix]!==11) setFloor(ix,iy,11);
         }
     });
+    // V74: espansione ovest controllata + rifiniture pinete prima delle mappe visuali.
+    applyV74WorldExpansionAndPolish();
     // V58: infrastruttura pavimenti morbidi. Solo mappe visuali derivate: non modificano roadMask, fMap, collisioni o accessibilità.
     buildFloorVisualMaps();
 }
 
 generateWorld();
 
-let posX=40.5, posY=10.0;
+let posX=40.5 + WEST_EXPAND_V74, posY=10.0;
 let dirX=0.0, dirY=1.0;
 let planeX=-dirY*planeScale, planeY=dirX*planeScale;
 let ZBuffer, WallTopBuffer, WallBottomBuffer, WallOwnerBuffer, CeilingDepthBuffer, CeilingOwnerBuffer, CeilingColumnHasDepth;
@@ -2397,6 +3832,7 @@ function spriteAnchorSink(s, spSize){
 }
 function spriteContactShadowAlpha(sprite, spSize){
     const k=sprite.kind||'';
+    if(k.indexOf('ivy_overhead_arch_v78')>=0 || k.indexOf('ivy_arch_hanging_high_v78')>=0) return 0;
     if(k==='pinecone' || k==='needles') return 0;
     if(k==='tent') return .28;
     if(k==='pine' || k==='palm') return .20;
@@ -2448,7 +3884,7 @@ function drawWorld(time){
             if(cY>=SEA_Y) type=2;
             else if(cX>=0&&cX<mapW&&cY>=0&&cY<mapH){ type=fMap[cY][cX]; typeC=cMap[cY][cX]; }
             else if(cY>=SEA_Y) type=2; else type=1;
-            const floorColor=getFloorColorAt(cX,cY,fX,fY,type,rowDist);
+            const floorColor=getFloorColorAt(cX,cY,fX,fY,type,rowDist,time);
             const ceilOwner=(typeC>0 && cX>=0&&cX<mapW&&cY>=0&&cY<mapH) ? ceilingOwnerMap[cY][cX] : 0;
             if(typeC>0){
                 for(let yy=ceilDrawY; yy<ceilDrawY+floorBandH; yy++){
@@ -2517,6 +3953,7 @@ function drawWorld(time){
         } else { ZBuffer[x]=1000; WallTopBuffer[x]=screenH; WallBottomBuffer[x]=-1; WallOwnerBuffer[x]=0; }
     }
     drawRoofLayer2_5D(time);
+    drawIvyPergolaLayerV79(time, drawStats);
     const spriteRenderList=getSpriteRenderCandidates(drawStats);
     spriteRenderList.sort((a,b)=>b.dist-a.dist);
     spriteRenderList.forEach(s=>{
@@ -2553,10 +3990,39 @@ function drawWorld(time){
     perlaLastDrawStats=drawStats;
 }
 function drawMiniMap(){
-    const scale=Math.min(128/mapW,128/mapH); miniCtx.clearRect(0,0,128,128); miniCtx.save(); miniCtx.beginPath(); miniCtx.arc(64,64,63,0,Math.PI*2); miniCtx.clip();
-    for(let y=0;y<mapH;y++) for(let x=0;x<mapW;x++){ miniCtx.fillStyle=map[y][x]?'#1b331d':miniColors[fMap[y][x]]; miniCtx.fillRect(Math.floor(x*scale),Math.floor(y*scale),Math.ceil(scale),Math.ceil(scale)); }
-    miniCtx.fillStyle='#fffbcc'; miniCtx.beginPath(); miniCtx.arc(posX*scale,posY*scale,3,0,Math.PI*2); miniCtx.fill(); miniCtx.strokeStyle='#fffbcc'; miniCtx.lineWidth=2; miniCtx.beginPath(); miniCtx.moveTo(posX*scale,posY*scale); miniCtx.lineTo((posX+dirX*3)*scale,(posY+dirY*3)*scale); miniCtx.stroke(); miniCtx.restore();
+    // V73: minimappa locale/camera-centered. Non scala tutta la 120x88 e non rivela la soluzione del labirinto.
+    miniCtx.clearRect(0,0,128,128); miniCtx.save(); miniCtx.beginPath(); miniCtx.arc(64,64,63,0,Math.PI*2); miniCtx.clip();
+    const cx=posX, cy=posY;
+    const pZone=(zoneMask[Math.floor(posY)]&&zoneMask[Math.floor(posY)][Math.floor(posX)])||'';
+    const inSecretMaze = pZone.indexOf('secret_maze')===0 || (posX>=82 && posX<=111 && posY>=52 && posY<=79);
+    const radius = inSecretMaze ? 8.5 : (currentViewportMode==='mobile-portrait' ? 17.5 : (currentViewportMode==='mobile-landscape' ? 20.0 : 23.5));
+    const scale=128/(radius*2);
+    miniCtx.fillStyle='rgba(6,18,20,.88)'; miniCtx.fillRect(0,0,128,128);
+    const minX=Math.floor(cx-radius)-1, maxX=Math.ceil(cx+radius)+1;
+    const minY=Math.floor(cy-radius)-1, maxY=Math.ceil(cy+radius)+1;
+    for(let y=minY;y<=maxY;y++) for(let x=minX;x<=maxX;x++){
+        const dx=(x+.5-cx), dy=(y+.5-cy);
+        if(dx*dx+dy*dy>radius*radius) continue;
+        const sx=Math.floor((x-(cx-radius))*scale), sy=Math.floor((y-(cy-radius))*scale);
+        const sw=Math.ceil(scale)+1, sh=Math.ceil(scale)+1;
+        if(x<0||y<0||x>=mapW||y>=mapH){ miniCtx.fillStyle='#071015'; miniCtx.fillRect(sx,sy,sw,sh); continue; }
+        let col=map[y][x]?'#1b331d':miniColors[fMap[y][x]];
+        const z=zoneMask[y][x]||'';
+        if(z==='secret_home_clearing') col='#9c6d3f';
+        else if(z==='secret_flower_field') col='#6f9a48';
+        else if(z==='secret_lake_sand') col='#d4b875';
+        else if(z.indexOf('secret_maze')===0 && !map[y][x]) col='#b89163';
+        miniCtx.fillStyle=col; miniCtx.fillRect(sx,sy,sw,sh);
+    }
+    // bordo soft di esplorazione locale
+    const g=miniCtx.createRadialGradient ? miniCtx.createRadialGradient(64,64,20,64,64,64) : null;
+    if(g){ g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,'rgba(0,0,0,.38)'); miniCtx.fillStyle=g; miniCtx.fillRect(0,0,128,128); }
+    miniCtx.fillStyle='#fffbcc'; miniCtx.beginPath(); miniCtx.arc(64,64,3.2,0,Math.PI*2); miniCtx.fill();
+    miniCtx.strokeStyle='#fffbcc'; miniCtx.lineWidth=2;
+    miniCtx.beginPath(); miniCtx.moveTo(64,64); miniCtx.lineTo(64+dirX*12,64+dirY*12); miniCtx.stroke();
+    miniCtx.restore();
 }
+
 function getRectInfo(el){
     if(!el || !el.getBoundingClientRect) return null;
     const r=el.getBoundingClientRect();
@@ -2626,19 +4092,19 @@ function collectPerlaDebugSnapshot(reason='manuale'){
     const frameSummary=summarizeNumbers(perlaPerfStats.frameIntervals);
     const cpuSummary=summarizeNumbers(perlaPerfStats.cpuMs);
     const snapshot={
-        build:{ id:PERLA_BUILD_ID, base:'PERLA1_V66_MOBILE_OPTIMIZER', debugEnabled:PERLA_MOBILE_DEBUG_ENABLED, reason, generatedAt:new Date().toISOString(), uptimeSec:+((now-perlaPerfStats.startedAt)/1000).toFixed(2) },
+        build:{ id:PERLA_BUILD_ID, base:'PERLA1_V90_PERGOLA_EDGE_QUALITY_FIX', debugEnabled:PERLA_MOBILE_DEBUG_ENABLED, reason, generatedAt:new Date().toISOString(), uptimeSec:+((now-perlaPerfStats.startedAt)/1000).toFixed(2) },
         app:{ title:document.title, url:location.href, online:navigator.onLine, visibilityState:document.visibilityState, focus:document.hasFocus && document.hasFocus() },
         device:{ userAgent:navigator.userAgent, platform:navigator.platform||null, language:navigator.language||null, languages:navigator.languages||null, maxTouchPoints:navigator.maxTouchPoints||0, hardwareConcurrency:navigator.hardwareConcurrency||null, deviceMemory:navigator.deviceMemory||null, vendor:navigator.vendor||null },
         viewport:{ mode:currentViewportMode, innerWidth:window.innerWidth, innerHeight:window.innerHeight, outerWidth:window.outerWidth, outerHeight:window.outerHeight, devicePixelRatio:window.devicePixelRatio, orientation:(screen.orientation?{type:screen.orientation.type, angle:screen.orientation.angle}:{ type:null, angle:window.orientation||0 }), visualViewport:getVisualViewportInfo() },
         renderer:{ screenW, screenH, canvasWidth:canvas.width, canvasHeight:canvas.height, projectionH:+projectionH.toFixed(3), verticalProjectionScale:+verticalProjectionScale.toFixed(3), planeScale:+planeScale.toFixed(3), planeLength:+Math.hypot(planeX,planeY).toFixed(3), dir:{x:+dirX.toFixed(4), y:+dirY.toFixed(4)}, plane:{x:+planeX.toFixed(4), y:+planeY.toFixed(4)}, zBufferLength:ZBuffer.length, ceilingDepthLength:CeilingDepthBuffer.length, ceilingRows:Math.ceil(screenH/2+4) },
-        player:{ posX:+posX.toFixed(4), posY:+posY.toFixed(4), cellX:px, cellY:py, zone:zoneAtPlayer(), floorType:fMap[py][px], wallType:map[py][px], cMap:cMap[py][px], roadMask:roadMask[py][px], objectBlock:objectBlock[py][px], outdoors:isOutdoors() },
+        player:{ posX:+displayWorldX_V74(posX).toFixed(4), posXActual:+posX.toFixed(4), posY:+posY.toFixed(4), cellX:px-WEST_EXPAND_V74, cellXActual:px, cellY:py, zone:zoneAtPlayer(), floorType:fMap[py][px], wallType:map[py][px], cMap:cMap[py][px], roadMask:roadMask[py][px], objectBlock:objectBlock[py][px], outdoors:isOutdoors() },
         controls:{ touchInput:{...touchInput}, keysDown:Object.keys(keys).filter(k=>keys[k]).sort(), lookDragDivisor:screenLookDragDivisorForMode(currentViewportMode), mobileComfort:currentViewportMode!=='desktop' },
         layout:{ gameContainer:getRectInfo(document.getElementById('game-container')), canvas:getRectInfo(canvas), mobileControls:getRectInfo(document.getElementById('mobile-controls')), movePad:getRectInfo(document.getElementById('movePad')), lookPad:getRectInfo(document.getElementById('lookPad')), turnLeftBtn:getRectInfo(document.getElementById('turnLeftBtn')), turnRightBtn:getRectInfo(document.getElementById('turnRightBtn')), miniMap:getRectInfo(mini), debugButton:getRectInfo(perlaDebugButton) },
         performance:{ frames:perlaPerfStats.frames, lastFps:+perlaPerfStats.lastFps.toFixed(2), fps:fpsSummary, frameIntervalMs:frameSummary, updateMs:summarizeNumbers(perlaPerfStats.updateMs), drawWorldMs:summarizeNumbers(perlaPerfStats.drawMs), miniMapMs:summarizeNumbers(perlaPerfStats.miniMapMs), cpuMs:cpuSummary, longFrames:perlaPerfStats.longFrames, longFramesRatio:perlaPerfStats.frames?+(perlaPerfStats.longFrames/perlaPerfStats.frames).toFixed(4):0, worstFrameMs:+perlaPerfStats.worstFrameMs.toFixed(3), lastFrameIntervalMs:+perlaPerfStats.lastFrameIntervalMs.toFixed(3), lastCpuMs:+perlaPerfStats.lastCpuMs.toFixed(3), lastDrawStats:perlaLastDrawStats },
         memory:getDeviceMemoryInfo(),
         connection:getConnectionInfo(),
         world:{ mapW, mapH, seaY:SEA_Y, sprites:sprites.length, roofSegments:roofSegments.length, assetManifestEntries:Object.keys(ASSET_MANIFEST).length, loadedTextureGroups:Object.keys(tex).length, floorTypes:countFloorTypes(), specialCells:countSpecialCells(), spriteKinds:countSpritesByKind(), floorVisualStats },
-        checks:{ roofFogCache:typeof roofFogCache==='undefined'?'absent':'present', roofFoggedColor:typeof roofFoggedColor==='undefined'?'absent':'present', slopedRoofCasting:typeof drawSlopedRoofLayer2_5D==='function' && typeof drawSlopedRoofGableCaps2_5D==='function', ceilingSpriteClipY:typeof ceilingSpriteClipY==='function', wallDecalMap:!!wallDecalMap, getWallDecalTexX:typeof getWallDecalTexX==='function' }
+        checks:{ roofFogCache:typeof roofFogCache==='undefined'?'absent':'present', roofFoggedColor:typeof roofFoggedColor==='undefined'?'absent':'present', slopedRoofCasting:typeof drawSlopedRoofLayer2_5D==='function' && typeof drawSlopedRoofGableCaps2_5D==='function', ceilingSpriteClipY:typeof ceilingSpriteClipY==='function', wallDecalMap:!!wallDecalMap, getWallDecalTexX:typeof getWallDecalTexX==='function', barbecueWallDecal:!!(wallDecalMap[33]?.[109]&&wallDecalMap[34]?.[109]&&wallDecalMap[35]?.[109]&&wallDecalMap[36]?.[109]), parkingPDecal:!!(wallDecalMap[18]?.[101]||wallDecalMap[18]?.[97]||wallDecalMap[12]?.[105]||wallDecalMap[12]?.[93]) }
     };
     snapshot.warnings=buildPerlaWarnings(snapshot);
     return snapshot;
@@ -2717,11 +4183,11 @@ function gameLoop(time){
     if(drawMiniMapThisFrame){ const mt0=performance.now(); drawMiniMap(); miniMapMs=performance.now()-mt0; }
     const t3=performance.now();
     recordPerlaFrameStats(frameIntervalMs, t1-t0, t2-t1, miniMapMs, t3-loopStart);
-    debugLine.textContent=`X ${posX.toFixed(2)} / Y ${posY.toFixed(2)} · zona: ${zoneAtPlayer()} · ${currentViewportMode} ${screenW}x${screenH} · FPS ${perlaPerfStats.lastFps.toFixed(1)} · draw ${((perlaPerfStats.drawMs.at&&perlaPerfStats.drawMs.at(-1))||0).toFixed(1)}ms · sprite: ${sprites.length}`;
+    debugLine.textContent=`X ${displayWorldX_V74(posX).toFixed(2)} / Y ${posY.toFixed(2)} · zona: ${zoneAtPlayer()} · ${currentViewportMode} ${screenW}x${screenH} · FPS ${perlaPerfStats.lastFps.toFixed(1)} · draw ${((perlaPerfStats.drawMs.at&&perlaPerfStats.drawMs.at(-1))||0).toFixed(1)}ms · sprite: ${sprites.length}`;
     requestAnimationFrame(gameLoop);
 }
 
-window.__PERLA_DEBUG__ = { map, fMap, cMap, zoneMask, roadMask, noNature, objectBlock, sprites, roofSegments, ASSET_MANIFEST, wallDecalMap, wallHeightMap, roadSoftEdgeMap, trailSoftEdgeMap, floorNoiseMap, floorDecalMap, floorOutlineMap, floorVisualColorMap, floorSubTileColorMap, floorNearSubTileColorMap, floorMicroDecalMap, floorVisualStats, buildFloorVisualMaps, buildFloorVisualColorMap, buildFloorDecalMap, buildFloorSubTileColorMap, buildFloorNearSubTileColorMap, resetFloorVisualMaps, getFloorColorAt, computeFloorVisualColor, floorHash2D, floorNoiseSigned, mixColorHex, mixFloorQuantized, floorNeedsSubTileColor, organicTrailMask, regularRoadMask, applyOrganicTrailSubTile, applyHumanRoadSubTile, applyFloorDecalAt, inferWallDecalFaceV35, getWallDecalTexX, wallVisualHeight, drawRoofRimColumn, drawCeilingSegment, isModernCoverOwner, drawRoofLayer2_5D, drawGabledRoof2_5D, drawModernBuildingSolid2_5D, collectModernWallFaces, collectModernRoofFaces, drawRoofPoly, roofVisibleAt, playerInsideRoof, modernInsideDepth, shouldDrawModernExteriorRoof, shouldUseModernNearWallGuard, drawModernCoverCeilingSegment, getModernCoverForOwner, drawSlopedRoofLayer2_5D, drawSlopedRoofGableCaps2_5D, slopedRoofGableCapsFor, slopedRoofGableCapFacesCamera, slopedRoofEdgeZAt, slopedRoofPlanesFor, slopedRoofPixelVisible, drawWorld, WallTopBuffer, WallBottomBuffer, WallOwnerBuffer, CeilingOwnerBuffer, ceilingOwnerMap, isWalkable, shouldDrawSeaHorizon, distToRoad, ceilingSpriteClipY, CeilingDepthBuffer, CeilingColumnHasDepth, touchInput, setupTouchControls, isCoarseViewport, isCoarsePortraitViewport, getPerlaViewportMode, resizePerlaRenderer, cameraPlaneScaleForMode, cameraVerticalScaleForMode, screenLookDragDivisorForMode, floorBandHeightForMode, getSpriteRenderCandidates, updatePerlaVisualViewportCSS, perlaPerfStats, collectPerlaDebugSnapshot, formatPerlaDebugReport, exportPerlaDebugReport, perlaLastDrawStats:()=>perlaLastDrawStats, currentViewportMode:()=>currentViewportMode, projectionH:()=>projectionH, screenSize:()=>({screenW,screenH}), setPlayerForDebug(x,y,dx,dy){ posX=x; posY=y; if(typeof dx==='number' && typeof dy==='number'){ const len=Math.hypot(dx,dy)||1; dirX=dx/len; dirY=dy/len; planeScale=cameraPlaneScaleForMode(currentViewportMode); refreshCameraPlane(); } } };
+window.__PERLA_DEBUG__ = { map, fMap, cMap, zoneMask, roadMask, noNature, objectBlock, sprites, roofSegments, ASSET_MANIFEST, wallDecalMap, wallHeightMap, roadSoftEdgeMap, trailSoftEdgeMap, floorNoiseMap, floorDecalMap, floorOutlineMap, floorVisualColorMap, floorSubTileColorMap, floorNearSubTileColorMap, floorMicroDecalMap, floorVisualStats, buildFloorVisualMaps, buildFloorVisualColorMap, buildFloorDecalMap, buildFloorSubTileColorMap, buildFloorNearSubTileColorMap, resetFloorVisualMaps, getFloorColorAt, computeFloorVisualColor, floorHash2D, floorNoiseSigned, mixColorHex, mixFloorQuantized, floorNeedsSubTileColor, organicTrailMask, regularRoadMask, applyOrganicTrailSubTile, applyHumanRoadSubTile, applyFloorDecalAt, floorArrowMaskV67, animatedSeaColorAtV67, inferWallDecalFaceV35, getWallDecalTexX, placeBarbecueWallDecalV69, placeBarbecueAvenueTamarisksV71, placeHomePinesV76, placeNorthFieldTamarisksV76, placeParkingPDecalV76, worldXFromGameplayV77, gameplayXFromWorldV77, placeIvyFlowerArchV77, placeForcedUserPinesV77, applyV77IvyArchAndCoordinateGuidePatch, applyV78LakeSoftArchFix, placeHighIvyArchV78, placeForcedUserPinesV78, applyV79IvyPergolaFix, applyV83PergolaAndBoatFix, applyV84PergolaV81StabilizedFix, placeSecretLakeBoatV83, drawIvyPergolaLayerV79, ivyPergolaScreenBoundsV89, removeBadHighIvyArchSpritesV79, placeForcedUserPinesV79, secretLakeEllipseDistanceV78, buildEasternSecretZoneV72, buildSecretNorthFlowerFieldV73, buildSecretHomeClearingV73, buildSecretMazeV72, setSecretGroundV72, setSecretHedgeWallV72, BAR_TABLES_ROW_V70, wallVisualHeight, drawRoofRimColumn, drawCeilingSegment, isModernCoverOwner, drawRoofLayer2_5D, drawGabledRoof2_5D, drawModernBuildingSolid2_5D, collectModernWallFaces, collectModernRoofFaces, drawRoofPoly, roofVisibleAt, playerInsideRoof, modernInsideDepth, shouldDrawModernExteriorRoof, shouldUseModernNearWallGuard, drawModernCoverCeilingSegment, getModernCoverForOwner, drawSlopedRoofLayer2_5D, drawSlopedRoofGableCaps2_5D, slopedRoofGableCapsFor, slopedRoofGableCapFacesCamera, slopedRoofEdgeZAt, slopedRoofPlanesFor, slopedRoofPixelVisible, drawWorld, drawMiniMap, WallTopBuffer, WallBottomBuffer, WallOwnerBuffer, CeilingOwnerBuffer, ceilingOwnerMap, isWalkable, shouldDrawSeaHorizon, distToRoad, ceilingSpriteClipY, CeilingDepthBuffer, CeilingColumnHasDepth, touchInput, setupTouchControls, isCoarseViewport, isCoarsePortraitViewport, getPerlaViewportMode, resizePerlaRenderer, cameraPlaneScaleForMode, cameraVerticalScaleForMode, screenLookDragDivisorForMode, floorBandHeightForMode, getSpriteRenderCandidates, updatePerlaVisualViewportCSS, perlaPerfStats, collectPerlaDebugSnapshot, formatPerlaDebugReport, exportPerlaDebugReport, perlaLastDrawStats:()=>perlaLastDrawStats, currentViewportMode:()=>currentViewportMode, projectionH:()=>projectionH, screenSize:()=>({screenW,screenH}), setPlayerForDebug(x,y,dx,dy){ posX=x; posY=y; if(typeof dx==='number' && typeof dy==='number'){ const len=Math.hypot(dx,dy)||1; dirX=dx/len; dirY=dy/len; planeScale=cameraPlaneScaleForMode(currentViewportMode); refreshCameraPlane(); } } };
 setupPerlaMobileDebugUI();
 loadAssets().then(()=>{ loading.classList.add('hidden'); requestAnimationFrame(gameLoop); }).catch(err=>{ loading.innerHTML=`<div><strong>Errore caricamento asset</strong><br><span class="muted">${String(err.message||err)}</span><br><br>Avvia con AVVIA_GIOCO_WINDOWS_SENZA_PYTHON.bat.</div>`; console.error(err); });
 
