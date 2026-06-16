@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Camping Sole, Mare & Zanzare - PERLA1 V310 WebKit Mobile Pacing</title>
+    <title>Camping Sole, Mare & Zanzare - PERLA1 V311 iOS Mobile Pacing</title>
     <style>
         :root { --panel: rgba(20,16,12,.88); --gold:#f1c40f; --sand:#f5d99e; --perla-vv-left:0px; --perla-vv-top:0px; --perla-vv-width:100vw; --perla-vv-height:100dvh; }
         body { margin:0; min-height:100vh; background:radial-gradient(circle at 50% 0%,#183b4a 0%,#07090d 55%,#000 100%); color:white; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; display:flex; flex-direction:column; align-items:center; overflow-x:hidden; }
@@ -106,12 +106,12 @@
     </style>
 </head>
 <body>
-            <h2>Camping Sole, Mare & Zanzare - PERLA1 V310</h2>
+            <h2>Camping Sole, Mare & Zanzare - PERLA1 V311</h2>
     <div id="game-container">
         <canvas id="screen" width="800" height="450"></canvas>
         <canvas id="mini-map" width="128" height="128"></canvas>
         <div id="perlaClockHud" data-weather="clear" aria-label="Orologio e meteo PERLA1"><span class="perla-clock-time">14:00</span><span class="perla-clock-meta">☀️ Giorno</span></div>
-        <div id="loading"><div><strong>Caricamento asset PERLA1 V310...</strong><br><span class="muted">Usa un server locale per evitare problemi da file://.</span></div></div>
+        <div id="loading"><div><strong>Caricamento asset PERLA1 V311...</strong><br><span class="muted">Usa un server locale per evitare problemi da file://.</span></div></div>
     </div>
     <div id="mobile-controls" aria-label="Controlli touch PERLA1">
         <div class="touch-cluster touch-cluster-left">
@@ -209,7 +209,7 @@ const loading = document.getElementById('loading');
 const debugLine = document.getElementById('debugLine');
 const perlaClockHud = document.getElementById('perlaClockHud');
 
-const PERLA_BUILD_ID = 'PERLA1_V310_WEBKIT_MOBILE_PACING_COMPAT_LOCAL';
+const PERLA_BUILD_ID = 'PERLA1_V311_IOS_RAF_ELAPSED_PACING_LOCAL';
 const PERLA_V258_PERFORMANCE_BASELINE_DEBUG_OVERHEAD_SAFE = true;
 const PERLA_V258A_PHASE1_REAL_QUICK_WINS_COMPLETE_SAFE = true;
 const PERLA_V258_BASE_BUILD = 'PERLA1_V257_RAIN_SKYBOX_DEPTH_ANCHOR_FIX_SAFE_LOCAL';
@@ -329,6 +329,15 @@ const PERLA_V310_WEBKIT_MOBILE_DIRECT_TIMER_SAFE = true;
 const PERLA_V310_WEBKIT_DIRECT_TIMER_LEAD_MS = 18.0;
 const PERLA_V310_WEBKIT_DIRECT_TIMER_EARLY_RENDER_MS = 6.0;
 const PERLA_V310_WEBKIT_DIRECT_TIMER_ZERO_DELAY_SAFE = true;
+const PERLA_V311_IOS_RAF_ELAPSED_PACING_SAFE = true;
+const PERLA_V311_BASE_BUILD = 'PERLA1_V310_WEBKIT_MOBILE_PACING_COMPAT_LOCAL';
+const PERLA_V311_PATCH_MODE = 'ios_real_mobile_raf_elapsed_tolerant_pacing_raw_telemetry';
+const PERLA_V311_NO_WORLDGEN_CHANGE = true;
+const PERLA_V311_NO_ASSET_CHANGE = true;
+const PERLA_V311_NO_RAIN_OUTPUT_CHANGE = true;
+const PERLA_V311_VISUAL_STABILITY_TARGET = true;
+const PERLA_V311_IOS_RENDER_TOLERANCE_MS = 3.5;
+const PERLA_V311_IOS_STALL_RESET_MS = 260;
 function perlaForce30FrameThresholdsV308(){
     const force30=(typeof perlaForce30FpsEnabledV302==='function' && perlaForce30FpsEnabledV302() && typeof perlaForce30KeepsAdaptiveQualityV307==='function' && perlaForce30KeepsAdaptiveQualityV307());
     return force30 ? {
@@ -714,6 +723,16 @@ let perlaForce30FpsStateV302 = {
     webKitMobileDirectTimerLastDelayMsV310:0,
     webKitMobileDirectTimerEarlyRenderMsV310:0,
     webKitMobileDirectTimerZeroDelayV310:false,
+    iosRafElapsedModeV311:false,
+    iosRafElapsedFramesV311:0,
+    iosRafElapsedSkipsV311:0,
+    iosRafElapsedLateFramesV311:0,
+    iosRafElapsedResyncsV311:0,
+    iosRafRawCallbacksV311:0,
+    iosRafRawDeltaMsV311:0,
+    iosRafRawMaxDeltaMsV311:0,
+    iosRafRawLateCallbacksV311:0,
+    iosRafLastCallbackTimeV311:0,
     lastScheduleReasonV306:'init',
     phaseLockedV305:!!PERLA_V305_PHASE_LOCKED_FRAME_PACING_SAFE,
     lastReason:'init'
@@ -761,6 +780,16 @@ function perlaForce30FpsSetV302(enabled){
     st.webKitMobileDirectTimerLastDelayMsV310=0;
     st.webKitMobileDirectTimerEarlyRenderMsV310=0;
     st.webKitMobileDirectTimerZeroDelayV310=false;
+    st.iosRafElapsedModeV311=false;
+    st.iosRafElapsedFramesV311=0;
+    st.iosRafElapsedSkipsV311=0;
+    st.iosRafElapsedLateFramesV311=0;
+    st.iosRafElapsedResyncsV311=0;
+    st.iosRafRawCallbacksV311=0;
+    st.iosRafRawDeltaMsV311=0;
+    st.iosRafRawMaxDeltaMsV311=0;
+    st.iosRafRawLateCallbacksV311=0;
+    st.iosRafLastCallbackTimeV311=0;
     st.lastScheduleReasonV306=st.enabled?'force_30fps_enabled':'force_30fps_disabled';
     st.lastReason=st.enabled?'force_30fps_enabled':'force_30fps_disabled';
     try{
@@ -838,9 +867,19 @@ function perlaWebKitMobilePacingFallbackV310(){
     const profile=perlaBrowserEngineProfileV310();
     return !!profile.isWebKitMobileEngine;
 }
+function perlaIOSRafElapsedPacingV311(){
+    if(!PERLA_V311_IOS_RAF_ELAPSED_PACING_SAFE) return false;
+    if(typeof perlaForce30FpsEnabledV302!=='function' || !perlaForce30FpsEnabledV302()) return false;
+    if(typeof perlaWebKitMobilePacingFallbackV310==='function' && perlaWebKitMobilePacingFallbackV310()) return false;
+    if(!perlaMobileTouchLikeV310()) return false;
+    const profile=perlaBrowserEngineProfileV310();
+    if(profile && profile.marker && profile.marker!=='webkit') return false;
+    return !!(profile && profile.isIOS && profile.isWebKitMobileEngine);
+}
 function perlaMobileContinuousRafPacingV309(){
     if(!PERLA_V309_MOBILE_PHASE_LOCKED_RAF_SAFE || !PERLA_V309_DISABLE_MOBILE_TIMER_CHAIN) return false;
     if(typeof perlaForce30FpsEnabledV302!=='function' || !perlaForce30FpsEnabledV302()) return false;
+    if(typeof perlaIOSRafElapsedPacingV311==='function' && perlaIOSRafElapsedPacingV311()) return false;
     if(typeof perlaWebKitMobilePacingFallbackV310==='function' && perlaWebKitMobilePacingFallbackV310()) return false;
     try{
         const mode=(typeof currentViewportMode!=='undefined') ? String(currentViewportMode||'') : ((typeof getPerlaViewportMode==='function') ? String(getPerlaViewportMode()||'') : '');
@@ -906,11 +945,87 @@ function perlaForce30MobileElapsedFrameGateV306(st, now, minMs){
     st.lastReason='mobile_elapsed_render_v306';
     return {render:true, forced:true, frameIntervalMs:elapsed, realFrameIntervalMs:elapsed, simulationFrameMs, simulationStepMs:minMs, simulationSteps:1, phaseLockedV305:false, mobileStableElapsedV306:true, pacingModeV306:'mobile_elapsed_v306', pacingJitterMs:pacingJitter, phaseResetV305:false};
 }
+function perlaRecordRawRafCadenceV311(st, now){
+    if(!st || !PERLA_V311_IOS_RAF_ELAPSED_PACING_SAFE) return null;
+    if(!Number.isFinite(now)) return null;
+    st.iosRafRawCallbacksV311=(st.iosRafRawCallbacksV311||0)+1;
+    if(!Number.isFinite(st.iosRafLastCallbackTimeV311) || st.iosRafLastCallbackTimeV311<=0){
+        st.iosRafLastCallbackTimeV311=now;
+        st.iosRafRawDeltaMsV311=0;
+        return null;
+    }
+    const delta=Math.max(0,now-st.iosRafLastCallbackTimeV311);
+    st.iosRafLastCallbackTimeV311=now;
+    st.iosRafRawDeltaMsV311=+delta.toFixed(3);
+    st.iosRafRawMaxDeltaMsV311=Math.max(st.iosRafRawMaxDeltaMsV311||0,delta);
+    if(delta>perlaLongFrameWarnThresholdMsV306()) st.iosRafRawLateCallbacksV311=(st.iosRafRawLateCallbacksV311||0)+1;
+    const perfStats=(typeof window!=='undefined') ? window.__PERLA_PERF_STATS__ : null;
+    if(perfStats && perfStats.rawRafDeltaMsV311) pushRolling(perfStats.rawRafDeltaMsV311, delta);
+    return delta;
+}
+function perlaForce30IOSRafElapsedFrameGateV311(st, now, minMs){
+    st.iosRafElapsedModeV311=true;
+    st.mobileElapsedModeV306=false;
+    st.phaseLockedV305=false;
+    st.mobileContinuousRafV309=true;
+    st.mobileSchedulerModeV309='ios_raf_elapsed_tolerant_v311';
+    st.webKitMobilePacingFallbackV310=false;
+    st.webKitMobileDirectTimerModeV310=false;
+    const rawDelta=perlaRecordRawRafCadenceV311(st, now);
+    const tolerance=Math.max(0,PERLA_V311_IOS_RENDER_TOLERANCE_MS||0);
+    const renderThreshold=Math.max(8,minMs-tolerance);
+    const resetPhase=(!st.lastRenderTime || now<st.lastRenderTime);
+    if(resetPhase){
+        if(st.lastRenderTime) st.iosRafElapsedResyncsV311=(st.iosRafElapsedResyncsV311||0)+1;
+        st.lastRenderTime=now;
+        st.nextRenderTime=now+minMs;
+        st.renderedFrames++;
+        st.iosRafElapsedFramesV311=(st.iosRafElapsedFramesV311||0)+1;
+        st.mobileContinuousRafFramesV309=(st.mobileContinuousRafFramesV309||0)+1;
+        st.lastRenderDeltaMs=0;
+        st.lastSimulationDeltaMs=0;
+        st.lastSimulationSteps=0;
+        st.lastPacingJitterMs=0;
+        st.lastReason='ios_raf_elapsed_init_v311';
+        return {render:true, forced:true, frameIntervalMs:0, realFrameIntervalMs:0, simulationFrameMs:0, simulationStepMs:minMs, simulationSteps:0, phaseLockedV305:false, mobileStableElapsedV306:false, iosRafElapsedV311:true, pacingModeV306:'ios_raf_elapsed_tolerant_v311', pacingJitterMs:0, phaseResetV305:false, rawRafDeltaMsV311:rawDelta};
+    }
+    const elapsed=now-st.lastRenderTime;
+    if(elapsed<renderThreshold){
+        st.skippedFrames++;
+        st.iosRafElapsedSkipsV311=(st.iosRafElapsedSkipsV311||0)+1;
+        st.mobileContinuousRafSkipsV309=(st.mobileContinuousRafSkipsV309||0)+1;
+        st.lastSkipDeltaMs=+elapsed.toFixed(3);
+        st.lastReason='ios_raf_elapsed_skip_v311';
+        return {render:false, forced:true, frameIntervalMs:elapsed, realFrameIntervalMs:elapsed, simulationFrameMs:0, simulationStepMs:0, simulationSteps:0, phaseLockedV305:false, iosRafElapsedV311:true, pacingModeV306:'ios_raf_elapsed_tolerant_v311', pacingJitterMs:+(elapsed-minMs).toFixed(3), rawRafDeltaMsV311:rawDelta};
+    }
+    const pacingJitter=elapsed-minMs;
+    const stalled=elapsed>PERLA_V311_IOS_STALL_RESET_MS;
+    if(elapsed>perlaLongFrameWarnThresholdMsV306()) {
+        st.iosRafElapsedLateFramesV311=(st.iosRafElapsedLateFramesV311||0)+1;
+        st.mobileContinuousRafLateFramesV309=(st.mobileContinuousRafLateFramesV309||0)+1;
+    }
+    if(stalled) st.iosRafElapsedResyncsV311=(st.iosRafElapsedResyncsV311||0)+1;
+    st.lastRenderTime=now;
+    st.nextRenderTime=now+minMs;
+    st.renderedFrames++;
+    st.iosRafElapsedFramesV311=(st.iosRafElapsedFramesV311||0)+1;
+    st.mobileContinuousRafFramesV309=(st.mobileContinuousRafFramesV309||0)+1;
+    st.lastRenderDeltaMs=+elapsed.toFixed(3);
+    st.lastSimulationDeltaMs=+minMs.toFixed(3);
+    st.lastSimulationSteps=1;
+    st.lastPacingJitterMs=+pacingJitter.toFixed(3);
+    st.maxPacingJitterMs=Math.max(st.maxPacingJitterMs||0,Math.abs(pacingJitter));
+    st.lastReason=stalled?'ios_raf_elapsed_stall_render_v311':'ios_raf_elapsed_render_v311';
+    return {render:true, forced:true, frameIntervalMs:elapsed, realFrameIntervalMs:elapsed, simulationFrameMs:minMs, simulationStepMs:minMs, simulationSteps:1, phaseLockedV305:false, mobileStableElapsedV306:false, iosRafElapsedV311:true, pacingModeV306:'ios_raf_elapsed_tolerant_v311', pacingJitterMs:pacingJitter, phaseResetV305:false, rawRafDeltaMsV311:rawDelta};
+}
 function perlaForce30FpsFrameGateV302(time){
     const st=perlaForce30FpsStateV302;
     if(!perlaForce30FpsEnabledV302()) return {render:true, forced:false, frameIntervalMs:null, realFrameIntervalMs:null, simulationFrameMs:null, simulationStepMs:null, simulationSteps:1, phaseLockedV305:false, pacingJitterMs:0};
     const now=Number.isFinite(time) ? time : ((typeof performance!=='undefined'&&performance.now)?performance.now():Date.now());
     const minMs=Math.max(8,st.minFrameMs||PERLA_V302_FORCE_30_FPS_MS);
+    const iosRafElapsedV311=!!(typeof perlaIOSRafElapsedPacingV311==='function' && perlaIOSRafElapsedPacingV311());
+    if(iosRafElapsedV311) return perlaForce30IOSRafElapsedFrameGateV311(st,now,minMs);
+    st.iosRafElapsedModeV311=false;
     const mobileContinuousV309=!!(typeof perlaMobileContinuousRafPacingV309==='function' && perlaMobileContinuousRafPacingV309());
     const webKitDirectTimerV310=!!(typeof perlaWebKitMobilePacingFallbackV310==='function' && perlaWebKitMobilePacingFallbackV310());
     if(!mobileContinuousV309 && !webKitDirectTimerV310 && perlaForce30MobileElapsedModeV306()) return perlaForce30MobileElapsedFrameGateV306(st,now,minMs);
@@ -1093,6 +1208,25 @@ function perlaForce30FpsSummaryV302(){
             directTimerEarlyRenderMs:+(st.webKitMobileDirectTimerEarlyRenderMsV310||0).toFixed(3),
             directTimerZeroDelay:!!st.webKitMobileDirectTimerZeroDelayV310,
             browserProfile:typeof perlaBrowserEngineProfileV310==='function' ? perlaBrowserEngineProfileV310() : null
+        },
+        v311:{
+            enabled:!!PERLA_V311_IOS_RAF_ELAPSED_PACING_SAFE,
+            baseBuild:PERLA_V311_BASE_BUILD,
+            patchMode:PERLA_V311_PATCH_MODE,
+            available:typeof perlaIOSRafElapsedPacingV311==='function' ? perlaIOSRafElapsedPacingV311() : false,
+            active:!!st.iosRafElapsedModeV311,
+            schedulerMode:st.mobileSchedulerModeV309||'legacy',
+            renderToleranceMs:+PERLA_V311_IOS_RENDER_TOLERANCE_MS.toFixed(3),
+            stallResetMs:PERLA_V311_IOS_STALL_RESET_MS,
+            frames:st.iosRafElapsedFramesV311||0,
+            skips:st.iosRafElapsedSkipsV311||0,
+            lateFrames:st.iosRafElapsedLateFramesV311||0,
+            resyncs:st.iosRafElapsedResyncsV311||0,
+            rawCallbacks:st.iosRafRawCallbacksV311||0,
+            rawDeltaMs:+(st.iosRafRawDeltaMsV311||0).toFixed(3),
+            rawMaxDeltaMs:+(st.iosRafRawMaxDeltaMsV311||0).toFixed(3),
+            rawLateCallbacks:st.iosRafRawLateCallbacksV311||0,
+            rawDeltaSummary:(typeof window!=='undefined' && window.__PERLA_PERF_STATS__ && window.__PERLA_PERF_STATS__.rawRafDeltaMsV311) ? summarizeNumbers(window.__PERLA_PERF_STATS__.rawRafDeltaMsV311) : null
         },
         storageKey:PERLA_V302_FORCE_30_FPS_STORAGE_KEY,
         reason:st.lastReason||'normal'
@@ -7172,9 +7306,11 @@ const perlaPerfStats = {
     frames:0, longFrames:0, worstFrameMs:0, lastFrameIntervalMs:0, lastCpuMs:0, lastFps:0,
     frameIntervals:[], fpsSamples:[], updateMs:[], drawMs:[], miniMapMs:[], cpuMs:[],
     frameWindowV309:[],
+    rawRafDeltaMsV311:[],
     simulationFrameMsV305:[], pacingJitterAbsMsV305:[], pacingJitterMsV305:[],
     lastSimulationFrameMsV305:0, lastSimulationStepsV305:0, lastPacingJitterMsV305:0, lastPacingJitterAbsMsV305:0, lastFramePacingV305:null
 };
+if(typeof window!=='undefined') window.__PERLA_PERF_STATS__=perlaPerfStats;
 let perlaLastDrawStats = null;
 function pushRolling(arr,value,maxLen=240){
     if(!Number.isFinite(value)) return;
@@ -7296,6 +7432,16 @@ function perlaFramePacingSampleV305(gate, realFrameIntervalMs, simulationFrameMs
         webKitMobileDirectTimerEarlyRenderMsV310:+(st.webKitMobileDirectTimerEarlyRenderMsV310||0).toFixed(3),
         webKitMobileDirectTimerZeroDelayV310:!!st.webKitMobileDirectTimerZeroDelayV310,
         mobileSchedulerModeV310:st.webKitMobilePacingFallbackV310?'direct_timer_phase_locked_v310':'none',
+        iosRafElapsedV311:!!st.iosRafElapsedModeV311,
+        iosRafElapsedFramesV311:st.iosRafElapsedFramesV311||0,
+        iosRafElapsedSkipsV311:st.iosRafElapsedSkipsV311||0,
+        iosRafElapsedLateFramesV311:st.iosRafElapsedLateFramesV311||0,
+        iosRafElapsedResyncsV311:st.iosRafElapsedResyncsV311||0,
+        iosRafRawCallbacksV311:st.iosRafRawCallbacksV311||0,
+        iosRafRawDeltaMsV311:+(st.iosRafRawDeltaMsV311||0).toFixed(3),
+        iosRafRawMaxDeltaMsV311:+(st.iosRafRawMaxDeltaMsV311||0).toFixed(3),
+        iosRafRawLateCallbacksV311:st.iosRafRawLateCallbacksV311||0,
+        rawRafDeltaMsV311:(typeof window!=='undefined' && window.__PERLA_PERF_STATS__ && window.__PERLA_PERF_STATS__.rawRafDeltaMsV311) ? summarizeNumbers(window.__PERLA_PERF_STATS__.rawRafDeltaMsV311) : null,
         reason:st.lastReason||'normal'
     };
 }
@@ -7320,14 +7466,16 @@ function perlaFramePacingSummaryV305(){
         v307:{enabled:!!PERLA_V307_MOBILE_RENDER_STABILITY_SAFE, baseBuild:PERLA_V307_BASE_BUILD, patchMode:PERLA_V307_PATCH_MODE, force30KeepsAdaptiveQuality:!!PERLA_V307_FORCE30_KEEPS_ADAPTIVE_QUALITY, mobileRafAlignedTimer:!!PERLA_V307_MOBILE_RAF_ALIGNED_TIMER_SAFE, mobileNaturalFloorBudget:!!PERLA_V307_MOBILE_NATURAL_FLOOR_BUDGET_SAFE, mobileSpriteStep3:!!PERLA_V307_MOBILE_SPRITE_STRIPE_STABLE_STEP3_SAFE},
         v308:{enabled:!!PERLA_V308_MOBILE_PACING_GUARDRAILS_SAFE, baseBuild:PERLA_V308_BASE_BUILD, patchMode:PERLA_V308_PATCH_MODE, mobileRafLeadMs:+PERLA_V308_FORCE30_RAF_LEAD_MS.toFixed(3), frameThresholds:perlaForce30FrameThresholdsV308()},
         v309:{enabled:!!PERLA_V309_MOBILE_PHASE_LOCKED_RAF_SAFE, baseBuild:PERLA_V309_BASE_BUILD, patchMode:PERLA_V309_PATCH_MODE, mobileContinuousRaf:!!(perlaForce30FpsStateV302&&perlaForce30FpsStateV302.mobileContinuousRafV309), mobileSchedulerMode:(perlaForce30FpsStateV302&&perlaForce30FpsStateV302.mobileSchedulerModeV309)||'legacy', continuousRafSchedules:(perlaForce30FpsStateV302&&perlaForce30FpsStateV302.mobileContinuousRafSchedulesV309)||0, continuousRafFrames:(perlaForce30FpsStateV302&&perlaForce30FpsStateV302.mobileContinuousRafFramesV309)||0, continuousRafSkips:(perlaForce30FpsStateV302&&perlaForce30FpsStateV302.mobileContinuousRafSkipsV309)||0, continuousRafLateFrames:(perlaForce30FpsStateV302&&perlaForce30FpsStateV302.mobileContinuousRafLateFramesV309)||0, continuousRafDroppedPeriods:(perlaForce30FpsStateV302&&perlaForce30FpsStateV302.mobileContinuousRafDroppedPeriodsV309)||0},
-        v310:{enabled:!!PERLA_V310_WEBKIT_MOBILE_PACING_COMPAT_SAFE, baseBuild:PERLA_V310_BASE_BUILD, patchMode:PERLA_V310_PATCH_MODE, allowed:(typeof perlaWebKitMobileDirectTimerAllowedV310==='function')?perlaWebKitMobileDirectTimerAllowedV310():false, available:(typeof perlaWebKitMobilePacingFallbackV310==='function')?perlaWebKitMobilePacingFallbackV310():false, active:!!(perlaForce30FpsStateV302&&perlaForce30FpsStateV302.webKitMobilePacingFallbackV310), schedulerMode:(perlaForce30FpsStateV302&&perlaForce30FpsStateV302.mobileSchedulerModeV309)||'legacy', directTimerSchedules:(perlaForce30FpsStateV302&&perlaForce30FpsStateV302.webKitMobileDirectTimerSchedulesV310)||0, directTimerFrames:(perlaForce30FpsStateV302&&perlaForce30FpsStateV302.webKitMobileDirectTimerFramesV310)||0, directTimerLeadMs:+((perlaForce30FpsStateV302&&perlaForce30FpsStateV302.webKitMobileDirectTimerLeadMsV310)||0).toFixed(3), directTimerLastDelayMs:+((perlaForce30FpsStateV302&&perlaForce30FpsStateV302.webKitMobileDirectTimerLastDelayMsV310)||0).toFixed(3), directTimerEarlyRenderMs:+((perlaForce30FpsStateV302&&perlaForce30FpsStateV302.webKitMobileDirectTimerEarlyRenderMsV310)||0).toFixed(3), browserProfile:(typeof perlaBrowserEngineProfileV310==='function')?perlaBrowserEngineProfileV310():null}
+        v310:{enabled:!!PERLA_V310_WEBKIT_MOBILE_PACING_COMPAT_SAFE, baseBuild:PERLA_V310_BASE_BUILD, patchMode:PERLA_V310_PATCH_MODE, allowed:(typeof perlaWebKitMobileDirectTimerAllowedV310==='function')?perlaWebKitMobileDirectTimerAllowedV310():false, available:(typeof perlaWebKitMobilePacingFallbackV310==='function')?perlaWebKitMobilePacingFallbackV310():false, active:!!(perlaForce30FpsStateV302&&perlaForce30FpsStateV302.webKitMobilePacingFallbackV310), schedulerMode:(perlaForce30FpsStateV302&&perlaForce30FpsStateV302.mobileSchedulerModeV309)||'legacy', directTimerSchedules:(perlaForce30FpsStateV302&&perlaForce30FpsStateV302.webKitMobileDirectTimerSchedulesV310)||0, directTimerFrames:(perlaForce30FpsStateV302&&perlaForce30FpsStateV302.webKitMobileDirectTimerFramesV310)||0, directTimerLeadMs:+((perlaForce30FpsStateV302&&perlaForce30FpsStateV302.webKitMobileDirectTimerLeadMsV310)||0).toFixed(3), directTimerLastDelayMs:+((perlaForce30FpsStateV302&&perlaForce30FpsStateV302.webKitMobileDirectTimerLastDelayMsV310)||0).toFixed(3), directTimerEarlyRenderMs:+((perlaForce30FpsStateV302&&perlaForce30FpsStateV302.webKitMobileDirectTimerEarlyRenderMsV310)||0).toFixed(3), browserProfile:(typeof perlaBrowserEngineProfileV310==='function')?perlaBrowserEngineProfileV310():null},
+        v311:{enabled:!!PERLA_V311_IOS_RAF_ELAPSED_PACING_SAFE, baseBuild:PERLA_V311_BASE_BUILD, patchMode:PERLA_V311_PATCH_MODE, available:(typeof perlaIOSRafElapsedPacingV311==='function')?perlaIOSRafElapsedPacingV311():false, active:!!(perlaForce30FpsStateV302&&perlaForce30FpsStateV302.iosRafElapsedModeV311), schedulerMode:(perlaForce30FpsStateV302&&perlaForce30FpsStateV302.mobileSchedulerModeV309)||'legacy', renderToleranceMs:+PERLA_V311_IOS_RENDER_TOLERANCE_MS.toFixed(3), stallResetMs:+PERLA_V311_IOS_STALL_RESET_MS.toFixed(3), frames:(perlaForce30FpsStateV302&&perlaForce30FpsStateV302.iosRafElapsedFramesV311)||0, skips:(perlaForce30FpsStateV302&&perlaForce30FpsStateV302.iosRafElapsedSkipsV311)||0, lateFrames:(perlaForce30FpsStateV302&&perlaForce30FpsStateV302.iosRafElapsedLateFramesV311)||0, resyncs:(perlaForce30FpsStateV302&&perlaForce30FpsStateV302.iosRafElapsedResyncsV311)||0, rawCallbacks:(perlaForce30FpsStateV302&&perlaForce30FpsStateV302.iosRafRawCallbacksV311)||0, rawDeltaMs:+((perlaForce30FpsStateV302&&perlaForce30FpsStateV302.iosRafRawDeltaMsV311)||0).toFixed(3), rawMaxDeltaMs:+((perlaForce30FpsStateV302&&perlaForce30FpsStateV302.iosRafRawMaxDeltaMsV311)||0).toFixed(3), rawLateCallbacks:(perlaForce30FpsStateV302&&perlaForce30FpsStateV302.iosRafRawLateCallbacksV311)||0, rawDeltaSummary:(typeof window!=='undefined'&&window.__PERLA_PERF_STATS__&&window.__PERLA_PERF_STATS__.rawRafDeltaMsV311)?summarizeNumbers(window.__PERLA_PERF_STATS__.rawRafDeltaMsV311):null}
     };
 }
 let perlaGameLoopTimerV306 = 0;
 let perlaGameLoopRafV307 = 0;
 function perlaScheduleNextGameLoopV306(reason){
     const st=perlaForce30FpsStateV302||{};
-    const mobileContinuous=!!(PERLA_V309_MOBILE_PHASE_LOCKED_RAF_SAFE && typeof perlaMobileContinuousRafPacingV309==='function' && perlaMobileContinuousRafPacingV309() && (typeof document==='undefined' || document.visibilityState!=='hidden') && typeof requestAnimationFrame==='function');
+    const iosRafElapsed=!!(PERLA_V311_IOS_RAF_ELAPSED_PACING_SAFE && typeof perlaIOSRafElapsedPacingV311==='function' && perlaIOSRafElapsedPacingV311());
+    const mobileContinuous=!!((iosRafElapsed || (PERLA_V309_MOBILE_PHASE_LOCKED_RAF_SAFE && typeof perlaMobileContinuousRafPacingV309==='function' && perlaMobileContinuousRafPacingV309())) && (typeof document==='undefined' || document.visibilityState!=='hidden') && typeof requestAnimationFrame==='function');
     if(mobileContinuous){
         if(perlaGameLoopTimerV306){
             clearTimeout(perlaGameLoopTimerV306);
@@ -7336,12 +7484,13 @@ function perlaScheduleNextGameLoopV306(reason){
         st.mobileTimerModeV306=false;
         st.mobileTimerLastDelayMsV306=0;
         st.mobileContinuousRafV309=true;
-        st.mobileSchedulerModeV309='continuous_raf_phase_locked';
+        st.mobileSchedulerModeV309=iosRafElapsed?'ios_raf_elapsed_tolerant_v311':'continuous_raf_phase_locked';
+        st.iosRafElapsedModeV311=!!iosRafElapsed;
         st.mobileContinuousRafSchedulesV309=(st.mobileContinuousRafSchedulesV309||0)+1;
         st.mobileRafAlignedV307=true;
         st.mobileRafAlignedSchedulesV307=(st.mobileRafAlignedSchedulesV307||0)+1;
         st.mobileRafLeadMsV308=0;
-        st.lastScheduleReasonV306=String(reason||'frame_complete')+'_continuous_raf_v309';
+        st.lastScheduleReasonV306=String(reason||'frame_complete')+(iosRafElapsed?'_ios_raf_elapsed_v311':'_continuous_raf_v309');
         if(!perlaGameLoopRafV307){
             perlaGameLoopRafV307=requestAnimationFrame(function(t){
                 perlaGameLoopRafV307=0;
@@ -7373,6 +7522,7 @@ function perlaScheduleNextGameLoopV306(reason){
         st.mobileSchedulerModeV309='direct_timer_phase_locked_v310';
         st.webKitMobilePacingFallbackV310=true;
         st.webKitMobileDirectTimerModeV310=true;
+        st.iosRafElapsedModeV311=false;
         st.webKitMobileDirectTimerSchedulesV310=(st.webKitMobileDirectTimerSchedulesV310||0)+1;
         st.webKitMobileDirectTimerLeadMsV310=+lead.toFixed(3);
         st.webKitMobileDirectTimerLastDelayMsV310=+delay.toFixed(3);
@@ -7400,6 +7550,7 @@ function perlaScheduleNextGameLoopV306(reason){
         }
         st.mobileTimerModeV306=true;
         st.mobileSchedulerModeV309='legacy_timer_raf_chain';
+        st.iosRafElapsedModeV311=false;
         st.mobileTimerSchedulesV306=(st.mobileTimerSchedulesV306||0)+1;
         st.mobileTimerLastDelayMsV306=+delay.toFixed(3);
         st.mobileRafLeadMsV308=+lead.toFixed(3);
@@ -7423,6 +7574,7 @@ function perlaScheduleNextGameLoopV306(reason){
     st.mobileContinuousRafV309=false;
     st.webKitMobilePacingFallbackV310=false;
     st.webKitMobileDirectTimerModeV310=false;
+    st.iosRafElapsedModeV311=false;
     st.mobileSchedulerModeV309='raf_default';
     if(perlaGameLoopTimerV306){
         clearTimeout(perlaGameLoopTimerV306);
@@ -27328,7 +27480,7 @@ function collectPerlaDebugSnapshot(reason='manuale'){
     const frameSummary=summarizeNumbers(perlaPerfStats.frameIntervals);
     const cpuSummary=summarizeNumbers(perlaPerfStats.cpuMs);
     const snapshot={
-        build:{ id:PERLA_BUILD_ID, base:PERLA_V310_BASE_BUILD, patch:'V310 WebKit mobile pacing compatibility telemetry over V309 phase-locked rAF; direct-timer fallback is diagnostic/opt-in only, while V307/V308 draw quality budgets and V309 asset retry remain preserved; no worldgen/rain output/asset pixel change' , debugEnabled:PERLA_MOBILE_DEBUG_ENABLED, reason, generatedAt:new Date().toISOString(), uptimeSec:+((now-perlaPerfStats.startedAt)/1000).toFixed(2), v258PatchMode:PERLA_V258_PATCH_MODE, v258aPatchMode:PERLA_V258A_PATCH_MODE, v303PatchMode:PERLA_V303_PATCH_MODE, v304PatchMode:PERLA_V304_PATCH_MODE, v305PatchMode:PERLA_V305_PATCH_MODE, v306PatchMode:PERLA_V306_PATCH_MODE, v307PatchMode:PERLA_V307_PATCH_MODE, v308PatchMode:PERLA_V308_PATCH_MODE, v309PatchMode:PERLA_V309_PATCH_MODE, v310PatchMode:PERLA_V310_PATCH_MODE },
+        build:{ id:PERLA_BUILD_ID, base:PERLA_V311_BASE_BUILD, patch:'V311 iOS real-mobile rAF elapsed tolerant pacing over V310 diagnostics; avoids phase-lock catch-up resets on iOS while preserving V307/V308 draw quality budgets, V309 asset retry and V310 diagnostic fallback; no worldgen/rain output/asset pixel change' , debugEnabled:PERLA_MOBILE_DEBUG_ENABLED, reason, generatedAt:new Date().toISOString(), uptimeSec:+((now-perlaPerfStats.startedAt)/1000).toFixed(2), v258PatchMode:PERLA_V258_PATCH_MODE, v258aPatchMode:PERLA_V258A_PATCH_MODE, v303PatchMode:PERLA_V303_PATCH_MODE, v304PatchMode:PERLA_V304_PATCH_MODE, v305PatchMode:PERLA_V305_PATCH_MODE, v306PatchMode:PERLA_V306_PATCH_MODE, v307PatchMode:PERLA_V307_PATCH_MODE, v308PatchMode:PERLA_V308_PATCH_MODE, v309PatchMode:PERLA_V309_PATCH_MODE, v310PatchMode:PERLA_V310_PATCH_MODE, v311PatchMode:PERLA_V311_PATCH_MODE },
         app:{ title:document.title, url:location.href, online:navigator.onLine, visibilityState:document.visibilityState, focus:document.hasFocus && document.hasFocus() },
         device:{ userAgent:navigator.userAgent, platform:navigator.platform||null, language:navigator.language||null, languages:navigator.languages||null, maxTouchPoints:navigator.maxTouchPoints||0, hardwareConcurrency:navigator.hardwareConcurrency||null, deviceMemory:navigator.deviceMemory||null, vendor:navigator.vendor||null },
         viewport:{ mode:currentViewportMode, innerWidth:window.innerWidth, innerHeight:window.innerHeight, outerWidth:window.outerWidth, outerHeight:window.outerHeight, devicePixelRatio:window.devicePixelRatio, orientation:(screen.orientation?{type:screen.orientation.type, angle:screen.orientation.angle}:{ type:null, angle:window.orientation||0 }), visualViewport:getVisualViewportInfo() },
@@ -27364,7 +27516,7 @@ function formatPerlaDebugReport(snapshot){
     lines.push('WARNING AUTOMATICI:');
     for(const w of snapshot.warnings) lines.push('• '+w);
     lines.push('');
-    lines.push('SEZIONE V305/V306/V307/V308/V309 FRAME PACING:');
+    lines.push('SEZIONE V305/V306/V307/V308/V309/V310/V311 FRAME PACING:');
     lines.push(JSON.stringify({
         framePacingV305:pacing||null,
         lastDrawFramePacingV305:lastDraw&&lastDraw.framePacingV305 ? lastDraw.framePacingV305 : null,
@@ -27387,6 +27539,18 @@ function formatPerlaDebugReport(snapshot){
         mobileContinuousRafLateFramesV309:lastDraw ? lastDraw.mobileContinuousRafLateFramesV309 : null,
         mobileContinuousRafDroppedPeriodsV309:lastDraw ? lastDraw.mobileContinuousRafDroppedPeriodsV309 : null,
         mobileSchedulerModeV309:lastDraw ? lastDraw.mobileSchedulerModeV309 : null,
+        webKitMobilePacingFallbackV310:lastDraw ? lastDraw.webKitMobilePacingFallbackV310 : null,
+        webKitMobileDirectTimerModeV310:lastDraw ? lastDraw.webKitMobileDirectTimerModeV310 : null,
+        iosRafElapsedV311:lastDraw ? lastDraw.iosRafElapsedV311 : null,
+        iosRafElapsedFramesV311:lastDraw ? lastDraw.iosRafElapsedFramesV311 : null,
+        iosRafElapsedSkipsV311:lastDraw ? lastDraw.iosRafElapsedSkipsV311 : null,
+        iosRafElapsedLateFramesV311:lastDraw ? lastDraw.iosRafElapsedLateFramesV311 : null,
+        iosRafElapsedResyncsV311:lastDraw ? lastDraw.iosRafElapsedResyncsV311 : null,
+        iosRafRawCallbacksV311:lastDraw ? lastDraw.iosRafRawCallbacksV311 : null,
+        iosRafRawDeltaMsV311:lastDraw ? lastDraw.iosRafRawDeltaMsV311 : null,
+        iosRafRawMaxDeltaMsV311:lastDraw ? lastDraw.iosRafRawMaxDeltaMsV311 : null,
+        iosRafRawLateCallbacksV311:lastDraw ? lastDraw.iosRafRawLateCallbacksV311 : null,
+        iosRafRawDeltaSummaryV311:lastDraw ? lastDraw.iosRafRawDeltaSummaryV311 : null,
         smartAdaptiveEnabledV300:lastDraw ? lastDraw.smartAdaptiveEnabledV300 : null,
         smartAdaptiveLevelV300:lastDraw ? lastDraw.smartAdaptiveLevelV300 : null,
         smartAdaptiveReasonV300:lastDraw ? lastDraw.smartAdaptiveReasonV300 : null
@@ -28079,6 +28243,7 @@ function collectPerlaPerformanceBaselineV258A(reason='manual'){
     base.v308={mobilePacingGuardrails:!!PERLA_V308_MOBILE_PACING_GUARDRAILS_SAFE, baseBuild:PERLA_V308_BASE_BUILD, patchMode:PERLA_V308_PATCH_MODE, mobileRafLeadMs:PERLA_V308_FORCE30_RAF_LEAD_MS, frameThresholds:(typeof perlaForce30FrameThresholdsV308==='function')?perlaForce30FrameThresholdsV308():null, summary:(typeof perlaFramePacingSummaryV305==='function')?perlaFramePacingSummaryV305():null};
     base.v309={mobilePhaseLockedRaf:!!PERLA_V309_MOBILE_PHASE_LOCKED_RAF_SAFE, baseBuild:PERLA_V309_BASE_BUILD, patchMode:PERLA_V309_PATCH_MODE, noWorldgenChange:!!PERLA_V309_NO_WORLDGEN_CHANGE, noAssetChange:!!PERLA_V309_NO_ASSET_CHANGE, noAssetContentChange:!!PERLA_V309_NO_ASSET_CONTENT_CHANGE, noRainOutputChange:!!PERLA_V309_NO_RAIN_OUTPUT_CHANGE, visualStabilityTarget:!!PERLA_V309_VISUAL_STABILITY_TARGET, mobileTimerChainDisabled:!!PERLA_V309_DISABLE_MOBILE_TIMER_CHAIN, assetFirstLoadRetry:!!PERLA_V309_ASSET_FIRST_LOAD_RETRY_SAFE, assetLoad:(typeof perlaAssetLoadStatsSnapshotV309==='function')?perlaAssetLoadStatsSnapshotV309():null, summary:(typeof perlaFramePacingSummaryV305==='function')?perlaFramePacingSummaryV305():null};
     base.v310={webKitMobilePacingCompat:!!PERLA_V310_WEBKIT_MOBILE_PACING_COMPAT_SAFE, baseBuild:PERLA_V310_BASE_BUILD, patchMode:PERLA_V310_PATCH_MODE, noWorldgenChange:!!PERLA_V310_NO_WORLDGEN_CHANGE, noAssetChange:!!PERLA_V310_NO_ASSET_CHANGE, noRainOutputChange:!!PERLA_V310_NO_RAIN_OUTPUT_CHANGE, visualStabilityTarget:!!PERLA_V310_VISUAL_STABILITY_TARGET, directTimerSafe:!!PERLA_V310_WEBKIT_MOBILE_DIRECT_TIMER_SAFE, directTimerAllowed:(typeof perlaWebKitMobileDirectTimerAllowedV310==='function')?perlaWebKitMobileDirectTimerAllowedV310():false, directTimerAvailable:(typeof perlaWebKitMobilePacingFallbackV310==='function')?perlaWebKitMobilePacingFallbackV310():false, summary:(typeof perlaFramePacingSummaryV305==='function')?perlaFramePacingSummaryV305():null};
+    base.v311={iosRafElapsedPacing:!!PERLA_V311_IOS_RAF_ELAPSED_PACING_SAFE, baseBuild:PERLA_V311_BASE_BUILD, patchMode:PERLA_V311_PATCH_MODE, noWorldgenChange:!!PERLA_V311_NO_WORLDGEN_CHANGE, noAssetChange:!!PERLA_V311_NO_ASSET_CHANGE, noRainOutputChange:!!PERLA_V311_NO_RAIN_OUTPUT_CHANGE, visualStabilityTarget:!!PERLA_V311_VISUAL_STABILITY_TARGET, renderToleranceMs:PERLA_V311_IOS_RENDER_TOLERANCE_MS, stallResetMs:PERLA_V311_IOS_STALL_RESET_MS, available:(typeof perlaIOSRafElapsedPacingV311==='function')?perlaIOSRafElapsedPacingV311():false, summary:(typeof perlaFramePacingSummaryV305==='function')?perlaFramePacingSummaryV305():null};
     base.v266={roofSilhouetteMaskBudgetHierarchy:!!PERLA_V266_ROOF_SILHOUETTE_MASK_BUDGET_HIERARCHY_SAFE, baseBuild:PERLA_V266_BASE_BUILD, patchMode:PERLA_V266_PATCH_MODE, summary:(typeof perlaRoofSilhouetteMaskSummaryV266==='function')?perlaRoofSilhouetteMaskSummaryV266():null};
     base.v267={roofSilhouetteMainWallClip:!!PERLA_V267_ROOF_SILHOUETTE_MAIN_WALL_CLIP_SAFE, baseBuild:PERLA_V267_BASE_BUILD, patchMode:PERLA_V267_PATCH_MODE, originalRoofFillDefaultEnabled:PERLA_V267_ORIGINAL_ROOF_FILL_DEFAULT_ENABLED, summary:(typeof perlaRoofSilhouetteMainSummaryV267==='function')?perlaRoofSilhouetteMainSummaryV267():null};
     base.v270={realCeilingCloneEave:!!PERLA_V270_REAL_CEILING_CLONE_EAVE_SAFE, baseBuild:PERLA_V270_BASE_BUILD, patchMode:PERLA_V270_PATCH_MODE, source:'V267_not_V268_not_V269', noFakePerimeterBands:!!PERLA_V270_FORBID_FAKE_PERIMETER_BANDS, summary:(typeof perlaRealCeilingCloneSummaryV270==='function')?perlaRealCeilingCloneSummaryV270():null};
@@ -28202,6 +28367,24 @@ perlaPerfSmartCurrentSampleV258A = function(metrics, trigger){
         allowed:(typeof perlaWebKitMobileDirectTimerAllowedV310==='function')?perlaWebKitMobileDirectTimerAllowedV310():false,
         browserProfile:(typeof perlaBrowserEngineProfileV310==='function')?perlaBrowserEngineProfileV310():null
     };
+    sample.mobilePacingV311={
+        enabled:!!PERLA_V311_IOS_RAF_ELAPSED_PACING_SAFE,
+        patchMode:PERLA_V311_PATCH_MODE,
+        active:!!d.iosRafElapsedV311,
+        schedulerMode:d.mobileSchedulerModeV309||null,
+        renderToleranceMs:PERLA_V311_IOS_RENDER_TOLERANCE_MS,
+        stallResetMs:PERLA_V311_IOS_STALL_RESET_MS,
+        frames:d.iosRafElapsedFramesV311||0,
+        skips:d.iosRafElapsedSkipsV311||0,
+        lateFrames:d.iosRafElapsedLateFramesV311||0,
+        resyncs:d.iosRafElapsedResyncsV311||0,
+        rawCallbacks:d.iosRafRawCallbacksV311||0,
+        rawDeltaMs:d.iosRafRawDeltaMsV311||0,
+        rawMaxDeltaMs:d.iosRafRawMaxDeltaMsV311||0,
+        rawLateCallbacks:d.iosRafRawLateCallbacksV311||0,
+        rawDeltaSummary:d.iosRafRawDeltaSummaryV311||null,
+        available:(typeof perlaIOSRafElapsedPacingV311==='function')?perlaIOSRafElapsedPacingV311():false
+    };
     sample.assetLoadV309=(typeof perlaAssetLoadStatsSnapshotV309==='function')?perlaAssetLoadStatsSnapshotV309():null;
     sample.hotspotsV300={
         renderer:{floorSegments:d.floorSegments||0, floorRows:d.floorRows||0, wallColumns:d.wallColumns||0, ceilingSegments:d.ceilingSegments||0, floorRowMaxSegmentsV301:d.floorRowMaxSegmentsV301||0, floorMergedColorTransitionsV301:d.floorMergedColorTransitionsV301||0, floorHighEntropyRowsV301:d.floorHighEntropyRowsV301||0},
@@ -28298,12 +28481,12 @@ function perlaPerfSmartBuildReportV258A(reason){
     const sampleClassesV301=perlaPerfSmartSampleClassSummaryV301(samples);
     const report={
         buildId:PERLA_BUILD_ID,
-        baseBuild:PERLA_V310_BASE_BUILD,
-        phase:'V310 WebKit mobile force-30 direct-timer compatibility over V309 continuous rAF, with first-load asset retry diagnostics preserved',
+        baseBuild:PERLA_V311_BASE_BUILD,
+        phase:'V311 iOS real-mobile rAF elapsed tolerant pacing over V310 diagnostics, with first-load asset retry diagnostics preserved',
         reason:reason||'manual',
         generatedAt:new Date().toISOString(),
         session:{startedAt:st.events.find(e=>e.type==='start')||null, stoppedAt:st.stoppedAt?new Date().toISOString():null, durationSec:st.startedAt?perlaPerfSmartRoundV258A(((st.stoppedAt||perlaPerfSmartNowV258A())-st.startedAt)/1000,2):0, deep:!!st.deep, counters:st.counters, sampleIntervalMs:st.sampleIntervalMs},
-        overall:{fps:summarizeNumbers(samples.map(s=>s.fps)), frameIntervalMs:summarizeNumbers(samples.map(s=>s.frameIntervalMs)), simulationFrameMsV305:summarizeNumbers(samples.map(s=>s.simulationFrameMsV305)), pacingJitterAbsMsV305:summarizeNumbers(samples.map(s=>s.framePacingV305?s.framePacingV305.pacingJitterAbsMs:null)), drawWorldMs:summarizeNumbers(samples.map(s=>s.drawWorldMs)), cpuMs:summarizeNumbers(samples.map(s=>s.cpuMs)), miniMapMs:summarizeNumbers(samples.map(s=>s.miniMapMs)), adaptiveLevel:summarizeNumbers(samples.map(s=>s.smartAdaptiveV300?s.smartAdaptiveV300.level:0)), force30Active:summarizeNumbers(samples.map(s=>s.force30FpsV302?1:0)), phaseLockedV305:summarizeNumbers(samples.map(s=>s.framePacingV305&&s.framePacingV305.phaseLocked?1:0)), mobileContinuousRafV309:summarizeNumbers(samples.map(s=>s.mobilePacingV309&&s.mobilePacingV309.active?1:0)), mobileContinuousRafSkipsV309:summarizeNumbers(samples.map(s=>s.mobilePacingV309?s.mobilePacingV309.continuousRafSkips:null)), webKitDirectTimerV310:summarizeNumbers(samples.map(s=>s.mobilePacingV310&&s.mobilePacingV310.active?1:0)), droppedPeriodsV305:summarizeNumbers(samples.map(s=>s.framePacingV305?s.framePacingV305.droppedPeriods:null))},
+        overall:{fps:summarizeNumbers(samples.map(s=>s.fps)), frameIntervalMs:summarizeNumbers(samples.map(s=>s.frameIntervalMs)), simulationFrameMsV305:summarizeNumbers(samples.map(s=>s.simulationFrameMsV305)), pacingJitterAbsMsV305:summarizeNumbers(samples.map(s=>s.framePacingV305?s.framePacingV305.pacingJitterAbsMs:null)), drawWorldMs:summarizeNumbers(samples.map(s=>s.drawWorldMs)), cpuMs:summarizeNumbers(samples.map(s=>s.cpuMs)), miniMapMs:summarizeNumbers(samples.map(s=>s.miniMapMs)), adaptiveLevel:summarizeNumbers(samples.map(s=>s.smartAdaptiveV300?s.smartAdaptiveV300.level:0)), force30Active:summarizeNumbers(samples.map(s=>s.force30FpsV302?1:0)), phaseLockedV305:summarizeNumbers(samples.map(s=>s.framePacingV305&&s.framePacingV305.phaseLocked?1:0)), mobileContinuousRafV309:summarizeNumbers(samples.map(s=>s.mobilePacingV309&&s.mobilePacingV309.active?1:0)), mobileContinuousRafSkipsV309:summarizeNumbers(samples.map(s=>s.mobilePacingV309?s.mobilePacingV309.continuousRafSkips:null)), webKitDirectTimerV310:summarizeNumbers(samples.map(s=>s.mobilePacingV310&&s.mobilePacingV310.active?1:0)), iosRafElapsedV311:summarizeNumbers(samples.map(s=>s.mobilePacingV311&&s.mobilePacingV311.active?1:0)), iosRawRafDeltaMsV311:summarizeNumbers(samples.map(s=>s.mobilePacingV311?s.mobilePacingV311.rawDeltaMs:null)), droppedPeriodsV305:summarizeNumbers(samples.map(s=>s.framePacingV305?s.framePacingV305.droppedPeriods:null))},
         sampleClassesV301,
         steadyV301:sampleClassesV301.steady,
         warmupV301:sampleClassesV301.warmup,
@@ -28317,7 +28500,7 @@ function perlaPerfSmartBuildReportV258A(reason){
         markers:st.markers.slice(),
         sampleRetention:{totalSamples:samples.length, retainedSamples:retain, retainedTailOnly:true},
         samples:samples.slice(-retain),
-        notes:{minimapDefaultBehaviorChanged:false, noWorldgenChange:!!PERLA_V310_NO_WORLDGEN_CHANGE, noAssetChange:!!PERLA_V310_NO_ASSET_CHANGE, noAssetContentChange:!!PERLA_V309_NO_ASSET_CONTENT_CHANGE, noRainOutputChange:!!PERLA_V310_NO_RAIN_OUTPUT_CHANGE, visualOutputChange:'V310 changes only the force-30 scheduler for explicitly enabled WebKit mobile compatibility tests; V309 continuous rAF, V307/V308 visual budgets, V304 draw-prep/cache/weather guarantees, and asset pixel content remain unchanged', recorderDesign:'campiona periodico + frame pesanti + cambio zona/meteo/mode + marker; V310 mantiene classi V301, force30 switch V302, weather pipeline V303, draw-prep V304 e metriche V305/V306/V307/V308/V309 compatibili'},
+        notes:{minimapDefaultBehaviorChanged:false, noWorldgenChange:!!PERLA_V311_NO_WORLDGEN_CHANGE, noAssetChange:!!PERLA_V311_NO_ASSET_CHANGE, noAssetContentChange:!!PERLA_V309_NO_ASSET_CONTENT_CHANGE, noRainOutputChange:!!PERLA_V311_NO_RAIN_OUTPUT_CHANGE, visualOutputChange:'V311 changes only the force-30 gate on real iOS WebKit mobile: rAF remains compositor-aligned, simulation stays fixed-step, draw quality budgets and asset pixels remain unchanged', recorderDesign:'campiona periodico + frame pesanti + cambio zona/meteo/mode + marker; V311 mantiene classi V301, force30 switch V302, weather pipeline V303, draw-prep V304 e metriche V305/V306/V307/V308/V309/V310 compatibili'},
         baseline:collectPerlaPerformanceBaselineV258A('smart_report_embedded')
     };
     report.recommendations=perlaPerfSmartRecommendationsV258A(report);
@@ -28389,6 +28572,16 @@ function gameLoop(time){
         perlaLastDrawStats.webKitMobileDirectTimerSchedulesV310=pacingV305.webKitMobileDirectTimerSchedulesV310||0;
         perlaLastDrawStats.webKitMobileDirectTimerFramesV310=pacingV305.webKitMobileDirectTimerFramesV310||0;
         perlaLastDrawStats.mobileSchedulerModeV310=pacingV305.mobileSchedulerModeV310||null;
+        perlaLastDrawStats.iosRafElapsedV311=pacingV305.iosRafElapsedV311?1:0;
+        perlaLastDrawStats.iosRafElapsedFramesV311=pacingV305.iosRafElapsedFramesV311||0;
+        perlaLastDrawStats.iosRafElapsedSkipsV311=pacingV305.iosRafElapsedSkipsV311||0;
+        perlaLastDrawStats.iosRafElapsedLateFramesV311=pacingV305.iosRafElapsedLateFramesV311||0;
+        perlaLastDrawStats.iosRafElapsedResyncsV311=pacingV305.iosRafElapsedResyncsV311||0;
+        perlaLastDrawStats.iosRafRawCallbacksV311=pacingV305.iosRafRawCallbacksV311||0;
+        perlaLastDrawStats.iosRafRawDeltaMsV311=pacingV305.iosRafRawDeltaMsV311||0;
+        perlaLastDrawStats.iosRafRawMaxDeltaMsV311=pacingV305.iosRafRawMaxDeltaMsV311||0;
+        perlaLastDrawStats.iosRafRawLateCallbacksV311=pacingV305.iosRafRawLateCallbacksV311||0;
+        perlaLastDrawStats.iosRafRawDeltaSummaryV311=pacingV305.rawRafDeltaMsV311||null;
         perlaLastDrawStats.force30FrameThresholdsV308=(typeof perlaForce30FrameThresholdsV308==='function') ? perlaForce30FrameThresholdsV308() : null;
         perlaLastDrawStats.mobileRenderBudgetActiveV307=(typeof perlaMobileRenderBudgetActiveV307==='function' && perlaMobileRenderBudgetActiveV307())?1:0;
     }
@@ -28475,7 +28668,7 @@ window.perlaWeatherPerformanceV198 = function(){ return perlaLastDrawStats ? { w
 window.perlaWeatherCloudWorkerSummaryV303 = perlaWeatherCloudWorkerSummaryV303;
 window.perlaRoofPerformanceV199 = function(){ return perlaLastDrawStats ? { roofMs:perlaLastDrawStats.roofMsV198||0, roofSamples:perlaLastDrawStats.roofSamplesV106||0, roofVisibleSamples:perlaLastDrawStats.roofVisibleSamplesV106||0, roofSamplesSaved:perlaLastDrawStats.roofSamplesSavedEstimateV199||0, loopStepX:perlaLastDrawStats.roofLoopStepXV199||2, loopStepY:perlaLastDrawStats.roofLoopStepYV199||2, decision:perlaLastDrawStats.roofLoopDecisionV199||'none', quality:perlaLastDrawStats.roofQualityLabelV199||'normal', governorReason:perlaLastDrawStats.roofGovernorReasonV199||'', indoorSkip:perlaLastDrawStats.roofClosedCoveredSkipV199||0, outdoorBudget:perlaLastDrawStats.roofOutdoorFallbackBudgetCandidateV199||0, playerCMap:perlaCurrentCellV199().c, outdoors:perlaCurrentCellV199().outdoors } : null; };
 window.perlaRoofQualityV199 = function(mode){ const m=String(mode||'auto').toLowerCase(); perlaRoofGovernorManualModeV199 = (m==='normal'||m==='budget'||m==='emergency') ? m : 'auto'; return perlaRoofGovernorManualModeV199; };
-window.perla = Object.assign(window.perla||{}, { env:collectPerlaEnvironmentDebugV188, setTime:perlaSetEnvironmentTimeV188, skipHours:perlaSkipEnvironmentHoursV188, nextCycle:perlaNextEnvironmentCycleV188, setTimeScale:perlaSetEnvironmentTimeScaleV191, timeScale:perlaTimeScaleV191, timeX10:perlaTimeX10V191, timeNormal:perlaTimeNormalV191, dormi:perlaSleepCommandV188, command:perlaEnvironmentCommandV188, weather:collectPerlaEnvironmentDebugV188, setWeather:perlaSetWeatherV190, nextWeather:perlaNextWeatherV190, weatherAudioOn:perlaWeatherAudioOnV193, weatherAudioOff:perlaWeatherAudioOffV193, weatherAudio:perlaWeatherAudioToggleV193, ambienceAudioOn:perlaAmbientAudioOnV194, ambienceAudioOff:perlaAmbientAudioOffV194, footstepsOn:perlaFootstepsOnV194, footstepsOff:perlaFootstepsOffV194, weatherPerformanceV198:window.perlaWeatherPerformanceV198, roofPerformanceV199:window.perlaRoofPerformanceV199, roofQualityV199:window.perlaRoofQualityV199, telemetryV293:collectPerlaUnifiedTelemetryV293, telemetrySummaryV293:perlaUnifiedTelemetrySummaryV293, debugV295:perlaDebugV295, modernDebugV295:collectPerlaModernDebugV295, force30FpsV302:perlaForce30FpsToggleV302, force30FpsSummaryV302:perlaForce30FpsSummaryV302, framePacingV305:perlaFramePacingSummaryV305, framePacingV306:perlaFramePacingSummaryV305, mobilePacingV306:perlaFramePacingSummaryV305, framePacingV307:perlaFramePacingSummaryV305, mobileRenderStabilityV307:perlaFramePacingSummaryV305, framePacingV308:perlaFramePacingSummaryV305, mobilePacingGuardrailsV308:perlaFramePacingSummaryV305, framePacingV309:perlaFramePacingSummaryV305, mobilePhaseLockedRafV309:perlaFramePacingSummaryV305, framePacingV310:perlaFramePacingSummaryV305, webKitMobilePacingV310:perlaFramePacingSummaryV305, rollingFrameWindowV309:perlaRollingFrameWindowSummaryV309, assetLoadV309:perlaAssetLoadStatsSnapshotV309 });
+window.perla = Object.assign(window.perla||{}, { env:collectPerlaEnvironmentDebugV188, setTime:perlaSetEnvironmentTimeV188, skipHours:perlaSkipEnvironmentHoursV188, nextCycle:perlaNextEnvironmentCycleV188, setTimeScale:perlaSetEnvironmentTimeScaleV191, timeScale:perlaTimeScaleV191, timeX10:perlaTimeX10V191, timeNormal:perlaTimeNormalV191, dormi:perlaSleepCommandV188, command:perlaEnvironmentCommandV188, weather:collectPerlaEnvironmentDebugV188, setWeather:perlaSetWeatherV190, nextWeather:perlaNextWeatherV190, weatherAudioOn:perlaWeatherAudioOnV193, weatherAudioOff:perlaWeatherAudioOffV193, weatherAudio:perlaWeatherAudioToggleV193, ambienceAudioOn:perlaAmbientAudioOnV194, ambienceAudioOff:perlaAmbientAudioOffV194, footstepsOn:perlaFootstepsOnV194, footstepsOff:perlaFootstepsOffV194, weatherPerformanceV198:window.perlaWeatherPerformanceV198, roofPerformanceV199:window.perlaRoofPerformanceV199, roofQualityV199:window.perlaRoofQualityV199, telemetryV293:collectPerlaUnifiedTelemetryV293, telemetrySummaryV293:perlaUnifiedTelemetrySummaryV293, debugV295:perlaDebugV295, modernDebugV295:collectPerlaModernDebugV295, force30FpsV302:perlaForce30FpsToggleV302, force30FpsSummaryV302:perlaForce30FpsSummaryV302, framePacingV305:perlaFramePacingSummaryV305, framePacingV306:perlaFramePacingSummaryV305, mobilePacingV306:perlaFramePacingSummaryV305, framePacingV307:perlaFramePacingSummaryV305, mobileRenderStabilityV307:perlaFramePacingSummaryV305, framePacingV308:perlaFramePacingSummaryV305, mobilePacingGuardrailsV308:perlaFramePacingSummaryV305, framePacingV309:perlaFramePacingSummaryV305, mobilePhaseLockedRafV309:perlaFramePacingSummaryV305, framePacingV310:perlaFramePacingSummaryV305, webKitMobilePacingV310:perlaFramePacingSummaryV305, framePacingV311:perlaFramePacingSummaryV305, iosRafElapsedPacingV311:perlaFramePacingSummaryV305, rollingFrameWindowV309:perlaRollingFrameWindowSummaryV309, assetLoadV309:perlaAssetLoadStatsSnapshotV309 });
 window.addEventListener('perla:command', function(ev){
     const d=ev && ev.detail;
     if(typeof d==='string') perlaEnvironmentCommandV188(d);
@@ -28651,7 +28844,17 @@ Object.assign(window.__PERLA_DEBUG__, {
     PERLA_V310_NO_RAIN_OUTPUT_CHANGE,
     PERLA_V310_VISUAL_STABILITY_TARGET,
     PERLA_V310_WEBKIT_MOBILE_DIRECT_TIMER_SAFE,
+    PERLA_V311_IOS_RAF_ELAPSED_PACING_SAFE,
+    PERLA_V311_BASE_BUILD,
+    PERLA_V311_PATCH_MODE,
+    PERLA_V311_NO_WORLDGEN_CHANGE,
+    PERLA_V311_NO_ASSET_CHANGE,
+    PERLA_V311_NO_RAIN_OUTPUT_CHANGE,
+    PERLA_V311_VISUAL_STABILITY_TARGET,
+    PERLA_V311_IOS_RENDER_TOLERANCE_MS,
+    PERLA_V311_IOS_STALL_RESET_MS,
     perlaMobileContinuousRafPacingV309,
+    perlaIOSRafElapsedPacingV311,
     perlaBrowserEngineProfileV310,
     perlaWebKitMobileDirectTimerAllowedV310,
     perlaWebKitMobilePacingFallbackV310,
