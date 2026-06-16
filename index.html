@@ -245,8 +245,8 @@ const PERLA_V305_NO_WORLDGEN_CHANGE = true;
 const PERLA_V305_NO_ASSET_CHANGE = true;
 const PERLA_V305_NO_RAIN_OUTPUT_CHANGE = true;
 const PERLA_V305_VISUAL_STABILITY_TARGET = true;
-const PERLA_V305_FORCE30_PHASE_LOCK_EPSILON_MS = 4.0;
-const PERLA_V305_FORCE30_MAX_CATCHUP_STEPS = 2;
+const PERLA_V305_FORCE30_PHASE_LOCK_EPSILON_MS = 0.75;
+const PERLA_V305_FORCE30_MAX_CATCHUP_STEPS = 1;
 const PERLA_V305_FORCE30_RESET_AFTER_MS = 250;
 const PERLA_V304_TINY_PREFILTER_NATURAL_FORWARD = 11.5;
 const PERLA_V304_TINY_PREFILTER_HOTSPOT_FORWARD = 15.5;
@@ -593,6 +593,7 @@ let perlaForce30FpsStateV302 = {
     lastPacingJitterMs:0,
     maxPacingJitterMs:0,
     catchupFramesV305:0,
+    droppedPeriodsV305:0,
     phaseResetCountV305:0,
     phaseLockedV305:!!PERLA_V305_PHASE_LOCKED_FRAME_PACING_SAFE,
     lastReason:'init'
@@ -614,6 +615,7 @@ function perlaForce30FpsSetV302(enabled){
     st.lastPacingJitterMs=0;
     st.maxPacingJitterMs=0;
     st.catchupFramesV305=0;
+    st.droppedPeriodsV305=0;
     st.phaseResetCountV305=0;
     st.lastReason=st.enabled?'force_30fps_enabled':'force_30fps_disabled';
     try{
@@ -633,25 +635,72 @@ function perlaForce30FpsToggleV302(enabled){
 }
 function perlaForce30FpsFrameGateV302(time){
     const st=perlaForce30FpsStateV302;
-    if(!perlaForce30FpsEnabledV302()) return {render:true, forced:false, frameIntervalMs:null};
+    if(!perlaForce30FpsEnabledV302()) return {render:true, forced:false, frameIntervalMs:null, realFrameIntervalMs:null, simulationFrameMs:null, simulationStepMs:null, simulationSteps:1, phaseLockedV305:false, pacingJitterMs:0};
     const now=Number.isFinite(time) ? time : ((typeof performance!=='undefined'&&performance.now)?performance.now():Date.now());
     const minMs=Math.max(8,st.minFrameMs||PERLA_V302_FORCE_30_FPS_MS);
-    if(!st.lastRenderTime || now<st.lastRenderTime){
+    if(!PERLA_V305_PHASE_LOCKED_FRAME_PACING_SAFE){
+        if(!st.lastRenderTime || now<st.lastRenderTime){
+            st.lastRenderTime=now;
+            st.renderedFrames++;
+            st.lastRenderDeltaMs=0;
+            return {render:true, forced:true, frameIntervalMs:0, realFrameIntervalMs:0, simulationFrameMs:0, simulationStepMs:0, simulationSteps:0, phaseLockedV305:false, pacingJitterMs:0};
+        }
+        const elapsed=now-st.lastRenderTime;
+        if(elapsed+0.35<minMs){
+            st.skippedFrames++;
+            st.lastSkipDeltaMs=+elapsed.toFixed(3);
+            return {render:false, forced:true, frameIntervalMs:elapsed, realFrameIntervalMs:elapsed, simulationFrameMs:0, simulationStepMs:0, simulationSteps:0, phaseLockedV305:false, pacingJitterMs:0};
+        }
         st.lastRenderTime=now;
         st.renderedFrames++;
+        st.lastRenderDeltaMs=+elapsed.toFixed(3);
+        return {render:true, forced:true, frameIntervalMs:elapsed, realFrameIntervalMs:elapsed, simulationFrameMs:elapsed, simulationStepMs:elapsed, simulationSteps:1, phaseLockedV305:false, pacingJitterMs:0};
+    }
+    const resetPhase=(!st.lastRenderTime || !st.nextRenderTime || now<st.lastRenderTime || (now-st.lastRenderTime)>PERLA_V305_FORCE30_RESET_AFTER_MS);
+    if(resetPhase){
+        if(st.lastRenderTime) st.phaseResetCountV305++;
+        st.lastRenderTime=now;
+        st.nextRenderTime=now+minMs;
+        st.renderedFrames++;
         st.lastRenderDeltaMs=0;
-        return {render:true, forced:true, frameIntervalMs:0};
+        st.lastSimulationDeltaMs=0;
+        st.lastSimulationSteps=0;
+        st.lastPacingJitterMs=0;
+        st.lastReason=st.phaseResetCountV305?'phase_reset_v305':'phase_init_v305';
+        return {render:true, forced:true, frameIntervalMs:0, realFrameIntervalMs:0, simulationFrameMs:0, simulationStepMs:minMs, simulationSteps:0, phaseLockedV305:true, pacingJitterMs:0, phaseResetV305:!!st.phaseResetCountV305};
     }
-    const elapsed=now-st.lastRenderTime;
-    if(elapsed+0.35<minMs){
+    const untilTarget=st.nextRenderTime-now;
+    if(untilTarget>PERLA_V305_FORCE30_PHASE_LOCK_EPSILON_MS){
         st.skippedFrames++;
-        st.lastSkipDeltaMs=+elapsed.toFixed(3);
-        return {render:false, forced:true, frameIntervalMs:elapsed};
+        st.lastSkipDeltaMs=+(now-st.lastRenderTime).toFixed(3);
+        st.lastReason='phase_skip_v305';
+        return {render:false, forced:true, frameIntervalMs:now-st.lastRenderTime, realFrameIntervalMs:now-st.lastRenderTime, simulationFrameMs:0, simulationStepMs:0, simulationSteps:0, phaseLockedV305:true, pacingJitterMs:+(-untilTarget).toFixed(3)};
     }
+    const targetTime=st.nextRenderTime;
+    const realElapsed=now-st.lastRenderTime;
+    const rawSteps=Math.max(1,Math.floor(Math.max(0,now-targetTime)/minMs)+1);
+    const boundedSteps=Math.min(PERLA_V305_FORCE30_MAX_CATCHUP_STEPS,rawSteps);
+    const droppedCatchup=rawSteps>boundedSteps;
+    const simulationFrameMs=boundedSteps*minMs;
+    const pacingJitter=now-targetTime;
     st.lastRenderTime=now;
+    if(droppedCatchup){
+        st.droppedPeriodsV305+=(rawSteps-boundedSteps);
+        st.nextRenderTime=now+minMs;
+        st.phaseResetCountV305++;
+        st.lastReason='phase_catchup_reset_v305';
+    } else {
+        st.nextRenderTime=targetTime+(boundedSteps*minMs);
+        st.lastReason=boundedSteps>1?'phase_catchup_v305':'phase_render_v305';
+    }
     st.renderedFrames++;
-    st.lastRenderDeltaMs=+elapsed.toFixed(3);
-    return {render:true, forced:true, frameIntervalMs:elapsed};
+    if(boundedSteps>1) st.catchupFramesV305++;
+    st.lastRenderDeltaMs=+realElapsed.toFixed(3);
+    st.lastSimulationDeltaMs=+simulationFrameMs.toFixed(3);
+    st.lastSimulationSteps=boundedSteps;
+    st.lastPacingJitterMs=+pacingJitter.toFixed(3);
+    st.maxPacingJitterMs=Math.max(st.maxPacingJitterMs||0,Math.abs(pacingJitter));
+    return {render:true, forced:true, frameIntervalMs:realElapsed, realFrameIntervalMs:realElapsed, simulationFrameMs, simulationStepMs:minMs, simulationSteps:boundedSteps, phaseLockedV305:true, pacingJitterMs:pacingJitter, phaseResetV305:droppedCatchup};
 }
 function perlaForce30FpsSummaryV302(){
     const st=perlaForce30FpsStateV302||{};
@@ -664,6 +713,20 @@ function perlaForce30FpsSummaryV302(){
         skippedFrames:st.skippedFrames||0,
         lastRenderDeltaMs:+(st.lastRenderDeltaMs||0).toFixed(3),
         lastSkipDeltaMs:+(st.lastSkipDeltaMs||0).toFixed(3),
+        v305:{
+            phaseLocked:!!(PERLA_V305_PHASE_LOCKED_FRAME_PACING_SAFE && st.phaseLockedV305),
+            simulationStepMs:+((st.minFrameMs||PERLA_V302_FORCE_30_FPS_MS)).toFixed(3),
+            lastSimulationDeltaMs:+(st.lastSimulationDeltaMs||0).toFixed(3),
+            lastSimulationSteps:st.lastSimulationSteps||0,
+            lastPacingJitterMs:+(st.lastPacingJitterMs||0).toFixed(3),
+            maxPacingJitterMs:+(st.maxPacingJitterMs||0).toFixed(3),
+            catchupFrames:st.catchupFramesV305||0,
+            droppedPeriods:st.droppedPeriodsV305||0,
+            phaseResetCount:st.phaseResetCountV305||0,
+            epsilonMs:+PERLA_V305_FORCE30_PHASE_LOCK_EPSILON_MS.toFixed(3),
+            maxCatchupSteps:PERLA_V305_FORCE30_MAX_CATCHUP_STEPS,
+            resetAfterMs:PERLA_V305_FORCE30_RESET_AFTER_MS
+        },
         storageKey:PERLA_V302_FORCE_30_FPS_STORAGE_KEY,
         reason:st.lastReason||'normal'
     };
@@ -6626,7 +6689,9 @@ const SEA_FOAM_COLORS_V67 = ['#9edbe8','#bfeef5','#dffcff'];
 const perlaPerfStats = {
     startedAt: (performance && performance.now) ? performance.now() : Date.now(),
     frames:0, longFrames:0, worstFrameMs:0, lastFrameIntervalMs:0, lastCpuMs:0, lastFps:0,
-    frameIntervals:[], fpsSamples:[], updateMs:[], drawMs:[], miniMapMs:[], cpuMs:[]
+    frameIntervals:[], fpsSamples:[], updateMs:[], drawMs:[], miniMapMs:[], cpuMs:[],
+    simulationFrameMsV305:[], pacingJitterAbsMsV305:[], pacingJitterMsV305:[],
+    lastSimulationFrameMsV305:0, lastSimulationStepsV305:0, lastPacingJitterMsV305:0, lastPacingJitterAbsMsV305:0, lastFramePacingV305:null
 };
 let perlaLastDrawStats = null;
 function pushRolling(arr,value,maxLen=240){
@@ -6641,7 +6706,7 @@ function summarizeNumbers(arr){
     const pick=p=>vals[Math.min(vals.length-1, Math.max(0, Math.floor((vals.length-1)*p)))];
     return { count:vals.length, avg:+(sum/vals.length).toFixed(3), min:+vals[0].toFixed(3), p50:+pick(.50).toFixed(3), p90:+pick(.90).toFixed(3), p95:+pick(.95).toFixed(3), max:+vals[vals.length-1].toFixed(3) };
 }
-function recordPerlaFrameStats(frameIntervalMs, updateMs, drawMs, miniMapMs, cpuMs){
+function recordPerlaFrameStats(frameIntervalMs, updateMs, drawMs, miniMapMs, cpuMs, pacingV305){
     perlaPerfStats.frames++;
     perlaPerfStats.lastFrameIntervalMs=frameIntervalMs;
     perlaPerfStats.lastCpuMs=cpuMs;
@@ -6656,6 +6721,60 @@ function recordPerlaFrameStats(frameIntervalMs, updateMs, drawMs, miniMapMs, cpu
     pushRolling(perlaPerfStats.drawMs, drawMs);
     pushRolling(perlaPerfStats.miniMapMs, miniMapMs);
     pushRolling(perlaPerfStats.cpuMs, cpuMs);
+    if(pacingV305){
+        const sim=Number.isFinite(pacingV305.simulationFrameMs)?pacingV305.simulationFrameMs:0;
+        const jitter=Number.isFinite(pacingV305.pacingJitterMs)?pacingV305.pacingJitterMs:0;
+        perlaPerfStats.lastSimulationFrameMsV305=sim;
+        perlaPerfStats.lastSimulationStepsV305=pacingV305.simulationSteps||0;
+        perlaPerfStats.lastPacingJitterMsV305=jitter;
+        perlaPerfStats.lastPacingJitterAbsMsV305=Math.abs(jitter);
+        perlaPerfStats.lastFramePacingV305=pacingV305;
+        if(sim>0) pushRolling(perlaPerfStats.simulationFrameMsV305, sim);
+        pushRolling(perlaPerfStats.pacingJitterMsV305, jitter);
+        pushRolling(perlaPerfStats.pacingJitterAbsMsV305, Math.abs(jitter));
+    }
+}
+function perlaFramePacingSampleV305(gate, realFrameIntervalMs, simulationFrameMs){
+    const st=perlaForce30FpsStateV302||{};
+    const forced=!!(gate&&gate.forced);
+    const jitter=Number.isFinite(gate&&gate.pacingJitterMs)?gate.pacingJitterMs:0;
+    const simStep=Number.isFinite(gate&&gate.simulationStepMs)?gate.simulationStepMs:(forced?(st.minFrameMs||PERLA_V302_FORCE_30_FPS_MS):realFrameIntervalMs);
+    return {
+        enabled:!!PERLA_V305_PHASE_LOCKED_FRAME_PACING_SAFE,
+        force30Active:forced,
+        phaseLocked:!!(gate&&gate.phaseLockedV305),
+        realFrameIntervalMs:+(realFrameIntervalMs||0).toFixed(3),
+        simulationFrameMs:+(simulationFrameMs||0).toFixed(3),
+        simulationStepMs:+(simStep||0).toFixed(3),
+        simulationSteps:(gate&&Number.isFinite(gate.simulationSteps))?gate.simulationSteps:1,
+        pacingJitterMs:+jitter.toFixed(3),
+        pacingJitterAbsMs:+Math.abs(jitter).toFixed(3),
+        skippedRafs:st.skippedFrames||0,
+        renderedFrames:st.renderedFrames||0,
+        droppedPeriods:st.droppedPeriodsV305||0,
+        catchupFrames:st.catchupFramesV305||0,
+        phaseResetCount:st.phaseResetCountV305||0,
+        phaseReset:!!(gate&&gate.phaseResetV305),
+        reason:st.lastReason||'normal'
+    };
+}
+function perlaFramePacingSummaryV305(){
+    const last=perlaPerfStats.lastFramePacingV305||null;
+    return {
+        buildId:PERLA_BUILD_ID,
+        enabled:!!PERLA_V305_PHASE_LOCKED_FRAME_PACING_SAFE,
+        baseBuild:PERLA_V305_BASE_BUILD,
+        patchMode:PERLA_V305_PATCH_MODE,
+        noWorldgenChange:!!PERLA_V305_NO_WORLDGEN_CHANGE,
+        noAssetChange:!!PERLA_V305_NO_ASSET_CHANGE,
+        noRainOutputChange:!!PERLA_V305_NO_RAIN_OUTPUT_CHANGE,
+        visualStabilityTarget:!!PERLA_V305_VISUAL_STABILITY_TARGET,
+        force30:perlaForce30FpsSummaryV302(),
+        last,
+        simulationFrameMs:summarizeNumbers(perlaPerfStats.simulationFrameMsV305),
+        pacingJitterAbsMs:summarizeNumbers(perlaPerfStats.pacingJitterAbsMsV305),
+        pacingJitterMs:summarizeNumbers(perlaPerfStats.pacingJitterMsV305)
+    };
 }
 
 
@@ -26539,7 +26658,7 @@ function collectPerlaDebugSnapshot(reason='manuale'){
     const frameSummary=summarizeNumbers(perlaPerfStats.frameIntervals);
     const cpuSummary=summarizeNumbers(perlaPerfStats.cpuMs);
     const snapshot={
-        build:{ id:PERLA_BUILD_ID, base:PERLA_V303_BASE_BUILD, patch:'V303 weather effects pipeline: rain/storm CPU-GC reduction, cloud Worker/OffscreenCanvas prewarm, Chrome trace profiling hooks; no worldgen/asset/weather density change' , debugEnabled:PERLA_MOBILE_DEBUG_ENABLED, reason, generatedAt:new Date().toISOString(), uptimeSec:+((now-perlaPerfStats.startedAt)/1000).toFixed(2), v258PatchMode:PERLA_V258_PATCH_MODE, v258aPatchMode:PERLA_V258A_PATCH_MODE, v303PatchMode:PERLA_V303_PATCH_MODE },
+        build:{ id:PERLA_BUILD_ID, base:PERLA_V305_BASE_BUILD, patch:'V305 phase-locked 30fps pacing: stable camera simulation step + real rendered-frame telemetry; no worldgen/asset/rain output change' , debugEnabled:PERLA_MOBILE_DEBUG_ENABLED, reason, generatedAt:new Date().toISOString(), uptimeSec:+((now-perlaPerfStats.startedAt)/1000).toFixed(2), v258PatchMode:PERLA_V258_PATCH_MODE, v258aPatchMode:PERLA_V258A_PATCH_MODE, v303PatchMode:PERLA_V303_PATCH_MODE, v304PatchMode:PERLA_V304_PATCH_MODE, v305PatchMode:PERLA_V305_PATCH_MODE },
         app:{ title:document.title, url:location.href, online:navigator.onLine, visibilityState:document.visibilityState, focus:document.hasFocus && document.hasFocus() },
         device:{ userAgent:navigator.userAgent, platform:navigator.platform||null, language:navigator.language||null, languages:navigator.languages||null, maxTouchPoints:navigator.maxTouchPoints||0, hardwareConcurrency:navigator.hardwareConcurrency||null, deviceMemory:navigator.deviceMemory||null, vendor:navigator.vendor||null },
         viewport:{ mode:currentViewportMode, innerWidth:window.innerWidth, innerHeight:window.innerHeight, outerWidth:window.outerWidth, outerHeight:window.outerHeight, devicePixelRatio:window.devicePixelRatio, orientation:(screen.orientation?{type:screen.orientation.type, angle:screen.orientation.angle}:{ type:null, angle:window.orientation||0 }), visualViewport:getVisualViewportInfo() },
@@ -26548,7 +26667,7 @@ function collectPerlaDebugSnapshot(reason='manuale'){
         environment:collectPerlaEnvironmentDebugV188(),
         controls:{ touchInput:{...touchInput}, keysDown:Object.keys(keys).filter(k=>keys[k]).sort(), lookDragDivisor:screenLookDragDivisorForMode(currentViewportMode), mobileComfort:currentViewportMode!=='desktop' },
         layout:{ gameContainer:getRectInfo(document.getElementById('game-container')), canvas:getRectInfo(canvas), mobileControls:getRectInfo(document.getElementById('mobile-controls')), movePad:getRectInfo(document.getElementById('movePad')), lookPad:getRectInfo(document.getElementById('lookPad')), turnLeftBtn:getRectInfo(document.getElementById('turnLeftBtn')), turnRightBtn:getRectInfo(document.getElementById('turnRightBtn')), miniMap:getRectInfo(mini), debugButton:getRectInfo(perlaDebugButton) },
-        performance:{ frames:perlaPerfStats.frames, lastFps:+perlaPerfStats.lastFps.toFixed(2), fps:fpsSummary, frameIntervalMs:frameSummary, updateMs:summarizeNumbers(perlaPerfStats.updateMs), drawWorldMs:summarizeNumbers(perlaPerfStats.drawMs), miniMapMs:summarizeNumbers(perlaPerfStats.miniMapMs), cpuMs:cpuSummary, longFrames:perlaPerfStats.longFrames, longFramesRatio:perlaPerfStats.frames?+(perlaPerfStats.longFrames/perlaPerfStats.frames).toFixed(4):0, worstFrameMs:+perlaPerfStats.worstFrameMs.toFixed(3), lastFrameIntervalMs:+perlaPerfStats.lastFrameIntervalMs.toFixed(3), lastCpuMs:+perlaPerfStats.lastCpuMs.toFixed(3), v258:collectPerlaPerformanceBaselineV258('embedded_debug_snapshot'), v258a:collectPerlaPerformanceBaselineV258A('embedded_debug_snapshot'), telemetryV293:perlaUnifiedTelemetrySummaryV293({source:'embedded_debug_snapshot'}), lastDrawStatsSummaryV258:perlaLastDrawStatsSummaryV258(), lastDrawStats:perlaLastDrawStats },
+        performance:{ frames:perlaPerfStats.frames, lastFps:+perlaPerfStats.lastFps.toFixed(2), fps:fpsSummary, frameIntervalMs:frameSummary, updateMs:summarizeNumbers(perlaPerfStats.updateMs), drawWorldMs:summarizeNumbers(perlaPerfStats.drawMs), miniMapMs:summarizeNumbers(perlaPerfStats.miniMapMs), cpuMs:cpuSummary, framePacingV305:perlaFramePacingSummaryV305(), longFrames:perlaPerfStats.longFrames, longFramesRatio:perlaPerfStats.frames?+(perlaPerfStats.longFrames/perlaPerfStats.frames).toFixed(4):0, worstFrameMs:+perlaPerfStats.worstFrameMs.toFixed(3), lastFrameIntervalMs:+perlaPerfStats.lastFrameIntervalMs.toFixed(3), lastCpuMs:+perlaPerfStats.lastCpuMs.toFixed(3), v258:collectPerlaPerformanceBaselineV258('embedded_debug_snapshot'), v258a:collectPerlaPerformanceBaselineV258A('embedded_debug_snapshot'), telemetryV293:perlaUnifiedTelemetrySummaryV293({source:'embedded_debug_snapshot'}), lastDrawStatsSummaryV258:perlaLastDrawStatsSummaryV258(), lastDrawStats:perlaLastDrawStats },
         memory:getDeviceMemoryInfo(),
         connection:getConnectionInfo(),
         world:{ mapW, mapH, seaY:SEA_Y, sprites:sprites.length, roofSegments:roofSegments.length, assetManifestEntries:Object.keys(ASSET_MANIFEST).length, loadedTextureGroups:Object.keys(tex).length, floorTypes:countFloorTypes(), specialCells:countSpecialCells(), spriteKinds:countSpritesByKind(), floorVisualStats, towerV126:v126TowerInfo },
@@ -26559,6 +26678,8 @@ function collectPerlaDebugSnapshot(reason='manuale'){
 }
 function formatPerlaDebugReport(snapshot){
     const lines=[];
+    const pacing=snapshot && snapshot.performance ? snapshot.performance.framePacingV305 : null;
+    const lastDraw=snapshot && snapshot.performance ? snapshot.performance.lastDrawStats : null;
     lines.push('PERLA1 SMARTPHONE DEBUG REPORT — '+snapshot.build.id);
     lines.push('Generato: '+snapshot.build.generatedAt);
     lines.push('Motivo: '+snapshot.build.reason);
@@ -26572,6 +26693,16 @@ function formatPerlaDebugReport(snapshot){
     lines.push('');
     lines.push('WARNING AUTOMATICI:');
     for(const w of snapshot.warnings) lines.push('• '+w);
+    lines.push('');
+    lines.push('SEZIONE V305 FRAME PACING:');
+    lines.push(JSON.stringify({
+        framePacingV305:pacing||null,
+        lastDrawFramePacingV305:lastDraw&&lastDraw.framePacingV305 ? lastDraw.framePacingV305 : null,
+        force30PhaseLockedV305:lastDraw ? lastDraw.force30PhaseLockedV305 : null,
+        framePacingRealMsV305:lastDraw ? lastDraw.framePacingRealMsV305 : null,
+        framePacingSimulationMsV305:lastDraw ? lastDraw.framePacingSimulationMsV305 : null,
+        framePacingJitterAbsMsV305:lastDraw ? lastDraw.framePacingJitterAbsMsV305 : null
+    }, null, 2));
     lines.push('');
     lines.push('SINTESI RAPIDA:');
     lines.push(JSON.stringify({ build:snapshot.build, viewport:snapshot.viewport, renderer:snapshot.renderer, player:snapshot.player, performance:snapshot.performance, memory:snapshot.memory }, null, 2));
@@ -27227,6 +27358,7 @@ function collectPerlaPerformanceBaselineV258A(reason='manual'){
     base.v302={steadyRenderStability:!!PERLA_V302_STEADY_RENDER_STABILITY_SAFE, force30FpsSwitch:!!PERLA_V302_FORCE_30_FPS_SWITCH_SAFE, baseBuild:PERLA_V302_BASE_BUILD, patchMode:PERLA_V302_PATCH_MODE, noWorldgenChange:!!PERLA_V302_NO_WORLDGEN_CHANGE, noAssetChange:!!PERLA_V302_NO_ASSET_CHANGE, noRainOutputChange:!!PERLA_V302_NO_RAIN_OUTPUT_CHANGE, summary:(typeof perlaForce30FpsSummaryV302==='function')?perlaForce30FpsSummaryV302():null};
     base.v303={weatherEffectPipeline:!!PERLA_V303_WEATHER_EFFECT_PIPELINE_SAFE, baseBuild:PERLA_V303_BASE_BUILD, patchMode:PERLA_V303_PATCH_MODE, noWorldgenChange:!!PERLA_V303_WEATHER_NO_WORLDGEN_CHANGE, noAssetChange:!!PERLA_V303_WEATHER_NO_ASSET_CHANGE, rainDensityPreserved:!!PERLA_V303_RAIN_DENSITY_PRESERVED, cloudWorker:(typeof perlaWeatherCloudWorkerSummaryV303==='function')?perlaWeatherCloudWorkerSummaryV303():null};
     base.v304={steadyDrawPrepBudget:!!PERLA_V304_STEADY_DRAW_PREP_BUDGET_SAFE, baseBuild:PERLA_V304_BASE_BUILD, patchMode:PERLA_V304_PATCH_MODE, noWorldgenChange:!!PERLA_V304_NO_WORLDGEN_CHANGE, noAssetChange:!!PERLA_V304_NO_ASSET_CHANGE, noRainOutputChange:!!PERLA_V304_NO_RAIN_OUTPUT_CHANGE, noPreviousFrameQualityFeedback:!!PERLA_V304_NO_PREVIOUS_FRAME_QUALITY_FEEDBACK, summary:(typeof perlaDrawPrepBudgetSummaryV304==='function')?perlaDrawPrepBudgetSummaryV304():null};
+    base.v305={phaseLockedFramePacing:!!PERLA_V305_PHASE_LOCKED_FRAME_PACING_SAFE, baseBuild:PERLA_V305_BASE_BUILD, patchMode:PERLA_V305_PATCH_MODE, noWorldgenChange:!!PERLA_V305_NO_WORLDGEN_CHANGE, noAssetChange:!!PERLA_V305_NO_ASSET_CHANGE, noRainOutputChange:!!PERLA_V305_NO_RAIN_OUTPUT_CHANGE, visualStabilityTarget:!!PERLA_V305_VISUAL_STABILITY_TARGET, summary:(typeof perlaFramePacingSummaryV305==='function')?perlaFramePacingSummaryV305():null};
     base.v266={roofSilhouetteMaskBudgetHierarchy:!!PERLA_V266_ROOF_SILHOUETTE_MASK_BUDGET_HIERARCHY_SAFE, baseBuild:PERLA_V266_BASE_BUILD, patchMode:PERLA_V266_PATCH_MODE, summary:(typeof perlaRoofSilhouetteMaskSummaryV266==='function')?perlaRoofSilhouetteMaskSummaryV266():null};
     base.v267={roofSilhouetteMainWallClip:!!PERLA_V267_ROOF_SILHOUETTE_MAIN_WALL_CLIP_SAFE, baseBuild:PERLA_V267_BASE_BUILD, patchMode:PERLA_V267_PATCH_MODE, originalRoofFillDefaultEnabled:PERLA_V267_ORIGINAL_ROOF_FILL_DEFAULT_ENABLED, summary:(typeof perlaRoofSilhouetteMainSummaryV267==='function')?perlaRoofSilhouetteMainSummaryV267():null};
     base.v270={realCeilingCloneEave:!!PERLA_V270_REAL_CEILING_CLONE_EAVE_SAFE, baseBuild:PERLA_V270_BASE_BUILD, patchMode:PERLA_V270_PATCH_MODE, source:'V267_not_V268_not_V269', noFakePerimeterBands:!!PERLA_V270_FORBID_FAKE_PERIMETER_BANDS, summary:(typeof perlaRealCeilingCloneSummaryV270==='function')?perlaRealCeilingCloneSummaryV270():null};
@@ -27284,6 +27416,8 @@ perlaPerfSmartCurrentSampleV258A = function(metrics, trigger){
     sample.smartAdaptiveV300=(typeof perlaSmartAdaptiveModeSampleV300==='function') ? perlaSmartAdaptiveModeSampleV300() : {enabled:false,level:0};
     sample.force30FpsV302=!!d.force30FpsV302;
     sample.force30FpsStateV302=(typeof perlaForce30FpsSummaryV302==='function') ? perlaForce30FpsSummaryV302() : null;
+    sample.framePacingV305=(metrics&&metrics.pacingV305) ? metrics.pacingV305 : ((typeof perlaFramePacingSummaryV305==='function') ? perlaFramePacingSummaryV305().last : null);
+    sample.simulationFrameMsV305=perlaPerfSmartRoundV258A((metrics&&Number.isFinite(metrics.simulationFrameMs))?metrics.simulationFrameMs:perlaPerfStats.lastSimulationFrameMsV305,3);
     sample.transitionV301=sample.smartAdaptiveV300&&sample.smartAdaptiveV300.v301 ? sample.smartAdaptiveV300.v301 : null;
     sample.sampleClassV301=d.smartAdaptiveSampleClassV301 || (sample.transitionV301&&sample.transitionV301.sampleClass) || 'steady';
     sample.floorEntropyV301={rowMaxSegments:d.floorRowMaxSegmentsV301||0, rawTransitions:d.floorRawColorTransitionsV301||0, mergedTransitions:d.floorMergedColorTransitionsV301||0, highEntropyRows:d.floorHighEntropyRowsV301||0, byDistance:d.floorSegmentsByDistanceV301||null, quantizedPixels:d.floorColorQuantizedPixelsV301||0, quantizeStep:d.floorColorQuantizeStepV301||0, quantCacheSize:d.floorColorQuantCacheSizeV301||0, quantCacheHits:d.floorColorQuantCacheHitsV301||0, quantCacheMisses:d.floorColorQuantCacheMissesV301||0, stableQuantizedV302:d.floorStableQuantizedV302||0, stableQuantizeStepV302:d.floorStableQuantizeStepV302||0, roadStableQuantizedV302:d.floorRoadStableQuantizedV302||0, stableBandAppliedV302:d.floorStableBandAppliedV302||0, stableBandMaxV302:d.floorStableBandMaxV302||0};
@@ -27314,7 +27448,7 @@ perlaPerfSmartCurrentSampleV258A = function(metrics, trigger){
 };
 function perlaPerfSmartSampleV258A(metrics){ const st=perlaPerfSmartStateV258A; if(!st.active) return false; st.counters.framesSeen++; const now=perlaPerfSmartNowV258A(), zone=zoneAtPlayer(), weather=(perlaEnvironmentStateV188&&perlaEnvironmentStateV188.weather)||'unknown', mode=currentViewportMode, triggers=[]; if(now-st.lastSampleAt>=st.sampleIntervalMs){ triggers.push('periodic'); st.counters.periodic++; } if(metrics&&metrics.frameIntervalMs>PERLA_V258A_LONG_FRAME_MS){ triggers.push('long_frame'); st.counters.longFrame++; } if(metrics&&metrics.drawMs>PERLA_V258A_HEAVY_DRAW_MS){ triggers.push('heavy_draw'); st.counters.heavyDraw++; } if(metrics&&metrics.miniMapMs>PERLA_V258A_MINIMAP_WARN_MS){ triggers.push('minimap_warning'); st.counters.miniMapWarning++; } if(zone!==st.lastZone){ triggers.push('zone_change'); st.counters.zoneChange++; } if(weather!==st.lastWeather){ triggers.push('weather_change'); st.counters.weatherChange++; } if(mode!==st.lastMode){ triggers.push('mode_change'); st.counters.modeChange++; } if(!triggers.length) return false; st.lastSampleAt=now; st.lastZone=zone; st.lastWeather=weather; st.lastMode=mode; perlaPerfSmartStoreSampleV258A(perlaPerfSmartCurrentSampleV258A(metrics,triggers.join('+'))); return true; }
 function perlaPerfSmartStartV258A(options){ options=options||{}; const fresh=perlaPerfSmartCreateStateV258A(); Object.keys(perlaPerfSmartStateV258A).forEach(k=>delete perlaPerfSmartStateV258A[k]); Object.assign(perlaPerfSmartStateV258A,fresh,{active:true, deep:!!options.deep, startedAt:perlaPerfSmartNowV258A(), reason:options.reason||'manual_console_tour'}); perlaPerfSmartStateV258A.sampleIntervalMs=Number.isFinite(options.sampleIntervalMs)?Math.max(100,options.sampleIntervalMs):PERLA_V258A_SMART_RECORDER_SAMPLE_INTERVAL_MS; perlaPerfSmartStateV258A.events.push({type:'start', at:new Date().toISOString(), buildId:PERLA_BUILD_ID, deep:perlaPerfSmartStateV258A.deep}); return perlaPerfSmartStatusV258A(); }
-function perlaPerfSmartMarkV258A(label){ const st=perlaPerfSmartStateV258A; if(!st.active) return {active:false, warning:'Recorder non attivo. Usa perlaPerfStart() prima del giro.'}; const metrics={frameIntervalMs:perlaPerfStats.lastFrameIntervalMs||0, updateMs:(perlaPerfStats.updateMs||[]).slice(-1)[0]||0, drawMs:(perlaPerfStats.drawMs||[]).slice(-1)[0]||0, miniMapMs:(perlaPerfStats.miniMapMs||[]).slice(-1)[0]||0, cpuMs:perlaPerfStats.lastCpuMs||0}; const sample=perlaPerfSmartCurrentSampleV258A(metrics,'manual_marker'); sample.marker=String(label||'marker'); st.markers.push(sample); perlaPerfSmartTrimV258A(st.markers,120); st.counters.manualMarker++; perlaPerfSmartStoreSampleV258A(sample); return sample; }
+function perlaPerfSmartMarkV258A(label){ const st=perlaPerfSmartStateV258A; if(!st.active) return {active:false, warning:'Recorder non attivo. Usa perlaPerfStart() prima del giro.'}; const metrics={frameIntervalMs:perlaPerfStats.lastFrameIntervalMs||0, simulationFrameMs:perlaPerfStats.lastSimulationFrameMsV305||0, pacingV305:perlaPerfStats.lastFramePacingV305||null, updateMs:(perlaPerfStats.updateMs||[]).slice(-1)[0]||0, drawMs:(perlaPerfStats.drawMs||[]).slice(-1)[0]||0, miniMapMs:(perlaPerfStats.miniMapMs||[]).slice(-1)[0]||0, cpuMs:perlaPerfStats.lastCpuMs||0}; const sample=perlaPerfSmartCurrentSampleV258A(metrics,'manual_marker'); sample.marker=String(label||'marker'); st.markers.push(sample); perlaPerfSmartTrimV258A(st.markers,120); st.counters.manualMarker++; perlaPerfSmartStoreSampleV258A(sample); return sample; }
 function perlaPerfSmartStatusV258A(){ const st=perlaPerfSmartStateV258A; return {buildId:PERLA_BUILD_ID, active:!!st.active, deep:!!st.deep, durationSec:st.startedAt?perlaPerfSmartRoundV258A((perlaPerfSmartNowV258A()-st.startedAt)/1000,2):0, samples:st.samples.length, worstFrames:st.worstFrames.length, markers:st.markers.length, counters:st.counters, sampleIntervalMs:st.sampleIntervalMs}; }
 function perlaPerfSmartStopV258A(){ const st=perlaPerfSmartStateV258A; st.active=false; st.stoppedAt=perlaPerfSmartNowV258A(); st.events.push({type:'stop', at:new Date().toISOString(), samples:st.samples.length}); return perlaPerfSmartBuildReportV258A('stop'); }
 function perlaPerfSmartGroupSummaryV258A(samples,keyFn){
@@ -27399,12 +27533,12 @@ function perlaPerfSmartBuildReportV258A(reason){
     const sampleClassesV301=perlaPerfSmartSampleClassSummaryV301(samples);
     const report={
         buildId:PERLA_BUILD_ID,
-        baseBuild:PERLA_V304_BASE_BUILD,
-        phase:'V304 steady draw-prep budget over V303 weather pipeline',
+        baseBuild:PERLA_V305_BASE_BUILD,
+        phase:'V305 phase-locked frame pacing over V304 steady draw-prep budget',
         reason:reason||'manual',
         generatedAt:new Date().toISOString(),
         session:{startedAt:st.events.find(e=>e.type==='start')||null, stoppedAt:st.stoppedAt?new Date().toISOString():null, durationSec:st.startedAt?perlaPerfSmartRoundV258A(((st.stoppedAt||perlaPerfSmartNowV258A())-st.startedAt)/1000,2):0, deep:!!st.deep, counters:st.counters, sampleIntervalMs:st.sampleIntervalMs},
-        overall:{fps:summarizeNumbers(samples.map(s=>s.fps)), frameIntervalMs:summarizeNumbers(samples.map(s=>s.frameIntervalMs)), drawWorldMs:summarizeNumbers(samples.map(s=>s.drawWorldMs)), cpuMs:summarizeNumbers(samples.map(s=>s.cpuMs)), miniMapMs:summarizeNumbers(samples.map(s=>s.miniMapMs)), adaptiveLevel:summarizeNumbers(samples.map(s=>s.smartAdaptiveV300?s.smartAdaptiveV300.level:0)), force30Active:summarizeNumbers(samples.map(s=>s.force30FpsV302?1:0))},
+        overall:{fps:summarizeNumbers(samples.map(s=>s.fps)), frameIntervalMs:summarizeNumbers(samples.map(s=>s.frameIntervalMs)), simulationFrameMsV305:summarizeNumbers(samples.map(s=>s.simulationFrameMsV305)), pacingJitterAbsMsV305:summarizeNumbers(samples.map(s=>s.framePacingV305?s.framePacingV305.pacingJitterAbsMs:null)), drawWorldMs:summarizeNumbers(samples.map(s=>s.drawWorldMs)), cpuMs:summarizeNumbers(samples.map(s=>s.cpuMs)), miniMapMs:summarizeNumbers(samples.map(s=>s.miniMapMs)), adaptiveLevel:summarizeNumbers(samples.map(s=>s.smartAdaptiveV300?s.smartAdaptiveV300.level:0)), force30Active:summarizeNumbers(samples.map(s=>s.force30FpsV302?1:0)), phaseLockedV305:summarizeNumbers(samples.map(s=>s.framePacingV305&&s.framePacingV305.phaseLocked?1:0)), droppedPeriodsV305:summarizeNumbers(samples.map(s=>s.framePacingV305?s.framePacingV305.droppedPeriods:null))},
         sampleClassesV301,
         steadyV301:sampleClassesV301.steady,
         warmupV301:sampleClassesV301.warmup,
@@ -27418,7 +27552,7 @@ function perlaPerfSmartBuildReportV258A(reason){
         markers:st.markers.slice(),
         sampleRetention:{totalSamples:samples.length, retainedSamples:retain, retainedTailOnly:true},
         samples:samples.slice(-retain),
-        notes:{minimapDefaultBehaviorChanged:false, noWorldgenChange:!!PERLA_V304_NO_WORLDGEN_CHANGE, noAssetChange:!!PERLA_V304_NO_ASSET_CHANGE, noRainOutputChange:!!PERLA_V304_NO_RAIN_OUTPUT_CHANGE, visualOutputChange:'steady draw-prep budget for sprite stripes, natural floor entropy, canopy bookkeeping, and rain replay capture gating; no asset/worldgen/rain density change', recorderDesign:'campiona periodico + frame pesanti + cambio zona/meteo/mode + marker; V304 mantiene classi V301, force30 V302 e weather pipeline V303'},
+        notes:{minimapDefaultBehaviorChanged:false, noWorldgenChange:!!PERLA_V305_NO_WORLDGEN_CHANGE, noAssetChange:!!PERLA_V305_NO_ASSET_CHANGE, noRainOutputChange:!!PERLA_V305_NO_RAIN_OUTPUT_CHANGE, visualOutputChange:'V305 changes frame pacing telemetry and force-30 camera simulation step only; V304 draw-prep/cache/weather visual guarantees remain unchanged', recorderDesign:'campiona periodico + frame pesanti + cambio zona/meteo/mode + marker; V305 mantiene classi V301, force30 switch V302, weather pipeline V303 e draw-prep V304'},
         baseline:collectPerlaPerformanceBaselineV258A('smart_report_embedded')
     };
     report.recommendations=perlaPerfSmartRecommendationsV258A(report);
@@ -27447,8 +27581,10 @@ function gameLoop(time){
         return;
     }
     const prevTime=lastTime || time;
-    const frameIntervalMs=force30Gate.forced ? Math.max(0,force30Gate.frameIntervalMs||0) : Math.max(0, time-prevTime);
-    const ft=Math.min(.05, frameIntervalMs/1000||0);
+    const frameIntervalMs=force30Gate.forced ? Math.max(0,force30Gate.realFrameIntervalMs||force30Gate.frameIntervalMs||0) : Math.max(0, time-prevTime);
+    const simulationFrameMs=force30Gate.forced ? Math.max(0,force30Gate.simulationFrameMs||0) : frameIntervalMs;
+    const ft=Math.min(.05, simulationFrameMs/1000||0);
+    const pacingV305=(typeof perlaFramePacingSampleV305==='function') ? perlaFramePacingSampleV305(force30Gate,frameIntervalMs,simulationFrameMs) : null;
     lastTime=time;
     const loopStart=performance.now();
     if(typeof perlaSmartAdaptiveModeBeginFrameV300==='function') perlaSmartAdaptiveModeBeginFrameV300(frameIntervalMs);
@@ -27457,14 +27593,24 @@ function gameLoop(time){
     updatePlayer(ft);
     const t1=performance.now();
     drawWorld(time);
+    if(perlaLastDrawStats && pacingV305){
+        perlaLastDrawStats.framePacingV305=pacingV305;
+        perlaLastDrawStats.force30PhaseLockedV305=pacingV305.phaseLocked?1:0;
+        perlaLastDrawStats.framePacingRealMsV305=pacingV305.realFrameIntervalMs;
+        perlaLastDrawStats.framePacingSimulationMsV305=pacingV305.simulationFrameMs;
+        perlaLastDrawStats.framePacingSimulationStepsV305=pacingV305.simulationSteps;
+        perlaLastDrawStats.framePacingJitterMsV305=pacingV305.pacingJitterMs;
+        perlaLastDrawStats.framePacingJitterAbsMsV305=pacingV305.pacingJitterAbsMs;
+        perlaLastDrawStats.framePacingDroppedPeriodsV305=pacingV305.droppedPeriods;
+    }
     const t2=performance.now();
     let miniMapMs=0;
     const drawMiniMapThisFrame=(currentViewportMode==='desktop') || ((perlaMiniMapFrameCounter++ % PERLA_MOBILE_MINIMAP_FRAME_SKIP)===0);
     if(drawMiniMapThisFrame){ const mt0=performance.now(); drawMiniMap(); miniMapMs=performance.now()-mt0; }
     const t3=performance.now();
     if(typeof perlaSmartAdaptiveModeFinalizeFrameV300==='function') perlaSmartAdaptiveModeFinalizeFrameV300(perlaLastDrawStats,{frameIntervalMs, updateMs:t1-t0, drawMs:t2-t1, miniMapMs, cpuMs:t3-loopStart});
-    recordPerlaFrameStats(frameIntervalMs, t1-t0, t2-t1, miniMapMs, t3-loopStart);
-    perlaPerfSmartSampleV258A({frameIntervalMs, updateMs:t1-t0, drawMs:t2-t1, miniMapMs, cpuMs:t3-loopStart});
+    recordPerlaFrameStats(frameIntervalMs, t1-t0, t2-t1, miniMapMs, t3-loopStart, pacingV305);
+    perlaPerfSmartSampleV258A({frameIntervalMs, simulationFrameMs, pacingV305, updateMs:t1-t0, drawMs:t2-t1, miniMapMs, cpuMs:t3-loopStart});
     perlaConsumeDeepDrawStatsOneShotV258A(perlaLastDrawStats);
     updatePerlaClockHudV190();
     updatePerlaDebugLineV258(time);
@@ -27496,6 +27642,8 @@ window.downloadPerlaUnifiedTelemetryV293 = downloadPerlaUnifiedTelemetryV293;
 window.perlaTelemetryHealthV293 = perlaTelemetryHealthV293;
 window.perlaTelemetryBranchInventoryV293 = perlaTelemetryBranchInventoryV293;
 window.perlaTelemetryDeletionReadinessV293 = perlaTelemetryDeletionReadinessV293;
+window.perlaFramePacingSummaryV305 = perlaFramePacingSummaryV305;
+window.getPerlaFramePacingSummaryV305 = perlaFramePacingSummaryV305;
 window.perlaDrawPrepBudgetSummaryV304 = perlaDrawPrepBudgetSummaryV304;
 window.getPerlaDrawPrepBudgetSummaryV304 = perlaDrawPrepBudgetSummaryV304;
 window.perlaDebugV295 = perlaDebugV295;
@@ -27532,7 +27680,7 @@ window.perlaWeatherPerformanceV198 = function(){ return perlaLastDrawStats ? { w
 window.perlaWeatherCloudWorkerSummaryV303 = perlaWeatherCloudWorkerSummaryV303;
 window.perlaRoofPerformanceV199 = function(){ return perlaLastDrawStats ? { roofMs:perlaLastDrawStats.roofMsV198||0, roofSamples:perlaLastDrawStats.roofSamplesV106||0, roofVisibleSamples:perlaLastDrawStats.roofVisibleSamplesV106||0, roofSamplesSaved:perlaLastDrawStats.roofSamplesSavedEstimateV199||0, loopStepX:perlaLastDrawStats.roofLoopStepXV199||2, loopStepY:perlaLastDrawStats.roofLoopStepYV199||2, decision:perlaLastDrawStats.roofLoopDecisionV199||'none', quality:perlaLastDrawStats.roofQualityLabelV199||'normal', governorReason:perlaLastDrawStats.roofGovernorReasonV199||'', indoorSkip:perlaLastDrawStats.roofClosedCoveredSkipV199||0, outdoorBudget:perlaLastDrawStats.roofOutdoorFallbackBudgetCandidateV199||0, playerCMap:perlaCurrentCellV199().c, outdoors:perlaCurrentCellV199().outdoors } : null; };
 window.perlaRoofQualityV199 = function(mode){ const m=String(mode||'auto').toLowerCase(); perlaRoofGovernorManualModeV199 = (m==='normal'||m==='budget'||m==='emergency') ? m : 'auto'; return perlaRoofGovernorManualModeV199; };
-window.perla = Object.assign(window.perla||{}, { env:collectPerlaEnvironmentDebugV188, setTime:perlaSetEnvironmentTimeV188, skipHours:perlaSkipEnvironmentHoursV188, nextCycle:perlaNextEnvironmentCycleV188, setTimeScale:perlaSetEnvironmentTimeScaleV191, timeScale:perlaTimeScaleV191, timeX10:perlaTimeX10V191, timeNormal:perlaTimeNormalV191, dormi:perlaSleepCommandV188, command:perlaEnvironmentCommandV188, weather:collectPerlaEnvironmentDebugV188, setWeather:perlaSetWeatherV190, nextWeather:perlaNextWeatherV190, weatherAudioOn:perlaWeatherAudioOnV193, weatherAudioOff:perlaWeatherAudioOffV193, weatherAudio:perlaWeatherAudioToggleV193, ambienceAudioOn:perlaAmbientAudioOnV194, ambienceAudioOff:perlaAmbientAudioOffV194, footstepsOn:perlaFootstepsOnV194, footstepsOff:perlaFootstepsOffV194, weatherPerformanceV198:window.perlaWeatherPerformanceV198, roofPerformanceV199:window.perlaRoofPerformanceV199, roofQualityV199:window.perlaRoofQualityV199, telemetryV293:collectPerlaUnifiedTelemetryV293, telemetrySummaryV293:perlaUnifiedTelemetrySummaryV293, debugV295:perlaDebugV295, modernDebugV295:collectPerlaModernDebugV295, force30FpsV302:perlaForce30FpsToggleV302, force30FpsSummaryV302:perlaForce30FpsSummaryV302 });
+window.perla = Object.assign(window.perla||{}, { env:collectPerlaEnvironmentDebugV188, setTime:perlaSetEnvironmentTimeV188, skipHours:perlaSkipEnvironmentHoursV188, nextCycle:perlaNextEnvironmentCycleV188, setTimeScale:perlaSetEnvironmentTimeScaleV191, timeScale:perlaTimeScaleV191, timeX10:perlaTimeX10V191, timeNormal:perlaTimeNormalV191, dormi:perlaSleepCommandV188, command:perlaEnvironmentCommandV188, weather:collectPerlaEnvironmentDebugV188, setWeather:perlaSetWeatherV190, nextWeather:perlaNextWeatherV190, weatherAudioOn:perlaWeatherAudioOnV193, weatherAudioOff:perlaWeatherAudioOffV193, weatherAudio:perlaWeatherAudioToggleV193, ambienceAudioOn:perlaAmbientAudioOnV194, ambienceAudioOff:perlaAmbientAudioOffV194, footstepsOn:perlaFootstepsOnV194, footstepsOff:perlaFootstepsOffV194, weatherPerformanceV198:window.perlaWeatherPerformanceV198, roofPerformanceV199:window.perlaRoofPerformanceV199, roofQualityV199:window.perlaRoofQualityV199, telemetryV293:collectPerlaUnifiedTelemetryV293, telemetrySummaryV293:perlaUnifiedTelemetrySummaryV293, debugV295:perlaDebugV295, modernDebugV295:collectPerlaModernDebugV295, force30FpsV302:perlaForce30FpsToggleV302, force30FpsSummaryV302:perlaForce30FpsSummaryV302, framePacingV305:perlaFramePacingSummaryV305 });
 window.addEventListener('perla:command', function(ev){
     const d=ev && ev.detail;
     if(typeof d==='string') perlaEnvironmentCommandV188(d);
@@ -27649,6 +27797,17 @@ Object.assign(window.__PERLA_DEBUG__, {
     PERLA_V304_NO_PREVIOUS_FRAME_QUALITY_FEEDBACK,
     PERLA_V304_CLEAR_V185_OFFSCREEN_CACHE_SAFE,
     PERLA_V304_CLEAR_V185_CACHE_ANGLE_QUANT,
+    PERLA_V305_PHASE_LOCKED_FRAME_PACING_SAFE,
+    PERLA_V305_BASE_BUILD,
+    PERLA_V305_PATCH_MODE,
+    PERLA_V305_NO_WORLDGEN_CHANGE,
+    PERLA_V305_NO_ASSET_CHANGE,
+    PERLA_V305_NO_RAIN_OUTPUT_CHANGE,
+    PERLA_V305_VISUAL_STABILITY_TARGET,
+    PERLA_V305_FORCE30_PHASE_LOCK_EPSILON_MS,
+    PERLA_V305_FORCE30_MAX_CATCHUP_STEPS,
+    PERLA_V305_FORCE30_RESET_AFTER_MS,
+    perlaFramePacingSummaryV305,
     perlaClearV185SkyCacheSummaryV304,
     perlaDrawClearV185SkyCacheV304,
     perlaDrawPrepBudgetSummaryV304,
