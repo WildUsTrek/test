@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Camping Sole, Mare & Zanzare - PERLA1 V304 Draw Prep Stability</title>
+    <title>Camping Sole, Mare & Zanzare - PERLA1 V305 Frame Pacing</title>
     <style>
         :root { --panel: rgba(20,16,12,.88); --gold:#f1c40f; --sand:#f5d99e; --perla-vv-left:0px; --perla-vv-top:0px; --perla-vv-width:100vw; --perla-vv-height:100dvh; }
         body { margin:0; min-height:100vh; background:radial-gradient(circle at 50% 0%,#183b4a 0%,#07090d 55%,#000 100%); color:white; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; display:flex; flex-direction:column; align-items:center; overflow-x:hidden; }
@@ -192,7 +192,7 @@ const loading = document.getElementById('loading');
 const debugLine = document.getElementById('debugLine');
 const perlaClockHud = document.getElementById('perlaClockHud');
 
-const PERLA_BUILD_ID = 'PERLA1_V304_STEADY_DRAW_PREP_BUDGET_LOCAL';
+const PERLA_BUILD_ID = 'PERLA1_V305_PHASE_LOCKED_FRAME_PACING_LOCAL';
 const PERLA_V258_PERFORMANCE_BASELINE_DEBUG_OVERHEAD_SAFE = true;
 const PERLA_V258A_PHASE1_REAL_QUICK_WINS_COMPLETE_SAFE = true;
 const PERLA_V258_BASE_BUILD = 'PERLA1_V257_RAIN_SKYBOX_DEPTH_ANCHOR_FIX_SAFE_LOCAL';
@@ -238,6 +238,16 @@ const PERLA_V304_NO_ASSET_CHANGE = true;
 const PERLA_V304_NO_RAIN_OUTPUT_CHANGE = true;
 const PERLA_V304_VISUAL_STABILITY_TARGET = true;
 const PERLA_V304_NO_PREVIOUS_FRAME_QUALITY_FEEDBACK = true;
+const PERLA_V305_PHASE_LOCKED_FRAME_PACING_SAFE = true;
+const PERLA_V305_BASE_BUILD = 'PERLA1_V304_STEADY_DRAW_PREP_BUDGET_LOCAL';
+const PERLA_V305_PATCH_MODE = 'phase_locked_30fps_camera_simulation_pacing_metrics';
+const PERLA_V305_NO_WORLDGEN_CHANGE = true;
+const PERLA_V305_NO_ASSET_CHANGE = true;
+const PERLA_V305_NO_RAIN_OUTPUT_CHANGE = true;
+const PERLA_V305_VISUAL_STABILITY_TARGET = true;
+const PERLA_V305_FORCE30_PHASE_LOCK_EPSILON_MS = 4.0;
+const PERLA_V305_FORCE30_MAX_CATCHUP_STEPS = 2;
+const PERLA_V305_FORCE30_RESET_AFTER_MS = 250;
 const PERLA_V304_TINY_PREFILTER_NATURAL_FORWARD = 11.5;
 const PERLA_V304_TINY_PREFILTER_HOTSPOT_FORWARD = 15.5;
 const PERLA_V304_FAR_TREE_STABLE_STEP3_DIST = 20.0;
@@ -573,10 +583,18 @@ let perlaForce30FpsStateV302 = {
     enabled:perlaReadStoredForce30FpsV302(),
     minFrameMs:PERLA_V302_FORCE_30_FPS_MS,
     lastRenderTime:0,
+    nextRenderTime:0,
     renderedFrames:0,
     skippedFrames:0,
     lastRenderDeltaMs:0,
     lastSkipDeltaMs:0,
+    lastSimulationDeltaMs:0,
+    lastSimulationSteps:0,
+    lastPacingJitterMs:0,
+    maxPacingJitterMs:0,
+    catchupFramesV305:0,
+    phaseResetCountV305:0,
+    phaseLockedV305:!!PERLA_V305_PHASE_LOCKED_FRAME_PACING_SAFE,
     lastReason:'init'
 };
 function perlaForce30FpsEnabledV302(){
@@ -586,10 +604,17 @@ function perlaForce30FpsSetV302(enabled){
     const st=perlaForce30FpsStateV302;
     st.enabled=enabled!==false;
     st.lastRenderTime=0;
+    st.nextRenderTime=0;
     st.renderedFrames=0;
     st.skippedFrames=0;
     st.lastRenderDeltaMs=0;
     st.lastSkipDeltaMs=0;
+    st.lastSimulationDeltaMs=0;
+    st.lastSimulationSteps=0;
+    st.lastPacingJitterMs=0;
+    st.maxPacingJitterMs=0;
+    st.catchupFramesV305=0;
+    st.phaseResetCountV305=0;
     st.lastReason=st.enabled?'force_30fps_enabled':'force_30fps_disabled';
     try{
         if(window.localStorage) window.localStorage.setItem(PERLA_V302_FORCE_30_FPS_STORAGE_KEY, st.enabled?'on':'off');
@@ -18969,6 +18994,27 @@ function perlaDrawClearV185SkyCacheV304(env, skyH, pano, drawStats){
     }
     return true;
 }
+function perlaClearV185SkyCacheSummaryV304(){
+    const st=perlaClearV185SkyCacheV304;
+    return {
+        enabled:!!(PERLA_V304_CLEAR_V185_OFFSCREEN_CACHE_SAFE && PERLA_V304_STEADY_DRAW_PREP_BUDGET_SAFE),
+        hasCanvas:!!st.canvas,
+        hasContext:!!st.ctx,
+        width:st.canvas ? st.canvas.width : 0,
+        height:st.canvas ? st.canvas.height : 0,
+        key:st.key||'',
+        hits:st.hits|0,
+        misses:st.misses|0,
+        paints:st.paints|0,
+        lastReason:st.lastReason||'',
+        lastMeta:st.lastMeta ? {
+            paintMs:+(st.lastMeta.paintMs||0),
+            panoramaSpans:st.lastMeta.panoramaSpans|0,
+            panoramaDrawCalls:st.lastMeta.panoramaDrawCalls|0,
+            panoramaWraps:st.lastMeta.panoramaWraps|0
+        } : null
+    };
+}
 function drawDistortionControlledEnvironmentHorizonV185(time, drawStats){
     const t0=(typeof performance!=='undefined'&&performance.now)?performance.now():0;
     const env=currentEnvironmentV163();
@@ -27495,7 +27541,7 @@ window.addEventListener('perla:command', function(ev){
 window.__PERLA_SKYBOX_V169_DEBUG__ = { PERLA_SKYBOX_V169, PERLA_SKYBOX_EDGE_DEPROJECTED_LOCK_SAFE_V169, drawSkyboxV169, drawEdgeDeprojectedLockSkyboxImageV169, skyboxMappingProbeV169, skyboxSafeAngleOffsetV169 };
 window.__PERLA_ENV_HORIZON_V181_DEBUG__ = { PERLA_RAY_DIRECTION_ENV_HORIZON_V181, retiredByV295:true, replacement:'__PERLA_ENV_HORIZON_V185_DEBUG__', drawRayDirectionEnvironmentHorizonV181, drawRayDirectionEnvironmentImageV181, envHorizonAngle01AtScreenXV181, envHorizonSourceXAtScreenXV181, envHorizonMappingProbeV181 };
 window.__PERLA_ENV_HORIZON_V182_DEBUG__ = { PERLA_EDGE_DEPROJECTED_ENV_HORIZON_V182, retiredByV295:true, replacement:'__PERLA_ENV_HORIZON_V185_DEBUG__', drawEdgeDeprojectedEnvironmentHorizonV182, drawEdgeDeprojectedEnvironmentImageV182, envHorizonAngle01AtScreenXV182, envHorizonAngleV182, envHorizonSourceXAtScreenXV182, envHorizonMappingProbeV182, envHorizonEdgeBlendV182 };
-window.__PERLA_ENV_HORIZON_V185_DEBUG__ = { PERLA_DISTORTION_CONTROLLED_ENV_HORIZON_V185, PERLA_ENV_HORIZON_MAX_STRETCH_TARGET_V185, PERLA_V304_CLEAR_V185_OFFSCREEN_CACHE_SAFE, drawDistortionControlledEnvironmentHorizonV185, drawDistortionControlledEnvironmentImageV185, envHorizonCameraParamsV185, envHorizonAngle01AtScreenXV185, envHorizonAngleV185, envHorizonSourceXAtScreenXV185, envHorizonMappingProbeV185, envHorizonStretchProbeV185, perlaClearV185SkyCacheV304, perlaDrawClearV185SkyCacheV304 };
+window.__PERLA_ENV_HORIZON_V185_DEBUG__ = { PERLA_DISTORTION_CONTROLLED_ENV_HORIZON_V185, PERLA_ENV_HORIZON_MAX_STRETCH_TARGET_V185, PERLA_V304_CLEAR_V185_OFFSCREEN_CACHE_SAFE, drawDistortionControlledEnvironmentHorizonV185, drawDistortionControlledEnvironmentImageV185, envHorizonCameraParamsV185, envHorizonAngle01AtScreenXV185, envHorizonAngleV185, envHorizonSourceXAtScreenXV185, envHorizonMappingProbeV185, envHorizonStretchProbeV185, perlaClearV185SkyCacheSummaryV304, perlaDrawClearV185SkyCacheV304 };
 window.__PERLA_DEBUG__ = { PERLA_BUILD_ID, __PERLA_BUILD_ID__: PERLA_BUILD_ID, getBuildId:()=>PERLA_BUILD_ID, PERLA_V245_HIGH_WALL_DIAGNOSTICS_RUNTIME_OFF_SAFE, PERLA_V245_BASE_BUILD, PERLA_V244_HIGH_WALL_DRAW_ROLLBACK_DEBUG_ONLY, PERLA_V244_ROLLBACK_BASE_BUILD, PERLA_V244_RETIRED_HIGH_WALL_DRAW_BUILDS, PERLA_V236_ROOF_SUPPORT_SYNC_REAL_SAFE, PERLA_V236_MODERN_ROOF_SUPPORT_SYNC, PERLA_WEATHER_V236_MODE, PERLA_V236_SUPPORT_OWNER_SCAN_PX, PERLA_V235_TOWER_VISIBILITY_RAIN_MIDFIELD_SAFE, PERLA_WEATHER_V235_MODE, PERLA_V235_TOWER_VISIBILITY_STABILIZER, PERLA_V235_RAIN_MIDFIELD_OUTDOOR_VOLUME, PERLA_V234_RAIN_AIRSPACE_LOGIC_CAR_ANCHOR_SAFE, PERLA_WEATHER_V234_MODE, PERLA_V234_RAIN_AIRSPACE_NO_WALL_DRAW, PERLA_V234_CAR_VISUAL_ANCHOR_LIFT, PERLA_SKYBOX_V163, PERLA_ENVIRONMENT_V163, PERLA_SKYBOX_ATMOSPHERE_SAFE_V163, PERLA_ENVIRONMENT_BUCKET_V163, PERLA_ENVIRONMENT_PALETTES_V163, PERLA_SKYBOX_HORIZON_RGB_V163, drawSkyboxV163, drawWrappedSkyboxImageV163, drawSkyboxCloudLayerV163, skyboxEffectiveFovRadiansV163, skyboxAngle01V163, skyboxDirectionLabelV163, wallFogColorForDistanceV163, map, fMap, cMap, towerMetaMapV126, v126TowerInfo:()=>v126TowerInfo, TOWER_WALL_TEX_V126, TOWER_CABIN_TEX_V127, TOWER_OWNER_ID_V126, TOWER_HEIGHT_V126, TOWER_TOP_CABIN_UNITS_V127, isTowerWallV126, towerMetaAtV126, wallOwnerIdAtV126, setTowerWallV126, buildTowerFootprintV126, applyV126Tower2x2StatueFoundation, drawRepeatedWallColumnV126, drawLifeguardTowerColumnV127, towerColumnVisibleSpansV128, TOWER_LIFEGUARD_ROOF_PATCH_V129, TOWER_ROOF_LOCK_PATCH_V130, TOWER_ROOF_BODY_MASK_PATCH_V131, TOWER_ROOF_BODY_OVERLAP_ALLOW_PX_V131, TOWER_ROOF_FASCIA_ANCHOR_PATCH_V132, TOWER_ROOF_FASCIA_DEPTH_LOCK_PATCH_V133, TOWER_ROOF_FASCIA_RAW_TOP_HIDE_MARGIN_V133, TOWER_ROOF_FASCIA_MAX_FOG_V133, TOWER_ROOF_UNDERSIDE_EAVE_PATCH_V134, TOWER_ROOF_UNDERSIDE_MAX_DIST_V134, TOWER_ROOF_SIDE_THICKNESS_PATCH_V135, TOWER_ROOF_UNDERSIDE_OVERLAP_PX_V135, TOWER_ROOF_SIDE_THICKNESS_OVERLAP_PX_V135, TOWER_ROOF_SIDE_THICKNESS_MAX_DIST_V135,  TOWER_ROOF_PLANE_OVERLAP_ALLOW_PX_V132, TOWER_ROOF_GABLE_OVERLAP_ALLOW_PX_V132, TOWER_ROOF_FASCIA_OVERLAP_ALLOW_PX_V132, TOWER_ROOF_MAX_DIST_V130, towerRoofBodyVisibleV130, towerRoofAnchorVisibleAtColumnV130, shouldConsiderRoofSegmentV130, towerRoofGableCapFacesCameraV130, isTowerLifeguardRoofV129, registerTowerLifeguardRoofV129, towerRoofPixelVisibleV129, slopedRoofPixelVisibleForRoofV129, towerRoofBodyMaskBlocksV132, towerRoofFasciaRawTopYV133, towerRoofFasciaFogColorV133, towerRoofUndersideInsideRingV134, towerRoofUndersidePixelVisibleV134, drawTowerRoofUndersideEaveV134, towerRoofSideThicknessEdgesV135, towerRoofSideThicknessPixelVisibleV135, drawTowerRoofSideThicknessV135, TOWER_INTEGRATED_ROOF_CAP_PATCH_V136, nearestTowerCapBodyColumnV136, towerIntegratedCapPixelVisibleV136, drawIntegratedTowerRoofCapV136, drawTowerRoofFasciaAnchorV132, findTowerRayHitV126, drawTowerBehindWallPeekV126, towerVisibilityCandidateV235, stabilizeTowerVisibilityV235, zoneMask, roadMask, noNature, objectBlock, sprites, roofSegments, ASSET_MANIFEST, wallDecalMap, wallHeightMap, roadSoftEdgeMap, trailSoftEdgeMap, waterSoftEdgeMapV150, waterInnerEdgeMapV150, waterCornerLandMapV151, waterCornerInnerMapV151, lakeWaterRingMapV152, lakeSandInnerRingMapV152, lakeSandOuterRingMapV152, lakeGrassOuterRingMapV152, lakeWaterRoundMaskV153, lakeSandRoundMaskV153, lakeOuterFloorTypeV155, lakeGrassBlendColorV155, lakeSandGrassBoundaryV155, secretHomeEllipseDistanceV156, lakeHouseBlendValueV156, lakeHouseBlendMapV156, lakeHouseTerraMapV156, lakeShoreSeamMapV157, lakeShoreTerraSeamMapV157, lakeShoreSeamValueV157, lakeShoreMidGreenColorV157, buildWaterSoftEdgeMapV150, buildWaterInnerEdgeMapV150, buildWaterCornerMapsV151, buildSecretLakeShoreMapsV152, waterCornerMaskV151, softenWaterEdgeV150, softenSecretLakeWaterEdgeV152, applyWaterEdgeSubTileV150, applySecretLakeShoreSubTileV152, floorNoiseMap, floorDecalMap, floorOutlineMap, floorVisualColorMap, floorSubTileColorMap, floorNearSubTileColorMap, floorMicroDecalMap, floorVisualStats, floorVisualModeV150, buildFloorVisualMaps, buildFloorVisualColorMap, buildFloorDecalMap, buildFloorSubTileColorMap, buildFloorNearSubTileColorMap, resetFloorVisualMaps, getFloorColorAt, computeFloorVisualColor, floorHash2D, floorNoiseSigned, mixColorHex, mixFloorQuantized, floorNeedsSubTileColor, organicTrailMask, regularRoadMask, applyOrganicTrailSubTile, applyHumanRoadSubTile, applyFloorDecalAt, floorArrowMaskV67, animatedSeaColorAtV67, inferWallDecalFaceV35, getWallDecalTexX, placeBarbecueWallDecalV69, placeBarbecueAvenueTamarisksV71, placeHomePinesV76, placeNorthFieldTamarisksV76, placeParkingPDecalV76, applyV91ForestVariantsGroundCleanup, cleanupWestGroundDetailsV91, cleanupEastHomePineconesV91, placeNorthFieldWallTamarisksV91, removeRequestedRoadBushV91, distributePineVariantsV91, isTruePineSpriteV92, isPineVariantOrTruePineV93, applyV93PinetaSignArchPrune, movePinetaSignV93, reduceWestPineta2PinesV93, cleanupFlowerArchesV93, pathLenPineta2V93, isTamariskSpriteV94, isPotSpriteV94, removeNearestSpriteAtGameplayV94, closeBeachNorthShortcutsV94, applyV94BeachShortcutsAndSpriteCleanup, placeSpecialTallPalmV95, applyV95CamperPalmAndFestoonSetup, drawCamperFestoonLightsV95, camperFestoonPointV95, camperFestoonCellBlocksViewV102, camperFestoonGridLineBlockedV102, camperFestoonWorldVisibleV102, camperFestoonProjectRawV103, camperFestoonRawVisibleV103, camperFestoonFindWallEdgeProjectionV103, camperFestoonPlayerInsideRoomV104, buildCamperFestoonCacheV104, getCamperFestoonCacheV104, camperFestoonProjectedV104, camperFestoonSegmentVisibleV104, camperFestoonProjectedRoomProbeVisibleV105, camperFestoonGridLineBlockedCachedV105, camperFestoonPlayerBucketV105, raiseCamperEastWallV100, raiseCamperRoomWallsV101, raiseCamperRoomWallsV102, raiseCamperRoomWallsV103, CAMPER_FESTOON_V95, distributeGrassVariantsV91, worldXFromGameplayV77, gameplayXFromWorldV77, placeIvyFlowerArchV77, placeForcedUserPinesV77, applyV77IvyArchAndCoordinateGuidePatch, applyV78LakeSoftArchFix, placeHighIvyArchV78, placeForcedUserPinesV78, applyV79IvyPergolaFix, applyV83PergolaAndBoatFix, applyV84PergolaV81StabilizedFix, placeSecretLakeBoatV83, drawIvyPergolaLayerV79, ivyPergolaScreenBoundsV89, removeBadHighIvyArchSpritesV79, placeForcedUserPinesV79, secretLakeEllipseDistanceV78, buildEasternSecretZoneV72, buildSecretNorthFlowerFieldV73, buildSecretHomeClearingV73, buildSecretMazeV72, setSecretGroundV72, setSecretHedgeWallV72, BAR_TABLES_ROW_V70, wallVisualHeight, drawRoofRimColumn, drawCeilingSegment, isModernCoverOwner, drawRoofLayer2_5D, drawGabledRoof2_5D, drawModernBuildingSolid2_5D, collectModernWallFaces, collectModernRoofFaces, drawRoofPoly, roofVisibleAt, modernRoofSupportAllowsV236, modernRoofSupportVisibleNearColumnV236, modernRoofLayerIsSupportCriticalV236, ModernSupportOwnerBufferV236, ModernSupportDepthBufferV236, playerInsideRoof, modernInsideDepth, shouldDrawModernExteriorRoof, shouldUseModernNearWallGuard, drawModernCoverCeilingSegment, roofSoffitWallOverlapPxV116, modernWallRoofMergeOverlapPxV117, drawModernWallRoofMergeOverlapV117, shouldDrawLegacyCeilingFogV119, drawLegacyCeilingFogV119, shouldSkipSkyFogRectV118, drawSegmentedCeilingFogV118, collectDeferredCanopySegmentV121, drawDeferredCanopySegmentsV121, collectDoorRainCeilingCoverSegmentV214, drawDoorRainCeilingCoverReplayV214, drawDoorRainSolidCeilingCoverV215, captureCeilingFillRectV216, perlaWeatherExactReplayRainActiveV216, perlaWeatherExactReplayActiveDescriptorV216, drawDoorRainExactCeilingReplayV216, drawDoorRainSelectiveCeilingReplayV217, resolveDoorReplayProfileV217, DOOR_REPLAY_PROFILES_V217, SHELTER_REPLAY_PROFILES_V218, resolveShelterProfileV218, drawLocalShelterReplayV218, v221LocalV216CeilingCoverRects, shelterProjectedScreenGateV221, rectAllowedForV221LocalV216Cover, canopyDepthAllowsV121, shouldClipUnderRoofSpriteV121, raiseExistingHedgeWallSegmentV118, removeNearestSpriteAtGameplayV118, placeSecondMarbleStatueV118, applyV118SkyGuardMapInputFix, placeBarCocktailWallDecalV125, resetKeyboardMovementV118, getModernCoverForOwner, roofSoffitVisibleColorV109, roofSoffitLineColorV109, drawSlopedRoofLayer2_5D, drawSlopedRoofGableCaps2_5D, perlaRoofPerformanceV199:window.perlaRoofPerformanceV199, perlaRoofFallbackDecisionV199, perlaRoofBoundsFullLikeV200, perlaUpdateRoofGovernorV199, roofSelfDepthAllowsV112, roofSelfDepthValueV112, slopedRoofGableCapsFor, slopedRoofGableCapFacesCamera, slopedRoofEdgeZAt, slopedRoofPlanesFor, slopedRoofPixelVisible, drawWorld, drawMiniMap, spriteAnchorSink, drawSpriteContactShadowV141, v141ShadowProfile, v141IsMicrofloraShadowless, WallTopBuffer, WallBottomBuffer, WallOwnerBuffer, CeilingOwnerBuffer, ceilingOwnerMap, isWalkable, shouldDrawSeaHorizon, distToRoad, ceilingSpriteClipY, CeilingDepthBuffer, CeilingColumnHasDepth, touchInput, setupTouchControls, isCoarseViewport, isCoarsePortraitViewport, getPerlaViewportMode, resizePerlaRenderer, cameraPlaneScaleForMode, cameraVerticalScaleForMode, screenLookDragDivisorForMode, floorBandHeightForMode, SPRITE_BROADPHASE_PATCH_V137, spriteBroadphaseParamsV137, getSpriteRenderCandidates, v147SpriteLodVisible, v147SpriteStripeStep, v147IsTinyDetailSprite, v147IsTreeSprite, updatePerlaVisualViewportCSS, perlaPerfStats, collectPerlaDebugSnapshot, applyV138MPinesGroundLitterBarAnchor, V138N_SOLID_FOOT_FLOWER_SPACING, SPRITE_SOLID_FOOT_BOTTOM_PAD_V138N, spriteSolidFootCorrectionV138N, applyV138NSolidFootFlowerSpacing, v138NIsMainRoadFlower, V138O_MICROFLORA_FOOTPRINT_SAFE, v138OIsMicrofloraSprite, v138OMicrofloraFootprintSafe, applyV138OMicrofloraFootprintSafe, V138P_MICROFLORA_VISUAL_MASK, v138PVisualGroundSafeAt, v138PMicrofloraVisualFootprintSafe, V138Q_MICROFLORA_DIRECTIONAL_RELOCATION, v138QMicrofloraDangerVector, v138QFindVisualSafeMicrofloraPosition, applyV138PMicrofloraVisualMaskBushCleanup, removeNearestBushAtGameplayV138P, v145StoneGrassSafeAt, v145StoneFootprintSafe, applyV145SmallStones, v138MIsPinetaCasaGroundDetail, v138MIsGroundDetail, v138MCellIsSecretFlowerFieldGrass, formatPerlaDebugReport, exportPerlaDebugReport, perlaLastDrawStats:()=>perlaLastDrawStats, currentViewportMode:()=>currentViewportMode, projectionH:()=>projectionH, screenSize:()=>({screenW,screenH}), setPlayerForDebug(x,y,dx,dy){ posX=x; posY=y; if(typeof dx==='number' && typeof dy==='number'){ const len=Math.hypot(dx,dy)||1; dirX=dx/len; dirY=dy/len; planeScale=cameraPlaneScaleForMode(currentViewportMode); refreshCameraPlane(); } } };
 const perlaDebugSetPlayerForDebugBaseV301 = window.__PERLA_DEBUG__.setPlayerForDebug;
 window.__PERLA_DEBUG__.setPlayerForDebug = function(x,y,dx,dy){
@@ -27603,7 +27649,7 @@ Object.assign(window.__PERLA_DEBUG__, {
     PERLA_V304_NO_PREVIOUS_FRAME_QUALITY_FEEDBACK,
     PERLA_V304_CLEAR_V185_OFFSCREEN_CACHE_SAFE,
     PERLA_V304_CLEAR_V185_CACHE_ANGLE_QUANT,
-    perlaClearV185SkyCacheV304,
+    perlaClearV185SkyCacheSummaryV304,
     perlaDrawClearV185SkyCacheV304,
     perlaDrawPrepBudgetSummaryV304,
     perlaForce30FpsSummaryV302,

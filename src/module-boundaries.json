@@ -1,0 +1,35 @@
+{
+  "status": "scaffold-only",
+  "runtimeSourceOfTruth": "../index.html",
+  "note": "This manifest documents future module boundaries. The game still runs from index.html; no external runtime module is loaded yet.",
+  "boundaries": [
+    {
+      "blockId": "asset-loading",
+      "candidateModule": "runtime/assets.js",
+      "risk": "low",
+      "firstExtractionCandidate": true,
+      "symbols": ["ASSET_BASE", "ASSET_MANIFEST", "loadAssets", "getTex"]
+    },
+    {
+      "blockId": "debug-api",
+      "candidateModule": "runtime/debug-api.js",
+      "risk": "medium",
+      "firstExtractionCandidate": false,
+      "symbols": ["window.__PERLA_DEBUG__", "perlaLastDrawStats", "setPlayerForDebug"]
+    },
+    {
+      "blockId": "roof-system",
+      "candidateModule": "runtime/roof-system.js",
+      "risk": "high",
+      "firstExtractionCandidate": false,
+      "symbols": ["drawRoofLayer2_5D", "drawSlopedRoofLayer2_5D", "drawModernIntegratedRoofCapV278"]
+    },
+    {
+      "blockId": "renderer",
+      "candidateModule": "runtime/renderer.js",
+      "risk": "high",
+      "firstExtractionCandidate": false,
+      "symbols": ["drawWorld", "gameLoop"]
+    }
+  ]
+}
