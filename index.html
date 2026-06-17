@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Camping Sole, Mare & Zanzare - PERLA1 V315 Optimization Isolation</title>
+    <title>Camping Sole, Mare & Zanzare - PERLA1 V316 Mobile Debug Tour UI</title>
     <style>
         :root { --panel: rgba(20,16,12,.88); --gold:#f1c40f; --sand:#f5d99e; --perla-vv-left:0px; --perla-vv-top:0px; --perla-vv-width:100vw; --perla-vv-height:100dvh; }
         body { margin:0; min-height:100vh; background:radial-gradient(circle at 50% 0%,#183b4a 0%,#07090d 55%,#000 100%); color:white; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; display:flex; flex-direction:column; align-items:center; overflow-x:hidden; }
@@ -28,12 +28,16 @@
         /* V66: debug mobile smart + layout visualViewport-safe. */
         #perla-debug-widget { position:fixed; left:calc(8px + env(safe-area-inset-left)); top:calc(8px + env(safe-area-inset-top)); z-index:30; display:flex; flex-direction:column; align-items:flex-start; gap:6px; pointer-events:none; }
         #perla-debug-widget[hidden] { display:none !important; }
-        #perlaDebugCopyBtn { pointer-events:auto; border:1px solid rgba(255,255,255,.34); border-radius:999px; padding:8px 12px; color:#fff; background:linear-gradient(180deg,rgba(241,196,15,.92),rgba(162,97,30,.92)); box-shadow:0 7px 18px rgba(0,0,0,.42); font-size:12px; font-weight:900; letter-spacing:.04em; -webkit-user-select:none; user-select:none; touch-action:manipulation; }
-        #perlaDebugCopyBtn:active { filter:brightness(1.14); transform:translateY(1px); }
+        #perlaDebugCopyBtn, #perlaDebugTourBtn { pointer-events:auto; border:1px solid rgba(255,255,255,.34); border-radius:999px; padding:8px 12px; color:#fff; background:linear-gradient(180deg,rgba(241,196,15,.92),rgba(162,97,30,.92)); box-shadow:0 7px 18px rgba(0,0,0,.42); font-size:12px; font-weight:900; letter-spacing:.04em; -webkit-user-select:none; user-select:none; touch-action:manipulation; }
+        #perlaDebugCopyBtn:active, #perlaDebugTourBtn:active { filter:brightness(1.14); transform:translateY(1px); }
         .perla-debug-weather-row { pointer-events:auto; display:flex; align-items:center; gap:5px; padding:5px 6px; border-radius:999px; color:#fff7df; background:rgba(8,10,14,.72); border:1px solid rgba(255,255,255,.22); box-shadow:0 6px 16px rgba(0,0,0,.36); }
-        #perlaDebugWeatherSelect { max-width:118px; height:28px; border-radius:999px; border:1px solid rgba(255,255,255,.28); color:#fff; background:rgba(20,16,12,.86); font-size:12px; font-weight:850; padding:0 8px; }
-        #perlaDebugWeatherApplyBtn { height:28px; min-width:34px; border-radius:999px; border:1px solid rgba(255,255,255,.26); color:#fff; background:rgba(50,116,154,.88); font-size:11px; font-weight:900; letter-spacing:.04em; }
-        #perlaDebugWeatherApplyBtn:active { filter:brightness(1.16); transform:translateY(1px); }
+        .perla-debug-opt-row { pointer-events:auto; display:flex; align-items:center; flex-wrap:wrap; gap:5px; max-width:min(332px,calc(100vw - 16px)); padding:5px 6px; border-radius:14px; color:#fff7df; background:rgba(8,10,14,.72); border:1px solid rgba(255,255,255,.22); box-shadow:0 6px 16px rgba(0,0,0,.36); }
+        #perlaDebugWeatherSelect, #perlaDebugOptSelect { max-width:118px; height:28px; border-radius:999px; border:1px solid rgba(255,255,255,.28); color:#fff; background:rgba(20,16,12,.86); font-size:12px; font-weight:850; padding:0 8px; }
+        #perlaDebugWeatherApplyBtn, #perlaDebugOptApplyBtn, #perlaDebugTourMarkBtn { height:28px; min-width:34px; border-radius:999px; border:1px solid rgba(255,255,255,.26); color:#fff; background:rgba(50,116,154,.88); font-size:11px; font-weight:900; letter-spacing:.04em; }
+        #perlaDebugWeatherApplyBtn:active, #perlaDebugOptApplyBtn:active, #perlaDebugTourMarkBtn:active { filter:brightness(1.16); transform:translateY(1px); }
+        #perlaDebugTourBtn[data-active="true"] { background:linear-gradient(180deg,rgba(70,190,115,.95),rgba(28,110,72,.92)); }
+        .perla-debug-group-toggle { display:inline-flex; align-items:center; gap:3px; min-height:24px; padding:2px 5px; border-radius:999px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); font-size:10px; font-weight:850; letter-spacing:.02em; }
+        .perla-debug-group-toggle input { width:15px; height:15px; margin:0; accent-color:#f1c40f; }
         #perlaDebugOutput { display:none; width:min(520px,calc(100vw - 22px - env(safe-area-inset-left) - env(safe-area-inset-right))); max-height:min(54dvh,460px); overflow:auto; margin:0; padding:8px 10px; color:#eaf9ff; background:rgba(3,8,12,.88); border:1px solid rgba(255,255,255,.16); border-radius:10px; box-shadow:0 10px 28px rgba(0,0,0,.55); font:10px/1.35 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; white-space:pre-wrap; pointer-events:auto; }
         #perlaDebugOutput.visible { display:block; }
         .touch-pad, .touch-look, .touch-turn-btn { -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent; touch-action:none; }
@@ -98,20 +102,21 @@
         }
         html.perla-mobile-landscape #loading { font-size:12px; padding:10px; }
         html.perla-mobile-landscape #perla-debug-widget { top:calc(6px + env(safe-area-inset-top)); left:calc(6px + env(safe-area-inset-left)); }
-        html.perla-mobile-landscape #perlaDebugCopyBtn { padding:6px 10px; font-size:10px; }
-        html.perla-mobile-landscape .perla-debug-weather-row { padding:4px 5px; gap:4px; }
-        html.perla-mobile-landscape #perlaDebugWeatherSelect { max-width:104px; height:24px; font-size:10px; padding:0 6px; }
-        html.perla-mobile-landscape #perlaDebugWeatherApplyBtn { height:24px; min-width:30px; font-size:9px; }
+        html.perla-mobile-landscape #perlaDebugCopyBtn, html.perla-mobile-landscape #perlaDebugTourBtn { padding:6px 10px; font-size:10px; }
+        html.perla-mobile-landscape .perla-debug-weather-row, html.perla-mobile-landscape .perla-debug-opt-row { padding:4px 5px; gap:4px; }
+        html.perla-mobile-landscape #perlaDebugWeatherSelect, html.perla-mobile-landscape #perlaDebugOptSelect { max-width:104px; height:24px; font-size:10px; padding:0 6px; }
+        html.perla-mobile-landscape #perlaDebugWeatherApplyBtn, html.perla-mobile-landscape #perlaDebugOptApplyBtn, html.perla-mobile-landscape #perlaDebugTourMarkBtn { height:24px; min-width:30px; font-size:9px; }
+        html.perla-mobile-landscape .perla-debug-group-toggle { min-height:22px; padding:1px 4px; font-size:9px; }
         html.perla-mobile-landscape #perlaDebugOutput { max-height:52dvh; font-size:9px; }
     </style>
 </head>
 <body>
-            <h2>Camping Sole, Mare & Zanzare - PERLA1 V315</h2>
+            <h2>Camping Sole, Mare & Zanzare - PERLA1 V316</h2>
     <div id="game-container">
         <canvas id="screen" width="800" height="450"></canvas>
         <canvas id="mini-map" width="128" height="128"></canvas>
         <div id="perlaClockHud" data-weather="clear" aria-label="Orologio e meteo PERLA1"><span class="perla-clock-time">14:00</span><span class="perla-clock-meta">☀️ Giorno</span></div>
-        <div id="loading"><div><strong>Caricamento asset PERLA1 V315...</strong><br><span class="muted">Usa un server locale per evitare problemi da file://.</span></div></div>
+        <div id="loading"><div><strong>Caricamento asset PERLA1 V316...</strong><br><span class="muted">Usa un server locale per evitare problemi da file://.</span></div></div>
     </div>
     <div id="mobile-controls" aria-label="Controlli touch PERLA1">
         <div class="touch-cluster touch-cluster-left">
@@ -140,12 +145,39 @@
             </select>
             <button id="perlaDebugWeatherApplyBtn" type="button" aria-label="Applica meteo debug">OK</button>
         </div>
+        <div class="perla-debug-opt-row" aria-label="Profilo performance debug">
+            <select id="perlaDebugOptSelect" aria-label="Profilo performance debug">
+                <option value="simple">Simple</option>
+                <option value="all_off">All off</option>
+                <option value="renderer">Renderer</option>
+                <option value="pacing">Pacing</option>
+                <option value="visual">Visual</option>
+                <option value="telemetry">Telemetry</option>
+                <option value="all">All</option>
+                <option value="custom">Custom</option>
+            </select>
+            <button id="perlaDebugOptApplyBtn" type="button" aria-label="Applica profilo performance">OK</button>
+        </div>
+        <div class="perla-debug-opt-row" aria-label="Gruppi performance debug">
+            <label class="perla-debug-group-toggle"><input type="checkbox" data-perla-opt-group="adaptive">ADP</label>
+            <label class="perla-debug-group-toggle"><input type="checkbox" data-perla-opt-group="floor">FLR</label>
+            <label class="perla-debug-group-toggle"><input type="checkbox" data-perla-opt-group="sprite">SPR</label>
+            <label class="perla-debug-group-toggle"><input type="checkbox" data-perla-opt-group="pacing">PAC</label>
+            <label class="perla-debug-group-toggle"><input type="checkbox" data-perla-opt-group="skycache">SKY</label>
+            <label class="perla-debug-group-toggle"><input type="checkbox" data-perla-opt-group="weather">WTH</label>
+            <label class="perla-debug-group-toggle"><input type="checkbox" data-perla-opt-group="minimap">MAP</label>
+            <label class="perla-debug-group-toggle"><input type="checkbox" data-perla-opt-group="telemetry">TEL</label>
+        </div>
+        <div class="perla-debug-opt-row" aria-label="Tour performance debug">
+            <button id="perlaDebugTourBtn" type="button" aria-label="Avvia o salva tour performance">TOUR START</button>
+            <button id="perlaDebugTourMarkBtn" type="button" aria-label="Marca punto tour performance">MARK</button>
+        </div>
         <button id="perlaDebugCopyBtn" type="button">📋 COPIA DEBUG</button>
         <pre id="perlaDebugOutput" aria-live="polite"></pre>
     </div>
     <div class="ui-panel">
         <strong>COMANDI:</strong> Desktop [W][A][S][D] o Frecce. Smartphone: pad CAMMINA + pad GIRA, oppure tieni premuto lo schermo.<br>
-        <span class="alert">V315: profili performance diagnostici; renderer moderno invariato.</span><br>
+        <span class="alert">V316: debug mobile con profili, gruppi e tour senza console.</span><br>
         <span class="muted" id="debugLine">posizione...</span>
     </div>
 
@@ -209,7 +241,7 @@ const loading = document.getElementById('loading');
 const debugLine = document.getElementById('debugLine');
 const perlaClockHud = document.getElementById('perlaClockHud');
 
-const PERLA_BUILD_ID = 'PERLA1_V315_OPTIMIZATION_ISOLATION_LOCAL';
+const PERLA_BUILD_ID = 'PERLA1_V316_MOBILE_DEBUG_TOUR_UI_LOCAL';
 const PERLA_V258_PERFORMANCE_BASELINE_DEBUG_OVERHEAD_SAFE = true;
 const PERLA_V258A_PHASE1_REAL_QUICK_WINS_COMPLETE_SAFE = true;
 const PERLA_V258_BASE_BUILD = 'PERLA1_V257_RAIN_SKYBOX_DEPTH_ANCHOR_FIX_SAFE_LOCAL';
@@ -2295,6 +2327,10 @@ const perlaDebugWidget = document.getElementById('perla-debug-widget');
 const perlaDebugButton = document.getElementById('perlaDebugCopyBtn');
 const perlaDebugWeatherSelect = document.getElementById('perlaDebugWeatherSelect');
 const perlaDebugWeatherApplyBtn = document.getElementById('perlaDebugWeatherApplyBtn');
+const perlaDebugOptSelect = document.getElementById('perlaDebugOptSelect');
+const perlaDebugOptApplyBtn = document.getElementById('perlaDebugOptApplyBtn');
+const perlaDebugTourBtn = document.getElementById('perlaDebugTourBtn');
+const perlaDebugTourMarkBtn = document.getElementById('perlaDebugTourMarkBtn');
 const perlaDebugOutput = document.getElementById('perlaDebugOutput');
 
 let screenW = canvas.width, screenH = canvas.height;
@@ -28233,6 +28269,92 @@ function perlaApplyDebugWeatherSelectionV307(){
     perlaSyncDebugWeatherSelectV307();
     return result;
 }
+function perlaDebugGroupInputsV316(){
+    if(typeof document==='undefined') return [];
+    return Array.prototype.slice.call(document.querySelectorAll('[data-perla-opt-group]'));
+}
+function perlaSyncDebugOptimizationControlsV316(){
+    if(typeof perlaOptimizationSummaryV315!=='function') return null;
+    const summary=perlaOptimizationSummaryV315();
+    if(perlaDebugOptSelect){
+        const has=[].some.call(perlaDebugOptSelect.options,opt=>opt.value===summary.profile);
+        perlaDebugOptSelect.value=has?summary.profile:'simple';
+    }
+    const groups=summary.groups||{};
+    perlaDebugGroupInputsV316().forEach(input=>{
+        const group=String(input.getAttribute('data-perla-opt-group')||'');
+        input.checked=!!groups[group];
+    });
+    return summary;
+}
+function perlaApplyDebugOptimizationControlsV316(fromGroups){
+    if(typeof perlaOptimizationProfileV315!=='function' || typeof perlaOptimizationGroupV315!=='function') return null;
+    let summary=null;
+    if(fromGroups){
+        perlaDebugGroupInputsV316().forEach(input=>{
+            const group=String(input.getAttribute('data-perla-opt-group')||'');
+            if(group) summary=perlaOptimizationGroupV315(group, !!input.checked, true);
+        });
+    }else{
+        const profile=perlaDebugOptSelect ? String(perlaDebugOptSelect.value||'simple') : 'simple';
+        if(profile==='custom') return perlaApplyDebugOptimizationControlsV316(true);
+        summary=perlaOptimizationProfileV315(profile, true);
+    }
+    summary=perlaSyncDebugOptimizationControlsV316()||summary;
+    if(perlaDebugOptApplyBtn){
+        const label=summary && summary.profile ? summary.profile : 'OK';
+        perlaDebugOptApplyBtn.textContent=String(label).replace('custom:','').slice(0,10).toUpperCase();
+        setTimeout(()=>{ perlaDebugOptApplyBtn.textContent='OK'; }, 1800);
+    }
+    if(perlaDebugOutput){
+        perlaDebugOutput.textContent='Profilo performance: '+JSON.stringify(summary,null,2)+'\n\nPer un test formale, ricarica la pagina dopo aver cambiato profilo/gruppi.';
+        perlaDebugOutput.classList.add('visible');
+    }
+    return summary;
+}
+function perlaDebugTourCurrentLabelV316(prefix){
+    const weather=(perlaEnvironmentStateV188&&perlaEnvironmentStateV188.weather)||'weather';
+    const opt=(typeof perlaOptimizationSummaryV315==='function'&&perlaOptimizationSummaryV315())||{};
+    const profile=opt.profile||'opt';
+    return [prefix||'tour',profile,weather,zoneAtPlayer()].join('_');
+}
+function perlaSyncDebugTourButtonV316(){
+    if(!perlaDebugTourBtn || typeof perlaPerfSmartStatusV258A!=='function') return;
+    const active=!!perlaPerfSmartStatusV258A().active;
+    perlaDebugTourBtn.dataset.active=active?'true':'false';
+    perlaDebugTourBtn.textContent=active?'TOUR STOP':'TOUR START';
+}
+function perlaDebugTourToggleV316(){
+    if(typeof perlaPerfSmartStatusV258A!=='function' || typeof perlaPerfSmartStartV258A!=='function' || typeof perlaPerfSmartStopAndDownloadV258A!=='function') return null;
+    const status=perlaPerfSmartStatusV258A();
+    let result=null;
+    if(status.active){
+        if(typeof perlaPerfSmartMarkV258A==='function') perlaPerfSmartMarkV258A(perlaDebugTourCurrentLabelV316('stop'));
+        result=perlaPerfSmartStopAndDownloadV258A();
+    }else{
+        result=perlaPerfSmartStartV258A({deep:true,sampleIntervalMs:500,reason:perlaDebugTourCurrentLabelV316('mobile_ui')});
+        if(typeof perlaPerfSmartMarkV258A==='function') perlaPerfSmartMarkV258A(perlaDebugTourCurrentLabelV316('start'));
+    }
+    perlaSyncDebugTourButtonV316();
+    if(perlaDebugOutput){
+        perlaDebugOutput.textContent=JSON.stringify(result,null,2);
+        perlaDebugOutput.classList.add('visible');
+    }
+    return result;
+}
+function perlaDebugTourMarkV316(){
+    if(typeof perlaPerfSmartMarkV258A!=='function') return null;
+    const sample=perlaPerfSmartMarkV258A(perlaDebugTourCurrentLabelV316('mark'));
+    if(perlaDebugTourMarkBtn){
+        perlaDebugTourMarkBtn.textContent='MARK OK';
+        setTimeout(()=>{ perlaDebugTourMarkBtn.textContent='MARK'; }, 1200);
+    }
+    if(perlaDebugOutput){
+        perlaDebugOutput.textContent=JSON.stringify(sample,null,2);
+        perlaDebugOutput.classList.add('visible');
+    }
+    return sample;
+}
 async function exportPerlaDebugReport(){
     perlaRequestDeepDrawStatsOneShotV258A();
     await new Promise(resolve=>requestAnimationFrame(()=>resolve()));
@@ -28963,6 +29085,7 @@ perlaPerfSmartCurrentSampleV258A = function(metrics, trigger){
         performancePreserved:!!d.realRoofUndersideEavePerformancePreservedV272
     };
     sample.smartAdaptiveV300=(typeof perlaSmartAdaptiveModeSampleV300==='function') ? perlaSmartAdaptiveModeSampleV300() : {enabled:false,level:0};
+    sample.optimizationV315=(typeof perlaOptimizationSummaryV315==='function') ? perlaOptimizationSummaryV315() : null;
     sample.force30FpsV302=!!d.force30FpsV302;
     sample.force30FpsStateV302=(typeof perlaForce30FpsSummaryV302==='function') ? perlaForce30FpsSummaryV302() : null;
     sample.framePacingV305=(metrics&&metrics.pacingV305) ? metrics.pacingV305 : ((typeof perlaFramePacingSummaryV305==='function') ? perlaFramePacingSummaryV305().last : null);
@@ -29203,8 +29326,9 @@ function perlaPerfSmartBuildReportV258A(reason){
     const sampleClassesV301=perlaPerfSmartSampleClassSummaryV301(samples);
     const report={
         buildId:PERLA_BUILD_ID,
-        baseBuild:PERLA_V313_BASE_BUILD,
-        phase:'V313 real-device mobile stutter fix: iOS rAF scarcity timer fallback plus Android protected-unknown stripe guard over V312',
+        baseBuild:PERLA_V315_BASE_BUILD,
+        phase:'V316 mobile debug tour UI: profili e gruppi performance selezionabili da touch senza console',
+        optimizationV315:(typeof perlaOptimizationSummaryV315==='function') ? perlaOptimizationSummaryV315() : null,
         reason:reason||'manual',
         generatedAt:new Date().toISOString(),
         session:{startedAt:st.events.find(e=>e.type==='start')||null, stoppedAt:st.stoppedAt?new Date().toISOString():null, durationSec:st.startedAt?perlaPerfSmartRoundV258A(((st.stoppedAt||perlaPerfSmartNowV258A())-st.startedAt)/1000,2):0, deep:!!st.deep, counters:st.counters, sampleIntervalMs:st.sampleIntervalMs},
@@ -29242,8 +29366,15 @@ function setupPerlaMobileDebugUI(){
     document.documentElement.classList.add('perla-debug-enabled');
     if(perlaDebugWidget) perlaDebugWidget.hidden=false;
     if(typeof perlaSyncDebugWeatherSelectV307==='function') perlaSyncDebugWeatherSelectV307();
+    if(typeof perlaSyncDebugOptimizationControlsV316==='function') perlaSyncDebugOptimizationControlsV316();
+    if(typeof perlaSyncDebugTourButtonV316==='function') perlaSyncDebugTourButtonV316();
     if(perlaDebugWeatherApplyBtn) perlaDebugWeatherApplyBtn.addEventListener('click', e=>{ e.preventDefault(); perlaApplyDebugWeatherSelectionV307(); }, {passive:false});
     if(perlaDebugWeatherSelect) perlaDebugWeatherSelect.addEventListener('change', e=>{ e.preventDefault(); perlaApplyDebugWeatherSelectionV307(); }, {passive:false});
+    if(perlaDebugOptApplyBtn) perlaDebugOptApplyBtn.addEventListener('click', e=>{ e.preventDefault(); perlaApplyDebugOptimizationControlsV316(false); }, {passive:false});
+    if(perlaDebugOptSelect) perlaDebugOptSelect.addEventListener('change', e=>{ e.preventDefault(); perlaApplyDebugOptimizationControlsV316(false); }, {passive:false});
+    perlaDebugGroupInputsV316().forEach(input=>input.addEventListener('change', e=>{ e.preventDefault(); perlaApplyDebugOptimizationControlsV316(true); }, {passive:false}));
+    if(perlaDebugTourBtn) perlaDebugTourBtn.addEventListener('click', e=>{ e.preventDefault(); perlaDebugTourToggleV316(); }, {passive:false});
+    if(perlaDebugTourMarkBtn) perlaDebugTourMarkBtn.addEventListener('click', e=>{ e.preventDefault(); perlaDebugTourMarkV316(); }, {passive:false});
     if(perlaDebugButton) perlaDebugButton.addEventListener('click', e=>{ e.preventDefault(); exportPerlaDebugReport(); }, {passive:false});
 }
 function zoneAtPlayer(){ const x=clamp(Math.floor(posX),0,mapW-1), y=clamp(Math.floor(posY),0,mapH-1); return zoneMask[y][x]||'erba'; }
@@ -29382,6 +29513,9 @@ window.perlaOptimizationV315 = perlaOptimizationSummaryV315;
 window.perlaOptimizationProfileV315 = perlaOptimizationProfileV315;
 window.perlaOptimizationGroupV315 = perlaOptimizationGroupV315;
 window.perlaOptimizationResetV315 = perlaOptimizationResetV315;
+window.perlaDebugOptimizationControlsV316 = perlaSyncDebugOptimizationControlsV316;
+window.perlaDebugTourToggleV316 = perlaDebugTourToggleV316;
+window.perlaDebugTourMarkV316 = perlaDebugTourMarkV316;
 window.perlaDebugV295 = perlaDebugV295;
 window.collectPerlaModernDebugV295 = collectPerlaModernDebugV295;
 window.perlaModernDebugSummaryV295 = perlaModernDebugSummaryV295;
@@ -29666,6 +29800,10 @@ Object.assign(window.__PERLA_DEBUG__, {
     perlaOptimizationGroupV315,
     perlaOptimizationResetV315,
     perlaOptimizationGroupEnabledV315,
+    perlaSyncDebugOptimizationControlsV316,
+    perlaApplyDebugOptimizationControlsV316,
+    perlaDebugTourToggleV316,
+    perlaDebugTourMarkV316,
     perlaMobileContinuousRafPacingV309,
     perlaIOSRafElapsedPacingV311,
     perlaIOSRafScarcityTimerFallbackV313,
