@@ -28289,6 +28289,7 @@ function perlaSyncDebugOptimizationControlsV316(){
 }
 function perlaApplyDebugOptimizationControlsV316(fromGroups){
     if(typeof perlaOptimizationProfileV315!=='function' || typeof perlaOptimizationGroupV315!=='function') return null;
+    const before=(typeof perlaOptimizationSummaryV315==='function') ? perlaOptimizationSummaryV315() : null;
     let summary=null;
     if(fromGroups){
         perlaDebugGroupInputsV316().forEach(input=>{
@@ -28309,6 +28310,13 @@ function perlaApplyDebugOptimizationControlsV316(fromGroups){
     if(perlaDebugOutput){
         perlaDebugOutput.textContent='Profilo performance: '+JSON.stringify(summary,null,2)+'\n\nPer un test formale, ricarica la pagina dopo aver cambiato profilo/gruppi.';
         perlaDebugOutput.classList.add('visible');
+    }
+    if(typeof perlaPerfSmartStatusV258A==='function' && perlaPerfSmartStatusV258A().active && typeof perlaPerfSmartMarkV258A==='function'){
+        const beforeGroups=before && before.enabledGroups ? before.enabledGroups.join('+') : '';
+        const afterGroups=summary && summary.enabledGroups ? summary.enabledGroups.join('+') : '';
+        perlaPerfSmartMarkV258A('opt_change_'+(fromGroups?'groups':'profile')+'_'+(summary&&summary.profile||'custom')+'_'+afterGroups);
+        const st=perlaPerfSmartStateV258A;
+        if(st && st.events) st.events.push({type:'optimization_change_v316', at:new Date().toISOString(), from:beforeGroups, to:afterGroups, profile:summary&&summary.profile||null});
     }
     return summary;
 }
@@ -29340,6 +29348,12 @@ function perlaPerfSmartBuildReportV258A(reason){
         byZone:perlaPerfSmartGroupSummaryV258A(samples,s=>s.zone).slice(0,18),
         byWeather:perlaPerfSmartGroupSummaryV258A(samples,s=>s.weather).slice(0,8),
         byMode:perlaPerfSmartGroupSummaryV258A(samples,s=>s.mode).slice(0,8),
+        byOptimizationProfileV316:perlaPerfSmartGroupSummaryV258A(samples,s=>(s.optimizationV315&&s.optimizationV315.profile)||'unknown').slice(0,12),
+        byOptimizationGroupsV316:perlaPerfSmartGroupSummaryV258A(samples,s=>{
+            const opt=s.optimizationV315||{};
+            const groups=Array.isArray(opt.enabledGroups)?opt.enabledGroups.slice():[];
+            return groups.length?groups.join('+'):'none';
+        }).slice(0,18),
         bySampleClassV301:perlaPerfSmartGroupSummaryV258A(samples,s=>s.sampleClassV301||'steady').slice(0,8),
         byAdaptiveLevel:perlaPerfSmartGroupSummaryV258A(samples,s=>s.smartAdaptiveV300?('L'+(s.smartAdaptiveV300.level||0)+'_'+(s.smartAdaptiveV300.levelLabel||'normal')):'L0_normal').slice(0,8),
         worstFrames:st.worstFrames.slice(0,30),
