@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Camping Sole, Mare & Zanzare - PERLA1 V317 Mobile Debug Panel</title>
+    <title>Camping Sole, Mare & Zanzare - PERLA1 V321 Toggle Reset</title>
     <style>
         :root { --panel: rgba(20,16,12,.88); --gold:#f1c40f; --sand:#f5d99e; --perla-vv-left:0px; --perla-vv-top:0px; --perla-vv-width:100vw; --perla-vv-height:100dvh; }
         body { margin:0; min-height:100vh; background:radial-gradient(circle at 50% 0%,#183b4a 0%,#07090d 55%,#000 100%); color:white; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; display:flex; flex-direction:column; align-items:center; overflow-x:hidden; }
@@ -33,9 +33,9 @@
         #perlaDebugCopyBtn:active, #perlaDebugTourBtn:active { filter:brightness(1.14); transform:translateY(1px); }
         .perla-debug-weather-row { pointer-events:auto; display:flex; align-items:center; gap:5px; padding:5px 6px; border-radius:999px; color:#fff7df; background:rgba(8,10,14,.72); border:1px solid rgba(255,255,255,.22); box-shadow:0 6px 16px rgba(0,0,0,.36); }
         .perla-debug-opt-row { pointer-events:auto; display:flex; align-items:center; flex-wrap:wrap; gap:5px; max-width:min(332px,calc(100vw - 16px)); padding:5px 6px; border-radius:14px; color:#fff7df; background:rgba(8,10,14,.72); border:1px solid rgba(255,255,255,.22); box-shadow:0 6px 16px rgba(0,0,0,.36); }
-        #perlaDebugWeatherSelect, #perlaDebugOptSelect { max-width:118px; height:28px; border-radius:999px; border:1px solid rgba(255,255,255,.28); color:#fff; background:rgba(20,16,12,.86); font-size:12px; font-weight:850; padding:0 8px; }
-        #perlaDebugWeatherApplyBtn, #perlaDebugOptApplyBtn, #perlaDebugTourMarkBtn { height:28px; min-width:34px; border-radius:999px; border:1px solid rgba(255,255,255,.26); color:#fff; background:rgba(50,116,154,.88); font-size:11px; font-weight:900; letter-spacing:.04em; }
-        #perlaDebugWeatherApplyBtn:active, #perlaDebugOptApplyBtn:active, #perlaDebugTourMarkBtn:active { filter:brightness(1.16); transform:translateY(1px); }
+        #perlaDebugWeatherSelect { max-width:118px; height:28px; border-radius:999px; border:1px solid rgba(255,255,255,.28); color:#fff; background:rgba(20,16,12,.86); font-size:12px; font-weight:850; padding:0 8px; }
+        #perlaDebugWeatherApplyBtn, #perlaDebugTourMarkBtn { height:28px; min-width:34px; border-radius:999px; border:1px solid rgba(255,255,255,.26); color:#fff; background:rgba(50,116,154,.88); font-size:11px; font-weight:900; letter-spacing:.04em; }
+        #perlaDebugWeatherApplyBtn:active, #perlaDebugTourMarkBtn:active { filter:brightness(1.16); transform:translateY(1px); }
         #perlaDebugTourBtn[data-active="true"] { background:linear-gradient(180deg,rgba(70,190,115,.95),rgba(28,110,72,.92)); }
         .perla-debug-group-toggle { display:inline-flex; align-items:center; gap:3px; min-height:24px; padding:2px 5px; border-radius:999px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); font-size:10px; font-weight:850; letter-spacing:.02em; }
         .perla-debug-group-toggle input { width:15px; height:15px; margin:0; accent-color:#f1c40f; }
@@ -106,19 +106,19 @@
         html.perla-mobile-landscape #perla-debug-widget { top:calc(6px + env(safe-area-inset-top)); left:calc(6px + env(safe-area-inset-left)); }
         html.perla-mobile-landscape #perlaDebugCopyBtn, html.perla-mobile-landscape #perlaDebugTourBtn { padding:6px 10px; font-size:10px; }
         html.perla-mobile-landscape .perla-debug-weather-row, html.perla-mobile-landscape .perla-debug-opt-row { padding:4px 5px; gap:4px; }
-        html.perla-mobile-landscape #perlaDebugWeatherSelect, html.perla-mobile-landscape #perlaDebugOptSelect { max-width:104px; height:24px; font-size:10px; padding:0 6px; }
-        html.perla-mobile-landscape #perlaDebugWeatherApplyBtn, html.perla-mobile-landscape #perlaDebugOptApplyBtn, html.perla-mobile-landscape #perlaDebugTourMarkBtn { height:24px; min-width:30px; font-size:9px; }
+        html.perla-mobile-landscape #perlaDebugWeatherSelect { max-width:104px; height:24px; font-size:10px; padding:0 6px; }
+        html.perla-mobile-landscape #perlaDebugWeatherApplyBtn, html.perla-mobile-landscape #perlaDebugTourMarkBtn { height:24px; min-width:30px; font-size:9px; }
         html.perla-mobile-landscape .perla-debug-group-toggle { min-height:22px; padding:1px 4px; font-size:9px; }
         html.perla-mobile-landscape #perlaDebugOutput { max-height:52dvh; font-size:9px; }
     </style>
 </head>
 <body>
-            <h2>Camping Sole, Mare & Zanzare - PERLA1 V317</h2>
+            <h2>Camping Sole, Mare & Zanzare - PERLA1 V321</h2>
     <div id="game-container">
         <canvas id="screen" width="800" height="450"></canvas>
         <canvas id="mini-map" width="128" height="128"></canvas>
         <div id="perlaClockHud" data-weather="clear" aria-label="Orologio e meteo PERLA1"><span class="perla-clock-time">14:00</span><span class="perla-clock-meta">☀️ Giorno</span></div>
-        <div id="loading"><div><strong>Caricamento asset PERLA1 V317...</strong><br><span class="muted">Usa un server locale per evitare problemi da file://.</span></div></div>
+        <div id="loading"><div><strong>Caricamento asset PERLA1 V321...</strong><br><span class="muted">Usa un server locale per evitare problemi da file://.</span></div></div>
     </div>
     <div id="mobile-controls" aria-label="Controlli touch PERLA1">
         <div class="touch-cluster touch-cluster-left">
@@ -147,20 +147,6 @@
             </select>
             <button id="perlaDebugWeatherApplyBtn" type="button" aria-label="Applica meteo debug">OK</button>
         </div>
-        <div class="perla-debug-opt-row" aria-label="Profilo performance debug">
-            <select id="perlaDebugOptSelect" aria-label="Profilo performance debug">
-                <option value="simple">Simple</option>
-                <option value="all_off">All off</option>
-                <option value="renderer">Renderer</option>
-                <option value="desktop_default">Desktop SPR/PAC/SKY</option>
-                <option value="pacing">Pacing</option>
-                <option value="visual">Visual</option>
-                <option value="telemetry">Telemetry</option>
-                <option value="all">All</option>
-                <option value="custom">Custom</option>
-            </select>
-            <button id="perlaDebugOptApplyBtn" type="button" aria-label="Applica profilo performance">OK</button>
-        </div>
         <div class="perla-debug-opt-row" aria-label="Gruppi performance debug">
             <label class="perla-debug-group-toggle"><input type="checkbox" data-perla-opt-group="adaptive">ADP</label>
             <label class="perla-debug-group-toggle"><input type="checkbox" data-perla-opt-group="floor">FLR</label>
@@ -168,6 +154,8 @@
             <label class="perla-debug-group-toggle"><input type="checkbox" data-perla-opt-group="pacing">PAC</label>
             <label class="perla-debug-group-toggle"><input type="checkbox" data-perla-opt-group="skycache">SKY</label>
             <label class="perla-debug-group-toggle"><input type="checkbox" data-perla-opt-group="weather">WTH</label>
+            <label class="perla-debug-group-toggle"><input type="checkbox" data-perla-opt-group="mobres">RES</label>
+            <label class="perla-debug-group-toggle"><input type="checkbox" data-perla-opt-group="mobdist">DST</label>
             <label class="perla-debug-group-toggle"><input type="checkbox" data-perla-opt-group="minimap">MAP</label>
             <label class="perla-debug-group-toggle"><input type="checkbox" data-perla-opt-group="telemetry">TEL</label>
         </div>
@@ -180,7 +168,7 @@
     </div>
     <div class="ui-panel">
         <strong>COMANDI:</strong> Desktop [W][A][S][D] o Frecce. Smartphone: pad CAMMINA + pad GIRA, oppure tieni premuto lo schermo.<br>
-        <span class="alert">V317: debug mobile nascosto, apribile dalla minimappa.</span><br>
+        <span class="alert">V320: toggle performance dalla minimappa.</span><br>
         <span class="muted" id="debugLine">posizione...</span>
     </div>
 
@@ -200,11 +188,59 @@ function getPerlaViewportMode(){
     if(!isCoarseViewport()) return 'desktop';
     return window.innerWidth > window.innerHeight ? 'mobile-landscape' : 'mobile-portrait';
 }
+const PERLA_EARLY_OPT_STORAGE_KEY_V320 = 'PERLA1_OPTIMIZATION_PROFILE_V315';
+const PERLA_EARLY_OPT_USER_STORAGE_KEY_V320 = 'PERLA1_OPTIMIZATION_PROFILE_USER_SET_V320';
+const PERLA_EARLY_TOGGLE_RESET_ON_RELOAD_V321 = true;
+function perlaEarlyProfileGroupsV320(profile, mode){
+    const p=String(profile||'').trim().toLowerCase();
+    const map={
+        simple:['minimap'],
+        all_off:[],
+        no_minimap:[],
+        simple_no_minimap:[],
+        renderer:['floor','sprite','minimap'],
+        pacing:['pacing','minimap'],
+        desktop_default:['sprite','pacing','skycache','minimap'],
+        mobile_organic:['minimap','mobres','mobdist'],
+        visual:['skycache','weather','minimap'],
+        telemetry:['telemetry','minimap'],
+        all:['adaptive','floor','sprite','pacing','skycache','weather','mobres','mobdist','minimap','telemetry'],
+        v314:['adaptive','floor','sprite','pacing','skycache','weather','minimap','telemetry']
+    };
+    return map[p] || map[mode==='desktop'?'desktop_default':'mobile_organic'];
+}
+function perlaEarlyClearStoredOptimizationV321(){
+    if(!PERLA_EARLY_TOGGLE_RESET_ON_RELOAD_V321) return;
+    try{
+        if(window.localStorage){
+            window.localStorage.removeItem(PERLA_EARLY_OPT_STORAGE_KEY_V320);
+            window.localStorage.removeItem(PERLA_EARLY_OPT_USER_STORAGE_KEY_V320);
+        }
+    }catch(e){}
+}
+function perlaEarlyOptimizationGroupsV320(mode){
+    let profile='', groupsRaw='', explicit=false;
+    try{
+        const params=new URLSearchParams(window.location.search||'');
+        profile=params.get('perlaOpt') || params.get('perlaOptimization') || '';
+        groupsRaw=params.get('perlaOptGroups') || params.get('perlaOptimizationGroups') || '';
+        explicit=!!(profile || groupsRaw);
+    }catch(e){}
+    if(!explicit) perlaEarlyClearStoredOptimizationV321();
+    let customProfile=false;
+    if(profile.indexOf('custom:')===0 && !groupsRaw){ customProfile=true; groupsRaw=profile.slice('custom:'.length); }
+    const source=(customProfile || groupsRaw) ? String(groupsRaw).split(/[,+\s]+/) : perlaEarlyProfileGroupsV320(profile||'', mode);
+    return new Set(source.map(v=>String(v||'').trim().toLowerCase()).filter(Boolean));
+}
+function perlaEarlyOptimizationGroupEnabledV320(group, mode){
+    try{ return perlaEarlyOptimizationGroupsV320(mode).has(String(group||'').trim().toLowerCase()); }catch(e){ return false; }
+}
 function getCanvasSizeForMode(mode){
     // V63: tre risoluzioni reali, non CSS stretching.
     // Desktop resta 800x450; mobile portrait resta 450x720; mobile landscape usa 720x405 per rapporto 16:9 con costo pixel controllato.
-    if(mode === 'mobile-portrait') return {w:450,h:720};
-    if(mode === 'mobile-landscape') return {w:720,h:405};
+    const mobileRes=mode!=='desktop' && perlaEarlyOptimizationGroupEnabledV320('mobres', mode);
+    if(mode === 'mobile-portrait') return mobileRes ? {w:400,h:640} : {w:450,h:720};
+    if(mode === 'mobile-landscape') return mobileRes ? {w:640,h:360} : {w:720,h:405};
     return {w:800,h:450};
 }
 function applyViewportClasses(mode){
@@ -244,7 +280,7 @@ const loading = document.getElementById('loading');
 const debugLine = document.getElementById('debugLine');
 const perlaClockHud = document.getElementById('perlaClockHud');
 
-const PERLA_BUILD_ID = 'PERLA1_V319_DESKTOP_SPR_PAC_SKY_DEFAULT_REAL_MOBILE_SAFE_LOCAL';
+const PERLA_BUILD_ID = 'PERLA1_V321_DEFAULT_TOGGLE_RESET_ON_RELOAD_LOCAL';
 const PERLA_V258_PERFORMANCE_BASELINE_DEBUG_OVERHEAD_SAFE = true;
 const PERLA_V258A_PHASE1_REAL_QUICK_WINS_COMPLETE_SAFE = true;
 const PERLA_V258_BASE_BUILD = 'PERLA1_V257_RAIN_SKYBOX_DEPTH_ANCHOR_FIX_SAFE_LOCAL';
@@ -447,7 +483,8 @@ const PERLA_V315_NO_RAIN_OUTPUT_CHANGE = true;
 const PERLA_V315_VISUAL_STABILITY_TARGET = true;
 const PERLA_V315_OPT_STORAGE_KEY = 'PERLA1_OPTIMIZATION_PROFILE_V315';
 const PERLA_V315_OPT_DEFAULT_PROFILE = 'simple';
-const PERLA_V315_OPT_GROUPS = ['adaptive','floor','sprite','pacing','skycache','weather','minimap','telemetry'];
+const PERLA_V315_OPT_USER_STORAGE_KEY_V320 = PERLA_EARLY_OPT_USER_STORAGE_KEY_V320;
+const PERLA_V315_OPT_GROUPS = ['adaptive','floor','sprite','pacing','skycache','weather','mobres','mobdist','minimap','telemetry'];
 const PERLA_V315_OPT_PROFILES = Object.freeze({
     simple:['minimap'],
     all_off:[],
@@ -456,9 +493,10 @@ const PERLA_V315_OPT_PROFILES = Object.freeze({
     renderer:['floor','sprite','minimap'],
     pacing:['pacing','minimap'],
     desktop_default:['sprite','pacing','skycache','minimap'],
+    mobile_organic:['minimap','mobres','mobdist'],
     visual:['skycache','weather','minimap'],
     telemetry:['telemetry','minimap'],
-    all:['adaptive','floor','sprite','pacing','skycache','weather','minimap','telemetry'],
+    all:['adaptive','floor','sprite','pacing','skycache','weather','mobres','mobdist','minimap','telemetry'],
     v314:['adaptive','floor','sprite','pacing','skycache','weather','minimap','telemetry']
 });
 const PERLA_V317_DEBUG_PANEL_MINIMAP_REVEAL_SAFE = true;
@@ -480,7 +518,26 @@ const PERLA_V319_DESKTOP_DEFAULT_OPTIMIZATION_SAFE = true;
 const PERLA_V319_BASE_BUILD = 'PERLA1_V318_REAL_MOBILE_BASELINE_RENDER_SAFE_LOCAL';
 const PERLA_V319_PATCH_MODE = 'desktop_default_sprite_pacing_skycache_minimap_mobile_simple';
 const PERLA_V319_DESKTOP_DEFAULT_PROFILE = 'desktop_default';
-const PERLA_V319_MOBILE_DEFAULT_PROFILE = 'simple';
+const PERLA_V319_MOBILE_DEFAULT_PROFILE = 'mobile_organic';
+const PERLA_V320_MOBILE_ORGANIC_RENDER_SAFE = true;
+const PERLA_V320_BASE_BUILD = 'PERLA1_V319_DESKTOP_SPR_PAC_SKY_DEFAULT_REAL_MOBILE_SAFE_LOCAL';
+const PERLA_V320_PATCH_MODE = 'mobile_organic_render_scale_coordinated_distance_toggle_ui';
+const PERLA_V320_NO_WORLDGEN_CHANGE = true;
+const PERLA_V320_NO_ASSET_CHANGE = true;
+const PERLA_V320_NO_RAIN_OUTPUT_CHANGE = true;
+const PERLA_V320_VISUAL_STABILITY_TARGET = true;
+const PERLA_V320_MOBILE_RENDER_SCALE_PORTRAIT = 400/450;
+const PERLA_V320_MOBILE_RENDER_SCALE_LANDSCAPE = 640/720;
+const PERLA_V320_MOBILE_WALL_DIST_CAP_PORTRAIT = 42;
+const PERLA_V320_MOBILE_WALL_DIST_CAP_LANDSCAPE = 48;
+const PERLA_V320_MOBILE_SPRITE_DIST_PAD = -1.5;
+const PERLA_V321_TOGGLE_RESET_ON_RELOAD_SAFE = true;
+const PERLA_V321_BASE_BUILD = 'PERLA1_V320_MOBILE_ORGANIC_TOGGLE_RENDER_DISTANCE_LOCAL';
+const PERLA_V321_PATCH_MODE = 'reset_debug_toggles_to_device_defaults_on_reload';
+const PERLA_V321_NO_WORLDGEN_CHANGE = true;
+const PERLA_V321_NO_ASSET_CHANGE = true;
+const PERLA_V321_NO_RAIN_OUTPUT_CHANGE = true;
+const PERLA_V321_VISUAL_STABILITY_TARGET = true;
 let perlaOptimizationStateV315 = null;
 function perlaNormalizeOptimizationGroupV315(group){
     const g=String(group||'').trim().toLowerCase();
@@ -529,15 +586,21 @@ function perlaReadOptimizationStateV315(){
             hasExplicitRequest=!!(profile || groupsRaw);
         }
     }catch(e){}
-    if(!profile && !(PERLA_V317_STARTUP_MINIMAP_ONLY_BASELINE_SAFE && !hasExplicitRequest)){
-        try{ profile=(window.localStorage && window.localStorage.getItem(PERLA_V315_OPT_STORAGE_KEY)) || ''; }catch(e){}
+    if(!hasExplicitRequest && PERLA_V321_TOGGLE_RESET_ON_RELOAD_SAFE){
+        try{
+            if(window.localStorage){
+                window.localStorage.removeItem(PERLA_V315_OPT_STORAGE_KEY);
+                window.localStorage.removeItem(PERLA_V315_OPT_USER_STORAGE_KEY_V320);
+            }
+        }catch(e){}
     }
     const defaultProfileV319=(typeof perlaDefaultOptimizationProfileV319==='function') ? perlaDefaultOptimizationProfileV319(hasExplicitRequest) : PERLA_V315_OPT_DEFAULT_PROFILE;
     profile=String(profile||defaultProfileV319).trim().toLowerCase();
-    if(profile.indexOf('custom:')===0 && !groupsRaw) groupsRaw=profile.slice('custom:'.length);
+    let customProfile=false;
+    if(profile.indexOf('custom:')===0 && !groupsRaw){ customProfile=true; groupsRaw=profile.slice('custom:'.length); }
     const preset=PERLA_V315_OPT_PROFILES[profile] || null;
     const fallbackPreset=PERLA_V315_OPT_PROFILES[defaultProfileV319] || PERLA_V315_OPT_PROFILES[PERLA_V315_OPT_DEFAULT_PROFILE];
-    const groups=groupsRaw ? perlaParseOptimizationGroupsV315(groupsRaw, null) : perlaParseOptimizationGroupsV315(preset || fallbackPreset, null);
+    const groups=(customProfile || groupsRaw) ? perlaParseOptimizationGroupsV315(groupsRaw, null) : perlaParseOptimizationGroupsV315(preset || fallbackPreset, null);
     return {
         buildId:PERLA_BUILD_ID,
         baseBuild:PERLA_V315_BASE_BUILD,
@@ -554,7 +617,9 @@ function perlaReadOptimizationStateV315(){
         desktopDefaultProfileV319:PERLA_V319_DESKTOP_DEFAULT_PROFILE,
         mobileDefaultProfileV319:PERLA_V319_MOBILE_DEFAULT_PROFILE,
         storageKey:PERLA_V315_OPT_STORAGE_KEY,
-        note:'Use perlaOptimizationProfileV315("all") or perlaOptimizationGroupV315("floor", true) to re-enable groups one at a time.'
+        userStorageKey:PERLA_V315_OPT_USER_STORAGE_KEY_V320,
+        resetOnReloadV321:!!PERLA_V321_TOGGLE_RESET_ON_RELOAD_SAFE,
+        note:'Debug toggles are session-only in V321: reload/rientro restores desktop_default on desktop and mobile_organic on mobile. URL query still overrides for explicit tests.'
     };
 }
 function perlaOptimizationStateSafeV315(){
@@ -585,9 +650,9 @@ function perlaOptimizationProfileV315(profile, persist){
     const preset=PERLA_V315_OPT_PROFILES[name];
     if(!preset) throw new Error('Unknown PERLA V315 optimization profile: '+name+'; allowed '+Object.keys(PERLA_V315_OPT_PROFILES).join(', '));
     const runtimeDefault=(typeof perlaDefaultOptimizationProfileV319==='function') ? perlaDefaultOptimizationProfileV319(false) : PERLA_V315_OPT_DEFAULT_PROFILE;
-    perlaOptimizationStateV315={buildId:PERLA_BUILD_ID,baseBuild:PERLA_V315_BASE_BUILD,patchMode:PERLA_V315_PATCH_MODE,profile:name,requestedProfile:name,groups:perlaParseOptimizationGroupsV315(preset,null),enabledGroups:preset.slice(),disabledGroups:PERLA_V315_OPT_GROUPS.filter(g=>preset.indexOf(g)<0),defaultProfile:PERLA_V315_OPT_DEFAULT_PROFILE,runtimeDefaultProfile:runtimeDefault,explicitRequest:true,implicitRuntimeDefaultV319:false,desktopDefaultProfileV319:PERLA_V319_DESKTOP_DEFAULT_PROFILE,mobileDefaultProfileV319:PERLA_V319_MOBILE_DEFAULT_PROFILE,storageKey:PERLA_V315_OPT_STORAGE_KEY,note:'runtime profile changed; reload optional but recommended before formal debug capture'};
-    if(persist!==false){
-        try{ if(window.localStorage) window.localStorage.setItem(PERLA_V315_OPT_STORAGE_KEY,name); }catch(e){}
+    perlaOptimizationStateV315={buildId:PERLA_BUILD_ID,baseBuild:PERLA_V315_BASE_BUILD,patchMode:PERLA_V315_PATCH_MODE,profile:name,requestedProfile:name,groups:perlaParseOptimizationGroupsV315(preset,null),enabledGroups:preset.slice(),disabledGroups:PERLA_V315_OPT_GROUPS.filter(g=>preset.indexOf(g)<0),defaultProfile:PERLA_V315_OPT_DEFAULT_PROFILE,runtimeDefaultProfile:runtimeDefault,explicitRequest:true,implicitRuntimeDefaultV319:false,desktopDefaultProfileV319:PERLA_V319_DESKTOP_DEFAULT_PROFILE,mobileDefaultProfileV319:PERLA_V319_MOBILE_DEFAULT_PROFILE,storageKey:PERLA_V315_OPT_STORAGE_KEY,resetOnReloadV321:!!PERLA_V321_TOGGLE_RESET_ON_RELOAD_SAFE,note:'runtime profile changed for this session; reload/rientro restores the device default in V321'};
+    if(persist!==false && !PERLA_V321_TOGGLE_RESET_ON_RELOAD_SAFE){
+        try{ if(window.localStorage){ window.localStorage.setItem(PERLA_V315_OPT_STORAGE_KEY,name); window.localStorage.setItem(PERLA_V315_OPT_USER_STORAGE_KEY_V320,'1'); } }catch(e){}
     }
     return perlaOptimizationSummaryV315();
 }
@@ -598,16 +663,58 @@ function perlaOptimizationGroupV315(group, enabled, persist){
     const next=Object.assign({}, current.groups);
     next[g]=enabled!==false;
     const runtimeDefault=(typeof perlaDefaultOptimizationProfileV319==='function') ? perlaDefaultOptimizationProfileV319(false) : PERLA_V315_OPT_DEFAULT_PROFILE;
-    perlaOptimizationStateV315={buildId:PERLA_BUILD_ID,baseBuild:PERLA_V315_BASE_BUILD,patchMode:PERLA_V315_PATCH_MODE,profile:'custom',requestedProfile:'custom',groups:next,enabledGroups:PERLA_V315_OPT_GROUPS.filter(k=>!!next[k]),disabledGroups:PERLA_V315_OPT_GROUPS.filter(k=>!next[k]),defaultProfile:PERLA_V315_OPT_DEFAULT_PROFILE,runtimeDefaultProfile:runtimeDefault,explicitRequest:true,implicitRuntimeDefaultV319:false,desktopDefaultProfileV319:PERLA_V319_DESKTOP_DEFAULT_PROFILE,mobileDefaultProfileV319:PERLA_V319_MOBILE_DEFAULT_PROFILE,storageKey:PERLA_V315_OPT_STORAGE_KEY,note:'custom runtime groups changed; reload optional but recommended before formal debug capture'};
-    if(persist!==false){
-        try{ if(window.localStorage) window.localStorage.setItem(PERLA_V315_OPT_STORAGE_KEY,'custom:'+perlaOptimizationStateV315.enabledGroups.join(',')); }catch(e){}
+    perlaOptimizationStateV315={buildId:PERLA_BUILD_ID,baseBuild:PERLA_V315_BASE_BUILD,patchMode:PERLA_V315_PATCH_MODE,profile:'custom',requestedProfile:'custom',groups:next,enabledGroups:PERLA_V315_OPT_GROUPS.filter(k=>!!next[k]),disabledGroups:PERLA_V315_OPT_GROUPS.filter(k=>!next[k]),defaultProfile:PERLA_V315_OPT_DEFAULT_PROFILE,runtimeDefaultProfile:runtimeDefault,explicitRequest:true,implicitRuntimeDefaultV319:false,desktopDefaultProfileV319:PERLA_V319_DESKTOP_DEFAULT_PROFILE,mobileDefaultProfileV319:PERLA_V319_MOBILE_DEFAULT_PROFILE,storageKey:PERLA_V315_OPT_STORAGE_KEY,resetOnReloadV321:!!PERLA_V321_TOGGLE_RESET_ON_RELOAD_SAFE,note:'custom runtime groups changed for this session; reload/rientro restores the device default in V321'};
+    if(persist!==false && !PERLA_V321_TOGGLE_RESET_ON_RELOAD_SAFE){
+        try{ if(window.localStorage){ window.localStorage.setItem(PERLA_V315_OPT_STORAGE_KEY,'custom:'+perlaOptimizationStateV315.enabledGroups.join(',')); window.localStorage.setItem(PERLA_V315_OPT_USER_STORAGE_KEY_V320,'1'); } }catch(e){}
     }
     return perlaOptimizationSummaryV315();
 }
 function perlaOptimizationResetV315(){
     try{ if(window.localStorage) window.localStorage.removeItem(PERLA_V315_OPT_STORAGE_KEY); }catch(e){}
+    try{ if(window.localStorage) window.localStorage.removeItem(PERLA_V315_OPT_USER_STORAGE_KEY_V320); }catch(e){}
     perlaOptimizationStateV315=null;
     return perlaOptimizationSummaryV315();
+}
+function perlaMobileOrganicRuntimeV320(group){
+    if(!PERLA_V320_MOBILE_ORGANIC_RENDER_SAFE) return false;
+    if(currentViewportMode==='desktop') return false;
+    const g=String(group||'').trim().toLowerCase();
+    if(g && typeof perlaOptimizationGroupEnabledV315==='function' && !perlaOptimizationGroupEnabledV315(g)) return false;
+    return true;
+}
+function perlaMobileOrganicWallDistCapV320(drawStats){
+    if(!perlaMobileOrganicRuntimeV320('mobdist')) return 0;
+    const cap=currentViewportMode==='mobile-landscape' ? PERLA_V320_MOBILE_WALL_DIST_CAP_LANDSCAPE : PERLA_V320_MOBILE_WALL_DIST_CAP_PORTRAIT;
+    if(drawStats){
+        drawStats.mobileOrganicDistanceCapV320=1;
+        drawStats.mobileOrganicWallDistCapV320=cap;
+    }
+    return cap;
+}
+function perlaMobileOrganicSpriteDistCapV320(drawStats){
+    const wallCap=perlaMobileOrganicWallDistCapV320(null);
+    if(!wallCap) return 0;
+    const cap=Math.max(8,wallCap+PERLA_V320_MOBILE_SPRITE_DIST_PAD);
+    if(drawStats){
+        drawStats.mobileOrganicDistanceCapV320=1;
+        drawStats.mobileOrganicSpriteDistCapV320=cap;
+    }
+    return cap;
+}
+function perlaMobileOrganicRenderSummaryV320(){
+    return {
+        enabled:!!PERLA_V320_MOBILE_ORGANIC_RENDER_SAFE,
+        baseBuild:PERLA_V320_BASE_BUILD,
+        patchMode:PERLA_V320_PATCH_MODE,
+        runtimeMobile:currentViewportMode!=='desktop',
+        renderScaleActive:perlaMobileOrganicRuntimeV320('mobres'),
+        distanceCapActive:perlaMobileOrganicRuntimeV320('mobdist'),
+        portraitScale:+PERLA_V320_MOBILE_RENDER_SCALE_PORTRAIT.toFixed(3),
+        landscapeScale:+PERLA_V320_MOBILE_RENDER_SCALE_LANDSCAPE.toFixed(3),
+        wallDistCapPortrait:PERLA_V320_MOBILE_WALL_DIST_CAP_PORTRAIT,
+        wallDistCapLandscape:PERLA_V320_MOBILE_WALL_DIST_CAP_LANDSCAPE,
+        spriteDistPad:PERLA_V320_MOBILE_SPRITE_DIST_PAD
+    };
 }
 function perlaForce30FrameThresholdsV308(){
     const force30=(typeof perlaForce30FpsEnabledV302==='function' && perlaForce30FpsEnabledV302() && typeof perlaForce30KeepsAdaptiveQualityV307==='function' && perlaForce30KeepsAdaptiveQualityV307());
@@ -2411,8 +2518,8 @@ const perlaDebugWidget = document.getElementById('perla-debug-widget');
 const perlaDebugButton = document.getElementById('perlaDebugCopyBtn');
 const perlaDebugWeatherSelect = document.getElementById('perlaDebugWeatherSelect');
 const perlaDebugWeatherApplyBtn = document.getElementById('perlaDebugWeatherApplyBtn');
-const perlaDebugOptSelect = document.getElementById('perlaDebugOptSelect');
-const perlaDebugOptApplyBtn = document.getElementById('perlaDebugOptApplyBtn');
+const perlaDebugOptSelect = null;
+const perlaDebugOptApplyBtn = null;
 const perlaDebugTourBtn = document.getElementById('perlaDebugTourBtn');
 const perlaDebugTourMarkBtn = document.getElementById('perlaDebugTourMarkBtn');
 const perlaDebugOutput = document.getElementById('perlaDebugOutput');
@@ -2508,7 +2615,12 @@ function getSpriteRenderCandidates(drawStats){
     }
     const p=spriteBroadphaseParamsV137();
     const densePinetaV148 = (typeof v147PlayerInDensePineta==='function' && v147PlayerInDensePineta());
-    const maxDistV148 = densePinetaV148 ? (currentViewportMode==='desktop' ? 72 : (currentViewportMode==='mobile-landscape' ? 76 : 70)) : p.maxDist;
+    let maxDistV148 = densePinetaV148 ? (currentViewportMode==='desktop' ? 72 : (currentViewportMode==='mobile-landscape' ? 76 : 70)) : p.maxDist;
+    const mobileSpriteCapV320=(typeof perlaMobileOrganicSpriteDistCapV320==='function') ? perlaMobileOrganicSpriteDistCapV320(drawStats) : 0;
+    if(mobileSpriteCapV320>0){
+        maxDistV148=Math.min(maxDistV148,mobileSpriteCapV320);
+        if(drawStats) drawStats.mobileOrganicSpriteBroadphaseCapAppliedV320=1;
+    }
     const list=[]; let culled=0, culledFar=0, culledBehind=0, culledFov=0, forcedClose=0, culledV260=0;
     const maxDistSq=maxDistV148*maxDistV148;
     const forceCloseSq=p.forceClose*p.forceClose;
@@ -27694,14 +27806,22 @@ function drawWorld(time){
     if(typeof perlaRealCeilingCloneFlushEaveStripsV273==='function') perlaRealCeilingCloneFlushEaveStripsV273(realCeilingCloneEaveStripsV273,drawStats);
     perlaV291CapturePreWallCanvas(drawStats);
     const wallT0V314=(PERLA_V314_COARSE_RENDER_TIMINGS_SAFE && typeof performance!=='undefined'&&performance.now)?performance.now():0;
+    const mobileWallDistCapV320=(typeof perlaMobileOrganicWallDistCapV320==='function') ? perlaMobileOrganicWallDistCapV320(drawStats) : 0;
     for(let x=0;x<screenW;x++){
         drawStats.wallColumns++;
         const camX=2*x/screenW-1, rDirX=dirX+planeX*camX, rDirY=dirY+planeY*camX;
         let mapX=Math.floor(posX), mapY=Math.floor(posY), sDistX, sDistY; const dDistX=Math.abs(1/(rDirX||.00001)), dDistY=Math.abs(1/(rDirY||.00001));
-        let stepX,stepY,hit=0,side=0;
+        let stepX,stepY,hit=0,side=0,organicWallCapBreakV320=false;
         if(rDirX<0){ stepX=-1; sDistX=(posX-mapX)*dDistX; } else { stepX=1; sDistX=(mapX+1.0-posX)*dDistX; }
         if(rDirY<0){ stepY=-1; sDistY=(posY-mapY)*dDistY; } else { stepY=1; sDistY=(mapY+1.0-posY)*dDistY; }
-        while(hit===0 && mapY<mapH && mapY>=0 && mapX<mapW && mapX>=0){ if(sDistX<sDistY){ sDistX+=dDistX; mapX+=stepX; side=0; } else { sDistY+=dDistY; mapY+=stepY; side=1; } if(rDirY>0 && mapY>=SEA_Y){ break; } if(map[mapY]&&map[mapY][mapX]>0) hit=1; }
+        while(hit===0 && mapY<mapH && mapY>=0 && mapX<mapW && mapX>=0){
+            if(sDistX<sDistY){ sDistX+=dDistX; mapX+=stepX; side=0; } else { sDistY+=dDistY; mapY+=stepY; side=1; }
+            const travelled=(side===0)?(sDistX-dDistX):(sDistY-dDistY);
+            if(mobileWallDistCapV320>0 && travelled>mobileWallDistCapV320){ organicWallCapBreakV320=true; break; }
+            if(rDirY>0 && mapY>=SEA_Y){ break; }
+            if(map[mapY]&&map[mapY][mapX]>0) hit=1;
+        }
+        if(organicWallCapBreakV320){ drawStats.mobileOrganicWallRayCapBreaksV320=(drawStats.mobileOrganicWallRayCapBreaksV320||0)+1; }
         if(hit){
             drawStats.wallHits++;
             const perpDist=(side===0)?(mapX-posX+(1-stepX)/2)/rDirX:(mapY-posY+(1-stepY)/2)/rDirY; ZBuffer[x]=perpDist;
@@ -27791,7 +27911,7 @@ function drawWorld(time){
                 drawTowerBehindWallPeekV126(x,rDirX,rDirY,perpDist,drawStartFixed,time,drawStats);
             }
             drawAdditionalWallLayersV227(x,wallLayersForColumnV227,time,drawStats);
-        } else { ZBuffer[x]=1000; WallTopBuffer[x]=screenH; WallBottomBuffer[x]=-1; WallOwnerBuffer[x]=0; setWallLayersForColumnV227(x,[],drawStats); }
+        } else { ZBuffer[x]=mobileWallDistCapV320>0?mobileWallDistCapV320:1000; WallTopBuffer[x]=screenH; WallBottomBuffer[x]=-1; WallOwnerBuffer[x]=0; setWallLayersForColumnV227(x,[],drawStats); }
     }
     if(PERLA_V233_OVERDRAW_ROLLBACK_STABILITY){
         drawStats.v233OverdrawRollbackActive = true;
@@ -28313,7 +28433,7 @@ function collectPerlaDebugSnapshot(reason='manuale'){
     const frameSummary=summarizeNumbers(perlaPerfStats.frameIntervals);
     const cpuSummary=summarizeNumbers(perlaPerfStats.cpuMs);
     const snapshot={
-        build:{ id:PERLA_BUILD_ID, base:PERLA_V319_BASE_BUILD, patch:'V319 desktop default: PC avvia SPR/PAC/SKY/MAP; mobile reale resta MAP-only con V318 iOS pacing no-op e Android floor fast-color' , debugEnabled:PERLA_MOBILE_DEBUG_ENABLED, reason, generatedAt:new Date().toISOString(), uptimeSec:+((now-perlaPerfStats.startedAt)/1000).toFixed(2), v258PatchMode:PERLA_V258_PATCH_MODE, v258aPatchMode:PERLA_V258A_PATCH_MODE, v303PatchMode:PERLA_V303_PATCH_MODE, v304PatchMode:PERLA_V304_PATCH_MODE, v305PatchMode:PERLA_V305_PATCH_MODE, v306PatchMode:PERLA_V306_PATCH_MODE, v307PatchMode:PERLA_V307_PATCH_MODE, v308PatchMode:PERLA_V308_PATCH_MODE, v309PatchMode:PERLA_V309_PATCH_MODE, v310PatchMode:PERLA_V310_PATCH_MODE, v311PatchMode:PERLA_V311_PATCH_MODE, v312PatchMode:PERLA_V312_PATCH_MODE, v313PatchMode:PERLA_V313_PATCH_MODE, v314PatchMode:PERLA_V314_PATCH_MODE, v315PatchMode:PERLA_V315_PATCH_MODE, v317PatchMode:PERLA_V317_PATCH_MODE, v318PatchMode:PERLA_V318_PATCH_MODE, v319PatchMode:PERLA_V319_PATCH_MODE, optimizationV315:perlaOptimizationSummaryV315(), v317:{debugPanelMinimapReveal:!!PERLA_V317_DEBUG_PANEL_MINIMAP_REVEAL_SAFE, debugOutputSuppressed:!!PERLA_V317_DEBUG_OUTPUT_SUPPRESSED_DURING_TOUR_SAFE, startupMinimapOnlyBaseline:!!PERLA_V317_STARTUP_MINIMAP_ONLY_BASELINE_SAFE}, v318:{iosPacingNoop:!!(typeof perlaIOSPacingNoopRuntimeV318==='function'&&perlaIOSPacingNoopRuntimeV318()), androidFloorFastColor:!!PERLA_V318_ANDROID_FLOOR_FAST_COLOR_SAFE}, v319:{desktopDefaultOptimization:!!PERLA_V319_DESKTOP_DEFAULT_OPTIMIZATION_SAFE, desktopDefaultProfile:PERLA_V319_DESKTOP_DEFAULT_PROFILE, mobileDefaultProfile:PERLA_V319_MOBILE_DEFAULT_PROFILE} },
+        build:{ id:PERLA_BUILD_ID, base:PERLA_V321_BASE_BUILD, patch:'V321 default toggle reset: debug toggle choices are session-only; reload/rientro restores desktop_default or mobile_organic' , debugEnabled:PERLA_MOBILE_DEBUG_ENABLED, reason, generatedAt:new Date().toISOString(), uptimeSec:+((now-perlaPerfStats.startedAt)/1000).toFixed(2), v258PatchMode:PERLA_V258_PATCH_MODE, v258aPatchMode:PERLA_V258A_PATCH_MODE, v303PatchMode:PERLA_V303_PATCH_MODE, v304PatchMode:PERLA_V304_PATCH_MODE, v305PatchMode:PERLA_V305_PATCH_MODE, v306PatchMode:PERLA_V306_PATCH_MODE, v307PatchMode:PERLA_V307_PATCH_MODE, v308PatchMode:PERLA_V308_PATCH_MODE, v309PatchMode:PERLA_V309_PATCH_MODE, v310PatchMode:PERLA_V310_PATCH_MODE, v311PatchMode:PERLA_V311_PATCH_MODE, v312PatchMode:PERLA_V312_PATCH_MODE, v313PatchMode:PERLA_V313_PATCH_MODE, v314PatchMode:PERLA_V314_PATCH_MODE, v315PatchMode:PERLA_V315_PATCH_MODE, v317PatchMode:PERLA_V317_PATCH_MODE, v318PatchMode:PERLA_V318_PATCH_MODE, v319PatchMode:PERLA_V319_PATCH_MODE, v320PatchMode:PERLA_V320_PATCH_MODE, v321PatchMode:PERLA_V321_PATCH_MODE, optimizationV315:perlaOptimizationSummaryV315(), v317:{debugPanelMinimapReveal:!!PERLA_V317_DEBUG_PANEL_MINIMAP_REVEAL_SAFE, debugOutputSuppressed:!!PERLA_V317_DEBUG_OUTPUT_SUPPRESSED_DURING_TOUR_SAFE, startupMinimapOnlyBaseline:!!PERLA_V317_STARTUP_MINIMAP_ONLY_BASELINE_SAFE}, v318:{iosPacingNoop:!!(typeof perlaIOSPacingNoopRuntimeV318==='function'&&perlaIOSPacingNoopRuntimeV318()), androidFloorFastColor:!!PERLA_V318_ANDROID_FLOOR_FAST_COLOR_SAFE}, v319:{desktopDefaultOptimization:!!PERLA_V319_DESKTOP_DEFAULT_OPTIMIZATION_SAFE, desktopDefaultProfile:PERLA_V319_DESKTOP_DEFAULT_PROFILE, mobileDefaultProfile:PERLA_V319_MOBILE_DEFAULT_PROFILE}, v320:(typeof perlaMobileOrganicRenderSummaryV320==='function')?perlaMobileOrganicRenderSummaryV320():null, v321:{toggleResetOnReload:!!PERLA_V321_TOGGLE_RESET_ON_RELOAD_SAFE, baseBuild:PERLA_V321_BASE_BUILD, patchMode:PERLA_V321_PATCH_MODE} },
         app:{ title:document.title, url:location.href, online:navigator.onLine, visibilityState:document.visibilityState, focus:document.hasFocus && document.hasFocus() },
         device:{ userAgent:navigator.userAgent, platform:navigator.platform||null, language:navigator.language||null, languages:navigator.languages||null, maxTouchPoints:navigator.maxTouchPoints||0, hardwareConcurrency:navigator.hardwareConcurrency||null, deviceMemory:navigator.deviceMemory||null, vendor:navigator.vendor||null },
         viewport:{ mode:currentViewportMode, innerWidth:window.innerWidth, innerHeight:window.innerHeight, outerWidth:window.outerWidth, outerHeight:window.outerHeight, devicePixelRatio:window.devicePixelRatio, orientation:(screen.orientation?{type:screen.orientation.type, angle:screen.orientation.angle}:{ type:null, angle:window.orientation||0 }), visualViewport:getVisualViewportInfo() },
@@ -28478,10 +28598,6 @@ function perlaDebugGroupInputsV316(){
 function perlaSyncDebugOptimizationControlsV316(){
     if(typeof perlaOptimizationSummaryV315!=='function') return null;
     const summary=perlaOptimizationSummaryV315();
-    if(perlaDebugOptSelect){
-        const has=[].some.call(perlaDebugOptSelect.options,opt=>opt.value===summary.profile);
-        perlaDebugOptSelect.value=has?summary.profile:'simple';
-    }
     const groups=summary.groups||{};
     perlaDebugGroupInputsV316().forEach(input=>{
         const group=String(input.getAttribute('data-perla-opt-group')||'');
@@ -28504,12 +28620,12 @@ function perlaApplyDebugOptimizationControlsV316(fromGroups){
         summary=perlaOptimizationProfileV315(profile, true);
     }
     summary=perlaSyncDebugOptimizationControlsV316()||summary;
-    if(perlaDebugOptApplyBtn){
-        const label=summary && summary.profile ? summary.profile : 'OK';
-        perlaDebugOptApplyBtn.textContent=String(label).replace('custom:','').slice(0,10).toUpperCase();
-        setTimeout(()=>{ perlaDebugOptApplyBtn.textContent='OK'; }, 1800);
+    const beforeSet=new Set((before&&before.enabledGroups)||[]);
+    const afterSet=new Set((summary&&summary.enabledGroups)||[]);
+    if(beforeSet.has('mobres')!==afterSet.has('mobres') && typeof resizePerlaRenderer==='function'){
+        resizePerlaRenderer(true);
     }
-    perlaSetDebugOutputV317('Profilo performance: '+JSON.stringify(summary,null,2)+'\n\nPer un test formale, ricarica la pagina dopo aver cambiato profilo/gruppi.');
+    perlaSetDebugOutputV317('Toggle performance: '+JSON.stringify(summary,null,2)+'\n\nRES ridimensiona il canvas mobile; DST coordina distanza muri/sprite. I toggle sono immediati e salvati come scelta utente V320.');
     if(typeof perlaPerfSmartStatusV258A==='function' && perlaPerfSmartStatusV258A().active && typeof perlaPerfSmartMarkV258A==='function'){
         const beforeGroups=before && before.enabledGroups ? before.enabledGroups.join('+') : '';
         const afterGroups=summary && summary.enabledGroups ? summary.enabledGroups.join('+') : '';
@@ -28705,7 +28821,7 @@ function perlaTelemetryDeletionReadinessV293(options){
 }
 function perlaTelemetryHealthV293(){
     const warnings=[];
-    if(!/(V29[3-9]|V30[0-9]|V31[0-9])/.test(String(PERLA_BUILD_ID))) warnings.push('build_id_not_v293_to_v312_family');
+    if(!/(V29[3-9]|V30[0-9]|V31[0-9]|V32[0-9])/.test(String(PERLA_BUILD_ID))) warnings.push('build_id_not_v293_to_v32x_family');
     if(!PERLA_V293_NO_VISUAL_OUTPUT_CHANGE) warnings.push('v293_visual_change_flag_not_safe');
     if(String(PERLA_BUILD_ID).indexOf('V294')>=0){
         if(!PERLA_V294_V237_TOMBSTONE_CLEANUP_SAFE) warnings.push('v294_v237_cleanup_flag_not_safe');
@@ -28718,45 +28834,45 @@ function perlaTelemetryHealthV293(){
         if(!PERLA_V295_HIGH_WALL_DIAGNOSTICS_ABSORBED) warnings.push('v295_high_wall_absorption_missing');
         if(!PERLA_V295_FAILED_ROOF_BRANCHES_TOMBSTONED) warnings.push('v295_failed_roof_tombstone_missing');
     }
-    if(/(V29[6789]|V30[0-9]|V31[0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V29[6789]|V30[0-9]|V31[0-9]|V32[0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V296_PHYSICAL_TOMBSTONE_PRUNE_SAFE) warnings.push('v296_physical_prune_flag_not_safe');
         if(!PERLA_V296_NO_VISUAL_OUTPUT_CHANGE) warnings.push('v296_visual_change_flag_not_safe');
         if(!PERLA_V296_FAILED_ROOF_IMPLEMENTATIONS_PRUNED) warnings.push('v296_failed_roof_prune_missing');
         if(!PERLA_V296_HIGH_WALL_IMPLEMENTATIONS_PRUNED) warnings.push('v296_high_wall_prune_missing');
         if(!PERLA_V296_COMPATIBILITY_SHIMS_PRESERVED) warnings.push('v296_compatibility_shims_not_preserved');
     }
-    if(/(V29[789]|V30[0-9]|V31[0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V29[789]|V30[0-9]|V31[0-9]|V32[0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V297_PERGOLA_DRAW_BUDGET_SAFE) warnings.push('v297_pergola_draw_budget_not_safe');
         if(!PERLA_V297_NO_WORLDGEN_CHANGE) warnings.push('v297_worldgen_change_flag_not_safe');
         if(!PERLA_V297_NO_ASSET_CHANGE) warnings.push('v297_asset_change_flag_not_safe');
         if(!PERLA_V297_NO_RAIN_OUTPUT_CHANGE) warnings.push('v297_rain_change_flag_not_safe');
     }
-    if(/(V29[89]|V30[0-9]|V31[0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V29[89]|V30[0-9]|V31[0-9]|V32[0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V298_ROOF_STORM_BUDGET_SAFE) warnings.push('v298_roof_storm_budget_not_safe');
         if(!PERLA_V298_NO_WORLDGEN_CHANGE) warnings.push('v298_worldgen_change_flag_not_safe');
         if(!PERLA_V298_NO_ASSET_CHANGE) warnings.push('v298_asset_change_flag_not_safe');
         if(!PERLA_V298_NO_RAIN_OUTPUT_CHANGE) warnings.push('v298_rain_change_flag_not_safe');
     }
-    if(/(V299|V30[0-9]|V31[0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V299|V30[0-9]|V31[0-9]|V32[0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V299_ROOF_ALWAYS_BUDGET_SAFE) warnings.push('v299_roof_always_budget_not_safe');
         if(!PERLA_V299_NO_WORLDGEN_CHANGE) warnings.push('v299_worldgen_change_flag_not_safe');
         if(!PERLA_V299_NO_ASSET_CHANGE) warnings.push('v299_asset_change_flag_not_safe');
         if(!PERLA_V299_NO_RAIN_OUTPUT_CHANGE) warnings.push('v299_rain_change_flag_not_safe');
     }
-    if(/(V30[0-9]|V31[0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V30[0-9]|V31[0-9]|V32[0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V300_ADAPTIVE_PERFORMANCE_SAFE) warnings.push('v300_adaptive_performance_not_safe');
         if(!PERLA_V300_NO_WORLDGEN_CHANGE) warnings.push('v300_worldgen_change_flag_not_safe');
         if(!PERLA_V300_NO_ASSET_CHANGE) warnings.push('v300_asset_change_flag_not_safe');
         if(!PERLA_V300_NO_RAIN_OUTPUT_CHANGE) warnings.push('v300_rain_change_flag_not_safe');
     }
-    if(/V31[2-9]/.test(String(PERLA_BUILD_ID))){
+    if(/(V31[2-9]|V32[0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V312_REAL_MOBILE_RENDER_PACING_SAFE) warnings.push('v312_real_mobile_render_pacing_not_safe');
         if(!PERLA_V312_MOBILE_ANDROID_RENDER_BUDGET_SAFE) warnings.push('v312_android_render_budget_not_safe');
         if(!PERLA_V312_MOBILE_HOTSPOT_RENDER_BUDGET_SAFE) warnings.push('v312_hotspot_render_budget_not_safe');
         if(!PERLA_V312_IOS_RAF_SCARCITY_GUARD_SAFE) warnings.push('v312_ios_raf_scarcity_guard_not_safe');
         if(!PERLA_V312_NO_PREVIOUS_FRAME_QUALITY_FEEDBACK) warnings.push('v312_previous_frame_quality_feedback_not_disabled');
     }
-    if(/V31[3-9]/.test(String(PERLA_BUILD_ID))){
+    if(/(V31[3-9]|V32[0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V313_REAL_MOBILE_DEVICE_STUTTER_FIX_SAFE) warnings.push('v313_real_mobile_stutter_fix_not_safe');
         if(!PERLA_V313_IOS_RAF_SCARCITY_TIMER_FALLBACK_SAFE) warnings.push('v313_ios_timer_fallback_not_safe');
         if(!PERLA_V313_ANDROID_UNKNOWN_STRIPE_GUARD_SAFE) warnings.push('v313_android_unknown_stripe_guard_not_safe');
@@ -29004,45 +29120,45 @@ function perlaModernDebugHealthV295(){
     if(!PERLA_V295_MODERN_DEBUG_HUB_CLEANUP_SAFE) warnings.push('v295_cleanup_flag_missing');
     if(!PERLA_V295_NO_VISUAL_OUTPUT_CHANGE) warnings.push('v295_visual_change_flag_not_safe');
     if(!PERLA_V295_V293_COMPATIBILITY_PRESERVED) warnings.push('v293_compatibility_not_declared');
-    if(/(V29[6789]|V30[0-9]|V31[0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V29[6789]|V30[0-9]|V31[0-9]|V32[0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V296_PHYSICAL_TOMBSTONE_PRUNE_SAFE) warnings.push('v296_physical_prune_flag_missing');
         if(!PERLA_V296_NO_VISUAL_OUTPUT_CHANGE) warnings.push('v296_visual_change_flag_not_safe');
         if(!PERLA_V296_FAILED_ROOF_IMPLEMENTATIONS_PRUNED) warnings.push('v296_failed_roof_implementation_prune_missing');
         if(!PERLA_V296_HIGH_WALL_IMPLEMENTATIONS_PRUNED) warnings.push('v296_high_wall_implementation_prune_missing');
         if(!PERLA_V296_COMPATIBILITY_SHIMS_PRESERVED) warnings.push('v296_compatibility_shims_missing');
     }
-    if(/(V29[789]|V30[0-9]|V31[0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V29[789]|V30[0-9]|V31[0-9]|V32[0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V297_PERGOLA_DRAW_BUDGET_SAFE) warnings.push('v297_pergola_draw_budget_missing');
         if(!PERLA_V297_NO_WORLDGEN_CHANGE) warnings.push('v297_worldgen_change_flag_not_safe');
         if(!PERLA_V297_NO_ASSET_CHANGE) warnings.push('v297_asset_change_flag_not_safe');
         if(!PERLA_V297_NO_RAIN_OUTPUT_CHANGE) warnings.push('v297_rain_change_flag_not_safe');
     }
-    if(/(V29[89]|V30[0-9]|V31[0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V29[89]|V30[0-9]|V31[0-9]|V32[0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V298_ROOF_STORM_BUDGET_SAFE) warnings.push('v298_roof_storm_budget_missing');
         if(!PERLA_V298_NO_WORLDGEN_CHANGE) warnings.push('v298_worldgen_change_flag_not_safe');
         if(!PERLA_V298_NO_ASSET_CHANGE) warnings.push('v298_asset_change_flag_not_safe');
         if(!PERLA_V298_NO_RAIN_OUTPUT_CHANGE) warnings.push('v298_rain_change_flag_not_safe');
     }
-    if(/(V299|V30[0-9]|V31[0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V299|V30[0-9]|V31[0-9]|V32[0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V299_ROOF_ALWAYS_BUDGET_SAFE) warnings.push('v299_roof_always_budget_missing');
         if(!PERLA_V299_NO_WORLDGEN_CHANGE) warnings.push('v299_worldgen_change_flag_not_safe');
         if(!PERLA_V299_NO_ASSET_CHANGE) warnings.push('v299_asset_change_flag_not_safe');
         if(!PERLA_V299_NO_RAIN_OUTPUT_CHANGE) warnings.push('v299_rain_change_flag_not_safe');
     }
-    if(/(V30[0-9]|V31[0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V30[0-9]|V31[0-9]|V32[0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V300_ADAPTIVE_PERFORMANCE_SAFE) warnings.push('v300_adaptive_performance_missing');
         if(!PERLA_V300_NO_WORLDGEN_CHANGE) warnings.push('v300_worldgen_change_flag_not_safe');
         if(!PERLA_V300_NO_ASSET_CHANGE) warnings.push('v300_asset_change_flag_not_safe');
         if(!PERLA_V300_NO_RAIN_OUTPUT_CHANGE) warnings.push('v300_rain_change_flag_not_safe');
     }
-    if(/V31[2-9]/.test(String(PERLA_BUILD_ID))){
+    if(/(V31[2-9]|V32[0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V312_REAL_MOBILE_RENDER_PACING_SAFE) warnings.push('v312_real_mobile_render_pacing_missing');
         if(!PERLA_V312_MOBILE_ANDROID_RENDER_BUDGET_SAFE) warnings.push('v312_android_render_budget_missing');
         if(!PERLA_V312_MOBILE_HOTSPOT_RENDER_BUDGET_SAFE) warnings.push('v312_hotspot_render_budget_missing');
         if(!PERLA_V312_IOS_RAF_SCARCITY_GUARD_SAFE) warnings.push('v312_ios_raf_scarcity_guard_missing');
         if(!PERLA_V312_NO_PREVIOUS_FRAME_QUALITY_FEEDBACK) warnings.push('v312_previous_frame_quality_feedback_not_disabled');
     }
-    if(/V31[3-9]/.test(String(PERLA_BUILD_ID))){
+    if(/(V31[3-9]|V32[0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V313_REAL_MOBILE_DEVICE_STUTTER_FIX_SAFE) warnings.push('v313_real_mobile_stutter_fix_missing');
         if(!PERLA_V313_IOS_RAF_SCARCITY_TIMER_FALLBACK_SAFE) warnings.push('v313_ios_timer_fallback_missing');
         if(!PERLA_V313_ANDROID_UNKNOWN_STRIPE_GUARD_SAFE) warnings.push('v313_android_unknown_stripe_guard_missing');
@@ -29240,6 +29356,8 @@ function collectPerlaPerformanceBaselineV258A(reason='manual'){
     base.v272={realRoofUndersideEaveNearGeometry:!!PERLA_V272_REAL_ROOF_UNDERSIDE_EAVE_NEAR_GEOMETRY_SAFE, baseBuild:PERLA_V272_BASE_BUILD, patchMode:PERLA_V272_PATCH_MODE, source:'V271_plus_roof_space_geometry_not_original_fill', originalRoofFillForbidden:!!PERLA_V272_FORBID_ORIGINAL_ROOF_FILL, fakeBandForbidden:!!PERLA_V272_FORBID_FAKE_PERIMETER_BAND, summary:(typeof perlaRealRoofUndersideEaveSummaryV272==='function')?perlaRealRoofUndersideEaveSummaryV272():null};
     base.v273={realCeilingCloneExternalEaveAnchor:!!PERLA_V273_REAL_CEILING_CLONE_EXTERNAL_EAVE_ANCHOR_SAFE, baseBuild:PERLA_V273_BASE_BUILD, patchMode:PERLA_V273_PATCH_MODE, anchorZ:PERLA_V273_ANCHOR_Z_SOURCE, externalOnly:!!PERLA_V273_EXTERNAL_ONLY, originalRoofFillForbidden:!!PERLA_V273_FORBID_ORIGINAL_ROOF_FILL, edgeRailFallbackAsPrimaryForbidden:!!PERLA_V273_FORBID_EDGE_RAIL_FALLBACK_AS_PRIMARY, summary:(typeof perlaRealCeilingCloneEaveAnchorSummaryV273==='function')?perlaRealCeilingCloneEaveAnchorSummaryV273():null};
     base.v319={desktopDefaultOptimization:!!PERLA_V319_DESKTOP_DEFAULT_OPTIMIZATION_SAFE, baseBuild:PERLA_V319_BASE_BUILD, patchMode:PERLA_V319_PATCH_MODE, desktopDefaultProfile:PERLA_V319_DESKTOP_DEFAULT_PROFILE, mobileDefaultProfile:PERLA_V319_MOBILE_DEFAULT_PROFILE, optimizationSummary:(typeof perlaOptimizationSummaryV315==='function')?perlaOptimizationSummaryV315():null};
+    base.v320={mobileOrganicRender:!!PERLA_V320_MOBILE_ORGANIC_RENDER_SAFE, baseBuild:PERLA_V320_BASE_BUILD, patchMode:PERLA_V320_PATCH_MODE, noWorldgenChange:!!PERLA_V320_NO_WORLDGEN_CHANGE, noAssetChange:!!PERLA_V320_NO_ASSET_CHANGE, noRainOutputChange:!!PERLA_V320_NO_RAIN_OUTPUT_CHANGE, visualStabilityTarget:!!PERLA_V320_VISUAL_STABILITY_TARGET, summary:(typeof perlaMobileOrganicRenderSummaryV320==='function')?perlaMobileOrganicRenderSummaryV320():null, last:perlaLastDrawStats?{wallDistCap:perlaLastDrawStats.mobileOrganicWallDistCapV320||0,spriteDistCap:perlaLastDrawStats.mobileOrganicSpriteDistCapV320||0,wallRayCapBreaks:perlaLastDrawStats.mobileOrganicWallRayCapBreaksV320||0,spriteBroadphaseCapApplied:perlaLastDrawStats.mobileOrganicSpriteBroadphaseCapAppliedV320||0}:null};
+    base.v321={toggleResetOnReload:!!PERLA_V321_TOGGLE_RESET_ON_RELOAD_SAFE, baseBuild:PERLA_V321_BASE_BUILD, patchMode:PERLA_V321_PATCH_MODE, noWorldgenChange:!!PERLA_V321_NO_WORLDGEN_CHANGE, noAssetChange:!!PERLA_V321_NO_ASSET_CHANGE, noRainOutputChange:!!PERLA_V321_NO_RAIN_OUTPUT_CHANGE, visualStabilityTarget:!!PERLA_V321_VISUAL_STABILITY_TARGET, optimizationSummary:(typeof perlaOptimizationSummaryV315==='function')?perlaOptimizationSummaryV315():null};
     base.telemetryV293=perlaUnifiedTelemetrySummaryV293({source:'v258a_baseline'});
     base.smartRecorder=(typeof perlaPerfSmartStatusV258A==='function') ? perlaPerfSmartStatusV258A() : null;
     return base;
@@ -29290,6 +29408,17 @@ perlaPerfSmartCurrentSampleV258A = function(metrics, trigger){
     };
     sample.smartAdaptiveV300=(typeof perlaSmartAdaptiveModeSampleV300==='function') ? perlaSmartAdaptiveModeSampleV300() : {enabled:false,level:0};
     sample.optimizationV315=(typeof perlaOptimizationSummaryV315==='function') ? perlaOptimizationSummaryV315() : null;
+    sample.mobileOrganicV320={
+        enabled:!!PERLA_V320_MOBILE_ORGANIC_RENDER_SAFE,
+        renderScaleActive:!!(sample.optimizationV315&&sample.optimizationV315.groups&&sample.optimizationV315.groups.mobres),
+        distanceCapActive:!!(sample.optimizationV315&&sample.optimizationV315.groups&&sample.optimizationV315.groups.mobdist),
+        wallDistCap:d.mobileOrganicWallDistCapV320||0,
+        spriteDistCap:d.mobileOrganicSpriteDistCapV320||0,
+        wallRayCapBreaks:d.mobileOrganicWallRayCapBreaksV320||0,
+        spriteBroadphaseCapApplied:d.mobileOrganicSpriteBroadphaseCapAppliedV320||0,
+        screenW:d.screenW||screenW,
+        screenH:d.screenH||screenH
+    };
     sample.force30FpsV302=!!d.force30FpsV302;
     sample.force30FpsStateV302=(typeof perlaForce30FpsSummaryV302==='function') ? perlaForce30FpsSummaryV302() : null;
     sample.framePacingV305=(metrics&&metrics.pacingV305) ? metrics.pacingV305 : ((typeof perlaFramePacingSummaryV305==='function') ? perlaFramePacingSummaryV305().last : null);
@@ -29554,7 +29683,7 @@ function perlaPerfSmartBuildReportV258A(reason){
     const report={
         buildId:PERLA_BUILD_ID,
         baseBuild:PERLA_V315_BASE_BUILD,
-        phase:'V317 mobile debug panel: comandi nascosti dietro minimappa, output nero soppresso, avvio baseline MAP-only',
+        phase:'V320 mobile debug panel: comandi nascosti dietro minimappa, output nero soppresso, toggle RES/DST organici',
         optimizationV315:(typeof perlaOptimizationSummaryV315==='function') ? perlaOptimizationSummaryV315() : null,
         reason:reason||'manual',
         generatedAt:new Date().toISOString(),
@@ -29579,7 +29708,7 @@ function perlaPerfSmartBuildReportV258A(reason){
         markers:st.markers.slice(),
         sampleRetention:{totalSamples:samples.length, retainedSamples:retain, retainedTailOnly:true},
         samples:samples.slice(-retain),
-        notes:{minimapDefaultBehaviorChanged:false, debugPanelMinimapRevealV317:!!PERLA_V317_DEBUG_PANEL_MINIMAP_REVEAL_SAFE, debugOutputSuppressedV317:!!PERLA_V317_DEBUG_OUTPUT_SUPPRESSED_DURING_TOUR_SAFE, startupMinimapOnlyBaselineV317:!!PERLA_V317_STARTUP_MINIMAP_ONLY_BASELINE_SAFE, noWorldgenChange:!!PERLA_V313_NO_WORLDGEN_CHANGE, noAssetChange:!!PERLA_V313_NO_ASSET_CHANGE, noAssetContentChange:!!PERLA_V309_NO_ASSET_CONTENT_CHANGE, noRainOutputChange:!!PERLA_V313_NO_RAIN_OUTPUT_CHANGE, visualOutputChange:'V317 non cambia renderer/worldgen/assets/rain output: nasconde solo comandi debug e forza baseline di avvio simple/MAP-only salvo query esplicita.', recorderDesign:'campiona periodico + frame pesanti + cambio zona/meteo/mode + marker; V317 mantiene classi V301, force30 switch V302, weather pipeline V303, draw-prep V304 e metriche V305-V316 compatibili'},
+        notes:{minimapDefaultBehaviorChanged:false, debugPanelMinimapRevealV317:!!PERLA_V317_DEBUG_PANEL_MINIMAP_REVEAL_SAFE, debugOutputSuppressedV317:!!PERLA_V317_DEBUG_OUTPUT_SUPPRESSED_DURING_TOUR_SAFE, startupMinimapOnlyBaselineV317:!!PERLA_V317_STARTUP_MINIMAP_ONLY_BASELINE_SAFE, resetTogglesOnReloadV321:!!PERLA_V321_TOGGLE_RESET_ON_RELOAD_SAFE, noWorldgenChange:!!PERLA_V321_NO_WORLDGEN_CHANGE, noAssetChange:!!PERLA_V321_NO_ASSET_CHANGE, noAssetContentChange:!!PERLA_V309_NO_ASSET_CONTENT_CHANGE, noRainOutputChange:!!PERLA_V321_NO_RAIN_OUTPUT_CHANGE, visualOutputChange:'V321 non cambia worldgen/assets/rain output: i toggle debug sono solo di sessione e a reload/rientro tornano ai default desktop_default o mobile_organic.', recorderDesign:'campiona periodico + frame pesanti + cambio zona/meteo/mode + marker; V321 mantiene classi V301, force30 switch V302, weather pipeline V303, draw-prep V304 e metriche V305-V321 compatibili'},
         baseline:collectPerlaPerformanceBaselineV258A('smart_report_embedded')
     };
     report.recommendations=perlaPerfSmartRecommendationsV258A(report);
@@ -30068,6 +30197,26 @@ Object.assign(window.__PERLA_DEBUG__, {
     PERLA_V319_PATCH_MODE,
     PERLA_V319_DESKTOP_DEFAULT_PROFILE,
     PERLA_V319_MOBILE_DEFAULT_PROFILE,
+    PERLA_V320_MOBILE_ORGANIC_RENDER_SAFE,
+    PERLA_V320_BASE_BUILD,
+    PERLA_V320_PATCH_MODE,
+    PERLA_V320_NO_WORLDGEN_CHANGE,
+    PERLA_V320_NO_ASSET_CHANGE,
+    PERLA_V320_NO_RAIN_OUTPUT_CHANGE,
+    PERLA_V320_VISUAL_STABILITY_TARGET,
+    PERLA_V320_MOBILE_RENDER_SCALE_PORTRAIT,
+    PERLA_V320_MOBILE_RENDER_SCALE_LANDSCAPE,
+    PERLA_V320_MOBILE_WALL_DIST_CAP_PORTRAIT,
+    PERLA_V320_MOBILE_WALL_DIST_CAP_LANDSCAPE,
+    PERLA_V320_MOBILE_SPRITE_DIST_PAD,
+    PERLA_V321_TOGGLE_RESET_ON_RELOAD_SAFE,
+    PERLA_V321_BASE_BUILD,
+    PERLA_V321_PATCH_MODE,
+    PERLA_V321_NO_WORLDGEN_CHANGE,
+    PERLA_V321_NO_ASSET_CHANGE,
+    PERLA_V321_NO_RAIN_OUTPUT_CHANGE,
+    PERLA_V321_VISUAL_STABILITY_TARGET,
+    perlaMobileOrganicRenderSummaryV320,
     perlaDefaultOptimizationProfileV319,
     perlaMatrixRuntimeV319,
     perlaDebugPanelSummaryV317,
