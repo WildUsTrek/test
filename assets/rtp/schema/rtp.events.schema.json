@@ -14,6 +14,9 @@
         "required": [
           "eventId",
           "eventType",
+          "eventSource",
+          "sourceType",
+          "sourceRationale",
           "location",
           "timeBand",
           "participants",
@@ -28,6 +31,12 @@
         "additionalProperties": true,
         "properties": {
           "eventId": { "type": "string", "minLength": 1 },
+          "eventSource": {
+            "enum": ["script_explicit", "storyboard_explicit", "gameplay_explicit", "inferred"]
+          },
+          "sourceType": { "enum": ["explicit", "inferred"] },
+          "sourceRationale": { "type": "string", "minLength": 1 },
+          "inferenceRationale": { "type": "string", "minLength": 1 },
           "eventType": {
             "enum": [
               "intro",

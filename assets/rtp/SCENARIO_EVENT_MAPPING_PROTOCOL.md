@@ -23,10 +23,13 @@ Required specialist gate:
 - `rtp-scenario-workflow-planner` is `CALL` at task start and end for non-trivial RTP/scenario branch work. It reads `PERLA1/RTP_GAME_COMPLETION_PLAN.md` at task start, updates it at task end when production state changes, reads and updates `PERLA1/RTP_SCENARIO_WORKFLOW_ROADMAP.md` with current phase, active milestone, task packet, blockers, validation evidence, completed delta, and next step; it also opens and closes `PERLA1/RTP_SCENARIO_TASK_LEDGER.json` with planner start/end evidence.
 - `scenario-rtp-map-auditor` is `CALL` before and after scenario/RTP identity mapping, entity discovery, source priority, or future manifest planning.
 - `map-placement-auditor` is `CALL` before and after placement, coordinate, zone, walkability, visibility, route, density, or schedule-location decisions.
+- `sprite-animation-placement-auditor` is `CALL` before and after sprite animation settings and placement/readability are coupled: animation IDs, `rtp.behaviors.json`, `rtp.placements.json`, idle/walk loops, facing/mirror-left policy, 8-frame standard animation policy, special ambient exceptions, anchors/contact feet, sprite scale, quality-distance settings, draw distance, LOD/stripe budget, sprite density, or runtime sprite loader/render integration.
 - `event-flow-auditor` is `CALL` before and after event graph, quest, battle placeholder, prerequisite/effect, success/failure, or no-softlock decisions.
 - `dialogue-continuity-auditor` is `CALL` before and after dialogue, speaker, portrait policy, line continuity, or dialogue/event link decisions.
 
 The planner may update only `PERLA1/RTP_GAME_COMPLETION_PLAN.md`, the roadmap, and the ledger files. The auditors are read-only domain checks and must read the game-completion plan when their domain is touched. They do not replace `asset-integrity-auditor`, `code-mapper`, `renderer-block-auditor`, `visual-qa-auditor`, `workflow-guard`, `workflow-consistency-auditor`, `plan-integrity-auditor`, or `task-watchdog`, and they do not make dormant manifests active runtime data.
+
+Project-wide agents, protocols, and root `.codex/hooks.json` are secondary support for RTP/scenario work. They must be mapped and respected, and may be called when the primary RTP workflow lacks a needed specialty or a general guard/runtime/sync concern appears. They cannot bypass the RTP planner, close the RTP ledger, replace mandatory RTP `CALL` agents, or approve RTP readiness alone.
 
 ## Core Principle
 
@@ -94,7 +97,7 @@ For each entity, produce a placement record with:
 - `entityType`
 - `zone`
 - `position`: exact coordinates if provided, otherwise inferred coordinates
-- `placementSource`: `script_explicit`, `gameplay_explicit`, or `inferred`
+- `placementSource`: `script_explicit`, `storyboard_explicit`, `gameplay_explicit`, or `inferred`
 - `placementRationale`
 - `timeBands`
 - `availabilityConditions`
@@ -166,6 +169,7 @@ Premium raycaster-world standards:
 - animals should use ambient movement, short patrols, fleeing/perching/resting loops, or biome-specific idle;
 - no behavior should create heavy sprite clustering in one camera corridor;
 - no routine should require left-facing duplicate assets; left-facing render is derived by mirror.
+- live RTP sprite quality-distance, draw distance, LOD/stripe behavior, anchors/contact feet, and readability must stay coherent with the historical `assets/raycast/` sprite pipeline unless measured visual/performance validation approves a documented exception.
 
 Recommended static spacing before exact coordinate activation:
 
@@ -182,7 +186,7 @@ For every character dialogue:
 
 - connect it to a scenario line, event line, quest step, or fallback ambient line;
 - record prerequisites and outcome effects;
-- attach the correct portrait only for main characters unless an NPC portrait exception is explicitly approved;
+- attach the correct portrait for main characters and for NPCs with an explicitly approved `npc_portrait_exception`;
 - do not assign dialogue to animals;
 - do not let dialogue contradict the entity's time band or current event state.
 
@@ -282,7 +286,7 @@ Before declaring a scenario/gameplay mapping ready, validate:
 
 - all referenced character/animal IDs exist in `rtp.characters.json`;
 - no animal has dialogue;
-- no NPC portrait is used unless explicitly promoted;
+- no NPC portrait is used unless it is explicitly promoted through `npc_portrait_exception` and `portraitExceptionApproved`;
 - no entity is scheduled in impossible overlapping locations;
 - event prerequisites and effects do not create loops or dead states;
 - battle placeholders have both `won` and `lost` test outcomes when downstream logic needs them;

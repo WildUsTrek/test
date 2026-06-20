@@ -9,9 +9,10 @@ Optimized WebP assets are present under this folder. Until runtime code explicit
 Current generated payload:
 
 - 9 main-character dialogue portraits;
+- 9 approved real supplied NPC dialogue portraits;
 - 198 standard 8-frame sprite animations plus 4 special ambient source assets;
-- 211 WebP files total;
-- 5,632,616 generated WebP bytes;
+- 220 WebP files total;
+- 5,757,790 generated WebP bytes;
 - 0 generated PNG files, 0 generated nested zip files.
 
 ## When To Use This Reference
@@ -23,6 +24,8 @@ For tasks that map sceneggiatura/gameplay into world placement, time bands, beha
 For the first supplied scenario/gameplay source set, also consult `PERLA1/report/SCENEGGIATURA_GAMEPLAY_MAPPING_DRAFT_2026-06-14.md`.
 
 When scenario/gameplay mapping is in scope, the intake gate must call `rtp-scenario-workflow-planner` at task start and end for non-trivial work, must read/update `PERLA1/RTP_GAME_COMPLETION_PLAN.md` as the permanent production plan, must record the task in `PERLA1/RTP_SCENARIO_TASK_LEDGER.json`, and must call the matching read-only domain auditors: `scenario-rtp-map-auditor`, `map-placement-auditor`, `event-flow-auditor`, and `dialogue-continuity-auditor` as their signals apply. These agents must be aware of the game-completion plan, do not activate the RTP layer, and do not replace runtime validation.
+
+When sprite animation settings and map placement/readability are jointly touched, `sprite-animation-placement-auditor` is `CALL`. This covers `rtp.behaviors.json`, `rtp.placements.json`, animation IDs, idle/walk loops, facing/mirror-left policy, 8-frame standard animation policy, special ambient exceptions, anchors/contact feet, sprite scale, quality-distance settings, draw distance, LOD/stripe budget, sprite density, or runtime sprite loader/render integration. It must compare RTP main/NPC/animal settings with the historical `assets/raycast/` sprite pipeline and current runtime sprite symbols, not create a separate RTP-only quality policy.
 
 The permanent game-completion plan is `PERLA1/RTP_GAME_COMPLETION_PLAN.md`. It records the ordered work needed to finish the game layer: main characters, NPCs, animals, scenario manifests, events, dialogues, gameplay systems, runtime integration, and final intro storyboard integration. The planner must read it at task start and update it at task end when production state changes.
 The permanent roadmap is `PERLA1/RTP_SCENARIO_WORKFLOW_ROADMAP.md`. It records current phase, active milestone, active task packet, blockers, validation evidence, completed delta, and next step.
@@ -50,6 +53,8 @@ assets/rtp/
   characters/
     portraits/
       main/
+        <character_id>.webp
+      npc/
         <character_id>.webp
     sprites/
       main/
@@ -80,13 +85,13 @@ Sprite animation: characters/sprites/main/bruno_basalto/iso_walk_down.webp
 
 ## Portrait Contract
 
-Portraits are part of the optimized RTP layer, but the first dialogue contract is main-character-only.
+Portraits are part of the optimized RTP layer. Main characters and approved NPC dialogue portraits are supported; animals never receive dialogue portraits.
 
 - Purpose: RPG Maker-style dialogue portrait.
 - Runtime format: optimized WebP.
 - Target size: 512 px max side unless a smaller UI target is explicitly approved.
 - Load policy: lazy load on first dialogue open, or prefetch shortly before a known scripted dialogue.
-- NPC portraits from the source package are excluded by default until narrative design promotes an NPC to portrait-speaking dialogue.
+- NPC portraits from the source package are included as approved dialogue portraits when declared in `manifest/rtp.characters.json` and referenced through `npc_portrait_exception` with `portraitExceptionApproved: true`.
 
 ## Sprite Contract
 
@@ -134,4 +139,5 @@ The performance budget validator checks dormant manifest budgets before runtime 
 - Never extract source zip paths without path normalization and zip-slip checks.
 - Verify file magic bytes; do not trust extensions.
 - Keep this RTP layer separate from legacy `assets/raycast/` assets.
+- Runtime quality-distance, draw distance, LOD/stripe, and anchor/readability behavior for RTP live sprites must remain coherent with the historical `assets/raycast/` sprite pipeline unless measured performance/visual validation approves a documented exception.
 - Update `PERLA1_PROJECT_MAP.md` and run the required validation only when runtime code starts consuming this manifest.

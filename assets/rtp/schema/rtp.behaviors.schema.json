@@ -15,6 +15,8 @@
           "id",
           "placementId",
           "entityId",
+          "behaviorSource",
+          "sourceType",
           "mode",
           "anchor",
           "radius",
@@ -30,6 +32,11 @@
           "id": { "type": "string", "minLength": 1 },
           "placementId": { "type": "string", "minLength": 1 },
           "entityId": { "type": "string", "minLength": 1 },
+          "behaviorSource": {
+            "enum": ["script_explicit", "storyboard_explicit", "gameplay_explicit", "inferred"]
+          },
+          "sourceType": { "enum": ["explicit", "inferred"] },
+          "inferenceRationale": { "type": "string", "minLength": 1 },
           "mode": { "enum": ["idle_walk_loop", "idle_only", "patrol_loop", "ambient_loop", "event_only"] },
           "anchor": { "type": "object" },
           "radius": { "type": "number", "minimum": 0 },

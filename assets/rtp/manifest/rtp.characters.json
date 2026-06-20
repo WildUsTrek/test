@@ -16,9 +16,11 @@
     "rolesEnabledByDefault": [
       "main"
     ],
-    "rolesExcludedByDefault": [
+    "rolesEnabledByApprovedException": [
       "npc"
     ],
+    "rolesExcludedByDefault": [],
+    "npcPortraitException": "approved_real_supplied_portraits_only",
     "format": "webp",
     "maxSidePx": 512,
     "loadPolicy": "dialogue_lazy_or_event_prefetch"
@@ -68,7 +70,7 @@
       "rows": 2
     },
     "frameSelectionPolicy": "visual_arc_length_even_distribution",
-    "specialAmbientPolicy": "keep_real_source_frame_count; do_not_duplicate_static_or_short_ambient_sources_to_8"
+    "specialAmbientPolicy": "keep_real_source_frame_count; preserve_special_25_frame_5x5_atlas; do_not_duplicate_static_or_short_ambient_sources_to_8"
   },
   "paths": {
     "mainPortrait": "characters/portraits/main/{id}.webp",
@@ -2793,6 +2795,19 @@
           "mirrorsToLeft": true,
           "runtimeRepresentation": "optimized_8_frame_atlas_webp"
         }
+      },
+      "portraitAsset": {
+        "path": "characters/portraits/npc/agente_igiene_007.webp",
+        "bytes": 14334,
+        "width": 512,
+        "height": 512,
+        "format": "webp",
+        "reused": false,
+        "purpose": "dialogue_portrait",
+        "dialogueStyle": "rpg_maker",
+        "loadPolicy": "dialogue_lazy_or_event_prefetch",
+        "portraitPolicy": "npc_portrait_exception",
+        "source": "RTP CHARACTERS/characters portrait/npc real supplied portrait optimized to WebP"
       }
     },
     {
@@ -3054,6 +3069,19 @@
           "mirrorsToLeft": true,
           "runtimeRepresentation": "optimized_8_frame_atlas_webp"
         }
+      },
+      "portraitAsset": {
+        "path": "characters/portraits/npc/cocco_bill.webp",
+        "bytes": 17624,
+        "width": 512,
+        "height": 512,
+        "format": "webp",
+        "reused": false,
+        "purpose": "dialogue_portrait",
+        "dialogueStyle": "rpg_maker",
+        "loadPolicy": "dialogue_lazy_or_event_prefetch",
+        "portraitPolicy": "npc_portrait_exception",
+        "source": "RTP CHARACTERS/characters portrait/npc real supplied portrait optimized to WebP"
       }
     },
     {
@@ -3315,6 +3343,19 @@
           "mirrorsToLeft": true,
           "runtimeRepresentation": "optimized_8_frame_atlas_webp"
         }
+      },
+      "portraitAsset": {
+        "path": "characters/portraits/npc/dj_giacomo_tristezza.webp",
+        "bytes": 11422,
+        "width": 512,
+        "height": 512,
+        "format": "webp",
+        "reused": false,
+        "purpose": "dialogue_portrait",
+        "dialogueStyle": "rpg_maker",
+        "loadPolicy": "dialogue_lazy_or_event_prefetch",
+        "portraitPolicy": "npc_portrait_exception",
+        "source": "RTP CHARACTERS/characters portrait/npc real supplied portrait optimized to WebP"
       }
     },
     {
@@ -3576,6 +3617,19 @@
           "mirrorsToLeft": true,
           "runtimeRepresentation": "optimized_8_frame_atlas_webp"
         }
+      },
+      "portraitAsset": {
+        "path": "characters/portraits/npc/ennio_verticale.webp",
+        "bytes": 15286,
+        "width": 512,
+        "height": 512,
+        "format": "webp",
+        "reused": false,
+        "purpose": "dialogue_portrait",
+        "dialogueStyle": "rpg_maker",
+        "loadPolicy": "dialogue_lazy_or_event_prefetch",
+        "portraitPolicy": "npc_portrait_exception",
+        "source": "RTP CHARACTERS/characters portrait/npc real supplied portrait optimized to WebP"
       }
     },
     {
@@ -3837,6 +3891,19 @@
           "mirrorsToLeft": true,
           "runtimeRepresentation": "optimized_8_frame_atlas_webp"
         }
+      },
+      "portraitAsset": {
+        "path": "characters/portraits/npc/franca_sottovuoto.webp",
+        "bytes": 13624,
+        "width": 512,
+        "height": 512,
+        "format": "webp",
+        "reused": false,
+        "purpose": "dialogue_portrait",
+        "dialogueStyle": "rpg_maker",
+        "loadPolicy": "dialogue_lazy_or_event_prefetch",
+        "portraitPolicy": "npc_portrait_exception",
+        "source": "RTP CHARACTERS/characters portrait/npc real supplied portrait optimized to WebP"
       }
     },
     {
@@ -4098,6 +4165,19 @@
           "mirrorsToLeft": true,
           "runtimeRepresentation": "optimized_8_frame_atlas_webp"
         }
+      },
+      "portraitAsset": {
+        "path": "characters/portraits/npc/kevin_predatore.webp",
+        "bytes": 12998,
+        "width": 512,
+        "height": 512,
+        "format": "webp",
+        "reused": false,
+        "purpose": "dialogue_portrait",
+        "dialogueStyle": "rpg_maker",
+        "loadPolicy": "dialogue_lazy_or_event_prefetch",
+        "portraitPolicy": "npc_portrait_exception",
+        "source": "RTP CHARACTERS/characters portrait/npc real supplied portrait optimized to WebP"
       }
     },
     {
@@ -4359,6 +4439,19 @@
           "mirrorsToLeft": true,
           "runtimeRepresentation": "optimized_8_frame_atlas_webp"
         }
+      },
+      "portraitAsset": {
+        "path": "characters/portraits/npc/klaus_von_wurst.webp",
+        "bytes": 12074,
+        "width": 512,
+        "height": 512,
+        "format": "webp",
+        "reused": false,
+        "purpose": "dialogue_portrait",
+        "dialogueStyle": "rpg_maker",
+        "loadPolicy": "dialogue_lazy_or_event_prefetch",
+        "portraitPolicy": "npc_portrait_exception",
+        "source": "RTP CHARACTERS/characters portrait/npc real supplied portrait optimized to WebP"
       }
     },
     {
@@ -4620,6 +4713,19 @@
           "mirrorsToLeft": true,
           "runtimeRepresentation": "optimized_8_frame_atlas_webp"
         }
+      },
+      "portraitAsset": {
+        "path": "characters/portraits/npc/loris_salvagente.webp",
+        "bytes": 14504,
+        "width": 512,
+        "height": 512,
+        "format": "webp",
+        "reused": false,
+        "purpose": "dialogue_portrait",
+        "dialogueStyle": "rpg_maker",
+        "loadPolicy": "dialogue_lazy_or_event_prefetch",
+        "portraitPolicy": "npc_portrait_exception",
+        "source": "RTP CHARACTERS/characters portrait/npc real supplied portrait optimized to WebP"
       }
     },
     {
@@ -4881,6 +4987,19 @@
           "mirrorsToLeft": true,
           "runtimeRepresentation": "optimized_8_frame_atlas_webp"
         }
+      },
+      "portraitAsset": {
+        "path": "characters/portraits/npc/nonna_pina.webp",
+        "bytes": 13308,
+        "width": 512,
+        "height": 512,
+        "format": "webp",
+        "reused": false,
+        "purpose": "dialogue_portrait",
+        "dialogueStyle": "rpg_maker",
+        "loadPolicy": "dialogue_lazy_or_event_prefetch",
+        "portraitPolicy": "npc_portrait_exception",
+        "source": "RTP CHARACTERS/characters portrait/npc real supplied portrait optimized to WebP"
       }
     },
     {
@@ -8814,18 +8933,55 @@
           "reused": false,
           "state": "ambient",
           "sourceFacing": "right",
-          "frameCount": 1,
+          "frameCount": 25,
+          "sourceFrameCount": 25,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24
+          ],
           "sourceFrameSize": [
-            1280,
-            1280
+            256,
+            256
           ],
           "sourceAtlasSize": [
             1280,
             1280
           ],
+          "runtimeAtlasSize": [
+            1280,
+            1280
+          ],
+          "runtimeGrid": {
+            "columns": 5,
+            "rows": 5
+          },
           "mirrorsToLeft": true,
-          "runtimeRepresentation": "optimized_direct_webp",
-          "sourceLayout": "special_direct_png"
+          "runtimeRepresentation": "special_25_frame_atlas_webp",
+          "sourceLayout": "special_5x5_atlas_png",
+          "frameSelectionPolicy": "preserve_source_25_frame_cloud_motion"
         },
         "bees_iso_custom_cloud_shake_right_2_0002": {
           "path": "characters/sprites/animals/bees_iso_custom_cloud_shake_right/bees_iso_custom_cloud_shake_right_2_0002.webp",
@@ -8836,18 +8992,55 @@
           "reused": false,
           "state": "ambient",
           "sourceFacing": "right",
-          "frameCount": 1,
+          "frameCount": 25,
+          "sourceFrameCount": 25,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24
+          ],
           "sourceFrameSize": [
-            1280,
-            1280
+            256,
+            256
           ],
           "sourceAtlasSize": [
             1280,
             1280
           ],
+          "runtimeAtlasSize": [
+            1280,
+            1280
+          ],
+          "runtimeGrid": {
+            "columns": 5,
+            "rows": 5
+          },
           "mirrorsToLeft": true,
-          "runtimeRepresentation": "optimized_direct_webp",
-          "sourceLayout": "special_direct_png"
+          "runtimeRepresentation": "special_25_frame_atlas_webp",
+          "sourceLayout": "special_5x5_atlas_png",
+          "frameSelectionPolicy": "preserve_source_25_frame_cloud_motion"
         },
         "bees_iso_custom_cloud_shake_right_0003": {
           "path": "characters/sprites/animals/bees_iso_custom_cloud_shake_right/bees_iso_custom_cloud_shake_right_0003.webp",
@@ -8858,18 +9051,55 @@
           "reused": false,
           "state": "ambient",
           "sourceFacing": "right",
-          "frameCount": 1,
+          "frameCount": 25,
+          "sourceFrameCount": 25,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24
+          ],
           "sourceFrameSize": [
-            1280,
-            1280
+            256,
+            256
           ],
           "sourceAtlasSize": [
             1280,
             1280
           ],
+          "runtimeAtlasSize": [
+            1280,
+            1280
+          ],
+          "runtimeGrid": {
+            "columns": 5,
+            "rows": 5
+          },
           "mirrorsToLeft": true,
-          "runtimeRepresentation": "optimized_direct_webp",
-          "sourceLayout": "special_direct_png"
+          "runtimeRepresentation": "special_25_frame_atlas_webp",
+          "sourceLayout": "special_5x5_atlas_png",
+          "frameSelectionPolicy": "preserve_source_25_frame_cloud_motion"
         }
       }
     },
@@ -8889,18 +9119,327 @@
           "reused": false,
           "state": "ambient",
           "sourceFacing": "down",
-          "frameCount": 1,
+          "frameCount": 25,
+          "sourceFrameCount": 25,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24
+          ],
           "sourceFrameSize": [
-            1280,
-            1280
+            256,
+            256
           ],
           "sourceAtlasSize": [
             1280,
             1280
           ],
+          "runtimeAtlasSize": [
+            1280,
+            1280
+          ],
+          "runtimeGrid": {
+            "columns": 5,
+            "rows": 5
+          },
           "mirrorsToLeft": false,
-          "runtimeRepresentation": "optimized_direct_webp",
-          "sourceLayout": "special_direct_png"
+          "runtimeRepresentation": "special_25_frame_atlas_webp",
+          "sourceLayout": "special_5x5_atlas_png",
+          "frameSelectionPolicy": "preserve_source_25_frame_cloud_motion"
+        }
+      }
+    },
+    {
+      "id": "mosquitoes_iso_yoga_shadow",
+      "displayName": "Zanzare pineta yoga ombra",
+      "role": "animal_ambient",
+      "portrait": "none",
+      "spritesheet": "special_source_layout",
+      "spriteAssets": {
+        "mosquitoes_iso_custom_clouds_shake_down": {
+          "path": "characters/sprites/animals/mosquitoes_iso_custom_clouds_shake_down/mosquitoes_iso_custom_clouds_shake_down.webp",
+          "bytes": 158288,
+          "width": 1280,
+          "height": 1280,
+          "format": "webp",
+          "reused": true,
+          "state": "ambient",
+          "sourceFacing": "down",
+          "frameCount": 25,
+          "sourceFrameCount": 25,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24
+          ],
+          "sourceFrameSize": [
+            256,
+            256
+          ],
+          "sourceAtlasSize": [
+            1280,
+            1280
+          ],
+          "runtimeAtlasSize": [
+            1280,
+            1280
+          ],
+          "runtimeGrid": {
+            "columns": 5,
+            "rows": 5
+          },
+          "mirrorsToLeft": false,
+          "runtimeRepresentation": "special_25_frame_atlas_webp",
+          "sourceLayout": "special_5x5_atlas_png",
+          "frameSelectionPolicy": "preserve_source_25_frame_cloud_motion"
+        }
+      }
+    },
+    {
+      "id": "mosquitoes_iso_yoga_outer",
+      "displayName": "Zanzare pineta yoga esterna",
+      "role": "animal_ambient",
+      "portrait": "none",
+      "spritesheet": "special_source_layout",
+      "spriteAssets": {
+        "mosquitoes_iso_custom_clouds_shake_down": {
+          "path": "characters/sprites/animals/mosquitoes_iso_custom_clouds_shake_down/mosquitoes_iso_custom_clouds_shake_down.webp",
+          "bytes": 158288,
+          "width": 1280,
+          "height": 1280,
+          "format": "webp",
+          "reused": true,
+          "state": "ambient",
+          "sourceFacing": "down",
+          "frameCount": 25,
+          "sourceFrameCount": 25,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24
+          ],
+          "sourceFrameSize": [
+            256,
+            256
+          ],
+          "sourceAtlasSize": [
+            1280,
+            1280
+          ],
+          "runtimeAtlasSize": [
+            1280,
+            1280
+          ],
+          "runtimeGrid": {
+            "columns": 5,
+            "rows": 5
+          },
+          "mirrorsToLeft": false,
+          "runtimeRepresentation": "special_25_frame_atlas_webp",
+          "sourceLayout": "special_5x5_atlas_png",
+          "frameSelectionPolicy": "preserve_source_25_frame_cloud_motion"
+        }
+      }
+    },
+    {
+      "id": "mosquitoes_iso_far_west_pineta",
+      "displayName": "Zanzare pineta ovest",
+      "role": "animal_ambient",
+      "portrait": "none",
+      "spritesheet": "special_source_layout",
+      "spriteAssets": {
+        "mosquitoes_iso_custom_clouds_shake_down": {
+          "path": "characters/sprites/animals/mosquitoes_iso_custom_clouds_shake_down/mosquitoes_iso_custom_clouds_shake_down.webp",
+          "bytes": 158288,
+          "width": 1280,
+          "height": 1280,
+          "format": "webp",
+          "reused": true,
+          "state": "ambient",
+          "sourceFacing": "down",
+          "frameCount": 25,
+          "sourceFrameCount": 25,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24
+          ],
+          "sourceFrameSize": [
+            256,
+            256
+          ],
+          "sourceAtlasSize": [
+            1280,
+            1280
+          ],
+          "runtimeAtlasSize": [
+            1280,
+            1280
+          ],
+          "runtimeGrid": {
+            "columns": 5,
+            "rows": 5
+          },
+          "mirrorsToLeft": false,
+          "runtimeRepresentation": "special_25_frame_atlas_webp",
+          "sourceLayout": "special_5x5_atlas_png",
+          "frameSelectionPolicy": "preserve_source_25_frame_cloud_motion"
+        }
+      }
+    },
+    {
+      "id": "mosquitoes_iso_beach_sections",
+      "displayName": "Zanzare sezioni spiaggia",
+      "role": "animal_ambient",
+      "portrait": "none",
+      "spritesheet": "special_source_layout",
+      "spriteAssets": {
+        "mosquitoes_iso_custom_clouds_shake_down": {
+          "path": "characters/sprites/animals/mosquitoes_iso_custom_clouds_shake_down/mosquitoes_iso_custom_clouds_shake_down.webp",
+          "bytes": 158288,
+          "width": 1280,
+          "height": 1280,
+          "format": "webp",
+          "reused": true,
+          "state": "ambient",
+          "sourceFacing": "down",
+          "frameCount": 25,
+          "sourceFrameCount": 25,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24
+          ],
+          "sourceFrameSize": [
+            256,
+            256
+          ],
+          "sourceAtlasSize": [
+            1280,
+            1280
+          ],
+          "runtimeAtlasSize": [
+            1280,
+            1280
+          ],
+          "runtimeGrid": {
+            "columns": 5,
+            "rows": 5
+          },
+          "mirrorsToLeft": false,
+          "runtimeRepresentation": "special_25_frame_atlas_webp",
+          "sourceLayout": "special_5x5_atlas_png",
+          "frameSelectionPolicy": "preserve_source_25_frame_cloud_motion"
         }
       }
     }
