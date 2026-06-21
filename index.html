@@ -13,7 +13,7 @@
         #mini-map { position:absolute; right:12px; top:12px; width:128px; height:128px; border:2px solid rgba(255,255,255,.6); border-radius:50%; background:rgba(20,16,12,.65); box-shadow:0 5px 22px rgba(0,0,0,.55); }
         #mini-map.perla-debug-panel-toggle { cursor:pointer; touch-action:manipulation; }
         html.perla-rtp-review-v333 #mini-map { cursor:crosshair; }
-        #perlaPauseMenuChipV360 { position:fixed; z-index:8; display:flex; align-items:center; justify-content:center; min-width:48px; height:25px; padding:0 9px; border-radius:999px; color:#25190f; background:linear-gradient(180deg,#f5d99e,#d58a36); border:1px solid rgba(255,255,255,.54); box-shadow:0 7px 18px rgba(0,0,0,.44), inset 0 1px 0 rgba(255,255,255,.35); font-size:10px; line-height:1; font-weight:950; letter-spacing:0; text-transform:uppercase; pointer-events:auto; cursor:pointer; touch-action:manipulation; }
+        #perlaPauseMenuChipV360 { display:none !important; }
         #perlaMiniMapWarningsV360 { position:fixed; z-index:8; display:block; pointer-events:none; }
         #perlaMiniMapWarningsV360 .v360-warning-badge { --pct:0; display:grid; position:absolute; width:var(--perla-mini-warning-size,32px); height:var(--perla-mini-warning-size,32px); border-radius:50%; place-items:center; background:conic-gradient(var(--warn-color,#48c7ff) calc(var(--pct) * 1%), rgba(255,255,255,.16) 0); box-shadow:0 6px 14px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.18); opacity:.66; filter:saturate(.82); cursor:pointer; touch-action:manipulation; pointer-events:auto; }
         #perlaMiniMapWarningsV360 .v360-warning-badge[data-visible="true"] { display:grid; }
@@ -143,9 +143,15 @@
         #perlaInventoryHudV345P2 .inv-gd { color:#eaf9ff; background:linear-gradient(180deg,rgba(130,220,255,.28),rgba(22,82,112,.38)); border-color:rgba(130,220,255,.30); }
         #perlaInventoryHudV345P2 .inv-ec, #perlaInventoryHudV345P2 .inv-gd { display:none; }
         #perlaInventoryHudV345P2 .inv-capacity { color:#eaf7ff; background:linear-gradient(180deg,rgba(40,183,217,.26),rgba(22,71,89,.34)); border-color:rgba(130,220,255,.22); }
-        #perlaInventoryHudV345P2 .inv-debt { display:none; color:#2a150d; background:#ffcc4d; box-shadow:0 0 12px rgba(255,204,77,.22); }
-        #perlaInventoryHudV345P2 .inv-debt.visible { display:inline-flex; }
+        #perlaInventoryHudV345P2 .inv-debt { display:inline-flex; color:#fff7df; background:linear-gradient(180deg,rgba(245,217,158,.18),rgba(24,22,19,.42)); border-color:rgba(245,217,158,.24); box-shadow:0 5px 14px rgba(0,0,0,.28); }
+        #perlaInventoryHudV345P2 .inv-debt[data-alert="true"] { color:#2a150d; background:#ffcc4d; box-shadow:0 0 12px rgba(255,204,77,.28); }
         #perlaInventoryHudV345P2[data-rent-risk="default"] .inv-debt { color:#fff; background:#ef5d54; box-shadow:0 0 14px rgba(239,93,84,.36); }
+        #perlaInventoryHudV345P2 .inv-debt[data-alert-state="default"] { border-color:rgba(255,247,223,.72); animation:perlaStatCriticalPulseV366 .95s ease-in-out infinite; }
+        #perlaInventoryHudV345P2 .inv-capacity { min-width:62px; }
+        #perlaInventoryHudV345P2 .inv-capacity span:last-child { font-size:9px; }
+        #perlaInventoryHudV345P2 .inv-menu { width:34px; min-width:34px; padding:0; color:#25190f; background:linear-gradient(180deg,#f5d99e,#d58a36); border-color:rgba(245,217,158,.58); box-shadow:0 5px 14px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.30); }
+        #perlaInventoryHudV345P2 .inv-menu .inv-icon svg { width:21px; height:21px; }
+        #perlaInventoryHudV345P2 .inv-resources { display:none; }
         #perlaInventoryHudV345P2 .inv-resource { width:34px; padding:0; }
         #perlaInventoryHudV345P2 .inv-resource strong, #perlaInventoryHudV345P2 button .inv-usable-count { position:absolute; right:-4px; bottom:-4px; min-width:16px; height:16px; padding:0 4px; border-radius:999px; color:#25190f; background:#f5d99e; border:1px solid rgba(0,0,0,.25); font-size:8px; line-height:15px; font-weight:950; box-sizing:border-box; text-align:center; }
         #perlaInventoryHudV345P2 .inv-icon { display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; flex:0 0 auto; }
@@ -201,6 +207,24 @@
         #perlaInfoModalV361 .info-actions { display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end; padding-top:2px; }
         #perlaInfoModalV361 .info-action { min-height:34px; padding:0 12px; border-radius:8px; border:1px solid rgba(245,217,158,.44); color:#25190f; background:linear-gradient(180deg,#f5d99e,#d58a36); font-size:11px; line-height:1.1; font-weight:950; }
         #perlaInfoModalV361 .info-action.secondary { color:#fff7df; background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.20); }
+        #perlaInfoModalV361 .info-mission-current { display:grid; grid-template-columns:36px minmax(0,1fr); gap:10px; align-items:start; padding:10px; border-radius:8px; border:1px solid rgba(245,217,158,.34); background:linear-gradient(180deg,rgba(245,217,158,.12),rgba(255,255,255,.045)); }
+        #perlaInfoModalV361 .info-mission-icon { display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:10px; background:rgba(0,0,0,.22); border:1px solid rgba(245,217,158,.24); box-shadow:inset 0 1px 0 rgba(255,255,255,.10); }
+        #perlaInfoModalV361 .info-mission-icon svg { width:24px; height:24px; display:block; overflow:visible; }
+        #perlaInfoModalV361 .info-mission-copy { display:grid; gap:6px; min-width:0; }
+        #perlaInfoModalV361 .info-mission-kicker { color:#7be495; font-size:9px; line-height:1; font-weight:950; text-transform:uppercase; letter-spacing:.06em; }
+        #perlaInfoModalV361 .info-mission-title { color:#fff7df; font-size:13px; line-height:1.16; font-weight:950; }
+        #perlaInfoModalV361 .info-mission-desc { color:rgba(255,247,223,.78); font-size:11px; line-height:1.28; font-weight:760; }
+        #perlaInfoModalV361 .info-mission-timeline { display:grid; gap:6px; }
+        #perlaInfoModalV361 .info-mission-row { display:grid; grid-template-columns:24px minmax(0,1fr) auto; gap:8px; align-items:center; min-height:34px; padding:6px 8px; border-radius:8px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.045); }
+        #perlaInfoModalV361 .info-mission-row[data-state="active"] { border-color:rgba(245,217,158,.38); background:rgba(245,217,158,.08); }
+        #perlaInfoModalV361 .info-mission-row[data-state="done"] { border-color:rgba(69,212,131,.30); background:rgba(69,212,131,.08); }
+        #perlaInfoModalV361 .info-mission-row[data-state="future"] { opacity:.72; filter:saturate(.70); }
+        #perlaInfoModalV361 .info-mission-row .info-mission-icon { width:24px; height:24px; border-radius:8px; }
+        #perlaInfoModalV361 .info-mission-row .info-mission-icon svg { width:17px; height:17px; }
+        #perlaInfoModalV361 .info-mission-row-title { color:#fff7df; font-size:10px; line-height:1.16; font-weight:950; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        #perlaInfoModalV361 .info-mission-state { min-width:52px; padding:5px 7px; border-radius:999px; color:#25190f; background:#f5d99e; font-size:8px; line-height:1; font-weight:950; text-align:center; text-transform:uppercase; }
+        #perlaInfoModalV361 .info-mission-row[data-state="future"] .info-mission-state { color:#fff7df; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.14); }
+        #perlaInfoModalV361 .info-mission-row[data-state="done"] .info-mission-state { background:#82efaa; color:#052315; }
         #loading { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-align:center; background:rgba(0,0,0,.82); z-index:4; letter-spacing:.02em; }
         #loading.hidden { display:none; }
         .perla-loading-card { width:min(390px,calc(100% - 34px)); padding:16px 18px 17px; border-radius:8px; color:#fff7df; background:linear-gradient(180deg,rgba(36,29,20,.94),rgba(6,9,13,.92)); border:1px solid rgba(245,217,158,.34); box-shadow:0 18px 45px rgba(0,0,0,.70), inset 0 1px 0 rgba(255,255,255,.10); }
@@ -257,9 +281,9 @@
         #perlaGuidedTourV363 .tour-body { display:grid; gap:9px; padding:12px 14px; }
         #perlaGuidedTourV363 .tour-body p { margin:0; color:#fff7df; font-size:16px; line-height:1.34; font-weight:760; }
         #perlaGuidedTourV363 .tour-note { color:rgba(255,247,223,.72); font-size:11px; line-height:1.22; font-weight:780; }
-        #perlaRtpUpgradeMenuV334, #perlaRtpBattleModalV334, #perlaRtpChallengeModalV370, #perlaRtpMarketMenuV356 { position:fixed; left:calc(var(--perla-vv-left, 0px) + 14px + env(safe-area-inset-left)); right:calc(14px + env(safe-area-inset-right)); bottom:calc(118px + env(safe-area-inset-bottom)); z-index:15; display:none; max-width:760px; margin:0 auto; color:#fff7df; background:linear-gradient(180deg,rgba(28,24,19,.97),rgba(8,12,16,.96)); border:1px solid rgba(245,217,158,.40); border-radius:8px; box-shadow:0 18px 42px rgba(0,0,0,.68),0 0 24px rgba(69,212,131,.18); pointer-events:auto; }
-        #perlaRtpUpgradeMenuV334, #perlaRtpMarketMenuV356 { top:calc(18px + env(safe-area-inset-top)); bottom:auto; max-height:calc(100dvh - 36px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); overflow:auto; }
-        #perlaRtpUpgradeMenuV334.visible, #perlaRtpBattleModalV334.visible, #perlaRtpChallengeModalV370.visible, #perlaRtpMarketMenuV356.visible { display:block; }
+        #perlaRtpUpgradeMenuV334, #perlaCasaPremiumMenuV384, #perlaRtpBattleModalV334, #perlaRtpChallengeModalV370, #perlaRtpMarketMenuV356 { position:fixed; left:calc(var(--perla-vv-left, 0px) + 14px + env(safe-area-inset-left)); right:calc(14px + env(safe-area-inset-right)); bottom:calc(118px + env(safe-area-inset-bottom)); z-index:15; display:none; max-width:760px; margin:0 auto; color:#fff7df; background:linear-gradient(180deg,rgba(28,24,19,.97),rgba(8,12,16,.96)); border:1px solid rgba(245,217,158,.40); border-radius:8px; box-shadow:0 18px 42px rgba(0,0,0,.68),0 0 24px rgba(69,212,131,.18); pointer-events:auto; }
+        #perlaRtpUpgradeMenuV334, #perlaCasaPremiumMenuV384, #perlaRtpMarketMenuV356 { top:calc(18px + env(safe-area-inset-top)); bottom:auto; max-height:calc(100dvh - 36px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); overflow:auto; }
+        #perlaRtpUpgradeMenuV334.visible, #perlaCasaPremiumMenuV384.visible, #perlaRtpBattleModalV334.visible, #perlaRtpChallengeModalV370.visible, #perlaRtpMarketMenuV356.visible { display:block; }
         .rtp-v334-panel-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:12px 14px 8px; border-bottom:1px solid rgba(255,255,255,.12); }
         .rtp-v334-title { margin:0; color:#f5d99e; font-size:15px; line-height:1.12; font-weight:950; text-transform:uppercase; letter-spacing:.06em; }
         .rtp-v334-subtitle { margin-top:4px; color:rgba(255,247,223,.78); font-size:12px; line-height:1.24; font-weight:750; }
@@ -422,6 +446,260 @@
         .rtp-v374-skill-popup-subtitle { margin-top:3px; color:rgba(255,247,223,.76); font-size:12px; line-height:1.25; font-weight:760; }
         .rtp-v374-skill-popup-close { width:30px; height:30px; border-radius:8px; border:1px solid rgba(255,255,255,.26); color:#fff; background:linear-gradient(180deg,rgba(239,93,84,.98),rgba(154,48,45,.96)); font-size:17px; line-height:1; font-weight:950; }
         .rtp-v374-skill-popup .rtp-v365-skill-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
+        #perlaCasaPremiumMenuV384 {
+            max-width:920px;
+            border-radius:12px;
+            overflow:hidden;
+            background:
+                radial-gradient(circle at 18% 0%, rgba(245,217,158,.16), transparent 34%),
+                linear-gradient(180deg,rgba(39,31,23,.99),rgba(10,13,15,.985));
+            border-color:rgba(245,217,158,.56);
+            box-shadow:0 26px 68px rgba(0,0,0,.76),0 0 34px rgba(245,217,158,.16);
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-head {
+            display:grid;
+            grid-template-columns:minmax(0,1fr) auto;
+            gap:12px;
+            align-items:center;
+            padding:14px 16px 12px;
+            border-bottom:1px solid rgba(245,217,158,.20);
+            background:linear-gradient(180deg,rgba(245,217,158,.11),rgba(255,255,255,.025));
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-title-line { display:flex; flex-wrap:wrap; align-items:center; gap:8px; min-width:0; }
+        #perlaCasaPremiumMenuV384 .casa-v384-title { margin:0; color:#fff4cf; font-size:24px; line-height:1.05; font-weight:950; letter-spacing:0; }
+        #perlaCasaPremiumMenuV384 .casa-v384-head-stats { display:flex; flex-wrap:wrap; gap:6px; min-width:0; }
+        #perlaCasaPremiumMenuV384 .casa-v384-head-chip {
+            min-width:0;
+            display:inline-flex;
+            align-items:center;
+            gap:5px;
+            min-height:28px;
+            padding:4px 8px;
+            border-radius:999px;
+            color:#fff7df;
+            background:rgba(255,255,255,.08);
+            border:1px solid rgba(245,217,158,.22);
+            font-size:11px;
+            line-height:1;
+            font-weight:950;
+            white-space:nowrap;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-head-chip svg { width:18px; height:18px; flex:0 0 auto; }
+        #perlaCasaPremiumMenuV384 .casa-v384-close { width:38px; height:38px; border-radius:10px; border:1px solid rgba(255,92,92,.54); color:#fff; background:linear-gradient(180deg,rgba(239,93,84,.94),rgba(128,40,42,.98)); font-size:22px; line-height:1; font-weight:950; }
+        #perlaCasaPremiumMenuV384 .casa-v384-top {
+            display:grid;
+            grid-template-columns:minmax(0,1fr) auto;
+            gap:10px;
+            align-items:stretch;
+            padding:12px 14px 8px;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-status-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; min-width:0; }
+        #perlaCasaPremiumMenuV384 .casa-v384-status-card {
+            min-width:0;
+            display:grid;
+            grid-template-columns:34px minmax(0,1fr);
+            gap:8px;
+            align-items:center;
+            padding:8px 9px;
+            border-radius:10px;
+            border:1px solid rgba(255,255,255,.14);
+            background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.035));
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-status-icon { width:34px; height:34px; display:grid; place-items:center; border-radius:10px; background:rgba(0,0,0,.20); box-shadow:inset 0 0 0 1px rgba(255,255,255,.12); }
+        #perlaCasaPremiumMenuV384 .casa-v384-status-icon svg { width:25px; height:25px; }
+        #perlaCasaPremiumMenuV384 .casa-v384-status-label { color:rgba(255,247,223,.68); font-size:11px; line-height:1.08; font-weight:900; text-transform:uppercase; }
+        #perlaCasaPremiumMenuV384 .casa-v384-status-value { margin-top:3px; color:#fff4cf; font-size:14px; line-height:1.1; font-weight:950; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        #perlaCasaPremiumMenuV384 .casa-v384-actions { display:grid; grid-template-columns:repeat(3,auto); gap:8px; align-content:center; }
+        #perlaCasaPremiumMenuV384 .casa-v384-action {
+            min-height:42px;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:7px;
+            padding:0 12px;
+            border-radius:10px;
+            border:1px solid rgba(245,217,158,.32);
+            color:#25190f;
+            background:linear-gradient(180deg,#f5d99e,#d58a36);
+            font-size:13px;
+            line-height:1;
+            font-weight:950;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-action svg { width:20px; height:20px; }
+        #perlaCasaPremiumMenuV384 .casa-v384-action.secondary { color:#fff7df; background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.045)); border-color:rgba(255,255,255,.18); }
+        #perlaCasaPremiumMenuV384 .casa-v384-tabs {
+            display:flex;
+            gap:8px;
+            overflow-x:auto;
+            scrollbar-width:none;
+            padding:0 14px 10px;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-tabs::-webkit-scrollbar { display:none; }
+        #perlaCasaPremiumMenuV384 .rtp-v350-tab {
+            flex:0 0 auto;
+            min-height:38px;
+            padding:0 14px;
+            border-radius:999px;
+            border:1px solid rgba(255,255,255,.16);
+            color:#fff7df;
+            background:rgba(255,255,255,.055);
+            font-size:13px;
+            line-height:1;
+            font-weight:950;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v350-tab[data-active="true"] { color:#25190f; border-color:rgba(255,255,255,.48); background:linear-gradient(180deg,#f5d99e,#d58a36); box-shadow:0 8px 22px rgba(0,0,0,.34); }
+        #perlaCasaPremiumMenuV384 .casa-v384-body { padding:0 14px 14px; }
+        #perlaCasaPremiumMenuV384 .rtp-v350-tab-panel { display:none; }
+        #perlaCasaPremiumMenuV384 .rtp-v350-tab-panel[data-active="true"] { display:block; }
+        #perlaCasaPremiumMenuV384 .casa-v384-panel-title {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:10px;
+            margin:0 0 8px;
+            color:#f5d99e;
+            font-size:15px;
+            line-height:1.15;
+            font-weight:950;
+            text-transform:uppercase;
+            letter-spacing:.04em;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v334-upgrades,
+        #perlaCasaPremiumMenuV384 .rtp-v374-buildable-grid,
+        #perlaCasaPremiumMenuV384 .rtp-v345-consumable-grid {
+            display:grid;
+            grid-template-columns:repeat(3,minmax(0,1fr));
+            gap:10px;
+            padding:0;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v374-buildable-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+        #perlaCasaPremiumMenuV384 .rtp-v334-card,
+        #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card,
+        #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card {
+            min-height:220px;
+            border-radius:12px;
+            border-color:rgba(255,255,255,.16);
+            background:linear-gradient(180deg,rgba(255,255,255,.095),rgba(255,255,255,.035));
+            box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 12px 28px rgba(0,0,0,.20);
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v334-card h4,
+        #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card h5,
+        #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card h5 { font-size:15px; line-height:1.16; }
+        #perlaCasaPremiumMenuV384 .rtp-v334-card p,
+        #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card p,
+        #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card p { font-size:13px; line-height:1.32; }
+        #perlaCasaPremiumMenuV384 .rtp-v334-card button,
+        #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card button,
+        #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card button,
+        #perlaCasaPremiumMenuV384 .rtp-v345-resource-actions button,
+        #perlaCasaPremiumMenuV384 .rtp-v350-job-button { min-height:40px; border-radius:10px; font-size:13px; }
+        #perlaCasaPremiumMenuV384 .rtp-v355-summary,
+        #perlaCasaPremiumMenuV384 .rtp-v355-cost-grid { gap:6px; }
+        #perlaCasaPremiumMenuV384 .rtp-v355-summary-chip,
+        #perlaCasaPremiumMenuV384 .rtp-v355-cost-chip,
+        #perlaCasaPremiumMenuV384 .rtp-v364-owned-chip { min-height:30px; font-size:12px; line-height:1.12; }
+        #perlaCasaPremiumMenuV384 .rtp-v355-summary-chip svg,
+        #perlaCasaPremiumMenuV384 .rtp-v355-cost-chip svg,
+        #perlaCasaPremiumMenuV384 .rtp-v364-owned-chip svg { width:20px; height:20px; }
+        #perlaCasaPremiumMenuV384 .rtp-v363-hub-owned-box {
+            display:none !important;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v363-hub-owned-box::-webkit-scrollbar { display:none; }
+        #perlaCasaPremiumMenuV384 .rtp-v363-owned-title { display:none; }
+        #perlaCasaPremiumMenuV384 .rtp-v363-owned-grid { flex-wrap:nowrap; }
+        #perlaCasaPremiumMenuV384 .rtp-v345-resource-grid { grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+        #perlaCasaPremiumMenuV384 .rtp-v345-resource-chip { border-radius:12px; }
+        #perlaCasaPremiumMenuV384 .rtp-v345-resource-actions { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+        #perlaCasaPremiumMenuV384 .casa-v384-deposit-help {
+            display:grid;
+            grid-template-columns:repeat(3,minmax(0,1fr));
+            gap:8px;
+            margin-bottom:9px;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-deposit-tip {
+            min-width:0;
+            display:grid;
+            grid-template-columns:28px minmax(0,1fr);
+            gap:7px;
+            align-items:center;
+            padding:8px;
+            border-radius:12px;
+            border:1px solid rgba(245,217,158,.18);
+            background:rgba(255,255,255,.055);
+            color:rgba(255,247,223,.82);
+            font-size:12px;
+            line-height:1.22;
+            font-weight:780;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-deposit-tip svg { width:23px; height:23px; }
+        #perlaCasaPremiumMenuV384 .casa-v384-deposit-layout {
+            display:grid;
+            grid-template-columns:minmax(0,1.08fr) minmax(220px,.92fr);
+            gap:10px;
+            align-items:stretch;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-deposit-section {
+            min-width:0;
+            display:grid;
+            align-content:start;
+            gap:8px;
+            padding:9px;
+            border-radius:12px;
+            border:1px solid rgba(255,255,255,.13);
+            background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.032));
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-section-label {
+            color:#f5d99e;
+            font-size:12px;
+            line-height:1;
+            font-weight:950;
+            text-transform:uppercase;
+            letter-spacing:.04em;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-deposit-actions {
+            display:grid;
+            grid-template-columns:1fr;
+            gap:8px;
+            margin-top:0;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-deposit-actions button {
+            min-height:46px;
+            justify-content:flex-start;
+            padding:8px 10px;
+            border-radius:12px;
+            text-align:left;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-deposit-actions button span:last-child {
+            min-width:0;
+            overflow:hidden;
+            text-overflow:ellipsis;
+        }
+        #perlaCasaPremiumMenuV384 button[data-missing-cost-v384] {
+            color:#fff7df;
+            background:linear-gradient(180deg,rgba(239,93,84,.96),rgba(146,43,42,.96));
+            border-color:rgba(255,210,205,.34);
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-missing-owned {
+            display:flex;
+            flex-wrap:wrap;
+            gap:6px;
+            margin-top:8px;
+            padding:8px;
+            border-radius:12px;
+            background:rgba(255,255,255,.055);
+            border:1px solid rgba(245,217,158,.16);
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v345-roster-grid { grid-template-columns:repeat(auto-fill,64px); gap:10px; }
+        #perlaCasaPremiumMenuV384 .rtp-v345-roster-card { width:64px; height:64px; border-radius:12px; }
+        #perlaCasaPremiumMenuV384 .rtp-v358-worker-popup,
+        #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup { border-radius:12px; }
+        #perlaCasaPremiumMenuV384 .rtp-v353-cutscene-status {
+            margin:8px 0 10px;
+            border-radius:12px;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v353-cutscene-status span { font-size:13px; line-height:1.28; }
+        #perlaCasaPremiumMenuV384 .casa-v384-legacy-fallback,
+        #perlaCasaPremiumMenuV384 .casa-v384-hidden-legacy { display:none !important; }
         #perlaRtpUpgradeMenuV334, #perlaRtpMarketMenuV356, #perlaRtpBattleModalV334, #perlaRtpChallengeModalV370, #perlaInfoModalV361, #perlaPauseMenuV360 { font-size:13px; }
         #perlaRtpUpgradeMenuV334 .rtp-v334-title, #perlaRtpMarketMenuV356 .rtp-v334-title, #perlaRtpBattleModalV334 .rtp-v334-title, #perlaRtpChallengeModalV370 .rtp-v334-title { font-size:17px; line-height:1.16; }
         #perlaRtpUpgradeMenuV334 .rtp-v334-subtitle, #perlaRtpMarketMenuV356 .rtp-v334-subtitle, #perlaRtpBattleModalV334 .rtp-v334-subtitle, #perlaRtpChallengeModalV370 .rtp-v334-subtitle { font-size:12px; line-height:1.28; }
@@ -609,8 +887,8 @@
             #perlaRtpDialogueV332 .portrait { width:72px; height:72px; }
             #perlaRtpDialogueV332 .speaker { font-size:11px; line-height:1.15; }
             #perlaRtpDialogueV332 .line { font-size:16px; line-height:1.34; }
-            #perlaRtpUpgradeMenuV334, #perlaRtpBattleModalV334, #perlaRtpChallengeModalV370, #perlaRtpMarketMenuV356 { left:calc(var(--perla-vv-left, 0px) + 8px + env(safe-area-inset-left)); right:calc(8px + env(safe-area-inset-right)); bottom:calc(132px + env(safe-area-inset-bottom)); }
-            #perlaRtpUpgradeMenuV334, #perlaRtpMarketMenuV356 { top:calc(8px + env(safe-area-inset-top)); bottom:auto; max-height:calc(100dvh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+            #perlaRtpUpgradeMenuV334, #perlaCasaPremiumMenuV384, #perlaRtpBattleModalV334, #perlaRtpChallengeModalV370, #perlaRtpMarketMenuV356 { left:calc(var(--perla-vv-left, 0px) + 8px + env(safe-area-inset-left)); right:calc(8px + env(safe-area-inset-right)); bottom:calc(132px + env(safe-area-inset-bottom)); }
+            #perlaRtpUpgradeMenuV334, #perlaCasaPremiumMenuV384, #perlaRtpMarketMenuV356 { top:calc(8px + env(safe-area-inset-top)); bottom:auto; max-height:calc(100dvh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
             .rtp-v334-upgrades { grid-template-columns:1fr; max-height:42dvh; overflow:auto; }
             .rtp-v356-market-grid { grid-template-columns:1fr; max-height:52dvh; overflow:auto; }
             .rtp-v374-buildable-grid { grid-template-columns:1fr; max-height:44dvh; overflow:auto; }
@@ -675,8 +953,8 @@
         html.perla-mobile-landscape #perlaRtpDialogueV332 .portrait { width:66px; height:66px; }
         html.perla-mobile-landscape #perlaRtpDialogueV332 .speaker { font-size:11px; line-height:1.14; }
         html.perla-mobile-landscape #perlaRtpDialogueV332 .line { font-size:15px; line-height:1.32; }
-        html.perla-mobile-landscape #perlaRtpUpgradeMenuV334, html.perla-mobile-landscape #perlaRtpBattleModalV334, html.perla-mobile-landscape #perlaRtpMarketMenuV356 { left:calc(var(--perla-vv-left, 0px) + 96px + env(safe-area-inset-left)); right:calc(96px + env(safe-area-inset-right)); bottom:calc(76px + env(safe-area-inset-bottom)); }
-        html.perla-mobile-landscape #perlaRtpUpgradeMenuV334, html.perla-mobile-landscape #perlaRtpMarketMenuV356 { top:calc(6px + env(safe-area-inset-top)); bottom:auto; max-height:calc(100dvh - 12px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+        html.perla-mobile-landscape #perlaRtpUpgradeMenuV334, html.perla-mobile-landscape #perlaCasaPremiumMenuV384, html.perla-mobile-landscape #perlaRtpBattleModalV334, html.perla-mobile-landscape #perlaRtpMarketMenuV356 { left:calc(var(--perla-vv-left, 0px) + 96px + env(safe-area-inset-left)); right:calc(96px + env(safe-area-inset-right)); bottom:calc(76px + env(safe-area-inset-bottom)); }
+        html.perla-mobile-landscape #perlaRtpUpgradeMenuV334, html.perla-mobile-landscape #perlaCasaPremiumMenuV384, html.perla-mobile-landscape #perlaRtpMarketMenuV356 { top:calc(6px + env(safe-area-inset-top)); bottom:auto; max-height:calc(100dvh - 12px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
         html.perla-mobile-landscape #perlaPauseMenuV360 { align-items:center; justify-content:center; padding:8px calc(88px + env(safe-area-inset-right)) 8px calc(88px + env(safe-area-inset-left)); overflow:hidden; }
         html.perla-mobile-landscape #perlaPauseMenuV360 .pause-panel { width:min(520px,calc(100vw - 190px - env(safe-area-inset-left) - env(safe-area-inset-right))); max-height:calc(100dvh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); display:grid; grid-template-rows:auto minmax(0,1fr); }
         html.perla-mobile-landscape #perlaPauseMenuV360 .pause-head { padding:8px 10px 7px; }
@@ -927,6 +1205,390 @@
         html.perla-mobile-landscape .rtp-v374-skill-popup .rtp-v365-skill-card {
             flex-basis:min(286px, calc(100vw - 210px));
         }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 {
+            border-radius:12px;
+            max-width:none;
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v384-head,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-head {
+            padding:10px 11px 9px;
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v384-title,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-title {
+            font-size:20px;
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v384-top,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-top {
+            grid-template-columns:1fr;
+            padding:9px 10px 7px;
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v384-status-grid,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-status-grid {
+            gap:6px;
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v384-status-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-status-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v384-status-card,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-status-card {
+            grid-template-columns:28px minmax(0,1fr);
+            padding:6px;
+            gap:6px;
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v384-status-icon,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-status-icon {
+            width:28px;
+            height:28px;
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v384-status-icon svg,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-status-icon svg {
+            width:21px;
+            height:21px;
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v384-status-label,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-status-label { font-size:9px; }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v384-status-value,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-status-value { font-size:12px; }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v384-actions,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-actions {
+            grid-template-columns:repeat(3,minmax(0,1fr));
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v384-action,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-action {
+            min-height:38px;
+            padding:0 7px;
+            font-size:12px;
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v384-body,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-body { padding:0 10px 10px; }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .rtp-v334-upgrades,
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .rtp-v345-consumable-grid,
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .rtp-v374-buildable-grid,
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup .rtp-v365-skill-grid,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v334-upgrades,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v345-consumable-grid,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v374-buildable-grid,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup .rtp-v365-skill-grid {
+            display:flex !important;
+            grid-template-columns:none !important;
+            overflow-x:auto !important;
+            overflow-y:hidden !important;
+            max-height:none !important;
+            scroll-snap-type:x mandatory;
+            -webkit-overflow-scrolling:touch;
+            scrollbar-width:none;
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .rtp-v334-upgrades::-webkit-scrollbar,
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .rtp-v345-consumable-grid::-webkit-scrollbar,
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .rtp-v374-buildable-grid::-webkit-scrollbar,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v334-upgrades::-webkit-scrollbar,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v345-consumable-grid::-webkit-scrollbar,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v374-buildable-grid::-webkit-scrollbar { display:none; }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .rtp-v334-card,
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card,
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card,
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup .rtp-v365-skill-card,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v334-card,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup .rtp-v365-skill-card {
+            flex:0 0 min(306px, calc(100vw - 42px));
+            scroll-snap-align:start;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v334-card,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup .rtp-v365-skill-card {
+            flex-basis:min(286px, calc(100vw - 210px));
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .rtp-v345-resource-grid,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v345-resource-grid {
+            grid-template-columns:repeat(2,minmax(0,1fr));
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v384-deposit-help,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-deposit-help {
+            grid-template-columns:repeat(3,minmax(118px,1fr));
+            overflow-x:auto;
+            scrollbar-width:none;
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v384-deposit-help::-webkit-scrollbar,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-deposit-help::-webkit-scrollbar { display:none; }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v384-deposit-layout,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-deposit-layout {
+            display:flex;
+            overflow-x:auto;
+            overflow-y:hidden;
+            scroll-snap-type:x mandatory;
+            -webkit-overflow-scrolling:touch;
+            scrollbar-width:none;
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v384-deposit-layout::-webkit-scrollbar,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-deposit-layout::-webkit-scrollbar { display:none; }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v384-deposit-section,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-deposit-section {
+            flex:0 0 min(320px, calc(100vw - 42px));
+            scroll-snap-align:start;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v350-tab-panel[data-panel="resources"][data-active="true"] {
+            grid-template-rows:auto auto minmax(0,1fr);
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v350-tab-panel[data-panel="resources"][data-active="true"] .casa-v384-deposit-help {
+            margin-bottom:6px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v350-tab-panel[data-panel="resources"][data-active="true"] .casa-v384-deposit-layout {
+            min-height:0;
+            gap:8px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v350-tab-panel[data-panel="resources"][data-active="true"] .casa-v384-deposit-section {
+            flex-basis:min(300px, calc(100vw - 240px));
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v350-tab-panel[data-panel="resources"][data-active="true"] .casa-v384-deposit-tip,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v350-tab-panel[data-panel="resources"][data-active="true"] .casa-v384-deposit-section {
+            padding:6px;
+            border-radius:10px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v350-tab-panel[data-panel="resources"][data-active="true"] .rtp-v345-resource-chip {
+            grid-template-columns:24px minmax(0,1fr);
+            gap:5px;
+            padding:5px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v350-tab-panel[data-panel="resources"][data-active="true"] .rtp-v345-resource-name {
+            font-size:8px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v350-tab-panel[data-panel="resources"][data-active="true"] .rtp-v345-resource-value {
+            font-size:9px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v350-tab-panel[data-panel="resources"][data-active="true"] .rtp-v345-resource-actions button {
+            min-height:32px;
+            font-size:10px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v350-tab-panel[data-panel="resources"][data-active="true"] .rtp-v345-resource-note {
+            display:none;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384.visible {
+            display:grid;
+            grid-template-columns:minmax(178px, 216px) minmax(0, 1fr);
+            grid-template-rows:auto auto minmax(0, 1fr);
+            overflow:hidden;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-head {
+            grid-column:1;
+            grid-row:1;
+            padding:8px 9px;
+            gap:8px;
+            border-right:1px solid rgba(245,217,158,.18);
+            border-bottom:1px solid rgba(245,217,158,.12);
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-title {
+            font-size:16px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-title-line {
+            gap:5px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-head-stats {
+            gap:4px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-head-chip {
+            min-height:24px;
+            padding:3px 6px;
+            font-size:9px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-head-chip svg {
+            width:15px;
+            height:15px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-close {
+            width:32px;
+            height:32px;
+            border-radius:9px;
+            font-size:18px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-top {
+            grid-column:1;
+            grid-row:2;
+            grid-template-columns:1fr;
+            padding:8px;
+            gap:7px;
+            border-right:1px solid rgba(245,217,158,.18);
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-status-grid {
+            grid-template-columns:repeat(2,minmax(0,1fr));
+            gap:5px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-status-card {
+            grid-template-columns:22px minmax(0,1fr);
+            min-height:32px;
+            padding:4px 5px;
+            gap:5px;
+            border-radius:8px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-status-icon {
+            width:22px;
+            height:22px;
+            border-radius:7px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-status-icon svg {
+            width:17px;
+            height:17px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-status-label {
+            font-size:7.5px;
+            line-height:1;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-status-value {
+            margin-top:1px;
+            font-size:9px;
+            line-height:1.05;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-actions {
+            grid-template-columns:repeat(3,minmax(0,1fr));
+            gap:5px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-action {
+            min-height:30px;
+            padding:0 4px;
+            gap:4px;
+            border-radius:8px;
+            font-size:10px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-action svg {
+            width:16px;
+            height:16px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-tabs {
+            grid-column:1;
+            grid-row:3;
+            align-content:start;
+            display:grid;
+            grid-template-columns:repeat(2,minmax(0,1fr));
+            gap:6px;
+            overflow:hidden;
+            padding:0 8px 8px;
+            border-right:1px solid rgba(245,217,158,.18);
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v350-tab {
+            min-height:30px;
+            padding:0 5px;
+            font-size:10px;
+            border-radius:10px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-body {
+            grid-column:2;
+            grid-row:1 / 4;
+            min-height:0;
+            display:grid;
+            grid-template-rows:auto minmax(0,1fr);
+            overflow:hidden;
+            padding:10px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v353-cutscene-status {
+            min-height:40px;
+            margin:0 0 8px;
+            padding:7px 8px;
+            border-radius:10px;
+            font-size:10px;
+            line-height:1.14;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v353-cutscene-status span {
+            display:-webkit-box;
+            -webkit-line-clamp:2;
+            -webkit-box-orient:vertical;
+            overflow:hidden;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v353-cutscene-status button {
+            min-height:30px;
+            padding:0 9px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v350-tab-panel[data-active="true"] {
+            min-height:0;
+            display:grid;
+            grid-template-rows:auto minmax(0,1fr);
+            overflow:hidden;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-panel-title {
+            margin-bottom:7px;
+            font-size:12px;
+            line-height:1.1;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v334-upgrades,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v345-consumable-grid,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v374-buildable-grid {
+            min-height:0;
+            height:auto;
+            align-items:stretch;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v334-card,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card {
+            min-height:0;
+            height:auto;
+            overflow:hidden;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v334-card {
+            grid-template-rows:minmax(76px,1fr) auto;
+            padding:8px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v354-card-body .rtp-v355-summary {
+            margin-top:6px;
+            padding-top:0;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v354-card-footer {
+            grid-template-rows:auto minmax(38px,auto) auto;
+            gap:5px;
+            padding-top:6px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v354-card-footer::before {
+            margin:0 0 2px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v355-cost-title {
+            min-height:17px;
+            padding:2px 8px;
+            font-size:8px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v355-cost-block {
+            grid-template-rows:auto minmax(34px,auto);
+            gap:4px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v355-cost-block .rtp-v355-cost-grid {
+            min-height:34px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v334-card p,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card p,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card p {
+            margin:4px 0 5px;
+            font-size:10px;
+            line-height:1.18;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v334-card h4,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card h5,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card h5 {
+            font-size:12px;
+            line-height:1.12;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v355-summary,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v355-cost-grid {
+            gap:4px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v355-summary-chip,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v355-cost-chip {
+            min-height:25px;
+            padding:3px 6px;
+            font-size:9px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v355-summary-chip svg,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v355-cost-chip svg {
+            width:16px;
+            height:16px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v334-card button,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card button,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card button {
+            min-height:32px;
+            font-size:11px;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v363-hub-owned-box {
+            display:none;
+        }
         html.perla-mobile-portrait #perlaPauseMenuV360,
         html.perla-mobile-landscape #perlaPauseMenuV360 {
             align-items:center;
@@ -1124,7 +1786,7 @@
             opacity:.90 !important;
         }
         html.perla-mobile-portrait #perlaInventoryHudV345P2 {
-            left:calc(var(--perla-v382-safe-x) + var(--perla-v382-clock-w) + 7px) !important;
+            left:calc(var(--perla-v382-safe-x) + var(--perla-v382-clock-w) + 2px) !important;
             right:calc(var(--perla-v382-mini-size) + var(--perla-v382-mini-gap) + 14px + env(safe-area-inset-right)) !important;
             top:calc(10px + env(safe-area-inset-top)) !important;
             width:auto !important;
@@ -1142,10 +1804,41 @@
         }
         html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-capacity,
         html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-debt,
-        html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-resource {
+        html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-resource,
+        html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-menu {
             height:30px;
             min-width:30px;
             padding:0 6px;
+        }
+        html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-debt {
+            width:30px;
+            padding:0;
+        }
+        html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-debt > span:not(.inv-icon) {
+            position:absolute;
+            right:-3px;
+            bottom:-3px;
+            min-width:15px;
+            height:15px;
+            padding:0 3px;
+            border-radius:999px;
+            color:#25190f;
+            background:#f5d99e;
+            border:1px solid rgba(0,0,0,.25);
+            font-size:7px;
+            line-height:14px;
+            text-align:center;
+        }
+        html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-capacity {
+            min-width:56px;
+            padding:0 5px;
+        }
+        html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-capacity span:last-child {
+            font-size:8px;
+        }
+        html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-menu {
+            width:30px;
+            padding:0;
         }
         html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-resource {
             width:30px;
@@ -1191,6 +1884,18 @@
             min-width:46px;
             padding:0 8px;
             font-size:9px;
+        }
+        @media (max-width: 370px) and (orientation: portrait) {
+            html.perla-mobile-portrait #perlaInventoryHudV345P2 {
+                left:var(--perla-v382-safe-x) !important;
+                right:auto !important;
+                top:calc(var(--perla-v382-safe-y) + 52px) !important;
+                width:auto !important;
+                max-width:calc(100% - var(--perla-v382-mini-size) - 28px - env(safe-area-inset-right)) !important;
+            }
+            html.perla-mobile-portrait #perlaBackpackHudV350 {
+                top:calc(var(--perla-v382-safe-y) + 92px);
+            }
         }
         html.perla-mobile-portrait .perla-rate-info-button-v381 {
             width:26px;
@@ -1250,7 +1955,7 @@
             <div class="comfort-note">Base stabile</div>
         </div>
         <div id="perlaInventoryHudV345P2" aria-label="Inventario e usabili PERLA1">
-            <div class="inv-head"><span class="inv-label-title">Risorse</span><span class="inv-ec">EC 0</span><span class="inv-gd">GD 0</span><span class="inv-debt"></span><span class="inv-capacity">0/14</span></div>
+            <div class="inv-head"><span class="inv-label-title">Risorse</span><span class="inv-ec">EC 0</span><span class="inv-gd">GD 0</span><span class="inv-debt"></span><span class="inv-capacity">0/14</span><button class="inv-menu" type="button" data-hud-action="pause-menu" aria-label="Apri menu partita" title="Menu partita"><span class="inv-icon"></span></button></div>
             <div class="inv-resources"></div>
             <div class="inv-usable-row"></div>
             <div class="inv-note">Nessun carico</div>
@@ -1583,6 +2288,8 @@ const PERLA_V374_CASA_BUILDABLES_SAFE = true;
 const PERLA_V375_CASA_MENU_TYPOGRAPHY_NORMALIZED_SAFE = true;
 const PERLA_V376_CASA_BUILDABLE_FULLSIZE_PATH_SAFE = true;
 const PERLA_V376_CASA_SLEEP_REOPEN_SAFE = true;
+const PERLA_V384_CASA_PREMIUM_MENU_SAFE = true;
+const PERLA_V384_CASA_LEGACY_MENU_FALLBACK_SAFE = true;
 const PERLA_V376_POPUP_FOCUS_ARIA_SAFE = true;
 const PERLA_V376_WETNESS_ORIENTATION_FAIL_VISUAL_SAFE = true;
 const PERLA_V377_MAIN_ORIGINAL_REMATCH_AFTER_RECRUIT_SAFE = true;
@@ -9870,8 +10577,7 @@ function perlaRtpMiniMapBadgeSizeV380(rect, kind){
     const base=Math.max(1, Math.min(Number(rect&&rect.width)||0, Number(rect&&rect.height)||0));
     const portrait=currentViewportMode==='mobile-portrait';
     const landscape=currentViewportMode==='mobile-landscape';
-    if(kind==='currency') return portrait ? Math.max(23, Math.min(25, Math.round(base*.30))) : (landscape ? Math.max(23, Math.min(26, Math.round(base*.29))) : Math.max(28, Math.min(34, Math.round(base*.44))));
-    return portrait ? Math.max(22, Math.min(24, Math.round(base*.28))) : (landscape ? Math.max(22, Math.min(25, Math.round(base*.28))) : Math.max(26, Math.min(32, Math.round(base*.42))));
+    return portrait ? Math.max(23, Math.min(25, Math.round(base*.30))) : (landscape ? Math.max(23, Math.min(26, Math.round(base*.29))) : Math.max(28, Math.min(34, Math.round(base*.44))));
 }
 function perlaRtpMiniMapViewportClampV382(rect, badgeSize, rawLocalLeft, rawLocalTop){
     const vv=window&&window.visualViewport;
@@ -9923,8 +10629,8 @@ function perlaRtpMiniMapStatWarningsPositionV360(el, force){
         badge.style.left=Math.round(slot.left)+'px';
         badge.style.top=Math.round(slot.top)+'px';
     };
-    place('wetness', portrait?154:(mobile?152:150), portrait ? .55 : (mobile ? .58 : .50));
-    place('orientation', portrait?26:(mobile?28:30), portrait ? .55 : (mobile ? .58 : .50));
+    place('wetness', portrait?132:(mobile?132:138), portrait ? .60 : (mobile ? .60 : .50));
+    place('orientation', portrait?48:(mobile?48:42), portrait ? .60 : (mobile ? .60 : .50));
 }
 function perlaRtpMiniMapStatWarningsUpdateV360(values, st){
     const el=perlaRtpMiniMapStatWarningsEnsureV360();
@@ -13477,6 +14183,7 @@ const PERLA_V350_ICON_SVG = Object.freeze({
     gd:'<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="12" fill="#82dcff" stroke="#eaf9ff" stroke-width="2"/><path d="M12 10h8a5 5 0 0 1 0 10h-3" fill="none" stroke="#0b4860" stroke-width="3" stroke-linecap="round"/><path d="M12 10v12h6M12 16h7" stroke="#0b4860" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     home:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 15L16 5l11 10" fill="none" stroke="#ecfff1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 14v12h14V14" fill="#45d483" stroke="#ecfff1" stroke-width="2" stroke-linejoin="round"/><path d="M14 26v-7h4v7" fill="#245f3d" stroke="#ecfff1" stroke-width="1.6" stroke-linejoin="round"/></svg>',
     debt:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 5h16v22l-4-2-4 2-4-2-4 2z" fill="#ffcc4d" stroke="#fff4c2" stroke-width="2"/><path d="M12 12h8M12 17h8M12 22h5" stroke="#5a3510" stroke-width="2.5" stroke-linecap="round"/></svg>',
+    menu:'<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="6" y="6" width="20" height="20" rx="5" fill="#f5d99e" stroke="#5a3510" stroke-width="2"/><path d="M11 12h10M11 16h10M11 20h10" stroke="#5a3510" stroke-width="2.6" stroke-linecap="round"/></svg>',
     capacity:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 13h18l-2 12H9z" fill="#8ed8ff" stroke="#eaf7ff" stroke-width="2"/><path d="M11 13a5 5 0 0 1 10 0" fill="none" stroke="#eaf7ff" stroke-width="2.5" stroke-linecap="round"/></svg>',
     stone_round:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 18c0-6 5-10 11-9 5 1 8 5 7 10-1 5-6 8-12 7-4-1-6-4-6-8z" fill="#b8aa91" stroke="#f4ead2" stroke-width="2"/><path d="M13 12l7 2M11 18l5 4" stroke="#756958" stroke-width="2" stroke-linecap="round"/></svg>',
     quartz:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4l7 9-7 15-7-15z" fill="#9fe9ff" stroke="#e8fbff" stroke-width="2"/><path d="M16 4v24M9 13h14" stroke="#4aa6c7" stroke-width="1.8" stroke-linecap="round"/></svg>',
@@ -13575,6 +14282,13 @@ function perlaRtpInfoModalOpenV361(title, bodyHtml, meta){
 function perlaRtpInfoModalCloseV361(reason){
     const el=document.getElementById('perlaInfoModalV361');
     if(el){
+        el.querySelectorAll('[data-expanded="true"],.expanded,.open').forEach(node=>{
+            if(node && node.dataset) node.dataset.expanded='false';
+            if(node && node.classList){
+                node.classList.remove('expanded');
+                node.classList.remove('open');
+            }
+        });
         const fallback=document.querySelector('#perlaRtpUpgradeMenuV334.visible .rtp-v350-sleep-button') || document.querySelector('#perlaPauseMenuV360.visible .pause-close') || document.getElementById('rtpActionBtnV332') || document.body;
         perlaRtpMoveFocusBeforeHideV376(el, fallback);
         el.classList.remove('visible');
@@ -13838,6 +14552,14 @@ function perlaRtpCurrentModifierGroupsV361(key){
     if(!malus.length) malus.push(perlaRtpInfoChipV361('stat_comfort','Nessun malus','al minuto','malus'));
     return {context, bonus, malus, support, rates, profile};
 }
+function perlaRtpCurrentStatEffectHtmlV385(key, groups){
+    const meta=perlaRtpStatMetaV366(key);
+    const rate=Number(groups&&groups.rates&&groups.rates[meta.key])||0;
+    const kind=perlaRtpRateKindForStatV366(meta.key, rate);
+    const label=Math.abs(rate)<.005 ? 'Stabile ora' : 'Effetto su '+meta.label;
+    const value=Math.abs(rate)<.005 ? '0/min' : perlaRtpRateFormatV366(rate);
+    return perlaRtpInfoChipRowV361([perlaRtpInfoChipV361(meta.icon,label,value,kind)]);
+}
 function perlaRtpOpenStatInfoV361(key){
     const k=String(key||'comfort');
     const st=perlaRtpComfortGameplayStateV336||{};
@@ -13857,7 +14579,7 @@ function perlaRtpOpenStatInfoV361(key){
         perlaRtpInfoSectionV361('Valore attuale', perlaRtpInfoChipRowV361([perlaRtpInfoChipV361(def.icon, def.label, def.value+'/100')])),
         perlaRtpInfoSectionV361('A cosa serve', '<p>'+perlaRtpInfoEscapeV361(def.text)+'</p>'),
         perlaRtpInfoSectionV361('Come si cura', '<p>'+perlaRtpInfoEscapeV361(def.cure)+'</p>'),
-        perlaRtpInfoSectionV361('Fascia, meteo e zona', perlaRtpInfoChipRowV361(groups.context)),
+        perlaRtpInfoSectionV361('Attuale', perlaRtpCurrentStatEffectHtmlV385(k, groups)),
         supportSection
     ].join('');
     return perlaRtpInfoModalOpenV361(def.label, body, {kind:'stat', key:k});
@@ -13869,6 +14591,100 @@ function perlaRtpResourceSpecByInfoKeyV361(key){
         return resourceId===k || String(spec&&spec.key||'')===k || String(spec&&spec.inventoryKey||'')===k;
     });
     return id ? PERLA_V345_RESOURCE_SPECS[id] : null;
+}
+function perlaRtpWheelbarrowResourceChipsV385(summary, sourceKey){
+    const s=summary||perlaRtpResourceSummaryV345();
+    const source=String(sourceKey||'carried');
+    return Object.keys(PERLA_V345_RESOURCE_SPECS).map(k=>{
+        const spec=PERLA_V345_RESOURCE_SPECS[k];
+        const invKey=spec.inventoryKey;
+        const amount=source==='stored' ? (s.inventory&&s.inventory[invKey]||0) : (s.carriedInventory&&s.carriedInventory[invKey]||0);
+        return perlaRtpInfoChipV361(spec.iconKey||spec.key, spec.label, String(amount));
+    });
+}
+function perlaRtpOpenWheelbarrowResourcesV385(source){
+    const summary=perlaRtpResourceSummaryV345();
+    const carriedWeight=Number(summary.carriedWeight)||0;
+    const capacity=Number(summary.capacity)||0;
+    const loadState=carriedWeight>=capacity && capacity>0 ? 'piena' : (carriedWeight>0 ? 'in uso' : 'vuota');
+    const body=[
+        perlaRtpInfoSectionV361('Carriola', perlaRtpInfoChipRowV361([
+            perlaRtpInfoChipV361('capacity','Peso',String(carriedWeight)+'/'+String(capacity)+' Kg'),
+            perlaRtpInfoChipV361('capacity','Stato',loadState)
+        ])),
+        perlaRtpInfoSectionV361('Sassi trasportati', perlaRtpInfoChipRowV361(perlaRtpWheelbarrowResourceChipsV385(summary,'carried'))),
+        perlaRtpInfoSectionV361('Deposito CASA', perlaRtpInfoChipRowV361(perlaRtpWheelbarrowResourceChipsV385(summary,'stored'))),
+        perlaRtpInfoModalActionsV361([{action:'close', label:'Chiudi'}])
+    ].join('');
+    return perlaRtpInfoModalOpenV361('Carriola e risorse', body, {kind:'wheelbarrow_resources_v385', source:String(source||'hud')});
+}
+function perlaRtpWorldAlertsHtmlV385(){
+    const rent=perlaRtpPass2RentSummaryV350();
+    const cut=(typeof perlaRtpBaseCutsceneSummaryV352==='function') ? perlaRtpBaseCutsceneSummaryV352() : null;
+    const layer=cut&&cut.layer||{};
+    const assigned=Number(layer.assignedCount)||0;
+    const missing=Math.max(0,3-assigned);
+    const cutsceneText=layer.strategySeen
+        ? 'La riunione della resistenza \u00e8 gi\u00e0 registrata.'
+        : (missing>0 ? 'Riunione non pronta: servono ancora '+missing+' alleati di turno.' : 'Riunione pronta: puoi avviarla dalla Casa Base.');
+    const rentText=rent.due
+        ? 'Affitto non pagato: servono '+rent.dailyCostEc+' EC. Grazia residua: '+rent.graceDaysRemaining+' giorno/i.'
+        : 'Piazzola pagata. Prossima quota: giorno '+rent.nextPaymentDay+', '+rent.dailyCostEc+' EC.';
+    const rentKind=rent.due?'malus':'bonus';
+    const rentSummary=(typeof perlaRtpResourceCostSummaryHtmlV355==='function')
+        ? perlaRtpResourceCostSummaryHtmlV355({ec:rent.dailyCostEc}, 'Quota')
+        : perlaRtpInfoChipRowV361([perlaRtpInfoChipV361('ec','Quota',String(rent.dailyCostEc)+' EC')]);
+    return [
+        perlaRtpInfoSectionV361('Piazzola', '<p>'+perlaRtpInfoEscapeV361(rentText)+'</p>'+rentSummary, rentKind),
+        perlaRtpInfoSectionV361('Base e squadra', '<p>'+perlaRtpInfoEscapeV361(cutsceneText)+'</p>'+perlaRtpInfoChipRowV361([
+            perlaRtpInfoChipV361('stat_forza','Alleati in turno',String(assigned)),
+            perlaRtpInfoChipV361('home','Base','Tier '+String(rent.tier||1))
+        ])),
+        perlaRtpInfoModalActionsV361([
+            {action:'show-mission-current-v385', label:'Missione corrente'},
+            {action:'close', label:'Chiudi', secondary:true}
+        ])
+    ].join('');
+}
+function perlaRtpOpenWorldAlertsV385(source){
+    return perlaRtpInfoModalOpenV361('Avvisi', perlaRtpWorldAlertsHtmlV385(), {kind:'world_alerts_v385', source:String(source||'hud')});
+}
+function perlaRtpMissionCurrentInfoHtmlV385(){
+    if(!PERLA_V363_MISSION_CURRENT_SAFE || typeof perlaRtpMissionSummaryV363!=='function') return {ok:false, reason:'missions_disabled_v385'};
+    const summary=perlaRtpMissionSummaryV363();
+    const current=summary.missions.find(item=>item.id===summary.currentId)||summary.missions[0]||null;
+    if(!current) return {ok:false, reason:'mission_missing_v385'};
+    perlaRtpMissionRuntimeStateV363.lastViewedId=current.id;
+    const currentHtml=[
+        '<div class="info-mission-current" data-mission-id="'+perlaRtpInfoEscapeV361(current.id)+'">',
+        '<span class="info-mission-icon">'+perlaRtpIconSvgV350(current.icon||'stat_forza')+'</span>',
+        '<div class="info-mission-copy">',
+        '<div class="info-mission-kicker">Missione attiva</div>',
+        '<div class="info-mission-title">'+perlaRtpInfoEscapeV361(current.title)+'</div>',
+        '<div class="info-mission-desc">'+perlaRtpInfoEscapeV361(current.detail)+'</div>',
+        '<div class="info-chip-row">',
+        perlaRtpInfoChipV361(current.icon||'stat_forza','Stato',current.stateLabel||'Attiva'),
+        perlaRtpInfoChipV361('capacity','Progresso',current.progress||'In corso'),
+        '</div>',
+        '</div>',
+        '</div>'
+    ].join('');
+    const timeline='<div class="info-mission-timeline">'+summary.missions.map(item=>{
+        const state=item.completed?'done':(item.id===summary.currentId?'active':'future');
+        const label=state==='done'?'Fatta':(state==='active'?'Ora':'Futura');
+        const title=state==='future' ? item.title+' (missione futura)' : item.title;
+        return '<div class="info-mission-row" data-state="'+state+'" data-mission-id="'+perlaRtpInfoEscapeV361(item.id)+'">'+
+            '<span class="info-mission-icon">'+perlaRtpIconSvgV350(item.icon||'stone_round')+'</span>'+
+            '<span class="info-mission-row-title">'+perlaRtpInfoEscapeV361(title)+'</span>'+
+            '<span class="info-mission-state">'+perlaRtpInfoEscapeV361(label)+'</span>'+
+        '</div>';
+    }).join('')+'</div>';
+    const body=[
+        perlaRtpInfoSectionV361('Obiettivo corrente', currentHtml, 'bonus'),
+        perlaRtpInfoSectionV361('Prossimi obiettivi', timeline),
+        perlaRtpInfoModalActionsV361([{action:'close', label:'Chiudi'}])
+    ].join('');
+    return {ok:true, currentId:current.id, completed:summary.completed, total:summary.total, html:body};
 }
 function perlaRtpOpenResourceInfoV361(key){
     const k=String(key||'');
@@ -13988,6 +14804,14 @@ function perlaRtpActionRearmHubMenuAfterRecoveryV376(result, source){
 function perlaRtpInfoModalHandleActionV361(btn){
     const action=String(btn&&btn.dataset&&btn.dataset.infoAction||'close');
     if(action==='close') return perlaRtpInfoModalCloseV361('button');
+    if(action==='show-mission-current-v385'){
+        const rendered=(typeof perlaRtpMissionCurrentInfoHtmlV385==='function') ? perlaRtpMissionCurrentInfoHtmlV385() : {ok:false, reason:'mission_renderer_missing_v385'};
+        if(rendered&&rendered.ok){
+            perlaRtpInfoModalOpenV361('Missione corrente', rendered.html, {kind:'mission_current_from_alerts_v385'});
+            if(typeof perlaRtpPass2AutoSaveAfterStateChange==='function') perlaRtpPass2AutoSaveAfterStateChange('mission_current_view_from_alerts_v385');
+        }
+        return rendered;
+    }
     if(action==='use-consumable'){
         const key=String(btn.dataset.key||'');
         const res=perlaRtpPass2UseConsumable(key, btn.dataset.source||'info_modal_v361');
@@ -14535,6 +15359,45 @@ function perlaRtpResourceCostAvailabilityHtmlV362(cost, options){
     }).join('')+'</div>';
     return opts.withTitle ? '<div class="rtp-v355-cost-block"><div class="rtp-v355-cost-title">Costa:</div>'+grid+'</div>' : grid;
 }
+function perlaRtpCasaMissingCostDataV384(cost){
+    try{ return JSON.stringify(cost||{}); }catch(err){ return '{}'; }
+}
+function perlaRtpCasaOwnedSummaryHtmlV384(){
+    const summary=perlaRtpResourceSummaryV345();
+    const chips=[
+        perlaRtpOwnedIconChipHtmlV364('ec','EC',String(summary.wallet&&summary.wallet.ec||0)),
+        perlaRtpOwnedIconChipHtmlV364('gd','GD',String(summary.wallet&&summary.wallet.gd||0))
+    ];
+    Object.keys(PERLA_V345_RESOURCE_SPECS).forEach(key=>{
+        const spec=PERLA_V345_RESOURCE_SPECS[key];
+        chips.push(perlaRtpOwnedIconChipHtmlV364(spec.iconKey||spec.key, spec.label, String(summary.inventory&&summary.inventory[spec.inventoryKey]||0)));
+    });
+    return '<div class="casa-v384-missing-owned">'+chips.join('')+'</div>';
+}
+function perlaRtpCasaMissingResourcesHtmlV384(cost){
+    const items=perlaRtpResourceCostItemsV355(cost||{});
+    if(!items.length) return perlaRtpInfoSectionV361('Costo','<p>Non servono risorse per questo passaggio.</p>'+perlaRtpCasaOwnedSummaryHtmlV384(), 'missing_cost_v384');
+    const summary=perlaRtpResourceSummaryV345();
+    const missingChips=[];
+    const requiredChips=[];
+    items.forEach(item=>{
+        const owned=perlaRtpResourceCostOwnedAmountV362(item.key, summary);
+        const missing=Math.max(0, Math.floor(Number(item.amount)||0)-owned);
+        requiredChips.push(perlaRtpSummaryChipHtmlV355(item.iconKey, item.label, String(item.amount)));
+        if(missing>0) missingChips.push(perlaRtpSummaryChipHtmlV355(item.iconKey, item.label, '-'+String(missing)));
+    });
+    const missingHtml=missingChips.length ? '<div class="rtp-v355-summary">'+missingChips.join('')+'</div>' : '<p>Hai gia tutto il necessario.</p>';
+    const requiredHtml='<div class="rtp-v355-summary">'+requiredChips.join('')+'</div>';
+    return [
+        perlaRtpInfoSectionV361('Ti manca', missingHtml, 'missing_delta_v384'),
+        perlaRtpInfoSectionV361('Richiesto', requiredHtml, 'missing_required_v384'),
+        perlaRtpInfoSectionV361('Possiedi ora', perlaRtpCasaOwnedSummaryHtmlV384(), 'missing_owned_v384')
+    ].join('');
+}
+function perlaRtpCasaOpenMissingResourcesPopupV384(cost, label){
+    perlaRtpPass2PlayActionSoundV345('fail');
+    return perlaRtpInfoModalOpenV361(label||'Risorse mancanti', perlaRtpCasaMissingResourcesHtmlV384(cost||{}), {kind:'casa_missing_resources_v384', cost:cost||{}});
+}
 function perlaRtpHubOwnedBoxEnsureV363(el){
     if(!PERLA_V363_HUB_OWNED_BOX_SAFE) return null;
     el=el||document.getElementById('perlaRtpUpgradeMenuV334');
@@ -14544,6 +15407,15 @@ function perlaRtpHubOwnedBoxEnsureV363(el){
         box=document.createElement('div');
         box.className='rtp-v363-hub-owned-box';
         box.setAttribute('aria-label','Risorse possedute');
+    }
+    if(el.id==='perlaCasaPremiumMenuV384'){
+        const body=el.querySelector('.casa-v384-body');
+        const popup=body&&body.querySelector('.rtp-v358-worker-popup');
+        if(body && box.parentNode!==body){
+            if(popup && popup.parentNode===body) body.insertBefore(box, popup);
+            else body.appendChild(box);
+        }
+    }else if(!box.parentNode){
         const popup=el.querySelector('.rtp-v358-worker-popup');
         if(popup && popup.parentNode===el) el.insertBefore(box, popup);
         else el.appendChild(box);
@@ -14558,7 +15430,8 @@ function perlaRtpHubOwnedBoxRenderV363(el){
     const box=perlaRtpHubOwnedBoxEnsureV363(el);
     if(!box) return {ok:false, reason:'owned_box_unavailable_v363'};
     const summary=perlaRtpResourceSummaryV345();
-    const chips=[
+    const premiumCasa=el&&el.id==='perlaCasaPremiumMenuV384';
+    const chips=premiumCasa ? [] : [
         perlaRtpOwnedIconChipHtmlV364('ec','EC',String(summary.wallet&&summary.wallet.ec||0)),
         perlaRtpOwnedIconChipHtmlV364('gd','GD',String(summary.wallet&&summary.wallet.gd||0)),
         perlaRtpOwnedIconChipHtmlV364('capacity','Carriola',String(summary.carriedWeight||0)+'/'+String(summary.capacity||0))
@@ -16263,10 +17136,14 @@ function perlaRtpBindInventoryInfoClicksV361(el){
     if(!PERLA_V361_INFO_MODAL_SAFE || !el || el.dataset.perlaInfoBoundV361==='1') return;
     el.dataset.perlaInfoBoundV361='1';
     el.addEventListener('click', e=>{
-        const target=e.target&&e.target.closest&&e.target.closest('[data-info-key]');
+        const target=e.target&&e.target.closest&&e.target.closest('[data-hud-action],[data-info-key]');
         if(!target || !el.contains(target)) return;
         e.preventDefault();
         e.stopPropagation();
+        const action=String(target.dataset.hudAction||'');
+        if(action==='wheelbarrow-resources') return perlaRtpOpenWheelbarrowResourcesV385('inventory_hud_v385');
+        if(action==='world-alerts') return perlaRtpOpenWorldAlertsV385('inventory_hud_v385');
+        if(action==='pause-menu') return perlaRtpPauseMenuOpenV360('inventory_hud_menu_v386');
         perlaRtpOpenResourceInfoV361(String(target.dataset.infoKey||''));
     }, {passive:false});
 }
@@ -16277,9 +17154,17 @@ function perlaRtpPass2RenderInventoryHud(){
     const summary=perlaRtpResourceSummaryV345();
     const capacity=el.querySelector('.inv-capacity');
     if(capacity){
-        capacity.dataset.infoKey='capacity';
-        capacity.innerHTML='<span class="inv-icon">'+perlaRtpIconSvgV350('capacity')+'</span><span>'+String(summary.carriedWeight||0)+'/'+String(summary.capacity||0)+'</span>';
-        capacity.title='Carriola: '+String(summary.carriedWeight||0)+'/'+String(summary.capacity||0)+' peso disponibile.';
+        delete capacity.dataset.infoKey;
+        capacity.dataset.hudAction='wheelbarrow-resources';
+        capacity.innerHTML='<span class="inv-icon">'+perlaRtpIconSvgV350('capacity')+'</span><span>'+String(summary.carriedWeight||0)+'/'+String(summary.capacity||0)+' Kg</span>';
+        capacity.title='Carriola: '+String(summary.carriedWeight||0)+'/'+String(summary.capacity||0)+' Kg. Tocca per vedere tutti i sassi.';
+    }
+    const menuBtn=el.querySelector('.inv-menu');
+    if(menuBtn){
+        menuBtn.dataset.hudAction='pause-menu';
+        menuBtn.setAttribute('aria-label','Apri menu partita');
+        menuBtn.title='Menu partita';
+        menuBtn.innerHTML='<span class="inv-icon">'+perlaRtpIconSvgV350('menu')+'</span>';
     }
     const ec=el.querySelector('.inv-ec');
     if(ec){
@@ -16297,33 +17182,26 @@ function perlaRtpPass2RenderInventoryHud(){
     if(rent&&rent.due) perlaRtpPass2MaybeShowDebtNoticeV366(rent, 'inventory_hud_render_v366');
     const debt=el.querySelector('.inv-debt');
     if(debt){
-        debt.dataset.infoKey='debt';
+        delete debt.dataset.infoKey;
+        debt.dataset.hudAction='world-alerts';
         if(rent.due){
-            debt.classList.add('visible');
-            debt.innerHTML='<span class="inv-icon">'+perlaRtpIconSvgV350('debt')+'</span><span>'+(rent.defaultRisk ? '!' : String(rent.graceDaysRemaining)+'g')+'</span>';
-            debt.title='Affitto piazzola: '+rent.dailyCostEc+' EC. Prossimo rischio default se la grazia scade.';
+            debt.dataset.alert='true';
+            debt.dataset.alertState=rent.defaultRisk?'default':'grace';
+            debt.innerHTML='<span class="inv-icon">'+perlaRtpIconSvgV350(rent.defaultRisk?'stat_stress':'debt')+'</span><span>'+(rent.defaultRisk ? '!' : String(rent.graceDaysRemaining)+'g')+'</span>';
+            debt.title=rent.defaultRisk
+                ? 'Avvisi: rischio sfratto/default base. Tocca per dettagli e missione corrente.'
+                : 'Avvisi: affitto piazzola '+rent.dailyCostEc+' EC. Tocca per dettagli e missione corrente.';
         }else{
-            debt.classList.remove('visible');
-            debt.innerHTML='';
-            debt.title='Affitto piazzola pagato oggi. Prossimo pagamento: giorno '+String(rent.nextPaymentDay)+', quota '+String(rent.dailyCostEc)+' EC.';
+            debt.dataset.alert='false';
+            debt.dataset.alertState='calm';
+            debt.innerHTML='<span class="inv-icon">'+perlaRtpIconSvgV350('debt')+'</span>';
+            debt.title='Avvisi: nessuna urgenza. Tocca per aprire avvisi e missione corrente.';
         }
         el.dataset.rentRisk=rent.defaultRisk?'default':(rent.due?'grace':'ok');
     }
     const resources=el.querySelector('.inv-resources');
     if(resources){
         resources.innerHTML='';
-        Object.keys(PERLA_V345_RESOURCE_SPECS).forEach(k=>{
-            const spec=PERLA_V345_RESOURCE_SPECS[k];
-            const cell=document.createElement('div');
-            cell.className='inv-resource';
-            cell.dataset.infoKey=spec.inventoryKey;
-            cell.innerHTML='<span class="inv-icon">'+perlaRtpIconSvgV350(spec.iconKey||spec.key)+'</span><strong></strong><span class="inv-label"></span>';
-            cell.title=spec.label+': carriola '+String(summary.carriedInventory[spec.inventoryKey]||0)+', base '+String(summary.inventory[spec.inventoryKey]||0)+'.';
-            cell.querySelector('strong').textContent=String(summary.carriedInventory[spec.inventoryKey]||0)+'/'+String(summary.inventory[spec.inventoryKey]||0);
-            const label=cell.querySelector('.inv-label');
-            if(label) label.textContent=spec.label;
-            resources.appendChild(cell);
-        });
     }
     const row=el.querySelector('.inv-usable-row');
     if(row){
@@ -19348,6 +20226,249 @@ function perlaRtpActionShowNoticeV332(eventInfo, line, triggerResult){
     perlaRtpActionUpdateDialogueUiV332();
     return Object.assign({ok:true, type:'show_notice', trigger:triggerResult||null}, perlaRtpActionSummaryV332());
 }
+function perlaRtpCasaPremiumSnapshotV384(){
+    const summary=perlaRtpResourceSummaryV345();
+    const rent=perlaRtpPass2RentSummaryV350();
+    const tier=perlaRtpHubTierV365();
+    const jobs=perlaRtpJobAssignmentSummaryV350();
+    const builds=perlaRtpHubBuildableSummaryV374();
+    const skills=perlaRtpHubSkillEffectsV365();
+    const wallet=summary.wallet||{};
+    return {tier, summary, rent, jobs, builds, skills, wallet};
+}
+function perlaRtpCasaPremiumStatusCardHtmlV384(icon, label, value){
+    return '<div class="casa-v384-status-card"><span class="casa-v384-status-icon">'+perlaRtpIconSvgV350(icon)+'</span><div><div class="casa-v384-status-label">'+perlaRtpHtmlEscapeV355(label)+'</div><div class="casa-v384-status-value">'+perlaRtpHtmlEscapeV355(value)+'</div></div></div>';
+}
+function perlaRtpCasaPremiumRenderTopV384(el){
+    if(!el) return;
+    let snap;
+    try{ snap=perlaRtpCasaPremiumSnapshotV384(); }catch(err){ snap=null; }
+    if(!snap) return;
+    const status=el.querySelector('.casa-v384-status-grid');
+    const carried=String(snap.summary.carriedWeight||0)+'/'+String(snap.summary.capacity||0);
+    const rentText=snap.rent&&snap.rent.due ? ('Debito '+String(snap.rent.dailyCostEc||0)+' EC') : ('Giorno '+String(snap.rent&&snap.rent.nextPaymentDay||1));
+    const squad=String((snap.jobs&&snap.jobs.activeAssigned&&snap.jobs.activeAssigned.length)||0)+'/'+String((snap.jobs&&snap.jobs.maxSlots)||1);
+        const headStats=el.querySelector('.casa-v384-head-stats');
+        if(headStats){
+            headStats.innerHTML=[
+                '<span class="casa-v384-head-chip">'+perlaRtpIconSvgV350('home')+'<span>Campo Livello '+perlaRtpHtmlEscapeV355(String(snap.tier))+'</span></span>',
+                '<span class="casa-v384-head-chip">'+perlaRtpIconSvgV350('stat_forza')+'<span>Squadra '+perlaRtpHtmlEscapeV355(squad)+'</span></span>',
+                '<span class="casa-v384-head-chip">'+perlaRtpIconSvgV350('debt')+'<span>'+perlaRtpHtmlEscapeV355(rentText)+'</span></span>'
+            ].join('');
+        }
+        if(status){
+            status.innerHTML=[
+            perlaRtpCasaPremiumStatusCardHtmlV384('ec','EC',String(snap.wallet.ec||0)),
+            perlaRtpCasaPremiumStatusCardHtmlV384('gd','GD',String(snap.wallet.gd||0))
+        ].join('');
+    }
+    const emptyBtn=el.querySelector('.rtp-v374-empty-wheelbarrow-button');
+    if(emptyBtn){
+        emptyBtn.disabled=(Number(snap.summary.carriedWeight)||0)<=0;
+        emptyBtn.innerHTML=perlaRtpIconSvgV350('capacity')+'<span>Svuota</span>';
+    }
+}
+function perlaRtpCasaPremiumEnsureMenuV384(){
+    let el=document.getElementById('perlaCasaPremiumMenuV384');
+    if(!el){
+        el=document.createElement('div');
+        el.id='perlaCasaPremiumMenuV384';
+        el.setAttribute('role','dialog');
+        el.setAttribute('aria-modal','false');
+        el.setAttribute('aria-label','Casa base');
+        el.innerHTML=[
+            '<div class="casa-v384-head">',
+                '<div class="casa-v384-title-line"><h3 class="casa-v384-title">Casa Base</h3><div class="casa-v384-head-stats"></div></div>',
+                '<button class="casa-v384-close" type="button" aria-label="Chiudi Casa Base">x</button>',
+            '</div>',
+            '<div class="casa-v384-top"><div class="casa-v384-status-grid"></div><div class="casa-v384-actions">',
+                '<button class="casa-v384-action rtp-v350-sleep-button" type="button">'+perlaRtpIconSvgV350('home')+'<span>Dormi</span></button>',
+                '<button class="casa-v384-action rtp-v374-empty-wheelbarrow-button" type="button">'+perlaRtpIconSvgV350('capacity')+'<span>Svuota</span></button>',
+                '<button class="casa-v384-action secondary rtp-v381-hub-alert-button" type="button" aria-label="Avvisi Casa Base">'+perlaRtpIconSvgV350('debt')+'<span>Avvisi</span></button>',
+            '</div></div>',
+            '<div class="rtp-v350-rent-status casa-v384-hidden-legacy"></div><div class="rtp-v350-rest-row casa-v384-hidden-legacy"><span class="rtp-v350-rest-note"></span></div>',
+            '<div class="casa-v384-tabs rtp-v350-tabs" role="tablist" aria-label="Sezioni Casa Base">',
+                '<button class="rtp-v350-tab" type="button" data-tab="upgrade" data-active="true">Migliora</button>',
+                '<button class="rtp-v350-tab" type="button" data-tab="jobs">Squadra</button>',
+                '<button class="rtp-v350-tab" type="button" data-tab="build">Costruisci</button>',
+                '<button class="rtp-v350-tab" type="button" data-tab="resources">Deposito</button>',
+                '<button class="rtp-v350-tab" type="button" data-tab="consumables">Compra</button>',
+            '</div>',
+            '<div class="casa-v384-body">',
+                '<div class="rtp-v350-tab-panel" data-panel="upgrade" data-active="true"><div class="casa-v384-panel-title"><span>Migliora il campo</span></div><div class="rtp-v334-upgrades"></div></div>',
+                '<div class="rtp-v350-tab-panel" data-panel="jobs"><div class="casa-v384-panel-title"><span>Squadra</span></div><div class="rtp-v353-cutscene-status" data-ready="false"><span>Riunione alleati: prepara tre compagni di turno.</span><button type="button" disabled>Non pronta</button></div><div class="rtp-v345-roster-grid"></div><div class="rtp-v350-job-note"></div></div>',
+                '<div class="rtp-v350-tab-panel" data-panel="build"><div class="casa-v384-panel-title"><span>Costruisci accoglienza</span></div><div class="rtp-v374-buildable-grid"></div><div class="rtp-v374-buildable-note"></div></div>',
+                '<div class="rtp-v350-tab-panel" data-panel="resources"><div class="casa-v384-panel-title"><span>Deposito</span></div><div class="casa-v384-deposit-help"><div class="casa-v384-deposit-tip">'+perlaRtpIconSvgV350('capacity')+'<span>Scarica la carriola nella base.</span></div><div class="casa-v384-deposit-tip">'+perlaRtpIconSvgV350('ec')+'<span>Trasforma sassi depositati in EC.</span></div><div class="casa-v384-deposit-tip">'+perlaRtpIconSvgV350('gd')+'<span>Prepara GD per docce e servizi.</span></div></div><div class="casa-v384-deposit-layout"><section class="casa-v384-deposit-section"><div class="casa-v384-section-label">Materiali in base</div><div class="rtp-v345-resource-grid"></div></section><section class="casa-v384-deposit-section"><div class="casa-v384-section-label">Azioni deposito</div><div class="rtp-v345-resource-actions casa-v384-deposit-actions"><button class="rtp-v345-resource-deposit" type="button">Scarica carriola</button><button class="rtp-v345-resource-convert" type="button">Converti in EC</button><button class="rtp-v345-resource-convert-gd-ec" type="button">EC in GD</button><button class="rtp-v345-resource-convert-gd-basalto" type="button">Basalto in GD</button></div><div class="rtp-v345-resource-note"></div></section></div></div>',
+                '<div class="rtp-v350-tab-panel" data-panel="consumables"><div class="casa-v384-panel-title"><span>Compra</span></div><div class="rtp-v345-consumable-grid"></div><div class="rtp-v345-consumable-note"></div></div>',
+                '<div class="rtp-v358-worker-popup" role="dialog" aria-modal="false" aria-label="Dettagli lavoro PG"></div><div class="rtp-v374-skill-popup" role="dialog" aria-modal="false" aria-label="Potenziamenti tier"></div>',
+            '</div>',
+            '<button class="casa-v384-legacy-fallback" type="button" aria-hidden="true" tabindex="-1">Versione classica</button>'
+        ].join('');
+        document.body.appendChild(el);
+        const close=el.querySelector('.casa-v384-close');
+        if(close) close.addEventListener('click', e=>{ e.preventDefault(); e.stopPropagation(); perlaRtpActionCloseDialogueV332('casa_premium_closed_v384'); }, {passive:false});
+        el.querySelectorAll('.rtp-v350-tab').forEach(btn=>{
+            btn.addEventListener('click', e=>{
+                e.preventDefault();
+                e.stopPropagation();
+                perlaRtpActionSetHubTabV350(el, btn.dataset.tab||'upgrade');
+                perlaRtpPass2PlayActionSoundV345('menu_open');
+            }, {passive:false});
+        });
+        const sleepBtn=el.querySelector('.rtp-v350-sleep-button');
+        if(sleepBtn) sleepBtn.addEventListener('click', e=>{
+            e.preventDefault();
+            e.stopPropagation();
+            perlaRtpOpenRecoveryInfoV361('sleep','hub_casa_premium_v384');
+        }, {passive:false});
+        const emptyBtn=el.querySelector('.rtp-v374-empty-wheelbarrow-button');
+        if(emptyBtn) emptyBtn.addEventListener('click', e=>{
+            e.preventDefault();
+            e.stopPropagation();
+            perlaRtpResourceDepositCarriedV345('hub_casa_premium_quick_v384');
+            perlaRtpCasaPremiumRefreshV384(el, null);
+            perlaRtpPass2RenderInventoryHud();
+        }, {passive:false});
+        const alertBtn=el.querySelector('.rtp-v381-hub-alert-button');
+        if(alertBtn) alertBtn.addEventListener('click', e=>{
+            e.preventDefault();
+            e.stopPropagation();
+            const rent=perlaRtpPass2RentSummaryV350();
+            const summary=perlaRtpBaseCutsceneSummaryV352();
+            const layer=summary&&summary.layer||{};
+            const missing=Math.max(0,3-(Number(layer.assignedCount)||0));
+            const cutscene=layer.strategySeen?'La riunione e gia registrata.':(missing>0?'Servono ancora '+missing+' alleati di turno.':'Riunione pronta: puoi avviarla dalla Casa Base.');
+            const body=[
+                perlaRtpInfoSectionV361('Riunione alleati','<p>'+perlaRtpInfoEscapeV361(cutscene)+'</p>'),
+                perlaRtpInfoSectionV361('Piazzola','<p>'+perlaRtpInfoEscapeV361(rent.due?('Da coprire: '+rent.dailyCostEc+' EC. Grazia: '+rent.graceDaysRemaining+' giorno/i.'):('Pagata. Prossima quota: giorno '+rent.nextPaymentDay+', '+rent.dailyCostEc+' EC.'))+'</p>'+perlaRtpResourceCostSummaryHtmlV355({ec:rent.dailyCostEc}, 'Quota')),
+                perlaRtpInfoSectionV361('Azioni rapide','<p>Dormi recupera le forze ma aumenta la fame. Svuota trasferisce il carico nel deposito.</p>')
+            ].join('');
+            perlaRtpInfoModalOpenV361('Avvisi Casa Base', body, {kind:'hub_alerts_v384'});
+        }, {passive:false});
+        const cutsceneBtn=el.querySelector('.rtp-v353-cutscene-status button');
+        if(cutsceneBtn) cutsceneBtn.addEventListener('click', e=>{
+            e.preventDefault();
+            e.stopPropagation();
+            perlaRtpActionStartBaseCutsceneFromHubV353(el);
+        }, {passive:false});
+    }
+    return el;
+}
+function perlaRtpCasaPremiumRenderUpgradesV384(el, eventInfo){
+    const list=el&&el.querySelector('.rtp-v334-upgrades');
+    if(!list) return;
+    const current=perlaRtpHubTierV365();
+    list.innerHTML='';
+    perlaRtpActionUpgradeSpecsV334().forEach(spec=>{
+        const card=document.createElement('div');
+        card.className='rtp-v334-card';
+        card.dataset.active=String(spec.tier===current);
+        const title=String(spec.title||'').replace(/^Tier\s+/i,'Livello ');
+        card.innerHTML='<div class="rtp-v354-card-body"><h4></h4><p></p><div class="rtp-v355-upgrade-summary"></div></div><div class="rtp-v354-card-footer"><span class="rtp-v334-cost"></span><button type="button"></button></div>';
+        card.querySelector('h4').textContent=title;
+        card.querySelector('p').textContent=perlaRtpActionHumanizeTextV350(spec.text||'Migliora la base.');
+        card.querySelector('.rtp-v355-upgrade-summary').innerHTML=perlaRtpUpgradeSummaryHtmlV355(spec);
+        card.querySelector('.rtp-v334-cost').innerHTML=perlaRtpResourceCostAvailabilityHtmlV362(spec.resourceCost||{}, {withTitle:true, emptyLabel:'gratis'});
+        const btn=card.querySelector('button');
+        const ownedTier=spec.tier<=current;
+        const affordable=ownedTier || perlaRtpPass2ResourceCostAffordable(spec.resourceCost||{});
+        btn.disabled=false;
+        btn.textContent=ownedTier?'Potenzia':(affordable?'Costruisci livello '+spec.tier:'Risorse mancanti');
+        if(!ownedTier && !affordable) btn.dataset.missingCostV384=perlaRtpCasaMissingCostDataV384(spec.resourceCost||{});
+        else delete btn.dataset.missingCostV384;
+        btn.addEventListener('click', e=>{
+            e.preventDefault();
+            e.stopPropagation();
+            if(ownedTier){
+                perlaRtpActionOpenHubSkillPopupV374(el, spec.tier);
+                perlaRtpPass2PlayActionSoundV345('menu_open');
+                return;
+            }
+            if(!affordable){
+                perlaRtpCasaOpenMissingResourcesPopupV384(spec.resourceCost||{}, title);
+                return;
+            }
+            perlaRtpActionApplyHubTierV334(spec.tier, 'casa_premium_upgrade_v384').then(trigger=>{
+                if(trigger&&trigger.ok===false) perlaRtpPass2RuntimeState.lastNotice='Miglioria bloccata: controlla i costi.';
+                perlaRtpCasaPremiumRefreshV384(el, eventInfo);
+                perlaRtpPass2RenderInventoryHud();
+            }).catch(err=>{
+                perlaRtpPass2PlayActionSoundV345('fail');
+                perlaRtpActionShowNoticeV332(eventInfo, 'Miglioria non riuscita: '+String(err&&err.message?err.message:err), null);
+            });
+        }, {passive:false});
+        list.appendChild(card);
+    });
+}
+function perlaRtpCasaPremiumPolishCopyV384(el){
+    if(!el) return;
+    const jobNote=el.querySelector('.rtp-v350-job-note');
+    if(jobNote){
+        const assigned=perlaRtpAssignedRosterV350();
+        const slots=perlaRtpJobMaxSlotsV365();
+        jobNote.textContent='Alleati di turno: '+assigned.length+'/'+slots.limit+'. Per la riunione servono tre compagni assegnati.';
+    }
+    const buildNote=el.querySelector('.rtp-v374-buildable-note');
+    if(buildNote){
+        const summary=perlaRtpHubBuildableSummaryV374();
+        buildNote.innerHTML='<div class="rtp-v355-summary">'+
+            perlaRtpSummaryChipHtmlV355('tent','Tende',String(summary.counts.tent||0)+'/'+summary.limit)+
+            perlaRtpSummaryChipHtmlV355('camper','Camper',String(summary.counts.camper||0)+'/'+summary.limit)+
+            perlaRtpSummaryChipHtmlV355('ec','Rendita','+'+summary.dailyYield.ec+' EC/g')+
+            perlaRtpSummaryChipHtmlV355('gd','Gettoni','+'+summary.dailyYield.gd+' GD/g')+
+            '</div>';
+    }
+    const cutText=el.querySelector('.rtp-v353-cutscene-status span');
+    if(cutText){
+        try{
+            const summary=perlaRtpBaseCutsceneSummaryV352();
+            const layer=summary&&summary.layer||{};
+            const missing=Math.max(0,3-(Number(layer.assignedCount)||0));
+            cutText.textContent=layer.strategySeen?'La riunione della Resistenza e gia pronta.':(missing>0?'Prepara ancora '+missing+' alleati per la riunione.':'Riunione pronta: raduna la squadra.');
+        }catch(err){}
+    }
+}
+function perlaRtpCasaPremiumRefreshV384(el, eventInfo){
+    el=el||document.getElementById('perlaCasaPremiumMenuV384');
+    if(!el) return;
+    perlaRtpCasaPremiumRenderTopV384(el);
+    perlaRtpCasaPremiumRenderUpgradesV384(el, eventInfo);
+    perlaRtpActionRenderHubRestV351(el, null);
+    perlaRtpActionRenderHubRosterV345(el);
+    perlaRtpActionRenderHubBuildablesV374(el);
+    perlaRtpActionRenderHubResourcesV345(el);
+    perlaRtpActionRenderHubConsumablesV345P2(el, eventInfo);
+    perlaRtpActionRenderHubCutsceneStatusV353(el);
+    perlaRtpHubOwnedBoxRenderV363(el);
+    perlaRtpCasaPremiumPolishCopyV384(el);
+    perlaRtpCasaPremiumRenderTopV384(el);
+}
+function perlaRtpActionRenderCasaPremiumMenuV384(eventInfo){
+    if(!PERLA_V384_CASA_PREMIUM_MENU_SAFE) return {ok:false, reason:'casa_premium_disabled_v384'};
+    const st=perlaRtpActionDialogueStateV332;
+    perlaRtpActionResetMovementOnUiLockV350('casa_premium_open_v384');
+    const legacy=document.getElementById('perlaRtpUpgradeMenuV334');
+    if(legacy) legacy.classList.remove('visible');
+    const el=perlaRtpCasaPremiumEnsureMenuV384();
+    perlaRtpActionSetHubTabV350(el, el.dataset.activeTab||'upgrade');
+    perlaRtpCasaPremiumRefreshV384(el, eventInfo);
+    el.classList.add('visible');
+    perlaRtpPass2PlayActionSoundV345('menu_open');
+    st.visible=false;
+    st.noticeOnly=false;
+    st.upgradeMenuVisible=true;
+    st.marketMenuVisible=false;
+    st.eventId=eventInfo&&eventInfo.eventId||'event.system.hub_upgrade_loop';
+    st.eventType='base_upgrade';
+    st.battlePlaceholder=false;
+    st.contracts=[];
+    st.lineIndex=0;
+    st.status='casa_premium_open_v384';
+    st.lastAction={ok:true, type:'open_casa_premium_v384', eventId:st.eventId, currentTier:perlaRtpHubTierV365(), at:new Date().toISOString()};
+    perlaRtpActionUpdateDialogueUiV332();
+    perlaRtpActionUpdateButtonV332();
+    return Object.assign({ok:true, type:'open_casa_premium_v384'}, perlaRtpActionSummaryV332());
+}
 function perlaRtpActionCloseDialogueV332(reason){
     const st=perlaRtpActionDialogueStateV332;
     perlaRtpActionResetMovementOnUiLockV350('dialogue_close_v350');
@@ -19372,6 +20493,12 @@ function perlaRtpActionCloseDialogueV332(reason){
     perlaRtpActionUpdateDialogueUiV332();
     const upgrade=document.getElementById('perlaRtpUpgradeMenuV334');
     if(upgrade) upgrade.classList.remove('visible');
+    const casaPremium=document.getElementById('perlaCasaPremiumMenuV384');
+    if(casaPremium){
+        casaPremium.classList.remove('visible');
+        perlaRtpActionCloseWorkerPopupV358(casaPremium);
+        perlaRtpActionCloseHubSkillPopupV374(casaPremium);
+    }
     const market=document.getElementById('perlaRtpMarketMenuV356');
     if(market) market.classList.remove('visible');
     const battle=document.getElementById('perlaRtpBattleModalV334');
@@ -19627,11 +20754,17 @@ function perlaRtpActionRenderHubSkillTreeV365(el){
             card.querySelector('.rtp-v365-skill-effects').outerHTML=perlaRtpHubSkillEffectChipsHtmlV365(spec);
             card.querySelector('.rtp-v334-cost').innerHTML=perlaRtpResourceCostAvailabilityHtmlV362(spec.cost||{}, {withTitle:true, emptyLabel:'gratis'});
             const btn=card.querySelector('button');
-            btn.disabled=!unlocked || owned || !affordable || ownedCount>=tierLimit;
+            btn.disabled=!unlocked || owned || ownedCount>=tierLimit;
             btn.textContent=!unlocked?'Tier bloccato':(owned?'Attivo':(!affordable?'Risorse mancanti':'Compra'));
+            if(unlocked && !owned && ownedCount<tierLimit && !affordable) btn.dataset.missingCostV384=perlaRtpCasaMissingCostDataV384(spec.cost||{});
+            else delete btn.dataset.missingCostV384;
             btn.addEventListener('click', e=>{
                 e.preventDefault();
                 e.stopPropagation();
+                if(unlocked && !owned && ownedCount<tierLimit && !affordable){
+                    perlaRtpCasaOpenMissingResourcesPopupV384(spec.cost||{}, spec.title||'Risorse mancanti');
+                    return;
+                }
                 perlaRtpHubBuySkillV365(spec.id, 'hub_skilltree_button_v365').then(res=>{
                     if(res&&res.ok===false) perlaRtpPass2RuntimeState.lastNotice='Potenziamento bloccato: '+String(res.reason||'risorse mancanti')+'.';
                     perlaRtpActionRenderHubSkillTreeV365(el);
@@ -19693,11 +20826,17 @@ function perlaRtpActionOpenHubSkillPopupV374(el, tier){
         card.querySelector('.rtp-v365-skill-effects').outerHTML=perlaRtpHubSkillEffectChipsHtmlV365(spec);
         card.querySelector('.rtp-v334-cost').innerHTML=perlaRtpResourceCostAvailabilityHtmlV362(spec.cost||{}, {withTitle:true, emptyLabel:'gratis'});
         const btn=card.querySelector('button');
-        btn.disabled=!unlocked || owned || !affordable || ownedCount>=tierLimit;
+        btn.disabled=!unlocked || owned || ownedCount>=tierLimit;
         btn.textContent=!unlocked?'Tier bloccato':(owned?'Attivo':(!affordable?'Risorse mancanti':(ownedCount>=tierLimit?'Limite raggiunto':'Compra')));
+        if(unlocked && !owned && ownedCount<tierLimit && !affordable) btn.dataset.missingCostV384=perlaRtpCasaMissingCostDataV384(spec.cost||{});
+        else delete btn.dataset.missingCostV384;
         btn.addEventListener('click', e=>{
             e.preventDefault();
             e.stopPropagation();
+            if(unlocked && !owned && ownedCount<tierLimit && !affordable){
+                perlaRtpCasaOpenMissingResourcesPopupV384(spec.cost||{}, spec.title||'Risorse mancanti');
+                return;
+            }
             perlaRtpHubBuySkillV365(spec.id, 'hub_skill_popup_v374').then(res=>{
                 if(res&&res.ok===false) perlaRtpPass2RuntimeState.lastNotice='Potenziamento bloccato: '+String(res.reason||'risorse mancanti')+'.';
                 perlaRtpActionOpenHubSkillPopupV374(el, t);
@@ -19744,11 +20883,17 @@ function perlaRtpActionRenderHubBuildablesV374(el){
         card.querySelector('.rtp-v355-summary').innerHTML=chips.join('');
         card.querySelector('.rtp-v334-cost').innerHTML=perlaRtpResourceCostAvailabilityHtmlV362(cost, {withTitle:false, emptyLabel:'gratis'});
         const btn=card.querySelector('button');
-        btn.disabled=capped || !affordable;
+        btn.disabled=capped;
         btn.textContent=capped?'Limite tier raggiunto':(affordable?'Costruisci':'Risorse mancanti');
+        if(!capped && !affordable) btn.dataset.missingCostV384=perlaRtpCasaMissingCostDataV384(cost);
+        else delete btn.dataset.missingCostV384;
         btn.addEventListener('click', e=>{
             e.preventDefault();
             e.stopPropagation();
+            if(!affordable && !capped){
+                perlaRtpCasaOpenMissingResourcesPopupV384(cost, spec.title||'Risorse mancanti');
+                return;
+            }
             const res=perlaRtpHubBuildableBuyV374(kind, 'hub_buildable_button_v374');
             if(res&&res.ok===false) perlaRtpPass2RuntimeState.lastNotice=res.reason==='buildable_limit_reached_v374'?'Limite costruzioni raggiunto per il tier attuale.':'Risorse insufficienti per costruire.';
             perlaRtpActionRenderHubBuildablesV374(el);
@@ -19905,6 +21050,7 @@ function perlaRtpActionRenderHubResourcesV345(el){
     const convertGdBasaltoBtn=el&&el.querySelector('.rtp-v345-resource-convert-gd-basalto');
     if(!grid) return;
     const summary=perlaRtpResourceSummaryV345();
+    const premiumCasa=el&&el.id==='perlaCasaPremiumMenuV384';
     grid.innerHTML='';
     Object.keys(PERLA_V345_RESOURCE_SPECS).forEach(key=>{
         const spec=PERLA_V345_RESOURCE_SPECS[key];
@@ -19913,7 +21059,9 @@ function perlaRtpActionRenderHubResourcesV345(el){
         chip.dataset.infoKey=spec.inventoryKey;
         chip.innerHTML='<span class="rtp-v350-menu-icon">'+perlaRtpIconSvgV350(spec.iconKey||spec.key)+'</span><div><div class="rtp-v345-resource-name"></div><div class="rtp-v345-resource-value"></div></div>';
         chip.querySelector('.rtp-v345-resource-name').textContent=spec.label;
-        chip.querySelector('.rtp-v345-resource-value').textContent='Carriola '+String(summary.carriedInventory[spec.inventoryKey]||0)+' / Base '+String(summary.inventory[spec.inventoryKey]||0);
+        chip.querySelector('.rtp-v345-resource-value').textContent=premiumCasa
+            ? ('Base '+String(summary.inventory[spec.inventoryKey]||0)+' - carico '+String(summary.carriedInventory[spec.inventoryKey]||0))
+            : ('Carriola '+String(summary.carriedInventory[spec.inventoryKey]||0)+' / Base '+String(summary.inventory[spec.inventoryKey]||0));
         chip.addEventListener('click', e=>{
             e.preventDefault();
             e.stopPropagation();
@@ -19928,7 +21076,7 @@ function perlaRtpActionRenderHubResourcesV345(el){
     const storage=perlaRtpResourceStorageInventoryV345();
     if(depositBtn){
         depositBtn.disabled=(summary.carriedWeight||0)<=0;
-        depositBtn.innerHTML='<span class="rtp-v350-menu-icon">'+perlaRtpIconSvgV350('capacity')+'</span><span>Scarica carriola</span>';
+        depositBtn.innerHTML='<span class="rtp-v350-menu-icon">'+perlaRtpIconSvgV350('capacity')+'</span><span>'+(premiumCasa?'Svuota carriola in base':'Scarica carriola')+'</span>';
         depositBtn.onclick=e=>{
             e.preventDefault(); e.stopPropagation();
             perlaRtpResourceDepositCarriedV345('hub_casa_menu');
@@ -19939,7 +21087,7 @@ function perlaRtpActionRenderHubResourcesV345(el){
     }
     if(convertBtn){
         convertBtn.disabled=potentialEc<=0;
-        convertBtn.innerHTML='<span class="rtp-v350-menu-icon">'+perlaRtpIconSvgV350('ec')+'</span><span>'+(potentialEc>0 ? ('Converti deposito in '+displayedPotentialEc+' EC') : 'Deposito vuoto')+'</span>';
+        convertBtn.innerHTML='<span class="rtp-v350-menu-icon">'+perlaRtpIconSvgV350('ec')+'</span><span>'+(potentialEc>0 ? ('Vendi sassi: +'+displayedPotentialEc+' EC') : 'Nessun sasso da vendere')+'</span>';
         convertBtn.onclick=e=>{
             e.preventDefault(); e.stopPropagation();
             perlaRtpPass2ConvertStorageToEcV345('hub_casa_menu');
@@ -19950,7 +21098,7 @@ function perlaRtpActionRenderHubResourcesV345(el){
     }
     if(convertGdEcBtn){
         convertGdEcBtn.disabled=(Number(wallet.ec)||0)<merchantRates.ecPerGd;
-        convertGdEcBtn.innerHTML='<span class="rtp-v350-menu-icon">'+perlaRtpIconSvgV350('gd')+'</span><span>Converti '+merchantRates.ecPerGd+' EC in 1 GD</span>';
+        convertGdEcBtn.innerHTML='<span class="rtp-v350-menu-icon">'+perlaRtpIconSvgV350('gd')+'</span><span>'+merchantRates.ecPerGd+' EC -> 1 GD</span>';
         convertGdEcBtn.onclick=e=>{
             e.preventDefault(); e.stopPropagation();
             perlaRtpPass2ConvertToGdV355('ec','hub_casa_menu');
@@ -19962,7 +21110,7 @@ function perlaRtpActionRenderHubResourcesV345(el){
     }
     if(convertGdBasaltoBtn){
         convertGdBasaltoBtn.disabled=(Number(storage.basalto)||0)<merchantRates.basaltoCost;
-        convertGdBasaltoBtn.innerHTML='<span class="rtp-v350-menu-icon">'+perlaRtpIconSvgV350('basalt')+'</span><span>Converti '+merchantRates.basaltoCost+' Basalto in '+merchantRates.basaltoToGd+' GD</span>';
+        convertGdBasaltoBtn.innerHTML='<span class="rtp-v350-menu-icon">'+perlaRtpIconSvgV350('basalt')+'</span><span>'+merchantRates.basaltoCost+' Basalto -> '+merchantRates.basaltoToGd+' GD</span>';
         convertGdBasaltoBtn.onclick=e=>{
             e.preventDefault(); e.stopPropagation();
             perlaRtpPass2ConvertToGdV355('basalto','hub_casa_menu');
@@ -19972,7 +21120,13 @@ function perlaRtpActionRenderHubResourcesV345(el){
             perlaRtpPass2RenderInventoryHud();
         };
     }
-    if(note) note.innerHTML='<div class="rtp-v355-summary">'+
+    if(note) note.innerHTML=premiumCasa
+        ? '<div class="rtp-v355-summary">'+
+        perlaRtpSummaryChipHtmlV355('ec','Vendita','+'+displayedPotentialEc+' EC')+
+        perlaRtpSummaryChipHtmlV355('gd','Docce','serve GD')+
+        perlaRtpSummaryChipHtmlV355('capacity','Carico',summary.carriedWeight+'/'+summary.capacity)+
+        '</div>'
+        : '<div class="rtp-v355-summary">'+
         perlaRtpSummaryChipHtmlV355('ec','Mercante','+'+Math.round((Number(merchantRates.pct)||0)*100)+'%')+
         perlaRtpSummaryChipHtmlV355('capacity','Carriola',summary.carriedWeight+'/'+summary.capacity)+
         '</div>';
@@ -19994,10 +21148,16 @@ function perlaRtpActionRenderHubConsumablesV345P2(el, eventInfo){
         card.querySelector('.rtp-v358-consumable-cost-inline').innerHTML=perlaRtpResourceCostAvailabilityHtmlV362(spec.cost, {emptyLabel:'Gratis'});
         const btn=card.querySelector('button');
         const affordable=perlaRtpPass2ResourceCostAffordable(spec.cost);
-        btn.disabled=!affordable;
+        btn.disabled=false;
         btn.textContent=affordable?'Compra':'Risorse mancanti';
+        if(!affordable) btn.dataset.missingCostV384=perlaRtpCasaMissingCostDataV384(spec.cost||{});
+        else delete btn.dataset.missingCostV384;
         btn.addEventListener('click', e=>{
             e.preventDefault(); e.stopPropagation();
+            if(!affordable){
+                perlaRtpCasaOpenMissingResourcesPopupV384(spec.cost||{}, spec.label||'Risorse mancanti');
+                return;
+            }
             const res=perlaRtpPass2BuyConsumable(key, 'hub_casa_menu_v345p2');
             perlaRtpActionRenderHubResourcesV345(el);
             perlaRtpActionRenderHubConsumablesV345P2(el, eventInfo);
@@ -20010,7 +21170,14 @@ function perlaRtpActionRenderHubConsumablesV345P2(el, eventInfo){
     });
     if(note) note.textContent=perlaRtpPass2RuntimeState.lastNotice || '';
 }
-function perlaRtpActionRenderUpgradeMenuV334(eventInfo){
+function perlaRtpActionRenderUpgradeMenuV334(eventInfo, options){
+    if(PERLA_V384_CASA_PREMIUM_MENU_SAFE && !(options&&options.forceLegacyV384)){
+        try{ return perlaRtpActionRenderCasaPremiumMenuV384(eventInfo); }
+        catch(err){
+            if(!PERLA_V384_CASA_LEGACY_MENU_FALLBACK_SAFE) throw err;
+            try{ perlaRtpPass2RuntimeState.lastNotice='Casa Base classica aperta per sicurezza.'; }catch(ignore){}
+        }
+    }
     const st=perlaRtpActionDialogueStateV332;
     perlaRtpActionResetMovementOnUiLockV350('upgrade_menu_open_v350');
     const el=perlaRtpActionEnsureUpgradeMenuV334();
@@ -46482,7 +47649,8 @@ function perlaRtpPauseMenuEnsureV360(){
         chip.setAttribute('aria-label','Apri menu pausa');
         document.body.appendChild(chip);
     }
-    perlaRtpPauseMenuPositionChipV360(chip);
+    chip.setAttribute('aria-hidden','true');
+    chip.tabIndex=-1;
     let menu=document.getElementById('perlaPauseMenuV360');
     if(!menu){
         menu=document.createElement('div');
@@ -46519,6 +47687,7 @@ function perlaRtpPauseMenuOpenV360(reason){
     const ui=perlaRtpPauseMenuEnsureV360();
     if(!ui) return {ok:false, reason:'pause_menu_disabled_v360'};
     ui.menu.classList.add('visible');
+    ui.menu.setAttribute('aria-hidden','false');
     try{ perlaRtpPauseMissionRenderV363(ui.menu); }catch(err){}
     perlaPauseMenuStateV360.lastAction={type:'open', reason:String(reason||'manual'), at:new Date().toISOString()};
     if(typeof perlaRtpActionResetMovementOnUiLockV350==='function') perlaRtpActionResetMovementOnUiLockV350('pause_menu_open_v360');
@@ -46526,10 +47695,14 @@ function perlaRtpPauseMenuOpenV360(reason){
 }
 function perlaRtpPauseMenuCloseV360(reason){
     const menu=document.getElementById('perlaPauseMenuV360');
+    const fallback=document.querySelector('#perlaInventoryHudV345P2 .inv-menu') || document.getElementById('rtpActionBtnV332') || document.body;
     if(menu){
         perlaRtpPauseMenuPopupCloseV364('menu_close_'+String(reason||'manual'));
+        perlaRtpMoveFocusBeforeHideV376(menu, fallback);
         menu.classList.remove('visible');
+        menu.setAttribute('aria-hidden','true');
     }
+    try{ if(fallback&&fallback.focus) fallback.focus({preventScroll:true}); }catch(err){}
     perlaPauseMenuStateV360.lastAction={type:'close', reason:String(reason||'manual'), at:new Date().toISOString()};
     if(typeof perlaRtpActionResetMovementOnUiLockV350==='function') perlaRtpActionResetMovementOnUiLockV350('pause_menu_close_v360');
     return {ok:true, reason:String(reason||'manual')};
@@ -46545,11 +47718,11 @@ function perlaRtpPauseMenuPopupCloseV364(reason){
     if(popup){
         const menuClosing=String(reason||'').indexOf('menu_close_')===0;
         const fallback=menuClosing
-            ? document.getElementById('perlaPauseMenuChipV360')
+            ? (document.querySelector('#perlaInventoryHudV345P2 .inv-menu') || document.getElementById('perlaPauseMenuChipV360'))
             : (perlaPauseMenuStateV360.popupReturnFocus && menu && menu.contains(perlaPauseMenuStateV360.popupReturnFocus) && !popup.contains(perlaPauseMenuStateV360.popupReturnFocus)
                 ? perlaPauseMenuStateV360.popupReturnFocus
                 : (menu&&menu.querySelector('[data-action="safe-backup"],[data-action="mission-current"],.pause-close')));
-        perlaRtpMoveFocusBeforeHideV376(popup, fallback||document.getElementById('perlaPauseMenuChipV360')||document.body);
+        perlaRtpMoveFocusBeforeHideV376(popup, fallback||document.querySelector('#perlaInventoryHudV345P2 .inv-menu')||document.body);
         popup.classList.remove('visible');
         popup.setAttribute('aria-hidden','true');
         try{ popup.inert=true; }catch(err){}
