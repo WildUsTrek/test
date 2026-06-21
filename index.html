@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Camping Sole, Mare & Zanzare - PERLA1 V382 RTP</title>
     <style>
-        :root { --panel: rgba(20,16,12,.88); --gold:#f1c40f; --sand:#f5d99e; --perla-vv-left:0px; --perla-vv-top:0px; --perla-vv-width:100vw; --perla-vv-height:100dvh; }
+        :root { --panel: rgba(20,16,12,.88); --gold:#f1c40f; --sand:#f5d99e; --perla-vv-left:0px; --perla-vv-top:0px; --perla-vv-width:100vw; --perla-vv-height:100svh; }
         body { margin:0; min-height:100vh; background:radial-gradient(circle at 50% 0%,#183b4a 0%,#07090d 55%,#000 100%); color:white; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; display:flex; flex-direction:column; align-items:center; overflow-x:hidden; }
         h2 { margin:12px 0 6px; font-size:22px; letter-spacing:.04em; text-shadow:0 3px 14px rgba(0,0,0,.8); }
         #game-container { position:relative; margin-top:8px; background:linear-gradient(to bottom,#56CCF2 0%,#a1c4fd 100%); border:4px solid #473526; box-shadow:0 16px 52px rgba(0,0,0,.92), inset 0 0 0 2px rgba(255,255,255,.08); overflow:hidden; }
@@ -1739,9 +1739,9 @@
         html.perla-mobile-portrait {
             --perla-v382-safe-x:calc(8px + env(safe-area-inset-left));
             --perla-v382-safe-y:calc(8px + env(safe-area-inset-top));
-            --perla-v382-clock-w:clamp(124px, 35vw, 148px);
-            --perla-v382-mini-size:82px;
-            --perla-v382-mini-gap:10px;
+            --perla-v382-clock-w:clamp(104px, 29vw, 126px);
+            --perla-v382-mini-size:78px;
+            --perla-v382-mini-gap:8px;
         }
         html.perla-mobile-portrait #perlaClockHud {
             left:var(--perla-v382-safe-x) !important;
@@ -1757,7 +1757,7 @@
         html.perla-mobile-portrait #perlaClockHud .perla-clock-time {
             max-width:100%;
             gap:5px;
-            font-size:15px;
+            font-size:14px;
         }
         html.perla-mobile-portrait #perlaClockHud .perla-clock-meta {
             max-width:100%;
@@ -1886,16 +1886,19 @@
             font-size:9px;
         }
         @media (max-width: 370px) and (orientation: portrait) {
+            html.perla-mobile-portrait {
+                --perla-v382-clock-w:102px;
+                --perla-v382-mini-size:74px;
+                --perla-v382-mini-gap:6px;
+            }
+            html.perla-mobile-portrait #perlaClockHud { padding:5px 7px 6px; }
+            html.perla-mobile-portrait #perlaClockHud .perla-clock-time { font-size:13px; }
             html.perla-mobile-portrait #perlaInventoryHudV345P2 {
-                left:var(--perla-v382-safe-x) !important;
-                right:auto !important;
-                top:calc(var(--perla-v382-safe-y) + 52px) !important;
-                width:auto !important;
-                max-width:calc(100% - var(--perla-v382-mini-size) - 28px - env(safe-area-inset-right)) !important;
+                left:calc(var(--perla-v382-safe-x) + var(--perla-v382-clock-w) + 2px) !important;
+                right:calc(var(--perla-v382-mini-size) + var(--perla-v382-mini-gap) + 12px + env(safe-area-inset-right)) !important;
+                top:calc(10px + env(safe-area-inset-top)) !important;
             }
-            html.perla-mobile-portrait #perlaBackpackHudV350 {
-                top:calc(var(--perla-v382-safe-y) + 92px);
-            }
+            html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-capacity { min-width:48px; }
         }
         html.perla-mobile-portrait .perla-rate-info-button-v381 {
             width:26px;
@@ -1931,6 +1934,217 @@
         html.perla-mobile-portrait #perlaComfortHudV336 .comfort-label {
             max-width:39px;
             font-size:6.3px;
+        }
+        /* V388: mobile/CASA resize-loop guard and fullscreen menu containment.
+           Keep this block near the end of the stylesheet so it wins over legacy V381/V382 rules. */
+        #perlaCasaPremiumMenuV384 {
+            left:calc(var(--perla-vv-left, 0px) + env(safe-area-inset-left)) !important;
+            right:env(safe-area-inset-right) !important;
+            top:env(safe-area-inset-top) !important;
+            bottom:env(safe-area-inset-bottom) !important;
+            width:auto !important;
+            max-width:none !important;
+            height:auto !important;
+            max-height:none !important;
+            margin:0 !important;
+            border-radius:0 !important;
+            overflow:hidden !important;
+            grid-template-rows:auto auto auto minmax(0,1fr);
+        }
+        #perlaCasaPremiumMenuV384.visible { display:grid !important; }
+        #perlaCasaPremiumMenuV384 .casa-v384-head {
+            min-height:0;
+            padding:10px 12px 8px;
+            gap:8px;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-title { font-size:22px; line-height:1.05; }
+        #perlaCasaPremiumMenuV384 .casa-v384-head-chip {
+            min-height:30px;
+            padding:5px 9px;
+            font-size:12px;
+            white-space:nowrap;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-top {
+            min-height:0;
+            padding:8px 12px;
+            gap:8px;
+            border-bottom:1px solid rgba(245,217,158,.18);
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-status-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+        #perlaCasaPremiumMenuV384 .casa-v384-status-card {
+            min-height:44px;
+            padding:7px 8px;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-actions {
+            grid-template-columns:repeat(3,minmax(0,1fr));
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-action {
+            min-height:42px;
+            justify-content:center;
+            white-space:nowrap;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-tabs {
+            flex:0 0 auto;
+            padding:9px 12px;
+            gap:8px;
+            overflow-x:auto;
+            overflow-y:hidden;
+            scrollbar-width:none;
+            scroll-snap-type:x proximity;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-tabs::-webkit-scrollbar { display:none; }
+        #perlaCasaPremiumMenuV384 .rtp-v350-tab {
+            flex:0 0 auto;
+            scroll-snap-align:start;
+            min-height:38px;
+            padding:0 14px;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-body {
+            min-height:0;
+            overflow:auto;
+            padding:0 12px 12px;
+            -webkit-overflow-scrolling:touch;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v350-tab-panel[data-active="true"] {
+            min-height:0;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v334-upgrades,
+        #perlaCasaPremiumMenuV384 .rtp-v345-consumable-grid,
+        #perlaCasaPremiumMenuV384 .rtp-v374-buildable-grid {
+            align-items:stretch;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v334-card,
+        #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card,
+        #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card {
+            min-height:0;
+            grid-template-rows:auto minmax(0,1fr) auto;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v354-card-body {
+            min-height:0;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v354-card-footer {
+            align-self:end;
+            min-height:0;
+            grid-template-rows:auto auto auto;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-deposit-layout {
+            min-height:0;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-deposit-actions button {
+            min-height:44px;
+        }
+        @media (max-width: 720px), (pointer: coarse) {
+            #perlaCasaPremiumMenuV384 .casa-v384-head {
+                grid-template-columns:minmax(0,1fr) 48px;
+                padding:9px 10px 7px;
+            }
+            #perlaCasaPremiumMenuV384 .casa-v384-title { font-size:19px; }
+            #perlaCasaPremiumMenuV384 .casa-v384-head-stats { gap:5px; }
+            #perlaCasaPremiumMenuV384 .casa-v384-head-chip {
+                min-height:26px;
+                padding:4px 7px;
+                font-size:10px;
+            }
+            #perlaCasaPremiumMenuV384 .casa-v384-close {
+                width:46px;
+                height:46px;
+                font-size:24px;
+            }
+            #perlaCasaPremiumMenuV384 .casa-v384-top {
+                grid-template-columns:1fr;
+                padding:7px 10px;
+            }
+            #perlaCasaPremiumMenuV384 .casa-v384-status-grid {
+                grid-template-columns:repeat(2,minmax(0,1fr));
+                gap:6px;
+            }
+            #perlaCasaPremiumMenuV384 .casa-v384-actions { gap:6px; }
+            #perlaCasaPremiumMenuV384 .casa-v384-action {
+                min-height:38px;
+                padding:0 7px;
+                font-size:11px;
+            }
+            #perlaCasaPremiumMenuV384 .casa-v384-body { padding:0 10px 10px; }
+            #perlaCasaPremiumMenuV384 .rtp-v334-upgrades,
+            #perlaCasaPremiumMenuV384 .rtp-v345-consumable-grid,
+            #perlaCasaPremiumMenuV384 .rtp-v374-buildable-grid {
+                display:flex !important;
+                grid-template-columns:none !important;
+                overflow-x:auto !important;
+                overflow-y:hidden !important;
+                scroll-snap-type:x mandatory;
+                -webkit-overflow-scrolling:touch;
+                scrollbar-width:none;
+            }
+            #perlaCasaPremiumMenuV384 .rtp-v334-upgrades::-webkit-scrollbar,
+            #perlaCasaPremiumMenuV384 .rtp-v345-consumable-grid::-webkit-scrollbar,
+            #perlaCasaPremiumMenuV384 .rtp-v374-buildable-grid::-webkit-scrollbar { display:none; }
+            #perlaCasaPremiumMenuV384 .rtp-v334-card,
+            #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card,
+            #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card {
+                flex:0 0 min(320px, calc(100vw - 42px));
+                scroll-snap-align:start;
+            }
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384.visible {
+            grid-template-columns:minmax(172px, 210px) minmax(0,1fr);
+            grid-template-rows:auto auto minmax(0,1fr);
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-head {
+            grid-column:1;
+            grid-row:1;
+            border-right:1px solid rgba(245,217,158,.18);
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-top {
+            grid-column:1;
+            grid-row:2 / 4;
+            align-content:start;
+            border-right:1px solid rgba(245,217,158,.18);
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-tabs {
+            grid-column:2;
+            grid-row:1;
+            align-self:end;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-body {
+            grid-column:2;
+            grid-row:2 / 4;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-status-grid,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-actions {
+            grid-template-columns:1fr;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v334-card,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card {
+            flex-basis:min(286px, calc(100vw - 244px));
+        }
+        #perlaInfoModalV361 .info-panel {
+            width:min(760px, calc(100vw - 24px));
+            max-height:min(88svh, 760px);
+        }
+        #perlaInfoModalV361[data-kind="instructions"] .info-body,
+        #perlaInfoModalV361[data-kind="mission_current_from_alerts_v385"] .info-body {
+            grid-template-columns:repeat(2,minmax(0,1fr));
+            align-items:start;
+        }
+        #perlaInfoModalV361[data-kind="instructions"] .info-actions,
+        #perlaInfoModalV361[data-kind="mission_current_from_alerts_v385"] .info-actions,
+        #perlaInfoModalV361[data-kind="instructions"] .info-mission-current,
+        #perlaInfoModalV361[data-kind="mission_current_from_alerts_v385"] .info-mission-current,
+        #perlaInfoModalV361[data-kind="instructions"] .info-mission-timeline,
+        #perlaInfoModalV361[data-kind="mission_current_from_alerts_v385"] .info-mission-timeline {
+            grid-column:1 / -1;
+        }
+        @media (max-width: 600px) {
+            #perlaInfoModalV361 .info-panel {
+                width:calc(100vw - 16px);
+                max-height:calc(100svh - 16px);
+            }
+            #perlaInfoModalV361[data-kind="instructions"] .info-body,
+            #perlaInfoModalV361[data-kind="mission_current_from_alerts_v385"] .info-body {
+                grid-template-columns:1fr;
+            }
         }
     </style>
 </head>
@@ -2045,14 +2259,20 @@ function isCoarsePortraitViewport(){
 function perlaViewportRoundV382(value){
     return Math.round(Number(value)||0);
 }
+function perlaViewportQuantizeV388(value, step){
+    const s=Math.max(1, Number(step)||1);
+    return Math.round((Number(value)||0)/s)*s;
+}
 function perlaViewportBasisV382(){
     const vv=window.visualViewport;
     const iw=Math.max(1, perlaViewportRoundV382(window.innerWidth));
     const ih=Math.max(1, perlaViewportRoundV382(window.innerHeight));
-    const vw=Math.max(1, perlaViewportRoundV382(vv ? vv.width : iw));
-    const vh=Math.max(1, perlaViewportRoundV382(vv ? vv.height : ih));
-    const left=perlaViewportRoundV382(vv ? vv.offsetLeft : 0);
-    const top=perlaViewportRoundV382(vv ? vv.offsetTop : 0);
+    // V388: iOS Safari can emit tiny visualViewport oscillations while browser chrome settles.
+    // Quantize material viewport values so harmless 1-3px changes cannot drive a resize loop.
+    const vw=Math.max(1, perlaViewportQuantizeV388(vv ? vv.width : iw, 4));
+    const vh=Math.max(1, perlaViewportQuantizeV388(vv ? vv.height : ih, 4));
+    const left=perlaViewportQuantizeV388(vv ? vv.offsetLeft : 0, 4);
+    const top=perlaViewportQuantizeV388(vv ? vv.offsetTop : 0, 4);
     const visualUsable=!!(vv && vw>=160 && vh>=160);
     const w=visualUsable ? vw : iw;
     const h=visualUsable ? vh : ih;
@@ -2134,7 +2354,16 @@ function updatePerlaVisualViewportCSS(){
     const height=basis.vh;
     const sig=[left,top,width,height].join('|');
     if(updatePerlaVisualViewportCSS._lastSigV381===sig) return false;
+    const previous=updatePerlaVisualViewportCSS._lastBasisV388;
+    if(previous){
+        const tinyShift=Math.abs(previous.left-left)<=4 && Math.abs(previous.top-top)<=4 && Math.abs(previous.width-width)<=4 && Math.abs(previous.height-height)<=4;
+        if(tinyShift){
+            updatePerlaVisualViewportCSS._lastSigV381=sig;
+            return false;
+        }
+    }
     updatePerlaVisualViewportCSS._lastSigV381=sig;
+    updatePerlaVisualViewportCSS._lastBasisV388={left,top,width,height};
     const st=document.documentElement.style;
     st.setProperty('--perla-vv-left', left+'px');
     st.setProperty('--perla-vv-top', top+'px');
@@ -2162,7 +2391,7 @@ const debugLine = document.getElementById('debugLine');
 const perlaClockHud = document.getElementById('perlaClockHud');
 const perlaComfortHudV336 = document.getElementById('perlaComfortHudV336');
 
-const PERLA_BUILD_ID = 'PERLA1_V382_MOBILE_PORTRAIT_HUD_CLEANUP';
+const PERLA_BUILD_ID = 'PERLA1_V388_MOBILE_CASA_RESIZE_LOOP_GUARD_LOCAL';
 const PERLA_V380_BASE_BUILD = 'PERLA1_V379_ORIENTATION_DIRECT_FAINT_GATE_LOCAL';
 const PERLA_V382_MOBILE_PORTRAIT_HUD_CLEANUP_SAFE = true;
 const PERLA_V380_MOBILE_HUD_ROTATION_CLUSTER_SAFE = true;
@@ -14268,10 +14497,12 @@ function perlaRtpInfoModalEnsureV361(){
 function perlaRtpInfoModalOpenV361(title, bodyHtml, meta){
     const el=perlaRtpInfoModalEnsureV361();
     if(!el) return {ok:false, reason:'info_modal_disabled_v361'};
+    const modalKind=meta&&meta.kind ? String(meta.kind) : 'generic';
     const h=el.querySelector('h3');
     const body=el.querySelector('.info-body');
     if(h) h.textContent=String(title||'Informazioni');
     if(body) body.innerHTML=String(bodyHtml||'');
+    el.dataset.kind=modalKind;
     el.classList.add('visible');
     el.setAttribute('aria-hidden','false');
     try{ el.inert=false; }catch(err){}
@@ -14293,6 +14524,7 @@ function perlaRtpInfoModalCloseV361(reason){
         perlaRtpMoveFocusBeforeHideV376(el, fallback);
         el.classList.remove('visible');
         el.setAttribute('aria-hidden','true');
+        el.dataset.kind='closed';
         try{ el.inert=true; }catch(err){}
     }
     perlaInfoModalStateV361.lastClose={reason:String(reason||'manual'), at:new Date().toISOString()};
@@ -14642,6 +14874,7 @@ function perlaRtpWorldAlertsHtmlV385(){
         ])),
         perlaRtpInfoModalActionsV361([
             {action:'show-mission-current-v385', label:'Missione corrente'},
+            {action:'show-instructions-v385', label:'Istruzioni'},
             {action:'close', label:'Chiudi', secondary:true}
         ])
     ].join('');
@@ -14811,6 +15044,10 @@ function perlaRtpInfoModalHandleActionV361(btn){
             if(typeof perlaRtpPass2AutoSaveAfterStateChange==='function') perlaRtpPass2AutoSaveAfterStateChange('mission_current_view_from_alerts_v385');
         }
         return rendered;
+    }
+    if(action==='show-instructions-v385'){
+        if(typeof perlaRtpInstructionsOpenV361==='function') return perlaRtpInstructionsOpenV361();
+        return {ok:false, reason:'instructions_renderer_missing_v385'};
     }
     if(action==='use-consumable'){
         const key=String(btn.dataset.key||'');
@@ -37488,6 +37725,10 @@ function perlaViewportRelayoutFlushV381(){
         perlaViewportRelayoutDeferV382(Math.max(50, st.rotationHoldUntil-now));
         return;
     }
+    if(!st.force && sample.sig===st.lastAppliedSigV382){
+        st.lastFlushAt=now;
+        return;
+    }
     updatePerlaVisualViewportCSS();
     const mode=sample.mode;
     const size=sample.size;
@@ -37511,6 +37752,11 @@ function perlaViewportRelayoutScheduleV381(reason, opts){
     st.force=!!(st.force || opts.forceRenderer);
     const isOrientation=st.reason==='orientationchange' || !!opts.orientation;
     const isViewportBurst=/^(window_resize|visual_viewport_resize|visual_viewport_scroll|pause_menu_resize)$/.test(st.reason);
+    if(st.reason==='visual_viewport_scroll' && !(st.rotationDeadline && now<st.rotationDeadline)){
+        updatePerlaVisualViewportCSS();
+        if(typeof perlaRtpMiniMapClusterRelayoutV380==='function') perlaRtpMiniMapClusterRelayoutV380('viewport_v388_visual_scroll_css_only');
+        return;
+    }
     if(isOrientation){
         st.rotationHoldUntil=Math.max(st.rotationHoldUntil, now+(opts.settleMs||PERLA_V382_ROTATION_SETTLE_MS));
         st.rotationDeadline=Math.max(st.rotationDeadline, now+PERLA_V382_ROTATION_MAX_WAIT_MS);
@@ -46704,7 +46950,7 @@ function perlaTelemetryDeletionReadinessV293(options){
 }
 function perlaTelemetryHealthV293(){
     const warnings=[];
-    if(!/(V29[3-9]|V30[0-9]|V31[0-9]|V32[0-9]|V3[3-6][0-9])/.test(String(PERLA_BUILD_ID))) warnings.push('build_id_not_v293_to_v36x_family');
+    if(!/(V29[3-9]|V30[0-9]|V31[0-9]|V32[0-9]|V3[3-9][0-9])/.test(String(PERLA_BUILD_ID))) warnings.push('build_id_not_v293_to_v39x_family');
     if(!PERLA_V293_NO_VISUAL_OUTPUT_CHANGE) warnings.push('v293_visual_change_flag_not_safe');
     if(String(PERLA_BUILD_ID).indexOf('V294')>=0){
         if(!PERLA_V294_V237_TOMBSTONE_CLEANUP_SAFE) warnings.push('v294_v237_cleanup_flag_not_safe');
@@ -46717,45 +46963,45 @@ function perlaTelemetryHealthV293(){
         if(!PERLA_V295_HIGH_WALL_DIAGNOSTICS_ABSORBED) warnings.push('v295_high_wall_absorption_missing');
         if(!PERLA_V295_FAILED_ROOF_BRANCHES_TOMBSTONED) warnings.push('v295_failed_roof_tombstone_missing');
     }
-    if(/(V29[6789]|V30[0-9]|V31[0-9]|V32[0-9]|V3[3-6][0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V29[6789]|V30[0-9]|V31[0-9]|V32[0-9]|V3[3-9][0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V296_PHYSICAL_TOMBSTONE_PRUNE_SAFE) warnings.push('v296_physical_prune_flag_not_safe');
         if(!PERLA_V296_NO_VISUAL_OUTPUT_CHANGE) warnings.push('v296_visual_change_flag_not_safe');
         if(!PERLA_V296_FAILED_ROOF_IMPLEMENTATIONS_PRUNED) warnings.push('v296_failed_roof_prune_missing');
         if(!PERLA_V296_HIGH_WALL_IMPLEMENTATIONS_PRUNED) warnings.push('v296_high_wall_prune_missing');
         if(!PERLA_V296_COMPATIBILITY_SHIMS_PRESERVED) warnings.push('v296_compatibility_shims_not_preserved');
     }
-    if(/(V29[789]|V30[0-9]|V31[0-9]|V32[0-9]|V3[3-6][0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V29[789]|V30[0-9]|V31[0-9]|V32[0-9]|V3[3-9][0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V297_PERGOLA_DRAW_BUDGET_SAFE) warnings.push('v297_pergola_draw_budget_not_safe');
         if(!PERLA_V297_NO_WORLDGEN_CHANGE) warnings.push('v297_worldgen_change_flag_not_safe');
         if(!PERLA_V297_NO_ASSET_CHANGE) warnings.push('v297_asset_change_flag_not_safe');
         if(!PERLA_V297_NO_RAIN_OUTPUT_CHANGE) warnings.push('v297_rain_change_flag_not_safe');
     }
-    if(/(V29[89]|V30[0-9]|V31[0-9]|V32[0-9]|V3[3-6][0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V29[89]|V30[0-9]|V31[0-9]|V32[0-9]|V3[3-9][0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V298_ROOF_STORM_BUDGET_SAFE) warnings.push('v298_roof_storm_budget_not_safe');
         if(!PERLA_V298_NO_WORLDGEN_CHANGE) warnings.push('v298_worldgen_change_flag_not_safe');
         if(!PERLA_V298_NO_ASSET_CHANGE) warnings.push('v298_asset_change_flag_not_safe');
         if(!PERLA_V298_NO_RAIN_OUTPUT_CHANGE) warnings.push('v298_rain_change_flag_not_safe');
     }
-    if(/(V299|V30[0-9]|V31[0-9]|V32[0-9]|V3[3-6][0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V299|V30[0-9]|V31[0-9]|V32[0-9]|V3[3-9][0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V299_ROOF_ALWAYS_BUDGET_SAFE) warnings.push('v299_roof_always_budget_not_safe');
         if(!PERLA_V299_NO_WORLDGEN_CHANGE) warnings.push('v299_worldgen_change_flag_not_safe');
         if(!PERLA_V299_NO_ASSET_CHANGE) warnings.push('v299_asset_change_flag_not_safe');
         if(!PERLA_V299_NO_RAIN_OUTPUT_CHANGE) warnings.push('v299_rain_change_flag_not_safe');
     }
-    if(/(V30[0-9]|V31[0-9]|V32[0-9]|V3[3-6][0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V30[0-9]|V31[0-9]|V32[0-9]|V3[3-9][0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V300_ADAPTIVE_PERFORMANCE_SAFE) warnings.push('v300_adaptive_performance_not_safe');
         if(!PERLA_V300_NO_WORLDGEN_CHANGE) warnings.push('v300_worldgen_change_flag_not_safe');
         if(!PERLA_V300_NO_ASSET_CHANGE) warnings.push('v300_asset_change_flag_not_safe');
         if(!PERLA_V300_NO_RAIN_OUTPUT_CHANGE) warnings.push('v300_rain_change_flag_not_safe');
     }
-    if(/(V31[2-9]|V32[0-9]|V3[3-6][0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V31[2-9]|V32[0-9]|V3[3-9][0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V312_REAL_MOBILE_RENDER_PACING_SAFE) warnings.push('v312_real_mobile_render_pacing_not_safe');
         if(!PERLA_V312_MOBILE_ANDROID_RENDER_BUDGET_SAFE) warnings.push('v312_android_render_budget_not_safe');
         if(!PERLA_V312_MOBILE_HOTSPOT_RENDER_BUDGET_SAFE) warnings.push('v312_hotspot_render_budget_not_safe');
         if(!PERLA_V312_IOS_RAF_SCARCITY_GUARD_SAFE) warnings.push('v312_ios_raf_scarcity_guard_not_safe');
         if(!PERLA_V312_NO_PREVIOUS_FRAME_QUALITY_FEEDBACK) warnings.push('v312_previous_frame_quality_feedback_not_disabled');
     }
-    if(/(V31[3-9]|V32[0-9]|V3[3-6][0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V31[3-9]|V32[0-9]|V3[3-9][0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V313_REAL_MOBILE_DEVICE_STUTTER_FIX_SAFE) warnings.push('v313_real_mobile_stutter_fix_not_safe');
         if(!PERLA_V313_IOS_RAF_SCARCITY_TIMER_FALLBACK_SAFE) warnings.push('v313_ios_timer_fallback_not_safe');
         if(!PERLA_V313_ANDROID_UNKNOWN_STRIPE_GUARD_SAFE) warnings.push('v313_android_unknown_stripe_guard_not_safe');
@@ -47003,45 +47249,45 @@ function perlaModernDebugHealthV295(){
     if(!PERLA_V295_MODERN_DEBUG_HUB_CLEANUP_SAFE) warnings.push('v295_cleanup_flag_missing');
     if(!PERLA_V295_NO_VISUAL_OUTPUT_CHANGE) warnings.push('v295_visual_change_flag_not_safe');
     if(!PERLA_V295_V293_COMPATIBILITY_PRESERVED) warnings.push('v293_compatibility_not_declared');
-    if(/(V29[6789]|V30[0-9]|V31[0-9]|V32[0-9]|V3[3-6][0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V29[6789]|V30[0-9]|V31[0-9]|V32[0-9]|V3[3-9][0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V296_PHYSICAL_TOMBSTONE_PRUNE_SAFE) warnings.push('v296_physical_prune_flag_missing');
         if(!PERLA_V296_NO_VISUAL_OUTPUT_CHANGE) warnings.push('v296_visual_change_flag_not_safe');
         if(!PERLA_V296_FAILED_ROOF_IMPLEMENTATIONS_PRUNED) warnings.push('v296_failed_roof_implementation_prune_missing');
         if(!PERLA_V296_HIGH_WALL_IMPLEMENTATIONS_PRUNED) warnings.push('v296_high_wall_implementation_prune_missing');
         if(!PERLA_V296_COMPATIBILITY_SHIMS_PRESERVED) warnings.push('v296_compatibility_shims_missing');
     }
-    if(/(V29[789]|V30[0-9]|V31[0-9]|V32[0-9]|V3[3-6][0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V29[789]|V30[0-9]|V31[0-9]|V32[0-9]|V3[3-9][0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V297_PERGOLA_DRAW_BUDGET_SAFE) warnings.push('v297_pergola_draw_budget_missing');
         if(!PERLA_V297_NO_WORLDGEN_CHANGE) warnings.push('v297_worldgen_change_flag_not_safe');
         if(!PERLA_V297_NO_ASSET_CHANGE) warnings.push('v297_asset_change_flag_not_safe');
         if(!PERLA_V297_NO_RAIN_OUTPUT_CHANGE) warnings.push('v297_rain_change_flag_not_safe');
     }
-    if(/(V29[89]|V30[0-9]|V31[0-9]|V32[0-9]|V3[3-6][0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V29[89]|V30[0-9]|V31[0-9]|V32[0-9]|V3[3-9][0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V298_ROOF_STORM_BUDGET_SAFE) warnings.push('v298_roof_storm_budget_missing');
         if(!PERLA_V298_NO_WORLDGEN_CHANGE) warnings.push('v298_worldgen_change_flag_not_safe');
         if(!PERLA_V298_NO_ASSET_CHANGE) warnings.push('v298_asset_change_flag_not_safe');
         if(!PERLA_V298_NO_RAIN_OUTPUT_CHANGE) warnings.push('v298_rain_change_flag_not_safe');
     }
-    if(/(V299|V30[0-9]|V31[0-9]|V32[0-9]|V3[3-6][0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V299|V30[0-9]|V31[0-9]|V32[0-9]|V3[3-9][0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V299_ROOF_ALWAYS_BUDGET_SAFE) warnings.push('v299_roof_always_budget_missing');
         if(!PERLA_V299_NO_WORLDGEN_CHANGE) warnings.push('v299_worldgen_change_flag_not_safe');
         if(!PERLA_V299_NO_ASSET_CHANGE) warnings.push('v299_asset_change_flag_not_safe');
         if(!PERLA_V299_NO_RAIN_OUTPUT_CHANGE) warnings.push('v299_rain_change_flag_not_safe');
     }
-    if(/(V30[0-9]|V31[0-9]|V32[0-9]|V3[3-6][0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V30[0-9]|V31[0-9]|V32[0-9]|V3[3-9][0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V300_ADAPTIVE_PERFORMANCE_SAFE) warnings.push('v300_adaptive_performance_missing');
         if(!PERLA_V300_NO_WORLDGEN_CHANGE) warnings.push('v300_worldgen_change_flag_not_safe');
         if(!PERLA_V300_NO_ASSET_CHANGE) warnings.push('v300_asset_change_flag_not_safe');
         if(!PERLA_V300_NO_RAIN_OUTPUT_CHANGE) warnings.push('v300_rain_change_flag_not_safe');
     }
-    if(/(V31[2-9]|V32[0-9]|V3[3-6][0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V31[2-9]|V32[0-9]|V3[3-9][0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V312_REAL_MOBILE_RENDER_PACING_SAFE) warnings.push('v312_real_mobile_render_pacing_missing');
         if(!PERLA_V312_MOBILE_ANDROID_RENDER_BUDGET_SAFE) warnings.push('v312_android_render_budget_missing');
         if(!PERLA_V312_MOBILE_HOTSPOT_RENDER_BUDGET_SAFE) warnings.push('v312_hotspot_render_budget_missing');
         if(!PERLA_V312_IOS_RAF_SCARCITY_GUARD_SAFE) warnings.push('v312_ios_raf_scarcity_guard_missing');
         if(!PERLA_V312_NO_PREVIOUS_FRAME_QUALITY_FEEDBACK) warnings.push('v312_previous_frame_quality_feedback_not_disabled');
     }
-    if(/(V31[3-9]|V32[0-9]|V3[3-6][0-9])/.test(String(PERLA_BUILD_ID))){
+    if(/(V31[3-9]|V32[0-9]|V3[3-9][0-9])/.test(String(PERLA_BUILD_ID))){
         if(!PERLA_V313_REAL_MOBILE_DEVICE_STUTTER_FIX_SAFE) warnings.push('v313_real_mobile_stutter_fix_missing');
         if(!PERLA_V313_IOS_RAF_SCARCITY_TIMER_FALLBACK_SAFE) warnings.push('v313_ios_timer_fallback_missing');
         if(!PERLA_V313_ANDROID_UNKNOWN_STRIPE_GUARD_SAFE) warnings.push('v313_android_unknown_stripe_guard_missing');
