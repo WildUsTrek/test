@@ -2146,6 +2146,184 @@
                 grid-template-columns:1fr;
             }
         }
+
+        /* V388P1: essential mobile HUD and CASA anti-collapse patch.
+           The notification/wheelbarrow/menu cluster must never be sized by the
+           leftover corridor between clock and minimap: that corridor changes on
+           iOS rotation settle and clips the Menu button. CASA cards must use a
+           stable vertical stack so chips, dividers and actions cannot climb over text. */
+        html.perla-mobile-portrait #perlaInventoryHudV345P2 {
+            left:calc(var(--perla-v382-safe-x) + 44px) !important;
+            right:auto !important;
+            top:calc(var(--perla-v382-safe-y) + 48px) !important;
+            width:max-content !important;
+            max-width:calc(100vw - 56px - env(safe-area-inset-left) - env(safe-area-inset-right)) !important;
+            min-width:max-content !important;
+            flex-wrap:nowrap !important;
+            overflow:visible !important;
+            justify-content:flex-start !important;
+            z-index:8;
+        }
+        html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-head {
+            flex-wrap:nowrap !important;
+            min-width:max-content;
+        }
+        html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-debt,
+        html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-capacity,
+        html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-menu {
+            flex:0 0 auto;
+        }
+        html.perla-mobile-portrait #perlaBackpackHudV350 {
+            z-index:8;
+        }
+        html.perla-mobile-landscape #perlaInventoryHudV345P2 {
+            left:calc(8px + env(safe-area-inset-left) + 210px) !important;
+            right:auto !important;
+            top:calc(8px + env(safe-area-inset-top)) !important;
+            width:max-content !important;
+            max-width:calc(100vw - 300px - env(safe-area-inset-left) - env(safe-area-inset-right)) !important;
+            min-width:max-content !important;
+            flex-wrap:nowrap !important;
+            overflow:visible !important;
+            transform:none !important;
+        }
+        html.perla-mobile-landscape #perlaInventoryHudV345P2 .inv-head {
+            flex-wrap:nowrap !important;
+            min-width:max-content;
+        }
+        html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-menu,
+        html.perla-mobile-landscape #perlaInventoryHudV345P2 .inv-menu {
+            display:inline-flex !important;
+            visibility:visible !important;
+            opacity:1 !important;
+        }
+
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384.visible {
+            grid-template-columns:1fr !important;
+            grid-template-rows:auto auto auto minmax(0,1fr) !important;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-head,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-top,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-tabs,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-body {
+            grid-column:1 !important;
+            border-right:0 !important;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-head { grid-row:1 !important; }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-top {
+            grid-row:2 !important;
+            display:grid !important;
+            grid-template-columns:minmax(0,1fr) minmax(220px,auto) !important;
+            align-items:center !important;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-tabs {
+            grid-row:3 !important;
+            display:flex !important;
+            padding:7px 10px !important;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-body {
+            grid-row:4 !important;
+            display:block !important;
+            overflow:auto !important;
+            padding:0 10px 10px !important;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-status-grid {
+            grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-actions {
+            grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v334-card,
+        #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card,
+        #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card {
+            display:flex !important;
+            flex-direction:column !important;
+            min-height:260px;
+            height:auto !important;
+            overflow:visible !important;
+            gap:8px;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v334-card {
+            min-height:300px;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v354-card-body {
+            display:flex !important;
+            flex-direction:column !important;
+            flex:1 1 auto !important;
+            min-height:0;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v354-card-body .rtp-v355-summary {
+            margin-top:auto !important;
+            padding-top:8px !important;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v354-card-footer {
+            display:grid !important;
+            grid-template-rows:auto auto auto !important;
+            gap:8px !important;
+            margin-top:auto !important;
+            padding-top:10px !important;
+            align-self:stretch !important;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v334-card p,
+        #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card p,
+        #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card p {
+            overflow:visible !important;
+            display:block !important;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card .rtp-v355-consumable-summary,
+        #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card .rtp-v355-summary {
+            margin-top:auto;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card button,
+        #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card button {
+            margin-top:auto;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v334-card,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card {
+            flex-basis:min(310px, calc(100vw - 42px)) !important;
+            min-height:260px !important;
+            overflow:visible !important;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v334-card {
+            min-height:300px !important;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v350-tab-panel[data-active="true"] {
+            display:block !important;
+            overflow:visible !important;
+        }
+
+        /* V388P2: CASA close control is a fixed visual affordance, not a grid item.
+           It must stay at the top-right margin of the menu across all rotations. */
+        #perlaCasaPremiumMenuV384 {
+            position:fixed !important;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-head {
+            position:relative !important;
+            grid-template-columns:minmax(0,1fr) !important;
+            padding-right:72px !important;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v384-close {
+            position:absolute !important;
+            top:10px !important;
+            right:10px !important;
+            z-index:4 !important;
+            flex:0 0 auto !important;
+        }
+        @media (max-width: 720px), (pointer: coarse) {
+            #perlaCasaPremiumMenuV384 .casa-v384-head {
+                grid-template-columns:minmax(0,1fr) !important;
+                padding-right:68px !important;
+            }
+            #perlaCasaPremiumMenuV384 .casa-v384-close {
+                top:9px !important;
+                right:10px !important;
+            }
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v384-close {
+            top:8px !important;
+            right:10px !important;
+        }
     </style>
 </head>
 <body>
