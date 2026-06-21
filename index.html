@@ -76,7 +76,7 @@
         #perlaPauseMenuV360 .pause-popup-close { width:32px; height:32px; border-radius:8px; border:1px solid rgba(255,92,92,.56); color:#fff; background:linear-gradient(180deg,rgba(239,93,84,.92),rgba(128,40,42,.98)); font-size:18px; line-height:1; font-weight:950; }
         #perlaPauseMenuV360 .pause-popup-body { min-height:0; overflow:auto; display:grid; gap:9px; padding:12px 13px 14px; }
         #perlaPauseMenuV360 .pause-popup-body p { margin:0; color:rgba(255,247,223,.82); font-size:12px; line-height:1.32; font-weight:760; }
-        #perlaClockHud { position:absolute; left:12px; top:12px; z-index:3; min-width:142px; padding:8px 11px 9px; border-radius:16px; color:#fff7df; background:linear-gradient(180deg,rgba(28,22,16,.78),rgba(8,10,14,.58)); border:1px solid rgba(255,255,255,.26); box-shadow:0 7px 20px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.12); backdrop-filter:blur(3px); font-weight:900; letter-spacing:.02em; text-shadow:0 2px 6px rgba(0,0,0,.74); pointer-events:none; box-sizing:border-box; }
+        #perlaClockHud { position:absolute; left:12px; top:12px; z-index:3; min-width:142px; padding:8px 11px 9px; border-radius:16px; color:#fff7df; background:linear-gradient(180deg,rgba(28,22,16,.78),rgba(8,10,14,.58)); border:1px solid rgba(255,255,255,.26); box-shadow:0 7px 20px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.12); backdrop-filter:blur(3px); font-weight:900; letter-spacing:.02em; text-shadow:0 2px 6px rgba(0,0,0,.74); pointer-events:auto; touch-action:manipulation; cursor:pointer; box-sizing:border-box; }
         #perlaClockHud .perla-clock-time { display:inline-flex; align-items:center; gap:7px; font-variant-numeric:tabular-nums; font-size:18px; line-height:1.02; }
         #perlaClockHud .perla-clock-meta { display:flex; align-items:center; gap:4px; margin-top:4px; font-size:9px; line-height:1.05; color:rgba(255,244,212,.90); letter-spacing:0; text-transform:uppercase; white-space:nowrap; }
         #perlaClockHud .perla-clock-weather-dot { width:8px; height:8px; border-radius:50%; flex:0 0 auto; background:#f1c40f; box-shadow:0 0 7px rgba(241,196,15,.55); }
@@ -792,6 +792,11 @@
             pointer-events:none;
             transition:opacity .16s ease, transform .16s ease, filter .16s ease;
         }
+        html .perla-rate-info-button-v381 {
+            display:none !important;
+            opacity:0 !important;
+            pointer-events:none !important;
+        }
         html.perla-mobile-portrait .perla-rate-info-button-v381 { right:8px; bottom:64px; }
         html.perla-mobile-landscape .perla-rate-info-button-v381 { right:78px; bottom:52px; }
         #perlaRtpUpgradeMenuV334 .rtp-v334-panel-head.rtp-v381-compact-head,
@@ -1351,7 +1356,9 @@ function perlaViewportBasisV382(){
 function getPerlaViewportMode(){
     if(!isCoarseViewport()) return 'desktop';
     const basis=perlaViewportBasisV382();
-    return basis.w > basis.h ? 'mobile-landscape' : 'mobile-portrait';
+    // V383 guard: visualViewport can oscillate on iOS while browser chrome settles.
+    // Use the layout viewport for mode/canvas selection; keep visualViewport only for safe-area CSS.
+    return basis.iw > basis.ih ? 'mobile-landscape' : 'mobile-portrait';
 }
 const PERLA_EARLY_OPT_STORAGE_KEY_V320 = 'PERLA1_OPTIMIZATION_PROFILE_V315';
 const PERLA_EARLY_OPT_USER_STORAGE_KEY_V320 = 'PERLA1_OPTIMIZATION_PROFILE_USER_SET_V320';
@@ -10054,34 +10061,42 @@ function perlaRtpBindHudInfoClicksV361(){
     }, {passive:false});
     perlaRtpRateInfoButtonEnsureV381();
 }
+function perlaRtpClockInfoQuestionMarkPurgeV383(reason){
+    let removed=0;
+    try{
+        document.querySelectorAll('#perlaRateInfoButtonV381,.perla-rate-info-button-v381').forEach(node=>{
+            removed++;
+            node.remove();
+        });
+        document.documentElement.classList.remove('perla-v382-clock-helper-active');
+        if(typeof perlaClockRateHelperStateV382!=='undefined' && perlaClockRateHelperStateV382.hideTimer){
+            clearTimeout(perlaClockRateHelperStateV382.hideTimer);
+            perlaClockRateHelperStateV382.hideTimer=null;
+        }
+    }catch(err){}
+    return {ok:true, removed, reason:String(reason||'purge_v383')};
+}
 function perlaRtpRateInfoButtonEnsureV381(){
     if(!PERLA_V361_INFO_MODAL_SAFE) return null;
     let btn=document.getElementById('perlaRateInfoButtonV381');
+    if(PERLA_V382_MOBILE_PORTRAIT_HUD_CLEANUP_SAFE){
+        perlaRtpClockInfoQuestionMarkPurgeV383('ensure_v383');
+        perlaRtpClockRateHelperBindV382(null);
+        return null;
+    }
     if(btn){
         perlaRtpRateInfoButtonPositionV381(btn);
         perlaRtpClockRateHelperBindV382(btn);
         return btn;
     }
-    btn=document.createElement('button');
-    btn.id='perlaRateInfoButtonV381';
-    btn.className='perla-rate-info-button-v381';
-    btn.type='button';
-    btn.textContent='?';
-    btn.setAttribute('aria-label','Apri riepilogo bonus e malus al minuto');
-    btn.setAttribute('aria-hidden','true');
-    btn.addEventListener('click', e=>{
-        e.preventDefault();
-        e.stopPropagation();
-        perlaRtpOpenRateInfoV381();
-        if(typeof perlaRtpClockRateHelperSetVisibleV382==='function') perlaRtpClockRateHelperSetVisibleV382(false,'rate_popup_open');
-    }, {passive:false});
-    document.body.appendChild(btn);
-    perlaRtpRateInfoButtonPositionV381(btn);
-    perlaRtpClockRateHelperBindV382(btn);
-    return btn;
+    return null;
 }
 function perlaRtpRateInfoButtonPositionV381(btn){
     btn=btn||document.getElementById('perlaRateInfoButtonV381');
+    if(PERLA_V382_MOBILE_PORTRAIT_HUD_CLEANUP_SAFE){
+        perlaRtpClockInfoQuestionMarkPurgeV383('position_v383');
+        return {left:0, top:0, size:0, anchored:false, hidden:true, removed:true, anchor:'removed_question_mark_v383'};
+    }
     if(!btn) return null;
     const root=document.documentElement;
     const mobilePortrait=currentViewportMode==='mobile-portrait' || root.classList.contains('perla-mobile-portrait');
@@ -10158,7 +10173,9 @@ const perlaClockRateHelperStateV382 = {bound:false, hideTimer:null, lastShowReas
 function perlaRtpClockRateHelperSetVisibleV382(visible, reason){
     if(!PERLA_V382_MOBILE_PORTRAIT_HUD_CLEANUP_SAFE) return;
     const root=document.documentElement;
-    const btn=document.getElementById('perlaRateInfoButtonV381');
+    perlaRtpClockInfoQuestionMarkPurgeV383('set_visible_'+String(reason||'v383'));
+    root.classList.remove('perla-v382-clock-helper-active');
+    return;
     const mobilePortrait=currentViewportMode==='mobile-portrait' || root.classList.contains('perla-mobile-portrait');
     const mobileLandscape=currentViewportMode==='mobile-landscape' || root.classList.contains('perla-mobile-landscape');
     const helperAllowed=!mobileLandscape;
@@ -10208,43 +10225,29 @@ function perlaRtpClockRateHelperSetVisibleV382(visible, reason){
 }
 function perlaRtpClockRateHelperBindV382(btn){
     if(!PERLA_V382_MOBILE_PORTRAIT_HUD_CLEANUP_SAFE || !perlaClockHud) return;
-    btn=btn||document.getElementById('perlaRateInfoButtonV381');
-    if(!btn || perlaClockRateHelperStateV382.bound) return;
+    perlaRtpClockInfoQuestionMarkPurgeV383('bind_v383');
+    if(perlaClockRateHelperStateV382.bound) return;
     perlaClockRateHelperStateV382.bound=true;
     perlaClockHud.dataset.helperV382='clock-rate-info';
     perlaClockHud.setAttribute('tabindex','0');
     perlaClockHud.setAttribute('role','button');
-    perlaClockHud.setAttribute('aria-label','Orologio e meteo PERLA1. Tocca per mostrare il riepilogo bonus e malus.');
-    const show=e=>{
-        if(e&&(e.type==='click'||e.type==='pointerdown'||e.type==='touchstart')){
+    perlaClockHud.setAttribute('aria-label','Orologio e meteo PERLA1. Tocca per aprire bonus e malus.');
+    const open=e=>{
+        if(e){
             e.preventDefault();
             e.stopPropagation();
         }
-        if(currentViewportMode==='mobile-landscape' || document.documentElement.classList.contains('perla-mobile-landscape')){
-            perlaRtpClockRateHelperSetVisibleV382(false,'non_portrait_clock_event');
-            return;
-        }
-        perlaRtpClockRateHelperSetVisibleV382(true,'clock_'+String(e&&e.type||'event'));
+        const now=(typeof performance!=='undefined'&&performance.now)?performance.now():Date.now();
+        if(perlaClockRateHelperStateV382.lastOpenAt && now-perlaClockRateHelperStateV382.lastOpenAt<260) return;
+        perlaClockRateHelperStateV382.lastOpenAt=now;
+        if(typeof perlaRtpOpenRateInfoV381==='function') perlaRtpOpenRateInfoV381();
     };
-    const scheduleHide=()=>{
-        if(perlaClockRateHelperStateV382.hideTimer) clearTimeout(perlaClockRateHelperStateV382.hideTimer);
-        perlaClockRateHelperStateV382.hideTimer=setTimeout(()=>perlaRtpClockRateHelperSetVisibleV382(false,'clock_leave'),900);
-    };
-    perlaClockHud.addEventListener('pointerenter', show, {passive:true});
-    perlaClockHud.addEventListener('focusin', show, {passive:true});
-    perlaClockHud.addEventListener('pointerdown', show, {passive:false});
-    perlaClockHud.addEventListener('touchstart', show, {passive:false});
-    perlaClockHud.addEventListener('click', show, {passive:false});
-    perlaClockHud.addEventListener('pointerleave', scheduleHide, {passive:true});
-    perlaClockHud.addEventListener('focusout', scheduleHide, {passive:true});
-    btn.addEventListener('pointerenter', ()=>perlaRtpClockRateHelperSetVisibleV382(true,'button_enter'), {passive:true});
-    btn.addEventListener('focusin', ()=>perlaRtpClockRateHelperSetVisibleV382(true,'button_focus'), {passive:true});
-    btn.addEventListener('pointerleave', scheduleHide, {passive:true});
-    document.addEventListener('pointerdown', e=>{
-        if(currentViewportMode!=='mobile-portrait') return;
-        if((perlaClockHud&&perlaClockHud.contains(e.target)) || (btn&&btn.contains(e.target))) return;
-        perlaRtpClockRateHelperSetVisibleV382(false,'outside_pointer');
-    }, {passive:true});
+    perlaClockHud.addEventListener('pointerdown', open, {passive:false});
+    perlaClockHud.addEventListener('click', open, {passive:false});
+    perlaClockHud.addEventListener('keydown', e=>{
+        const key=String(e.key||'').toLowerCase();
+        if(key==='enter' || key===' ' || key==='spacebar') open(e);
+    }, {passive:false});
 }
 function perlaRtpOpenRateInfoV381(){
     const groups=perlaRtpCurrentModifierGroupsV361('comfort');
@@ -19029,7 +19032,8 @@ function perlaRtpActionClosestEventV332(){
     if(nearestShower && (!closestSystem || Number(nearestShower.distance)+.15<=Number(closestSystem.distance||999)) && (!nearestSprite || Number(nearestShower.distance)+.15<=Number(nearestSprite.distance||999))){
         return nearestShower;
     }
-    if(PERLA_V370_HUB_SIGN_INTERACTION_PRIORITY_SAFE && hubSystem && nearestSprite && nearestSprite.recruitedBaseV345 && Number(hubSystem.distance||999)<=PERLA_V370_HUB_SIGN_PRIORITY_RADIUS_TILES){
+    const recruitedSpriteTouchGuardV383=nearestSprite && nearestSprite.recruitedBaseV345 && Number(nearestSprite.distance||999)<=.95 && Number(hubSystem&&hubSystem.distance||999)>.95;
+    if(PERLA_V370_HUB_SIGN_INTERACTION_PRIORITY_SAFE && hubSystem && nearestSprite && nearestSprite.recruitedBaseV345 && !recruitedSpriteTouchGuardV383 && Number(hubSystem.distance||999)<=PERLA_V370_HUB_SIGN_PRIORITY_RADIUS_TILES){
         hubSystem.actionSelectionSourceV370='hub_sign_priority_over_recruited_base_sprite';
         hubSystem.nearbySpriteEntityIdV350=nearestSprite.entityId;
         hubSystem.nearbySpriteDistanceV350=nearestSprite.distance;
@@ -19126,13 +19130,31 @@ function perlaRtpActionWorldTargetForMarkerV380(ev){
     }
     return null;
 }
+function perlaRtpActionEventIsRecruitedBaseV383(ev){
+    if(!ev) return false;
+    const sprite=ev.spriteEntity || ev.selectedSpriteEntity || ev.sprite || null;
+    if(sprite && sprite.recruitedBaseV345) return true;
+    const placement=String((sprite&&sprite.placementId)||ev.placementId||'');
+    if(placement.indexOf('placement.runtime.recruited_base.')===0) return true;
+    const source=String(ev.source||ev.actionSelectionSourceV350||ev.actionSelectionSourceV370||'');
+    return source.indexOf('recruited_base')>=0;
+}
+function perlaRtpPlayerInCasaActionAreaV383(){
+    const distToBase=Math.hypot(Number(posX)-PERLA_V363_BASE_WORLD_X, Number(posY)-PERLA_V363_BASE_WORLD_Y);
+    const distToPiazzola=Math.hypot(Number(posX)-PERLA_V363_PIAZZOLA_WORLD_X, Number(posY)-PERLA_V363_PIAZZOLA_WORLD_Y);
+    return {
+        near:distToBase<=6.4 || distToPiazzola<=7.2,
+        distToBase:+distToBase.toFixed(3),
+        distToPiazzola:+distToPiazzola.toFixed(3)
+    };
+}
 function perlaRtpCasaMarkerTargetV381(ev){
     const id=String(ev&&ev.eventId||ev&&ev.eventType||'').toLowerCase();
     const looksCasa=id.indexOf('hub')>=0 || id.indexOf('casa')>=0 || id.indexOf('upgrade')>=0 || id.indexOf('base')>=0;
-    const distToBase=Math.hypot(Number(posX)-PERLA_V363_BASE_WORLD_X, Number(posY)-PERLA_V363_BASE_WORLD_Y);
-    const distToPiazzola=Math.hypot(Number(posX)-PERLA_V363_PIAZZOLA_WORLD_X, Number(posY)-PERLA_V363_PIAZZOLA_WORLD_Y);
-    if(looksCasa || distToBase<=5.8 || distToPiazzola<=6.8){
-        return {x:PERLA_V363_BASE_WORLD_X, y:PERLA_V363_BASE_WORLD_Y, source:'casa_base_anchor_v381', casa:true};
+    if(perlaRtpActionEventIsRecruitedBaseV383(ev) && !looksCasa) return null;
+    const area=perlaRtpPlayerInCasaActionAreaV383();
+    if(looksCasa || area.near){
+        return {x:PERLA_V363_BASE_WORLD_X, y:PERLA_V363_BASE_WORLD_Y, source:'casa_base_anchor_v383', casa:true, casaAreaV383:area};
     }
     return null;
 }
@@ -19168,6 +19190,20 @@ function perlaRtpCasaMarkerScreenFallbackV382(target){
         reason:'casa_anchor_too_close_v382'
     };
 }
+function perlaRtpCasaMarkerScreenCenterV383(target){
+    if(!target || !target.casa || !canvas || !canvas.getBoundingClientRect) return null;
+    const rect=canvas.getBoundingClientRect();
+    if(!rect || rect.width<=0 || rect.height<=0) return null;
+    return {
+        x:+(rect.left+rect.width*.50).toFixed(2),
+        y:+(rect.top+rect.height*.50).toFixed(2),
+        transY:null,
+        screenX:+(screenW*.50).toFixed(2),
+        screenY:+(screenH*.50).toFixed(2),
+        fixedCenter:true,
+        reason:'casa_area_fixed_center_v383'
+    };
+}
 function perlaRtpActionMarkerUpdateV380(reason){
     if(!PERLA_V380_ACTION_WORLD_MARKER_SAFE) return perlaRtpActionMarkerHideV380('v380_disabled');
     const el=perlaRtpActionMarkerEnsureV380();
@@ -19183,7 +19219,8 @@ function perlaRtpActionMarkerUpdateV380(reason){
     }
     const ev=perlaRtpActionClosestEventV332();
     const target=perlaRtpCasaMarkerTargetV381(ev) || perlaRtpActionWorldTargetForMarkerV380(ev);
-    const pos=target ? (perlaRtpWorldToScreenCssV380(target.x, target.y) || perlaRtpCasaMarkerScreenFallbackV382(target)) : null;
+    const casaCenter=target && target.casa && !perlaRtpActionEventIsRecruitedBaseV383(ev);
+    const pos=target ? (casaCenter ? perlaRtpCasaMarkerScreenCenterV383(target) : (perlaRtpWorldToScreenCssV380(target.x, target.y) || perlaRtpCasaMarkerScreenFallbackV382(target))) : null;
     if(!target || !pos || (!ev && !target.casa)) return perlaRtpActionMarkerHideV380('no_projected_target');
     el.style.left=pos.x+'px';
     el.style.top=pos.y+'px';
@@ -19193,6 +19230,8 @@ function perlaRtpActionMarkerUpdateV380(reason){
     el.title='Azione: '+String((ev&&(ev.eventId||ev.eventType)) || (target.casa?'CASA':'evento'));
     el.dataset.eventId=String(ev&&ev.eventId||'');
     el.dataset.casa=String(!!target.casa);
+    el.dataset.casaCenter=String(!!(target.casa && pos.fixedCenter));
+    el.dataset.recruitedBase=String(!!perlaRtpActionEventIsRecruitedBaseV383(ev));
     el.dataset.reason=String(reason||'update');
     el.dataset.targetSource=target.source;
     return {ok:true, visible:true, eventId:ev&&ev.eventId||'', target, position:pos, reason:String(reason||'update')};
@@ -46766,7 +46805,7 @@ function perlaRtpPauseMenuBindV360(){
         if(e.key==='Escape'){ e.preventDefault(); perlaRtpPauseMenuCloseV360('escape_v360'); }
         if(e.key==='Enter' && e.target && e.target.matches && e.target.matches('.pause-pin input,[data-role="debug-pin-input"]')){ e.preventDefault(); perlaRtpPauseDebugOpenV360(); }
     }, {passive:false});
-    window.addEventListener('resize', ()=>{ const next=perlaRtpPauseMenuEnsureV360(); if(next&&next.chip) perlaRtpPauseMenuPositionChipV360(next.chip); if(typeof perlaViewportRelayoutScheduleV381==='function') perlaViewportRelayoutScheduleV381('pause_menu_resize', {settleMs:160}); else if(typeof perlaRtpMiniMapClusterRelayoutScheduleV380==='function') perlaRtpMiniMapClusterRelayoutScheduleV380('pause_menu_resize'); }, {passive:true});
+    window.addEventListener('resize', ()=>{ if(typeof perlaViewportRelayoutScheduleV381==='function') perlaViewportRelayoutScheduleV381('pause_menu_resize', {settleMs:160}); else if(typeof perlaRtpMiniMapClusterRelayoutScheduleV380==='function') perlaRtpMiniMapClusterRelayoutScheduleV380('pause_menu_resize'); }, {passive:true});
     return perlaPauseMenuStateV360;
 }
 function perlaDebugGrantResourcesV361(kind){
@@ -47209,6 +47248,9 @@ window.perlaRtpHubBuildableSummaryV374 = perlaRtpHubBuildableSummaryV374;
 window.perlaRtpHubBuildableBuyV374 = perlaRtpHubBuildableBuyV374;
 window.perlaRtpHubBuildablePlacementSummaryV376 = perlaRtpHubBuildablePlacementSummaryV376;
 window.perlaRtpActionRearmHubMenuAfterRecoveryV376 = perlaRtpActionRearmHubMenuAfterRecoveryV376;
+window.perlaRtpClockInfoQuestionMarkPurgeV383 = perlaRtpClockInfoQuestionMarkPurgeV383;
+window.perlaRtpActionEventIsRecruitedBaseV383 = perlaRtpActionEventIsRecruitedBaseV383;
+window.perlaRtpPlayerInCasaActionAreaV383 = perlaRtpPlayerInCasaActionAreaV383;
 window.perlaRtpWetnessOrientationFailVisualValidationV376 = perlaRtpWetnessOrientationFailVisualValidationV376;
 window.perlaRtpFaintContractAuditV378 = perlaRtpFaintContractAuditV378;
 window.perlaRtpSecondaryStatPressureV378 = perlaRtpSecondaryStatPressureV378;
