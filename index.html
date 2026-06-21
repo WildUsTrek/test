@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Camping Sole, Mare & Zanzare - PERLA1 V373 RTP</title>
+    <title>Camping Sole, Mare & Zanzare - PERLA1 V380 RTP</title>
     <style>
         :root { --panel: rgba(20,16,12,.88); --gold:#f1c40f; --sand:#f5d99e; --perla-vv-left:0px; --perla-vv-top:0px; --perla-vv-width:100vw; --perla-vv-height:100dvh; }
         body { margin:0; min-height:100vh; background:radial-gradient(circle at 50% 0%,#183b4a 0%,#07090d 55%,#000 100%); color:white; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; display:flex; flex-direction:column; align-items:center; overflow-x:hidden; }
@@ -15,7 +15,7 @@
         html.perla-rtp-review-v333 #mini-map { cursor:crosshair; }
         #perlaPauseMenuChipV360 { position:fixed; z-index:8; display:flex; align-items:center; justify-content:center; min-width:48px; height:25px; padding:0 9px; border-radius:999px; color:#25190f; background:linear-gradient(180deg,#f5d99e,#d58a36); border:1px solid rgba(255,255,255,.54); box-shadow:0 7px 18px rgba(0,0,0,.44), inset 0 1px 0 rgba(255,255,255,.35); font-size:10px; line-height:1; font-weight:950; letter-spacing:0; text-transform:uppercase; pointer-events:auto; cursor:pointer; touch-action:manipulation; }
         #perlaMiniMapWarningsV360 { position:fixed; z-index:8; display:block; pointer-events:none; }
-        #perlaMiniMapWarningsV360 .v360-warning-badge { --pct:0; display:grid; position:absolute; width:32px; height:32px; border-radius:50%; place-items:center; background:conic-gradient(var(--warn-color,#48c7ff) calc(var(--pct) * 1%), rgba(255,255,255,.16) 0); box-shadow:0 6px 14px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.18); opacity:.66; filter:saturate(.82); cursor:pointer; touch-action:manipulation; pointer-events:auto; }
+        #perlaMiniMapWarningsV360 .v360-warning-badge { --pct:0; display:grid; position:absolute; width:var(--perla-mini-warning-size,32px); height:var(--perla-mini-warning-size,32px); border-radius:50%; place-items:center; background:conic-gradient(var(--warn-color,#48c7ff) calc(var(--pct) * 1%), rgba(255,255,255,.16) 0); box-shadow:0 6px 14px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.18); opacity:.66; filter:saturate(.82); cursor:pointer; touch-action:manipulation; pointer-events:auto; }
         #perlaMiniMapWarningsV360 .v360-warning-badge[data-visible="true"] { display:grid; }
         #perlaMiniMapWarningsV360 .v360-warning-badge[data-alert="true"] { opacity:1; filter:none; box-shadow:0 6px 14px rgba(0,0,0,.42),0 0 14px color-mix(in srgb,var(--warn-color,#48c7ff) 42%,transparent), inset 0 1px 0 rgba(255,255,255,.18); }
         #perlaMiniMapWarningsV360 .v360-warning-badge[data-trend="regen"], #perlaMiniMapWarningsV360 .v360-warning-badge[data-trend="protected"] { --trend-color:#45d483; --trend-ring:rgba(69,212,131,.95); animation:perlaStatTrendGoodV366 1.75s ease-in-out infinite; }
@@ -26,7 +26,7 @@
         #perlaMiniMapWarningsV360 .v360-warning-badge[data-trend="regen"] svg, #perlaMiniMapWarningsV360 .v360-warning-badge[data-trend="protected"] svg, #perlaMiniMapWarningsV360 .v360-warning-badge[data-trend="down"] svg, #perlaMiniMapWarningsV360 .v360-warning-badge[data-trend="malus"] svg { color:var(--trend-color); animation:perlaStatIconPulseV366 1.75s ease-in-out infinite; }
         #perlaMiniMapWarningsV360 .v360-warning-value { position:absolute; right:-5px; bottom:-4px; z-index:2; min-width:16px; height:16px; padding:0 3px; border-radius:999px; color:#25190f; background:#f5d99e; border:1px solid rgba(0,0,0,.28); font-size:7px; line-height:15px; font-weight:950; text-align:center; box-sizing:border-box; }
         #perlaMiniMapCurrencyV364 { position:fixed; z-index:8; display:block; pointer-events:none; }
-        #perlaMiniMapCurrencyV364 .v364-currency-badge { display:grid; position:absolute; width:34px; height:34px; border-radius:50%; place-items:center; color:#fff7df; background:conic-gradient(var(--currency-color,#f1c40f) 100%, rgba(255,255,255,.16) 0); box-shadow:0 7px 16px rgba(0,0,0,.44), inset 0 1px 0 rgba(255,255,255,.20); border:1px solid rgba(255,255,255,.18); cursor:pointer; touch-action:manipulation; pointer-events:auto; }
+        #perlaMiniMapCurrencyV364 .v364-currency-badge { display:grid; position:absolute; width:var(--perla-mini-currency-size,34px); height:var(--perla-mini-currency-size,34px); border-radius:50%; place-items:center; color:#fff7df; background:conic-gradient(var(--currency-color,#f1c40f) 100%, rgba(255,255,255,.16) 0); box-shadow:0 7px 16px rgba(0,0,0,.44), inset 0 1px 0 rgba(255,255,255,.20); border:1px solid rgba(255,255,255,.18); cursor:pointer; touch-action:manipulation; pointer-events:auto; }
         #perlaMiniMapCurrencyV364 .v364-currency-badge::before { content:""; position:absolute; inset:4px; border-radius:inherit; background:linear-gradient(180deg,rgba(28,22,16,.88),rgba(8,10,14,.80)); border:1px solid rgba(255,255,255,.16); }
         #perlaMiniMapCurrencyV364 .v364-currency-badge svg { position:relative; z-index:1; width:18px; height:18px; filter:drop-shadow(0 2px 3px rgba(0,0,0,.45)); }
         #perlaMiniMapCurrencyV364 .v364-currency-value { position:absolute; right:-6px; bottom:-4px; z-index:2; min-width:17px; height:17px; padding:0 4px; border-radius:999px; color:#25190f; background:#f5d99e; border:1px solid rgba(0,0,0,.28); font-size:8px; line-height:16px; font-weight:950; text-align:center; box-sizing:border-box; }
@@ -115,18 +115,21 @@
         #perlaComfortHudV336 .comfort-row[data-critical="true"] { --danger-color:var(--stat-color,#ef5d54); --critical-base-y:0px; --critical-base-scale:1; --critical-pulse-y:-2px; --critical-pulse-scale:1.09; animation:perlaStatCriticalPulseV366 .92s ease-in-out infinite; filter:saturate(1.55) brightness(1.12); z-index:5; transform-origin:center center; }
         #perlaComfortHudV336 .comfort-row[data-critical="true"]::before { border-color:rgba(255,247,223,.95); box-shadow:0 0 0 3px color-mix(in srgb,var(--danger-color) 58%,transparent),0 0 20px color-mix(in srgb,var(--danger-color) 72%,transparent), inset 0 1px 5px rgba(0,0,0,.58); }
         #perlaComfortHudV336 .comfort-row[data-critical="true"] .comfort-icon { color:var(--danger-color); animation:perlaStatCriticalIconV366 .92s ease-in-out infinite; }
+        #perlaComfortHudV336 .comfort-row[data-critical="true"] .comfort-label { color:#ffe5df; background:rgba(117,18,18,.88); border-color:rgba(239,93,84,.88); box-shadow:0 0 12px rgba(239,93,84,.50),0 2px 6px rgba(0,0,0,.42); }
         #perlaComfortHudV336 .comfort-row[data-critical="true"] .comfort-value { color:#34120e; background:#fff1bf; border-color:rgba(239,93,84,.82); box-shadow:0 0 12px color-mix(in srgb,var(--danger-color) 54%,transparent),0 3px 9px rgba(0,0,0,.42); }
+        #perlaComfortHudV336 .comfort-row[data-key="wetness"][data-critical="true"], #perlaComfortHudV336 .comfort-row[data-key="orientation"][data-critical="true"] { --critical-base-y:-4px; --critical-base-scale:1.12; --critical-pulse-y:-8px; --critical-pulse-scale:1.22; }
+        #perlaComfortHudV336 .comfort-row[data-key="wetness"][data-critical="true"]::before, #perlaComfortHudV336 .comfort-row[data-key="orientation"][data-critical="true"]::before { box-shadow:0 0 0 5px color-mix(in srgb,var(--stat-color,#ef5d54) 68%,transparent),0 0 28px color-mix(in srgb,var(--stat-color,#ef5d54) 82%,transparent),0 0 50px color-mix(in srgb,var(--stat-color,#ef5d54) 38%,transparent), inset 0 1px 5px rgba(0,0,0,.60); }
         #perlaComfortHudV336 .comfort-row[data-condition-critical="true"] { --critical-base-y:-3px; --critical-base-scale:1.08; --critical-pulse-y:-6px; --critical-pulse-scale:1.15; }
         #perlaComfortHudV336 .comfort-row[data-condition-critical="true"]::before { box-shadow:0 0 0 4px color-mix(in srgb,var(--stat-color,#ef5d54) 62%,transparent),0 0 24px color-mix(in srgb,var(--stat-color,#ef5d54) 74%,transparent),0 0 42px color-mix(in srgb,var(--stat-color,#ef5d54) 30%,transparent), inset 0 1px 5px rgba(0,0,0,.60); }
-        #perlaComfortHudV336 .comfort-row[data-condition-critical="true"] .comfort-label { color:#ffe5df; background:rgba(117,18,18,.88); border-color:rgba(239,93,84,.88); box-shadow:0 0 12px rgba(239,93,84,.50),0 2px 6px rgba(0,0,0,.42); }
         #perlaComfortHudV336 .comfort-row[data-condition-critical="true"] .comfort-value { min-width:23px; background:#fff1bf; border-color:rgba(255,247,223,.95); }
-        #perlaMiniMapWarningsV360 .v360-warning-badge[data-critical="true"] { --danger-color:var(--warn-color,#ef5d54); animation:perlaStatCriticalPulseV366 .92s ease-in-out infinite; opacity:1; filter:saturate(1.55) brightness(1.12); }
-        #perlaMiniMapWarningsV360 .v360-warning-badge[data-critical="true"]::before { border-color:rgba(255,247,223,.95); box-shadow:0 0 0 3px color-mix(in srgb,var(--danger-color) 58%,transparent),0 0 18px color-mix(in srgb,var(--danger-color) 72%,transparent), inset 0 1px 5px rgba(0,0,0,.58); }
-        #perlaMiniMapWarningsV360 .v360-warning-badge[data-critical="true"] svg { color:var(--danger-color); animation:perlaStatCriticalIconV366 .92s ease-in-out infinite; }
+        #perlaMiniMapWarningsV360 .v360-warning-badge[data-critical="true"] { --danger-color:var(--warn-color,#ef5d54); --critical-base-y:0px; --critical-base-scale:1.22; --critical-pulse-y:0px; --critical-pulse-scale:1.43; animation:perlaStatCriticalPulseV366 .82s ease-in-out infinite; opacity:1; filter:saturate(1.75) brightness(1.18); z-index:5; transform-origin:center center; }
+        #perlaMiniMapWarningsV360 .v360-warning-badge[data-critical="true"]::before { border-color:rgba(255,247,223,.98); box-shadow:0 0 0 5px color-mix(in srgb,var(--danger-color) 66%,transparent),0 0 24px color-mix(in srgb,var(--danger-color) 86%,transparent),0 0 46px color-mix(in srgb,var(--danger-color) 42%,transparent), inset 0 1px 5px rgba(0,0,0,.58); }
+        #perlaMiniMapWarningsV360 .v360-warning-badge[data-critical="true"] svg { color:var(--danger-color); animation:perlaStatCriticalIconV366 .82s ease-in-out infinite; }
+        #perlaMiniMapWarningsV360 .v360-warning-badge[data-critical="true"] .v360-warning-value { color:#fff7df; background:#9a201c; border-color:rgba(255,247,223,.72); box-shadow:0 0 12px color-mix(in srgb,var(--danger-color) 65%,transparent),0 3px 9px rgba(0,0,0,.42); }
         #perlaMiniMapWarningsV360 .v360-warning-badge[data-condition-critical="true"]::before { box-shadow:0 0 0 4px color-mix(in srgb,var(--warn-color,#48c7ff) 62%,transparent),0 0 22px color-mix(in srgb,var(--warn-color,#48c7ff) 76%,transparent), inset 0 1px 5px rgba(0,0,0,.60); }
         @keyframes perlaStatCriticalPulseV366 { 0%,100%{ transform:translateY(var(--critical-base-y,0px)) scale(var(--critical-base-scale,1)); } 50%{ transform:translateY(var(--critical-pulse-y,-2px)) scale(var(--critical-pulse-scale,1.09)); } }
         @keyframes perlaStatCriticalIconV366 { 0%,100%{ transform:scale(1); filter:drop-shadow(0 2px 3px rgba(0,0,0,.45)); } 50%{ transform:scale(1.22); filter:drop-shadow(0 0 10px currentColor) drop-shadow(0 2px 4px rgba(0,0,0,.58)); } }
-        @media (prefers-reduced-motion: reduce) { #perlaComfortHudV336 .comfort-row[data-trend], #perlaComfortHudV336 .comfort-row[data-trend] .comfort-icon, #perlaMiniMapWarningsV360 .v360-warning-badge[data-trend], #perlaMiniMapWarningsV360 .v360-warning-badge[data-trend] svg, #perlaComfortHudV336 .comfort-row[data-critical="true"], #perlaComfortHudV336 .comfort-row[data-critical="true"] .comfort-icon, #perlaMiniMapWarningsV360 .v360-warning-badge[data-critical="true"], #perlaMiniMapWarningsV360 .v360-warning-badge[data-critical="true"] svg { animation:none; filter:none; } }
+        @media (prefers-reduced-motion: reduce) { #perlaComfortHudV336 .comfort-row[data-trend], #perlaComfortHudV336 .comfort-row[data-trend] .comfort-icon, #perlaMiniMapWarningsV360 .v360-warning-badge[data-trend], #perlaMiniMapWarningsV360 .v360-warning-badge[data-trend] svg, #perlaComfortHudV336 .comfort-row[data-critical="true"], #perlaComfortHudV336 .comfort-row[data-critical="true"] .comfort-icon, #perlaMiniMapWarningsV360 .v360-warning-badge[data-critical="true"], #perlaMiniMapWarningsV360 .v360-warning-badge[data-critical="true"] svg { animation:none; filter:none; } #perlaMiniMapWarningsV360 .v360-warning-badge[data-critical="true"] { transform:scale(1.26); } }
         #perlaComfortHudV336 .comfort-secondary { display:none; transform:scale(.88); }
         #perlaComfortHudV336 .comfort-secondary[data-visible="true"] { display:grid; }
         #perlaComfortHudV336 .comfort-note { display:none; }
@@ -152,6 +155,10 @@
         #perlaInventoryHudV345P2 button[data-consumable="snack"] { background:linear-gradient(180deg,rgba(245,217,158,.90),rgba(170,99,46,.90)); }
         #perlaInventoryHudV345P2 button[data-empty="true"] { opacity:.42; background:rgba(255,255,255,.08); }
         #perlaInventoryHudV345P2 .inv-note { display:none; }
+        #rtpActionMarkerV380 { position:fixed; z-index:11; display:none; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; color:#25190f; background:radial-gradient(circle at 50% 42%,#fff7df 0%,#f5d99e 46%,#d58a36 100%); border:2px solid rgba(255,255,255,.72); box-shadow:0 9px 24px rgba(0,0,0,.46),0 0 18px rgba(245,217,158,.50); font-size:24px; line-height:1; font-weight:950; text-shadow:none; cursor:pointer; touch-action:manipulation; pointer-events:auto; transform:translate(-50%,-50%); animation:perlaActionMarkerPulseV380 1.05s ease-in-out infinite; }
+        #rtpActionMarkerV380.visible { display:flex; }
+        #rtpActionMarkerV380::after { content:""; position:absolute; inset:-7px; border-radius:inherit; border:2px solid rgba(245,217,158,.52); opacity:.7; }
+        @keyframes perlaActionMarkerPulseV380 { 0%,100%{ transform:translate(-50%,-50%) scale(1); filter:brightness(1); } 50%{ transform:translate(-50%,-54%) scale(1.10); filter:brightness(1.12); } }
         #perlaBackpackHudV350 { position:absolute; left:12px; top:76px; z-index:4; display:grid; grid-template-columns:auto auto; align-items:start; gap:6px; pointer-events:auto; }
         #perlaBackpackToggleV350 { position:relative; display:flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:14px; border:1px solid rgba(245,217,158,.34); color:#fff7df; background:linear-gradient(180deg,rgba(24,22,19,.84),rgba(5,8,10,.72)); box-shadow:0 8px 22px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.12); backdrop-filter:blur(3px); }
         #perlaBackpackToggleV350 svg { width:25px; height:25px; }
@@ -396,6 +403,102 @@
         .rtp-v350-rent-status[data-risk="default"] { border-color:rgba(239,93,84,.54); background:linear-gradient(180deg,rgba(239,93,84,.24),rgba(255,255,255,.045)); }
         .rtp-v350-rent-status strong { color:#f5d99e; font-weight:950; }
         .rtp-v350-rent-status .rtp-v355-cost-grid { justify-content:flex-start; margin-top:7px; }
+        .rtp-v374-buildable-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+        .rtp-v374-buildable-card { min-width:0; min-height:220px; display:grid; grid-template-rows:auto minmax(44px,auto) auto auto auto; gap:7px; padding:9px; border-radius:8px; border:1px solid rgba(255,255,255,.14); background:linear-gradient(180deg,rgba(69,212,131,.12),rgba(255,255,255,.045)); }
+        .rtp-v374-buildable-card h5 { display:flex; align-items:center; gap:7px; margin:0; color:#fff; font-size:13px; line-height:1.15; font-weight:950; text-transform:uppercase; }
+        .rtp-v374-buildable-card p { margin:0; color:rgba(255,247,223,.78); font-size:12px; line-height:1.28; font-weight:730; }
+        .rtp-v374-buildable-count { color:#f5d99e; font-size:11px; line-height:1; font-weight:950; }
+        .rtp-v374-buildable-card .rtp-v374-cost-title { margin-top:2px; color:#f5d99e; font-size:10px; line-height:1; font-weight:950; text-transform:uppercase; letter-spacing:.06em; }
+        .rtp-v374-buildable-card button, .rtp-v374-empty-wheelbarrow-button { width:100%; min-height:34px; border-radius:8px; border:1px solid rgba(255,255,255,.22); color:#25190f; background:linear-gradient(180deg,#f5d99e,#d58a36); font-size:12px; line-height:1.1; font-weight:950; }
+        .rtp-v374-empty-wheelbarrow-button { flex:0 0 auto; width:auto; display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:0 12px; }
+        .rtp-v374-empty-wheelbarrow-button .rtp-v350-menu-icon { width:18px; height:18px; border-radius:6px; background:rgba(255,255,255,.16); }
+        .rtp-v374-empty-wheelbarrow-button .rtp-v350-menu-icon svg { width:16px; height:16px; }
+        .rtp-v374-buildable-card button:disabled, .rtp-v374-empty-wheelbarrow-button:disabled { opacity:.46; filter:grayscale(.25); }
+        .rtp-v374-buildable-note { margin-top:8px; color:rgba(255,247,223,.72); font-size:12px; line-height:1.28; font-weight:760; }
+        .rtp-v374-skill-popup { position:absolute; left:12px; right:12px; top:50%; z-index:5; display:none; max-height:min(440px,calc(100% - 26px)); overflow:auto; padding:10px; border-radius:8px; border:1px solid rgba(245,217,158,.44); background:linear-gradient(180deg,rgba(24,22,18,.99),rgba(7,11,15,.99)); box-shadow:0 22px 48px rgba(0,0,0,.76),0 0 24px rgba(185,145,255,.16); transform:translateY(-50%); }
+        .rtp-v374-skill-popup.visible { display:block; }
+        .rtp-v374-skill-popup-head { display:grid; grid-template-columns:1fr 30px; gap:10px; align-items:start; margin-bottom:8px; }
+        .rtp-v374-skill-popup-title { color:#fff; font-size:15px; line-height:1.16; font-weight:950; text-transform:uppercase; }
+        .rtp-v374-skill-popup-subtitle { margin-top:3px; color:rgba(255,247,223,.76); font-size:12px; line-height:1.25; font-weight:760; }
+        .rtp-v374-skill-popup-close { width:30px; height:30px; border-radius:8px; border:1px solid rgba(255,255,255,.26); color:#fff; background:linear-gradient(180deg,rgba(239,93,84,.98),rgba(154,48,45,.96)); font-size:17px; line-height:1; font-weight:950; }
+        .rtp-v374-skill-popup .rtp-v365-skill-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
+        #perlaRtpUpgradeMenuV334, #perlaRtpMarketMenuV356, #perlaRtpBattleModalV334, #perlaRtpChallengeModalV370, #perlaInfoModalV361, #perlaPauseMenuV360 { font-size:13px; }
+        #perlaRtpUpgradeMenuV334 .rtp-v334-title, #perlaRtpMarketMenuV356 .rtp-v334-title, #perlaRtpBattleModalV334 .rtp-v334-title, #perlaRtpChallengeModalV370 .rtp-v334-title { font-size:17px; line-height:1.16; }
+        #perlaRtpUpgradeMenuV334 .rtp-v334-subtitle, #perlaRtpMarketMenuV356 .rtp-v334-subtitle, #perlaRtpBattleModalV334 .rtp-v334-subtitle, #perlaRtpChallengeModalV370 .rtp-v334-subtitle { font-size:12px; line-height:1.28; }
+        #perlaRtpUpgradeMenuV334 .rtp-v345-resource-note, #perlaRtpUpgradeMenuV334 .rtp-v350-job-note, #perlaRtpUpgradeMenuV334 .rtp-v345-consumable-note, #perlaRtpMarketMenuV356 .rtp-v356-market-note { font-size:12px; line-height:1.28; }
+        #perlaRtpUpgradeMenuV334 .rtp-v355-summary-chip, #perlaRtpUpgradeMenuV334 .rtp-v355-cost-chip, #perlaRtpMarketMenuV356 .rtp-v355-summary-chip, #perlaRtpMarketMenuV356 .rtp-v355-cost-chip { font-size:10.5px; min-height:27px; }
+        #perlaRtpUpgradeMenuV334 { --casa-font-body:13px; --casa-font-secondary:12px; --casa-font-chip:11px; --casa-font-button:12px; --casa-line-body:1.28; }
+        #perlaRtpUpgradeMenuV334 .rtp-v350-tab { min-height:34px; padding:0 13px; font-size:12px; line-height:1; letter-spacing:0; }
+        #perlaRtpUpgradeMenuV334 .rtp-v345-hub-section h4 { font-size:13px; line-height:1.15; letter-spacing:.04em; }
+        #perlaRtpUpgradeMenuV334 .rtp-v334-card h4,
+        #perlaRtpUpgradeMenuV334 .rtp-v345-consumable-card h5,
+        #perlaRtpUpgradeMenuV334 .rtp-v374-buildable-card h5,
+        #perlaRtpUpgradeMenuV334 .rtp-v365-skill-card h5,
+        #perlaRtpUpgradeMenuV334 .rtp-v345-roster-name { font-size:13px; line-height:1.16; }
+        #perlaRtpUpgradeMenuV334 .rtp-v334-card p,
+        #perlaRtpUpgradeMenuV334 .rtp-v345-consumable-card p,
+        #perlaRtpUpgradeMenuV334 .rtp-v374-buildable-card p,
+        #perlaRtpUpgradeMenuV334 .rtp-v365-skill-card p,
+        #perlaRtpUpgradeMenuV334 .rtp-v345-roster-job,
+        #perlaRtpUpgradeMenuV334 .rtp-v345-roster-benefit,
+        #perlaRtpUpgradeMenuV334 .rtp-v350-rest-note,
+        #perlaRtpUpgradeMenuV334 .rtp-v353-cutscene-status,
+        #perlaRtpUpgradeMenuV334 .rtp-v350-rent-status,
+        #perlaRtpUpgradeMenuV334 .rtp-v345-resource-note,
+        #perlaRtpUpgradeMenuV334 .rtp-v350-job-note,
+        #perlaRtpUpgradeMenuV334 .rtp-v345-consumable-note,
+        #perlaRtpUpgradeMenuV334 .rtp-v374-buildable-note,
+        #perlaRtpUpgradeMenuV334 .rtp-v374-skill-popup-subtitle { font-size:12px; line-height:1.28; }
+        #perlaRtpUpgradeMenuV334 .rtp-v345-resource-name,
+        #perlaRtpUpgradeMenuV334 .rtp-v374-buildable-count,
+        #perlaRtpUpgradeMenuV334 .rtp-v355-cost-title,
+        #perlaRtpUpgradeMenuV334 .rtp-v374-cost-title,
+        #perlaRtpUpgradeMenuV334 .rtp-v363-owned-title { font-size:11px; line-height:1.08; }
+        #perlaRtpUpgradeMenuV334 .rtp-v345-resource-value,
+        #perlaRtpUpgradeMenuV334 .rtp-v355-summary-chip,
+        #perlaRtpUpgradeMenuV334 .rtp-v355-cost-chip,
+        #perlaRtpUpgradeMenuV334 .rtp-v364-owned-chip { font-size:11px; line-height:1.12; }
+        #perlaRtpUpgradeMenuV334 .rtp-v334-card button,
+        #perlaRtpUpgradeMenuV334 .rtp-v350-sleep-button,
+        #perlaRtpUpgradeMenuV334 .rtp-v374-empty-wheelbarrow-button,
+        #perlaRtpUpgradeMenuV334 .rtp-v345-resource-deposit,
+        #perlaRtpUpgradeMenuV334 .rtp-v345-resource-convert,
+        #perlaRtpUpgradeMenuV334 .rtp-v345-resource-convert-gd-ec,
+        #perlaRtpUpgradeMenuV334 .rtp-v345-resource-convert-gd-basalto,
+        #perlaRtpUpgradeMenuV334 .rtp-v345-consumable-card button,
+        #perlaRtpUpgradeMenuV334 .rtp-v374-buildable-card button,
+        #perlaRtpUpgradeMenuV334 .rtp-v350-job-button,
+        #perlaRtpUpgradeMenuV334 .rtp-v365-skill-card button { min-height:34px; font-size:12px; line-height:1.12; }
+        /* V378: V374 improved CASA first; this closes the same readability contract for pause/main and Loris market menus. */
+        #perlaPauseMenuV360 .pause-title-kicker { font-size:11px; line-height:1.08; letter-spacing:.06em; }
+        #perlaPauseMenuV360 h3 { font-size:19px; line-height:1.12; }
+        #perlaPauseMenuV360 .pause-body { gap:11px; }
+        #perlaPauseMenuV360 .pause-button { min-height:58px; grid-template-columns:40px minmax(0,1fr); gap:12px; padding:10px 12px; font-size:15px; line-height:1.16; }
+        #perlaPauseMenuV360 .pause-button-icon { width:40px; height:40px; }
+        #perlaPauseMenuV360 .pause-button-icon svg { width:24px; height:24px; }
+        #perlaPauseMenuV360 .pause-button-text { gap:4px; }
+        #perlaPauseMenuV360 .pause-button-text strong { font-size:15px; line-height:1.12; }
+        #perlaPauseMenuV360 .pause-button-text small { font-size:12px; line-height:1.26; }
+        #perlaPauseMenuV360 .pause-confirm p, #perlaPauseMenuV360 .pause-status { font-size:13px; line-height:1.35; }
+        #perlaPauseMenuV360 .mission-title { font-size:14px; line-height:1.16; }
+        #perlaPauseMenuV360 .mission-desc { font-size:12px; line-height:1.32; }
+        #perlaPauseMenuV360 .mission-state { min-width:70px; font-size:11px; line-height:1; }
+        #perlaPauseMenuV360 input { height:42px; font-size:16px; }
+        #perlaPauseMenuV360 .pause-small-button { min-height:40px; font-size:13px; }
+        #perlaPauseMenuV360 .pause-popup-title { font-size:18px; line-height:1.14; }
+        #perlaPauseMenuV360 .pause-popup-body { gap:11px; }
+        #perlaPauseMenuV360 .pause-popup-body p { font-size:14px; line-height:1.4; }
+        #perlaRtpMarketMenuV356 { font-size:14px; }
+        #perlaRtpMarketMenuV356 .rtp-v334-title { font-size:19px; line-height:1.16; }
+        #perlaRtpMarketMenuV356 .rtp-v334-subtitle, #perlaRtpMarketMenuV356 .rtp-v356-market-note { font-size:14px; line-height:1.36; }
+        #perlaRtpMarketMenuV356 .rtp-v356-market-grid { gap:10px; }
+        #perlaRtpMarketMenuV356 .rtp-v356-market-card { min-height:218px; gap:9px; padding:11px; grid-template-rows:auto minmax(48px,1fr) auto auto; }
+        #perlaRtpMarketMenuV356 .rtp-v356-market-card h4 { font-size:15px; line-height:1.18; }
+        #perlaRtpMarketMenuV356 .rtp-v356-market-card p { font-size:13px; line-height:1.34; }
+        #perlaRtpMarketMenuV356 .rtp-v356-market-flow { gap:8px; min-height:92px; padding-top:9px; padding-bottom:9px; }
+        #perlaRtpMarketMenuV356 .rtp-v345-resource-note { font-size:12px; line-height:1.14; }
+        #perlaRtpMarketMenuV356 .rtp-v355-summary-chip, #perlaRtpMarketMenuV356 .rtp-v355-cost-chip { min-height:30px; font-size:12px; line-height:1.14; }
+        #perlaRtpMarketMenuV356 .rtp-v356-market-card button { min-height:40px; font-size:13px; line-height:1.12; }
         .rtp-v345-float-pop { position:absolute; left:50%; top:42%; z-index:18; min-width:48px; padding:5px 9px; border-radius:999px; color:#25190f; background:#f5d99e; border:1px solid rgba(255,255,255,.72); box-shadow:0 8px 22px rgba(0,0,0,.42); font-size:13px; line-height:1; font-weight:950; text-align:center; pointer-events:none; transform:translate(-50%,0); animation:perlaRtpFloatPopV345 .92s ease-out forwards; }
         .rtp-v345-float-pop.with-icon { display:inline-flex; align-items:center; justify-content:center; gap:5px; padding:5px 10px 5px 7px; }
         .rtp-v345-float-pop .float-icon { display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; border-radius:50%; background:rgba(255,255,255,.45); box-shadow:inset 0 0 0 1px rgba(0,0,0,.12); }
@@ -489,6 +592,8 @@
             #perlaComfortHudV336 .comfort-value { right:2px; bottom:2px; min-width:15px; height:15px; font-size:7px; line-height:14px; }
             #perlaFailStateOverlayV350 .fail-loss-grid { grid-template-columns:1fr; }
             #perlaInventoryHudV345P2 { left:50%; top:7px; max-width:calc(100% - 190px); min-height:34px; padding:4px 5px; font-size:9px; }
+            #perlaInventoryHudV345P2 { overflow:visible; flex-wrap:wrap; justify-content:center; row-gap:4px; border-radius:18px; }
+            #perlaInventoryHudV345P2 .inv-head, #perlaInventoryHudV345P2 .inv-resources { flex-wrap:wrap; justify-content:center; min-width:0; }
             #perlaInventoryHudV345P2 .inv-debt { font-size:8px; padding:2px 4px; }
             #perlaInventoryHudV345P2 .inv-resources { gap:3px; }
             #perlaInventoryHudV345P2 button { min-height:28px; font-size:8px; }
@@ -500,14 +605,16 @@
             #perlaRepellentTimerV361 .repellent-time { min-width:16px; height:16px; font-size:7px; line-height:15px; }
             #perlaBackpackPanelV350 { padding:5px; gap:5px; }
             #perlaBackpackPanelV350 button { width:32px; height:32px; }
-            #perlaRtpDialogueV332 { left:calc(var(--perla-vv-left, 0px) + 8px + env(safe-area-inset-left)); right:calc(8px + env(safe-area-inset-right)); bottom:calc(132px + env(safe-area-inset-bottom)); padding:9px 10px; gap:8px; }
-            #perlaRtpDialogueV332 .portrait { width:64px; height:64px; }
-            #perlaRtpDialogueV332 .speaker { font-size:10px; }
-            #perlaRtpDialogueV332 .line { font-size:14px; line-height:1.28; }
-            #perlaRtpUpgradeMenuV334, #perlaRtpBattleModalV334, #perlaRtpMarketMenuV356 { left:calc(var(--perla-vv-left, 0px) + 8px + env(safe-area-inset-left)); right:calc(8px + env(safe-area-inset-right)); bottom:calc(132px + env(safe-area-inset-bottom)); }
+            #perlaRtpDialogueV332 { left:calc(var(--perla-vv-left, 0px) + 8px + env(safe-area-inset-left)); right:calc(8px + env(safe-area-inset-right)); bottom:calc(126px + env(safe-area-inset-bottom)); padding:11px 12px; gap:10px; max-height:42dvh; overflow:auto; }
+            #perlaRtpDialogueV332 .portrait { width:72px; height:72px; }
+            #perlaRtpDialogueV332 .speaker { font-size:11px; line-height:1.15; }
+            #perlaRtpDialogueV332 .line { font-size:16px; line-height:1.34; }
+            #perlaRtpUpgradeMenuV334, #perlaRtpBattleModalV334, #perlaRtpChallengeModalV370, #perlaRtpMarketMenuV356 { left:calc(var(--perla-vv-left, 0px) + 8px + env(safe-area-inset-left)); right:calc(8px + env(safe-area-inset-right)); bottom:calc(132px + env(safe-area-inset-bottom)); }
             #perlaRtpUpgradeMenuV334, #perlaRtpMarketMenuV356 { top:calc(8px + env(safe-area-inset-top)); bottom:auto; max-height:calc(100dvh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
             .rtp-v334-upgrades { grid-template-columns:1fr; max-height:42dvh; overflow:auto; }
             .rtp-v356-market-grid { grid-template-columns:1fr; max-height:52dvh; overflow:auto; }
+            .rtp-v374-buildable-grid { grid-template-columns:1fr; max-height:44dvh; overflow:auto; }
+            .rtp-v374-skill-popup .rtp-v365-skill-grid { grid-template-columns:1fr; }
             .rtp-v345-resource-grid, .rtp-v345-consumable-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
             .rtp-v345-roster-grid { grid-template-columns:repeat(auto-fill,58px); }
             #loading { font-size:13px; padding:12px; }
@@ -522,6 +629,7 @@
             .touch-look { position:relative; width:108px; height:108px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:radial-gradient(circle at 50% 45%,rgba(86,204,242,.20),rgba(255,255,255,.06) 58%,rgba(0,0,0,.34)); border:2px solid rgba(255,255,255,.28); box-shadow:0 10px 28px rgba(0,0,0,.5), inset 0 0 18px rgba(86,204,242,.10); color:rgba(255,255,255,.78); font-size:10px; font-weight:850; letter-spacing:.10em; }
             .touch-turn-btn { width:48px; height:48px; border-radius:18px; border:2px solid rgba(255,255,255,.24); color:white; background:linear-gradient(180deg,rgba(77,52,28,.78),rgba(27,18,12,.72)); box-shadow:0 8px 18px rgba(0,0,0,.42); font-size:24px; font-weight:900; }
             .touch-turn-btn:active, .touch-look.active, .touch-pad.active { filter:brightness(1.18); }
+            html.perla-v380-action-marker-ready.perla-v380-action-marker-visible #rtpActionBtnV332.visible { display:none; }
         }
         @media (max-width: 390px) and (max-height: 720px) {
             h2 { display:none; }
@@ -552,6 +660,8 @@
         html.perla-mobile-landscape #perlaComfortHudV336 .comfort-value { right:-3px; top:-3px; bottom:auto; min-width:14px; height:14px; font-size:7px; line-height:13px; }
         html.perla-mobile-landscape #perlaFailStateOverlayV350 .fail-loss-grid { grid-template-columns:1fr; }
         html.perla-mobile-landscape #perlaInventoryHudV345P2 { left:50%; top:6px; max-width:calc(100% - 170px); min-height:32px; padding:4px 5px; }
+        html.perla-mobile-landscape #perlaInventoryHudV345P2 { overflow:visible; flex-wrap:wrap; justify-content:center; row-gap:3px; }
+        html.perla-mobile-landscape #perlaInventoryHudV345P2 .inv-head, html.perla-mobile-landscape #perlaInventoryHudV345P2 .inv-resources { flex-wrap:wrap; justify-content:center; min-width:0; }
         html.perla-mobile-landscape #perlaInventoryHudV345P2 .inv-note { display:none; }
         html.perla-mobile-landscape #perlaBackpackHudV350 { left:7px; top:48px; gap:4px; }
         html.perla-mobile-landscape #perlaBackpackToggleV350 { width:32px; height:32px; border-radius:11px; }
@@ -561,12 +671,23 @@
         html.perla-mobile-landscape #perlaRepellentTimerV361 .repellent-time { right:-4px; bottom:-4px; min-width:14px; height:14px; font-size:6.5px; line-height:13px; }
         html.perla-mobile-landscape #perlaBackpackPanelV350 { padding:4px; gap:4px; }
         html.perla-mobile-landscape #perlaBackpackPanelV350 button { width:28px; height:28px; }
-        html.perla-mobile-landscape #perlaRtpDialogueV332 { left:calc(var(--perla-vv-left, 0px) + 96px + env(safe-area-inset-left)); right:calc(96px + env(safe-area-inset-right)); bottom:calc(76px + env(safe-area-inset-bottom)); padding:7px 9px; gap:7px; }
-        html.perla-mobile-landscape #perlaRtpDialogueV332 .portrait { width:52px; height:52px; }
-        html.perla-mobile-landscape #perlaRtpDialogueV332 .speaker { font-size:9px; }
-        html.perla-mobile-landscape #perlaRtpDialogueV332 .line { font-size:12px; line-height:1.22; }
+        html.perla-mobile-landscape #perlaRtpDialogueV332 { left:calc(var(--perla-vv-left, 0px) + 82px + env(safe-area-inset-left)); right:calc(82px + env(safe-area-inset-right)); bottom:calc(70px + env(safe-area-inset-bottom)); padding:10px 12px; gap:10px; max-height:42dvh; overflow:auto; }
+        html.perla-mobile-landscape #perlaRtpDialogueV332 .portrait { width:66px; height:66px; }
+        html.perla-mobile-landscape #perlaRtpDialogueV332 .speaker { font-size:11px; line-height:1.14; }
+        html.perla-mobile-landscape #perlaRtpDialogueV332 .line { font-size:15px; line-height:1.32; }
         html.perla-mobile-landscape #perlaRtpUpgradeMenuV334, html.perla-mobile-landscape #perlaRtpBattleModalV334, html.perla-mobile-landscape #perlaRtpMarketMenuV356 { left:calc(var(--perla-vv-left, 0px) + 96px + env(safe-area-inset-left)); right:calc(96px + env(safe-area-inset-right)); bottom:calc(76px + env(safe-area-inset-bottom)); }
         html.perla-mobile-landscape #perlaRtpUpgradeMenuV334, html.perla-mobile-landscape #perlaRtpMarketMenuV356 { top:calc(6px + env(safe-area-inset-top)); bottom:auto; max-height:calc(100dvh - 12px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+        html.perla-mobile-landscape #perlaPauseMenuV360 { align-items:center; justify-content:center; padding:8px calc(88px + env(safe-area-inset-right)) 8px calc(88px + env(safe-area-inset-left)); overflow:hidden; }
+        html.perla-mobile-landscape #perlaPauseMenuV360 .pause-panel { width:min(520px,calc(100vw - 190px - env(safe-area-inset-left) - env(safe-area-inset-right))); max-height:calc(100dvh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); display:grid; grid-template-rows:auto minmax(0,1fr); }
+        html.perla-mobile-landscape #perlaPauseMenuV360 .pause-head { padding:8px 10px 7px; }
+        html.perla-mobile-landscape #perlaPauseMenuV360 .pause-body { min-height:0; overflow:auto; gap:7px; padding:8px 10px 10px; }
+        html.perla-mobile-landscape #perlaPauseMenuV360 .pause-button { min-height:42px; grid-template-columns:30px minmax(0,1fr); gap:8px; padding:6px 8px; }
+        html.perla-mobile-landscape #perlaPauseMenuV360 .pause-button-icon { width:30px; height:30px; }
+        html.perla-mobile-landscape #perlaPauseMenuV360 .pause-button-icon svg { width:20px; height:20px; }
+        html.perla-mobile-landscape #perlaPauseMenuV360 .pause-button-text strong { font-size:13px; line-height:1.08; }
+        html.perla-mobile-landscape #perlaPauseMenuV360 .pause-button-text small { font-size:10.5px; line-height:1.16; }
+        html.perla-mobile-landscape #perlaPauseMenuV360 .pause-popup { padding:8px calc(84px + env(safe-area-inset-right)) 8px calc(84px + env(safe-area-inset-left)); }
+        html.perla-mobile-landscape #perlaPauseMenuV360 .pause-popup-card { width:min(560px,calc(100vw - 190px - env(safe-area-inset-left) - env(safe-area-inset-right))); max-height:calc(100dvh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
         html.perla-mobile-landscape .rtp-v334-upgrades { grid-template-columns:repeat(3,minmax(0,1fr)); max-height:45dvh; overflow:auto; }
         html.perla-mobile-landscape .rtp-v356-market-grid { grid-template-columns:repeat(2,minmax(0,1fr)); max-height:50dvh; overflow:auto; }
         html.perla-mobile-landscape #mobile-controls { display:flex; position:fixed; left:calc(var(--perla-vv-left, 0px) + env(safe-area-inset-left)); right:auto; width:calc(var(--perla-vv-width, 100vw) - env(safe-area-inset-left) - env(safe-area-inset-right)); bottom:calc(4px + env(safe-area-inset-bottom)); height:82px; z-index:7; justify-content:space-between; align-items:center; padding:0 10px; box-sizing:border-box; pointer-events:none; opacity:.86; }
@@ -596,7 +717,7 @@
     </style>
 </head>
 <body>
-            <h2>Camping Sole, Mare & Zanzare - PERLA1 V370 RTP</h2>
+            <h2>Camping Sole, Mare & Zanzare - PERLA1 V380 RTP</h2>
     <div id="game-container">
         <canvas id="screen" width="800" height="450"></canvas>
         <canvas id="mini-map" width="128" height="128"></canvas>
@@ -800,7 +921,13 @@ const debugLine = document.getElementById('debugLine');
 const perlaClockHud = document.getElementById('perlaClockHud');
 const perlaComfortHudV336 = document.getElementById('perlaComfortHudV336');
 
-const PERLA_BUILD_ID = 'PERLA1_V373_RTP_STUTTER_STABLE_POPULATION_RENDER_GUARD_LOCAL';
+const PERLA_BUILD_ID = 'PERLA1_V380_MOBILE_HUD_ROTATION_CLUSTER_LOCAL';
+const PERLA_V380_BASE_BUILD = 'PERLA1_V379_ORIENTATION_DIRECT_FAINT_GATE_LOCAL';
+const PERLA_V380_MOBILE_HUD_ROTATION_CLUSTER_SAFE = true;
+const PERLA_V380_ACTION_WORLD_MARKER_SAFE = true;
+const PERLA_V380_MOBILE_MENU_DIALOGUE_READABILITY_SAFE = true;
+const PERLA_V379_BASE_BUILD = 'PERLA1_V378_SECONDARY_STAT_PRESSURE_AUDIT_LOCAL';
+const PERLA_V378_BASE_BUILD = 'PERLA1_V377_MAIN_REMATCH_CONTINUITY_LOCAL';
 const PERLA_V363_INTRO_COMIC_GUIDED_TOUR_SAFE = true;
 const PERLA_V363_STORYBOARD_MANIFEST_PATH = 'assets/rtp/manifest/rtp.storyboards.json';
 const PERLA_V363_NEW_GAME_PENDING_KEY = 'PERLA_V363_NEW_GAME_INTRO_PENDING';
@@ -909,6 +1036,64 @@ const PERLA_V370_HISTORIC_BOULDER_DAILY_USES = 3;
 const PERLA_V370_HUB_SIGN_INTERACTION_PRIORITY_SAFE = true;
 const PERLA_V370_HUB_SIGN_PRIORITY_RADIUS_TILES = 2.5;
 const PERLA_V370_RECRUITED_BASE_DIALOGUE_RADIUS_TILES = 1.65;
+const PERLA_V374_REGRESSION_UI_CASA_BUILDABLES_SAFE = true;
+const PERLA_V374_GLOBAL_MENU_READABILITY_SAFE = true;
+const PERLA_V374_TIER_SKILL_POPUP_SAFE = true;
+const PERLA_V374_TIER_SKILL_LIMIT_BY_TIER = Object.freeze({1:4,2:4,3:4});
+const PERLA_V374_CHALLENGE_REWARD_SAFE = true;
+const PERLA_V374_CASA_QUICK_EMPTY_WHEELBARROW_SAFE = true;
+const PERLA_V374_CASA_BUILDABLES_SAFE = true;
+const PERLA_V375_CASA_MENU_TYPOGRAPHY_NORMALIZED_SAFE = true;
+const PERLA_V376_CASA_BUILDABLE_FULLSIZE_PATH_SAFE = true;
+const PERLA_V376_CASA_SLEEP_REOPEN_SAFE = true;
+const PERLA_V376_POPUP_FOCUS_ARIA_SAFE = true;
+const PERLA_V376_WETNESS_ORIENTATION_FAIL_VISUAL_SAFE = true;
+const PERLA_V377_MAIN_ORIGINAL_REMATCH_AFTER_RECRUIT_SAFE = true;
+const PERLA_V378_SECONDARY_STAT_PRESSURE_NOT_DIRECT_FAINT_SAFE = true;
+const PERLA_V379_ORIENTATION_DIRECT_FAINT_SAFE = true;
+const PERLA_V379_WETNESS_SECONDARY_ONLY_SAFE = true;
+const PERLA_V379_FAINT_AND_SECONDARY_PRESSURE_SAFE = true;
+const PERLA_V378_DIRECT_FAINT_STATS = Object.freeze({comfort:true, energy:true, stress:true, prep:true, hunger:true, wetness:false, orientation:true});
+const PERLA_V378_SECONDARY_PRESSURE_START = Object.freeze({wetness:55, orientation:45});
+const PERLA_V378_SECONDARY_PRESSURE_EXP = 2.2;
+const PERLA_V378_SECONDARY_PRESSURE_COMFORT_MULT = 7.0;
+const PERLA_V378_SECONDARY_PRESSURE_STRESS_MULT = 5.2;
+const PERLA_V378_CONDITION_CRITICAL_PROGRESS_GATE_SAFE = true;
+const PERLA_V378_CONDITION_CRITICAL_PROGRESS_MIN = .70;
+const PERLA_V374_BUILDABLE_LIMIT_BY_TIER = Object.freeze({1:1,2:2,3:3});
+const PERLA_V374_BUILDABLE_SPECS = Object.freeze({
+    tent:{
+        key:'tent',
+        title:'Tenda ospiti',
+        icon:'tent',
+        text:'Posto tenda ordinato nella piazzola: costa parecchio ma produce una piccola rendita stabile ogni giorno.',
+        yield:{ec:2, gd:0},
+        costs:{
+            1:{ciottoli:18, ghiaione:8, ec:45},
+            2:{ciottoli:28, ghiaione:14, quarzo:2, ec:85},
+            3:{ghiaione:26, quarzo:6, basalto:2, ec:150}
+        }
+    },
+    camper:{
+        key:'camper',
+        title:'Camper in affitto',
+        icon:'camper',
+        text:'Piazzola camper compatta: richiede risorse alte, ma rende EC e gettoni doccia ogni giorno.',
+        yield:{ec:4, gd:1},
+        costs:{
+            1:{ciottoli:28, ghiaione:16, quarzo:2, ec:110, gd:1},
+            2:{ghiaione:34, quarzo:8, basalto:3, ec:220, gd:2},
+            3:{ghiaione:48, quarzo:14, basalto:7, ec:380, gd:4}
+        }
+    }
+});
+const PERLA_V374_CHALLENGE_REWARD_TABLE = Object.freeze([
+    {ec:8},
+    {ec:12},
+    {ec:16},
+    {gd:1},
+    {ec:10, gd:1}
+]);
 const PERLA_V365_JOB_LIMIT_BY_TIER = Object.freeze({1:1,2:3,3:5});
 const PERLA_V365_TIER_SKILL_SPECS = Object.freeze([
     {id:'t1_mercante_da_spiaggia', tier:1, title:'Mercante da spiaggia', icon:'ec', cost:{ciottoli:8, ec:22}, summary:'+8% cambi e mercato', desc:'Contratti scritti su tovaglioli: compri e vendi senza pagare sempre il prezzo da turista smarrito.', effects:{merchantPct:.08}},
@@ -8354,7 +8539,8 @@ async function perlaRtpStateStoreSetBattlePlaceholderV325(eventId, result){
         st.eventStatus[id]='dormant';
     }else if(outcome==='won' || outcome==='lost'){
         perlaRtpStateStoreSyncExternalProducersV342('battle_placeholder_'+id);
-        if(!perlaRtpStateStoreConditionsMatchV334(ev&&ev.conditions)){
+        const rematchAllowedV377=perlaRtpMainChallengeRematchAllowedV377(id);
+        if(!perlaRtpStateStoreConditionsMatchV334(ev&&ev.conditions) && !rematchAllowedV377){
             st.eventStatus[id]='blocked_debug';
             return Object.assign({ok:false, eventId:id, result:outcome, reason:'conditions_not_met_before_battle_result', conditions:ev&&ev.conditions||[]}, perlaRtpStateStoreSummaryV325());
         }
@@ -8370,13 +8556,14 @@ async function perlaRtpStateStoreSetBattlePlaceholderV325(eventId, result){
         startEffectResult=await perlaRtpStateStoreApplyEffectsV334(id, ev.effects, 'battle_placeholder_start_v342');
         effectResult=await perlaRtpStateStoreApplyEffectsV334(id, outcome==='won'?ev.effectsOnWon:ev.effectsOnLost, 'battle_placeholder_'+outcome);
     }
+    const challengeRewardV374=(outcome==='won' && typeof perlaRtpChallengeRewardGrantV374==='function') ? perlaRtpChallengeRewardGrantV374(id, outcome) : null;
     if(outcome==='won' || outcome==='lost') perlaRtpPass2PlayActionSoundV345(outcome==='won'?'battle_won':'battle_lost');
     const effectErrors=(startEffectResult.errors||[]).concat(effectResult.errors||[]);
     const appliedTotal=(startEffectResult.applied||0)+(effectResult.applied||0);
-    st.lastAction={type:'set_battle_placeholder_result', eventId:id, result:st.battlePlaceholderResults[id], at:new Date().toISOString(), effectsApplied:appliedTotal, startEffectsApplied:startEffectResult.applied||0, outcomeEffectsApplied:effectResult.applied||0, effectErrors, sessionOnly:true};
+    st.lastAction={type:'set_battle_placeholder_result', eventId:id, result:st.battlePlaceholderResults[id], at:new Date().toISOString(), effectsApplied:appliedTotal, startEffectsApplied:startEffectResult.applied||0, outcomeEffectsApplied:effectResult.applied||0, effectErrors, rematchV377:!!perlaRtpMainChallengeRematchAllowedV377(id), sessionOnly:true};
     st.status='state_updated_debug_only';
     if(typeof perlaRtpPass2AutoSaveAfterStateChange==='function') perlaRtpPass2AutoSaveAfterStateChange('battle_placeholder_'+id+'_'+outcome);
-    return Object.assign({ok:startEffectResult.ok!==false&&effectResult.ok!==false, eventId:id, result:st.battlePlaceholderResults[id], eventStatus:st.eventStatus[id], effectsApplied:appliedTotal, startEffectResult, effectResult}, perlaRtpStateStoreSummaryV325());
+    return Object.assign({ok:startEffectResult.ok!==false&&effectResult.ok!==false, eventId:id, result:st.battlePlaceholderResults[id], eventStatus:st.eventStatus[id], effectsApplied:appliedTotal, startEffectResult, effectResult, challengeRewardV374, rematchV377:!!perlaRtpMainChallengeRematchAllowedV377(id)}, perlaRtpStateStoreSummaryV325());
 }
 const perlaRtpComfortGameplayStateV336 = {
     buildId:PERLA_BUILD_ID,
@@ -8766,6 +8953,41 @@ function perlaRtpComfortTrendBuildV364(before, after, profile){
     if(p.primary==='mosquito_chase') ['comfort','stress','energy','prep'].forEach(key=>{ if(!trend[key] || trend[key]==='stable') trend[key]=key==='stress'?'malus':'down'; });
     return trend;
 }
+function perlaRtpSecondaryStatPressureCurveV378(pressure){
+    const p=perlaRtpComfortClampV336(Number(pressure)||0,0,1);
+    if(p<=0) return 0;
+    const exp=Math.max(.1, Number(PERLA_V378_SECONDARY_PRESSURE_EXP)||2.2);
+    const denom=Math.exp(exp)-1;
+    return denom>0 ? +((Math.exp(p*exp)-1)/denom).toFixed(4) : +p.toFixed(4);
+}
+function perlaRtpSecondaryStatPressureV378(values){
+    const v=values||perlaRtpComfortGameplayStateV336||{};
+    const wetnessRaw=Number(v.wetness);
+    const orientationRaw=Number(v.orientation);
+    const wetness=perlaRtpComfortClampV336(Number.isFinite(wetnessRaw)?wetnessRaw:0,0,100);
+    const orientation=perlaRtpComfortClampV336(Number.isFinite(orientationRaw)?orientationRaw:100,0,100);
+    const wetStart=Number(PERLA_V378_SECONDARY_PRESSURE_START.wetness)||55;
+    const orientStart=Number(PERLA_V378_SECONDARY_PRESSURE_START.orientation)||45;
+    const wetPressure=perlaRtpComfortClampV336((wetness-wetStart)/Math.max(1,100-wetStart),0,1);
+    const orientPressure=perlaRtpComfortClampV336((orientStart-orientation)/Math.max(1,orientStart),0,1);
+    const wetCurve=perlaRtpSecondaryStatPressureCurveV378(wetPressure);
+    const orientCurve=perlaRtpSecondaryStatPressureCurveV378(orientPressure);
+    const wetMult=1+(PERLA_V378_SECONDARY_PRESSURE_COMFORT_MULT*wetCurve);
+    const orientMult=1+(PERLA_V378_SECONDARY_PRESSURE_COMFORT_MULT*orientCurve);
+    const wetStressMult=1+(PERLA_V378_SECONDARY_PRESSURE_STRESS_MULT*wetCurve);
+    const orientStressMult=1+(PERLA_V378_SECONDARY_PRESSURE_STRESS_MULT*orientCurve);
+    const wetComfort=PERLA_V357_SURVIVAL_BALANCE_SAFE ? wetPressure*PERLA_V357_SURVIVAL_WETNESS_COMFORT_PER_MIN*wetMult : 0;
+    const wetStress=PERLA_V357_SURVIVAL_BALANCE_SAFE ? wetPressure*PERLA_V357_SURVIVAL_WETNESS_STRESS_PER_MIN*wetStressMult : 0;
+    const orientationComfort=PERLA_V357_SURVIVAL_BALANCE_SAFE ? orientPressure*PERLA_V357_SURVIVAL_ORIENTATION_COMFORT_PER_MIN*orientMult : 0;
+    const orientationStress=PERLA_V357_SURVIVAL_BALANCE_SAFE ? orientPressure*PERLA_V357_SURVIVAL_ORIENTATION_STRESS_PER_MIN*orientStressMult : 0;
+    return {
+        buildId:PERLA_BUILD_ID,
+        safe:!!PERLA_V379_FAINT_AND_SECONDARY_PRESSURE_SAFE,
+        policy:'wetness_never_faints_directly_orientation_faints_at_zero_both_pressure_comfort_and_stress_before_limit',
+        wetness:{value:+wetness.toFixed(2), pressure:+wetPressure.toFixed(4), curve:wetCurve, comfortPerMin:+wetComfort.toFixed(3), stressPerMin:+wetStress.toFixed(3)},
+        orientation:{value:+orientation.toFixed(2), pressure:+orientPressure.toFixed(4), curve:orientCurve, comfortPerMin:+orientationComfort.toFixed(3), stressPerMin:+orientationStress.toFixed(3)}
+    };
+}
 function perlaRtpComfortGameplayTickV336(deltaMs){
     if(!PERLA_V336_COMFORT_GAMEPLAY_HUD_SAFE || !perlaRtpComfortGameplayStateV336.enabled) return perlaRtpComfortSummaryV336();
     const dt=Math.max(0, Math.min(Number(deltaMs)||0, PERLA_V336_COMFORT_TICK_MS*2));
@@ -8797,12 +9019,12 @@ function perlaRtpComfortGameplayTickV336(deltaMs){
         const hungerPressure=PERLA_V364_SURVIVAL_EXTREME_CONTROLLED_SAFE ? Math.max(0,(Number(st.hunger)||0)-PERLA_V364_SURVIVAL_HUNGER_PRESSURE_THRESHOLD)/Math.max(1,100-PERLA_V364_SURVIVAL_HUNGER_PRESSURE_THRESHOLD) : 0;
         const extra=(lowEnergy?(PERLA_V357_SURVIVAL_BALANCE_SAFE?PERLA_V357_SURVIVAL_LOW_ENERGY_EXTRA_DECAY_PER_MIN:PERLA_V336_COMFORT_LOW_ENERGY_EXTRA_DECAY_PER_MIN):0)+(softLowEnergy ? .85 : 0)+(stressCrisis ? .55 : 0)+(hungerPressure*.75);
         const prepExtra=(lowPrep ? (PERLA_V357_SURVIVAL_BALANCE_SAFE?PERLA_V357_SURVIVAL_LOW_PREP_EXTRA_DECAY_PER_MIN:.35) : 0)+(softLowPrep ? .65 : 0);
-        const wetnessPressure=PERLA_V357_SURVIVAL_BALANCE_SAFE ? Math.max(0,(Number(st.wetness)||0)-45)/55 : 0;
-        const orientationPressure=PERLA_V357_SURVIVAL_BALANCE_SAFE ? Math.max(0,45-(Number(st.orientation)||100))/45 : 0;
-        const wetComfort=wetnessPressure*PERLA_V357_SURVIVAL_WETNESS_COMFORT_PER_MIN;
-        const wetStress=wetnessPressure*PERLA_V357_SURVIVAL_WETNESS_STRESS_PER_MIN;
-        const orientationComfort=orientationPressure*PERLA_V357_SURVIVAL_ORIENTATION_COMFORT_PER_MIN;
-        const orientationStress=orientationPressure*PERLA_V357_SURVIVAL_ORIENTATION_STRESS_PER_MIN;
+        const secondaryPressureV378=perlaRtpSecondaryStatPressureV378(st);
+        const wetComfort=secondaryPressureV378.wetness.comfortPerMin;
+        const wetStress=secondaryPressureV378.wetness.stressPerMin;
+        const orientationComfort=secondaryPressureV378.orientation.comfortPerMin;
+        const orientationStress=secondaryPressureV378.orientation.stressPerMin;
+        st.lastSecondaryPressureV378=secondaryPressureV378;
         st.comfort=perlaRtpComfortClampV336(st.comfort-(p.comfortDecayPerMin+extra+prepExtra+wetComfort+orientationComfort)*minutes,0,100);
         st.stress=perlaRtpComfortClampV336(st.stress+(p.stressRisePerMin+wetStress+orientationStress)*minutes+(lowEnergy ? 1.1*minutes : 0)+(softLowEnergy ? .55*minutes : 0)+(lowPrep ? 1.0*minutes : 0)+(softLowPrep ? PERLA_V364_SURVIVAL_LOW_PREP_STRESS_PER_MIN*minutes : 0)+(hungerPressure*.85*minutes),0,100);
         st.energy=perlaRtpComfortClampV336(st.energy-(p.energyDrainPerMin+hungerPressure*.45+(stressCrisis?.35:0))*minutes,0,st.maxEnergy);
@@ -8874,8 +9096,8 @@ function perlaRtpComfortThresholdTextV366(key){
     if(key==='prep') return low('Forza', danger.prepMin, faint.prepMin);
     if(key==='stress') return 'Stress: pericolo grave a '+danger.stressMax+' o più; svenimento solo a '+faint.stressMax+'.';
     if(key==='hunger') return 'Fame: pericolo grave a '+danger.hungerMax+' o più; svenimento solo a '+faint.hungerMax+'.';
-    if(key==='wetness') return 'Bagnato: pericolo grave a '+danger.wetnessMax+' o più; svenimento solo a '+faint.wetnessMax+'.';
-    if(key==='orientation') return low('Orientamento', danger.orientationMin, faint.orientationMin);
+    if(key==='wetness') return 'Bagnato: pericolo grave a '+danger.wetnessMax+' o più; non sviene da solo, ma moltiplica il consumo di Comfort e lo Stress.';
+    if(key==='orientation') return 'Orientamento: pericolo grave a '+danger.orientationMin+' o meno; svieni a '+faint.orientationMin+'. Prima del limite moltiplica anche consumo di Comfort e Stress.';
     return 'Soglie non disponibili.';
 }
 function perlaRtpComfortDangerMapV366(values){
@@ -8890,6 +9112,25 @@ function perlaRtpComfortDangerMapV366(values){
         wetness:Number(v.wetness)>=t.wetnessMax,
         orientation:Number(v.orientation)<=t.orientationMin
     };
+}
+function perlaRtpConditionCriticalProgressGateV378(key, value, st){
+    if(!PERLA_V378_CONDITION_CRITICAL_PROGRESS_GATE_SAFE) return true;
+    value=Number(value);
+    if(!Number.isFinite(value)) return false;
+    const min=Math.max(.01, Math.min(.99, Number(PERLA_V378_CONDITION_CRITICAL_PROGRESS_MIN)||.70));
+    const maxByKey={
+        comfort:100,
+        stress:100,
+        energy:Math.max(1, Number(st&&st.maxEnergy)||100),
+        prep:Math.max(1, Number(PERLA_V341_PREP_MAX)||100),
+        hunger:100,
+        wetness:100,
+        orientation:100
+    };
+    const highFail={stress:true, hunger:true, wetness:true};
+    const max=Math.max(1, Number(maxByKey[key])||100);
+    if(highFail[key]) return (value/max)>=min;
+    return (value/max)<=(1-min);
 }
 function perlaRtpConditionCriticalMapV366(values, st, profile){
     if(st && st.lastRecoveryV364) return {};
@@ -8922,6 +9163,7 @@ function perlaRtpConditionCriticalMapV366(values, st, profile){
         else if(t.dir==='high' && rate>.005) minutes=(Number(t.danger)-value)/rate;
         if(minutes==null || !Number.isFinite(minutes) || minutes<0) return;
         if(minutes>PERLA_V367_CONDITION_CRITICAL_LOOKAHEAD_MIN && !dangerMap[key]) return;
+        if(!dangerMap[key] && !perlaRtpConditionCriticalProgressGateV378(key, value, st)) return;
         if(PERLA_V368_CONDITION_CRITICAL_SEVERITY_GATE_SAFE && !dangerMap[key]){
             const band=PERLA_V368_CONDITION_CRITICAL_VALUE_BANDS[key];
             if(band){
@@ -8962,8 +9204,8 @@ function perlaRtpComfortDangerCauseV366(values, st){
     low('prep','Forza quasi esaurita',v.prep,danger.prepMin,faint.prepMin);
     high('stress','Stress fuori controllo',v.stress,danger.stressMax,faint.stressMax);
     high('hunger','Fame fuori controllo',v.hunger,danger.hungerMax,faint.hungerMax);
-    high('wetness','Bagnato critico',v.wetness,danger.wetnessMax,faint.wetnessMax);
-    low('orientation','Orientamento quasi perso',v.orientation,danger.orientationMin,faint.orientationMin);
+    high('wetness','Bagnato critico: Comfort sotto pressione',v.wetness,danger.wetnessMax,faint.wetnessMax);
+    low('orientation','Orientamento perso: Comfort sotto pressione',v.orientation,danger.orientationMin,faint.orientationMin);
     if(!out.length) return null;
     out.sort((a,b)=>b.score-a.score);
     return out[0];
@@ -9087,24 +9329,33 @@ function perlaRtpMiniMapStatWarningsBindV361(el){
         perlaRtpOpenStatInfoV361(String(badge.dataset.key||''));
     }, {passive:false});
 }
-function perlaRtpMiniMapStatWarningsPositionV360(el){
+function perlaRtpMiniMapBadgeSizeV380(rect, kind){
+    const base=Math.max(1, Math.min(Number(rect&&rect.width)||0, Number(rect&&rect.height)||0));
+    if(kind==='currency') return Math.max(28, Math.min(34, Math.round(base*.44)));
+    return Math.max(26, Math.min(32, Math.round(base*.42)));
+}
+function perlaRtpMiniMapStatWarningsPositionV360(el, force){
     if(!el || !mini || !mini.getBoundingClientRect) return;
     const now=(typeof performance!=='undefined'&&performance.now)?performance.now():Date.now();
-    if(PERLA_V371_STUTTER_ROOT_CAUSE_GUARD_SAFE && Number(el._perlaPositionedAtV371||0) && now-Number(el._perlaPositionedAtV371||0)<PERLA_V371_MINIMAP_BADGE_POSITION_THROTTLE_MS) return;
-    el._perlaPositionedAtV371=now;
     const rect=mini.getBoundingClientRect();
+    const stamp=rect ? [Math.round(rect.left),Math.round(rect.top),Math.round(rect.width),Math.round(rect.height),window.innerWidth,window.innerHeight,currentViewportMode].join('|') : '';
+    if(!force && PERLA_V371_STUTTER_ROOT_CAUSE_GUARD_SAFE && Number(el._perlaPositionedAtV371||0) && el._perlaLayoutStampV380===stamp && now-Number(el._perlaPositionedAtV371||0)<PERLA_V371_MINIMAP_BADGE_POSITION_THROTTLE_MS) return;
+    el._perlaPositionedAtV371=now;
+    el._perlaLayoutStampV380=stamp;
     if(!rect || rect.width<=0 || rect.height<=0) return;
     el.style.left=Math.round(rect.left)+'px';
     el.style.top=Math.round(rect.top)+'px';
     el.style.width=Math.round(rect.width)+'px';
     el.style.height=Math.round(rect.height)+'px';
+    const badgeSize=perlaRtpMiniMapBadgeSizeV380(rect,'warning');
+    el.style.setProperty('--perla-mini-warning-size', badgeSize+'px');
     const cx=rect.width*.5, cy=rect.height*.5, r=Math.min(rect.width,rect.height)*.50;
     const place=(key, angleDeg)=>{
         const badge=el.querySelector('[data-key="'+key+'"]');
         if(!badge) return;
         const a=angleDeg*Math.PI/180;
-        badge.style.left=Math.round(cx+Math.cos(a)*r-16)+'px';
-        badge.style.top=Math.round(cy+Math.sin(a)*r-16)+'px';
+        badge.style.left=Math.round(cx+Math.cos(a)*r-badgeSize*.5)+'px';
+        badge.style.top=Math.round(cy+Math.sin(a)*r-badgeSize*.5)+'px';
     };
     place('wetness', 150);
     place('orientation', 30);
@@ -9164,7 +9415,7 @@ function perlaRtpMiniMapCurrencyEnsureV364(){
     }, {passive:false});
     return el;
 }
-function perlaRtpMiniMapCurrencyPositionV364(el){
+function perlaRtpMiniMapCurrencyPositionV364(el, force){
     if(!el || !mini || !mini.getBoundingClientRect) return;
     const rect=mini.getBoundingClientRect();
     if(!rect || rect.width<=0 || rect.height<=0) return;
@@ -9172,13 +9423,15 @@ function perlaRtpMiniMapCurrencyPositionV364(el){
     el.style.top=Math.round(rect.top)+'px';
     el.style.width=Math.round(rect.width)+'px';
     el.style.height=Math.round(rect.height)+'px';
+    const badgeSize=perlaRtpMiniMapBadgeSizeV380(rect,'currency');
+    el.style.setProperty('--perla-mini-currency-size', badgeSize+'px');
     const cx=rect.width*.5, cy=rect.height*.5, r=Math.min(rect.width,rect.height)*.50;
     const place=(key, angleDeg)=>{
         const badge=el.querySelector('[data-key="'+key+'"]');
         if(!badge) return;
         const a=angleDeg*Math.PI/180;
-        badge.style.left=Math.round(cx+Math.cos(a)*r-17)+'px';
-        badge.style.top=Math.round(cy+Math.sin(a)*r-17)+'px';
+        badge.style.left=Math.round(cx+Math.cos(a)*r-badgeSize*.5)+'px';
+        badge.style.top=Math.round(cy+Math.sin(a)*r-badgeSize*.5)+'px';
     };
     place('ec', -138);
     place('gd', -42);
@@ -9199,6 +9452,26 @@ function perlaRtpMiniMapCurrencyUpdateV364(summary){
         if(span) span.textContent=String(value);
     });
     return {ok:true, wallet:{ec:Math.max(0,Math.floor(Number(wallet&&wallet.ec)||0)), gd:Math.max(0,Math.floor(Number(wallet&&wallet.gd)||0))}};
+}
+function perlaRtpMiniMapClusterRelayoutV380(reason){
+    if(!PERLA_V380_MOBILE_HUD_ROTATION_CLUSTER_SAFE) return {ok:false, reason:'v380_disabled'};
+    const warn=document.getElementById('perlaMiniMapWarningsV360');
+    const currency=document.getElementById('perlaMiniMapCurrencyV364');
+    const chip=document.getElementById('perlaPauseMenuChipV360');
+    if(warn) perlaRtpMiniMapStatWarningsPositionV360(warn, true);
+    if(currency) perlaRtpMiniMapCurrencyPositionV364(currency, true);
+    if(chip && typeof perlaRtpPauseMenuPositionChipV360==='function') perlaRtpPauseMenuPositionChipV360(chip);
+    if(typeof perlaRtpActionMarkerUpdateV380==='function') perlaRtpActionMarkerUpdateV380('minimap_cluster_'+String(reason||'relayout'));
+    return {ok:true, reason:String(reason||'relayout'), warn:!!warn, currency:!!currency, chip:!!chip};
+}
+function perlaRtpMiniMapClusterRelayoutScheduleV380(reason){
+    if(!PERLA_V380_MOBILE_HUD_ROTATION_CLUSTER_SAFE) return;
+    perlaRtpMiniMapClusterRelayoutV380(reason||'immediate');
+    if(typeof requestAnimationFrame==='function') requestAnimationFrame(()=>perlaRtpMiniMapClusterRelayoutV380((reason||'raf')+'_raf'));
+    clearTimeout(perlaRtpMiniMapClusterRelayoutScheduleV380._t1);
+    clearTimeout(perlaRtpMiniMapClusterRelayoutScheduleV380._t2);
+    perlaRtpMiniMapClusterRelayoutScheduleV380._t1=setTimeout(()=>perlaRtpMiniMapClusterRelayoutV380((reason||'settle')+'_120ms'),120);
+    perlaRtpMiniMapClusterRelayoutScheduleV380._t2=setTimeout(()=>perlaRtpMiniMapClusterRelayoutV380((reason||'settle')+'_360ms'),360);
 }
 function perlaRtpBindHudInfoClicksV361(){
     if(!PERLA_V361_INFO_MODAL_SAFE || !perlaComfortHudV336 || perlaComfortHudV336.dataset.perlaInfoBoundV361==='1') return;
@@ -9298,15 +9571,98 @@ function perlaRtpComfortFailCauseV350(profile){
     const t=PERLA_V350_FAINT_THRESHOLDS;
     const eps=.001;
     const candidates=[];
-    if(Number(st.energy)<=t.energyMin+eps) candidates.push({cause:'energy', severity:t.energyMin-Number(st.energy), label:'Energia esaurita'});
-    if(Number(st.comfort)<=t.comfortMin+eps) candidates.push({cause:'comfort', severity:t.comfortMin-Number(st.comfort), label:'Comfort critico'});
-    if(Number(st.stress)>=t.stressMax-eps) candidates.push({cause:'stress', severity:Number(st.stress)-t.stressMax, label:'Stress massimo'});
-    if(Number(st.prep)<=t.prepMin+eps) candidates.push({cause:'prep', severity:t.prepMin-Number(st.prep), label:'Forza esaurita'});
-    if(Number(st.hunger)>=t.hungerMax-eps) candidates.push({cause:'hunger', severity:Number(st.hunger)-t.hungerMax, label:'Fame fuori controllo'});
-    if(Number(st.wetness)>=t.wetnessMax-eps) candidates.push({cause:'wetness', severity:Number(st.wetness)-t.wetnessMax, label:'Bagnato critico'});
-    if(Number(st.orientation)<=t.orientationMin+eps) candidates.push({cause:'orientation', severity:t.orientationMin-Number(st.orientation), label:'Orientamento perso'});
+    const direct=PERLA_V378_DIRECT_FAINT_STATS;
+    if(direct.energy && Number(st.energy)<=t.energyMin+eps) candidates.push({cause:'energy', severity:t.energyMin-Number(st.energy), label:'Energia esaurita'});
+    if(direct.comfort && Number(st.comfort)<=t.comfortMin+eps) candidates.push({cause:'comfort', severity:t.comfortMin-Number(st.comfort), label:'Comfort critico'});
+    if(direct.stress && Number(st.stress)>=t.stressMax-eps) candidates.push({cause:'stress', severity:Number(st.stress)-t.stressMax, label:'Stress massimo'});
+    if(direct.prep && Number(st.prep)<=t.prepMin+eps) candidates.push({cause:'prep', severity:t.prepMin-Number(st.prep), label:'Forza esaurita'});
+    if(direct.hunger && Number(st.hunger)>=t.hungerMax-eps) candidates.push({cause:'hunger', severity:Number(st.hunger)-t.hungerMax, label:'Fame fuori controllo'});
+    if(direct.wetness && Number(st.wetness)>=t.wetnessMax-eps) candidates.push({cause:'wetness', severity:Number(st.wetness)-t.wetnessMax, label:'Bagnato critico'});
+    if(direct.orientation && Number(st.orientation)<=t.orientationMin+eps) candidates.push({cause:'orientation', severity:t.orientationMin-Number(st.orientation), label:'Orientamento perso'});
     candidates.sort((a,b)=>b.severity-a.severity);
     return candidates[0]||null;
+}
+function perlaRtpComfortFailCauseProbeV376(values, profile){
+    const st=perlaRtpComfortGameplayStateV336;
+    const before={
+        energy:st.energy,
+        comfort:st.comfort,
+        stress:st.stress,
+        prep:st.prep,
+        hunger:st.hunger,
+        wetness:st.wetness,
+        orientation:st.orientation
+    };
+    try{
+        Object.keys(before).forEach(k=>{
+            if(Object.prototype.hasOwnProperty.call(values||{},k)) st[k]=Number(values[k]);
+        });
+        return perlaRtpComfortFailCauseV350(profile||{recovery:false});
+    }finally{
+        Object.keys(before).forEach(k=>{ st[k]=before[k]; });
+    }
+}
+function perlaRtpWetnessOrientationFailVisualValidationV376(){
+    const base={comfort:80, stress:20, energy:80, prep:80, hunger:20, wetness:0, orientation:80};
+    const wetCause=perlaRtpComfortFailCauseProbeV376(Object.assign({}, base, {wetness:100}), {recovery:false});
+    const orientCause=perlaRtpComfortFailCauseProbeV376(Object.assign({}, base, {orientation:0}), {recovery:false});
+    const wetDanger=perlaRtpComfortDangerMapV366(Object.assign({}, base, {wetness:100}));
+    const orientDanger=perlaRtpComfortDangerMapV366(Object.assign({}, base, {orientation:0}));
+    const wetPressure=perlaRtpSecondaryStatPressureV378(Object.assign({}, base, {wetness:100}));
+    const orientPressure=perlaRtpSecondaryStatPressureV378(Object.assign({}, base, {orientation:0}));
+    return {
+        buildId:PERLA_BUILD_ID,
+        safe:!!PERLA_V376_WETNESS_ORIENTATION_FAIL_VISUAL_SAFE,
+        supersededByV378:!!PERLA_V378_SECONDARY_STAT_PRESSURE_NOT_DIRECT_FAINT_SAFE,
+        supersededByV379:!!PERLA_V379_ORIENTATION_DIRECT_FAINT_SAFE,
+        thresholds:{wetnessDanger:PERLA_V366_DANGER_THRESHOLDS.wetnessMax, orientationDanger:PERLA_V366_DANGER_THRESHOLDS.orientationMin},
+        wetness:{directFaintAt100:!!(wetCause&&wetCause.cause==='wetness'), cause:wetCause, criticalUi:!!wetDanger.wetness, pressureV378:wetPressure.wetness, selector:'#perlaMiniMapWarningsV360 .v360-warning-badge[data-key="wetness"][data-critical="true"]'},
+        orientation:{directFaintAt0:!!(orientCause&&orientCause.cause==='orientation'), cause:orientCause, criticalUi:!!orientDanger.orientation, pressureV378:orientPressure.orientation, selector:'#perlaMiniMapWarningsV360 .v360-warning-badge[data-key="orientation"][data-critical="true"]'},
+        cssContract:'wetness_and_orientation_minimap_warning_badges_enlarge_pulse_v378'
+    };
+}
+function perlaRtpFaintContractAuditV378(){
+    const base={comfort:80, stress:20, energy:80, prep:80, hunger:20, wetness:0, orientation:80};
+    const probes={
+        comfort:Object.assign({}, base, {comfort:0}),
+        energy:Object.assign({}, base, {energy:0}),
+        stress:Object.assign({}, base, {stress:100}),
+        prep:Object.assign({}, base, {prep:0}),
+        hunger:Object.assign({}, base, {hunger:100}),
+        wetness:Object.assign({}, base, {wetness:100}),
+        orientation:Object.assign({}, base, {orientation:0})
+    };
+    const rows=Object.keys(probes).map(key=>{
+        const cause=perlaRtpComfortFailCauseProbeV376(probes[key], {recovery:false});
+        const expectedDirect=!!PERLA_V378_DIRECT_FAINT_STATS[key];
+        return {
+            key,
+            expectedDirectFaint:expectedDirect,
+            actualDirectFaint:!!(cause&&cause.cause===key),
+            actualCause:cause&&cause.cause||null,
+            ok:expectedDirect ? !!(cause&&cause.cause===key) : !(cause&&cause.cause===key)
+        };
+    });
+    const secondaryPressure={
+        wetness100:perlaRtpSecondaryStatPressureV378(probes.wetness).wetness,
+        orientation0:perlaRtpSecondaryStatPressureV378(probes.orientation).orientation
+    };
+    const directOk=rows.every(row=>row.ok);
+    const pressureOk=secondaryPressure.wetness100.comfortPerMin>PERLA_V357_SURVIVAL_WETNESS_COMFORT_PER_MIN &&
+        secondaryPressure.wetness100.stressPerMin>PERLA_V357_SURVIVAL_WETNESS_STRESS_PER_MIN &&
+        secondaryPressure.orientation0.comfortPerMin>PERLA_V357_SURVIVAL_ORIENTATION_COMFORT_PER_MIN &&
+        secondaryPressure.orientation0.stressPerMin>PERLA_V357_SURVIVAL_ORIENTATION_STRESS_PER_MIN;
+    return {
+        buildId:PERLA_BUILD_ID,
+        safe:!!PERLA_V379_FAINT_AND_SECONDARY_PRESSURE_SAFE,
+        policy:'direct_faint_for_primary_stats_plus_orientation_at_zero_wetness_secondary_pressure_only',
+        directFaintStats:Object.assign({}, PERLA_V378_DIRECT_FAINT_STATS),
+        rows,
+        secondaryPressure,
+        hiddenDirectFaintLeaks:rows.filter(row=>!row.expectedDirectFaint && row.actualDirectFaint).map(row=>row.key),
+        missingDirectFaints:rows.filter(row=>row.expectedDirectFaint && !row.actualDirectFaint).map(row=>row.key),
+        ok:directOk && pressureOk
+    };
 }
 function perlaRtpFailStateMessageV350(cause){
     const list=PERLA_V350_FAINT_MESSAGES[String(cause||'comfort')]||PERLA_V350_FAINT_MESSAGES.comfort;
@@ -9362,10 +9718,14 @@ function perlaRtpFailStateLossHtmlV365(entry){
 }
 function perlaRtpFailStateDismissOverlayV366(){
     const overlay=document.getElementById('perlaFailStateOverlayV350');
-    if(overlay) overlay.classList.remove('visible');
+    if(overlay){
+        perlaRtpMoveFocusBeforeHideV376(overlay, document.getElementById('rtpActionBtnV332')||document.body);
+        overlay.classList.remove('visible');
+    }
     const st=perlaRtpFailStateRuntimeV350();
     st.overlayUntil=0;
     st.awaitingDismissV366=false;
+    if(typeof perlaRtpActionUpdateButtonV332==='function') perlaRtpActionUpdateButtonV332();
 }
 function perlaRtpFailStateBindDismissV366(overlay){
     if(!overlay || overlay.dataset.perlaDismissBoundV366==='1') return;
@@ -9506,13 +9866,15 @@ function perlaRtpComfortSummaryV336(){
         v357:{coordinatePromotion:!!PERLA_V357_RTP_COORDINATE_PROMOTION_SAFE, survivalBalance:!!PERLA_V357_SURVIVAL_BALANCE_SAFE, timeMultipliers:Object.assign({}, PERLA_V357_SURVIVAL_TIME_MULTIPLIERS), tierMultipliers:Object.assign({}, PERLA_V357_SURVIVAL_TIER_MULTIPLIERS), weatherMultipliers:Object.assign({}, PERLA_V357_SURVIVAL_WEATHER_MULTIPLIERS), hubRecoveryMultipliers:Object.assign({}, PERLA_V357_SURVIVAL_HUB_RECOVERY_MULTIPLIERS), recruitMitigation:perlaRtpComfortRecruitMitigationV357()},
         v359:{challengeEventLinkBattleSafe:!!PERLA_V359_CHALLENGE_EVENT_LINK_BATTLE_SAFE, survivalFailThresholds:Object.assign({}, PERLA_V350_FAINT_THRESHOLDS), environmentContinuitySave:!!PERLA_V359_SAVE_ENVIRONMENT_CONTINUITY_SAFE},
         v366:{hudMarketFailstateFeedback:!!PERLA_V366_HUD_MARKET_FAILSTATE_FEEDBACK_SAFE, dailyDebtNotice:!!PERLA_V366_DAILY_DEBT_NOTICE_SAFE, dangerThresholds:Object.assign({}, PERLA_V366_DANGER_THRESHOLDS), faintExtremeThresholds:Object.assign({}, PERLA_V350_FAINT_THRESHOLDS)},
+        v378:{secondaryStatPressure:!!PERLA_V378_SECONDARY_STAT_PRESSURE_NOT_DIRECT_FAINT_SAFE, directFaintStats:Object.assign({}, PERLA_V378_DIRECT_FAINT_STATS), lastSecondaryPressure:st.lastSecondaryPressureV378||null, faintContractAudit:perlaRtpFaintContractAuditV378()},
+        v379:{orientationDirectFaint:!!PERLA_V379_ORIENTATION_DIRECT_FAINT_SAFE, wetnessSecondaryOnly:!!PERLA_V379_WETNESS_SECONDARY_ONLY_SAFE, conditionCriticalProgressGate:!!PERLA_V378_CONDITION_CRITICAL_PROGRESS_GATE_SAFE, conditionCriticalProgressMin:PERLA_V378_CONDITION_CRITICAL_PROGRESS_MIN},
         v360:{resourceSiteMinNodes:PERLA_V360_RESOURCE_SITE_MIN_NODES, resourceSiteMaxNodes:PERLA_V360_RESOURCE_SITE_MAX_NODES, minimapStatWarnings:!!PERLA_V360_MINIMAP_STAT_WARNINGS_SAFE, pauseMenuMinimap:!!PERLA_V360_PAUSE_MENU_MINIMAP_SAFE, coverageAbsoluteHazard:!!PERLA_V360_COVERAGE_ABSOLUTE_HAZARD_SAFE, weatherPerturbationBlocks:!!PERLA_V360_WEATHER_PERTURBATION_BLOCKS_SAFE},
         labels:{comfort:'Comfort', stress:'Stress', energy:'Energia', prep:'Forza', hunger:'Fame', wetness:'Bagnato', orientation:'Orientamento'},
         aliases:{forza:+st.prep.toFixed(2), prepInternal:+st.prep.toFixed(2)},
         values:{comfort:+st.comfort.toFixed(2), stress:+st.stress.toFixed(2), energy:+st.energy.toFixed(2), maxEnergy:st.maxEnergy, prep:+st.prep.toFixed(2), hunger:+(Number(st.hunger)||0).toFixed(2), wetness:+st.wetness.toFixed(2), orientation:+st.orientation.toFixed(2)},
         hazard:{zone:st.lastZone, band:st.lastBand, weather:st.lastWeather, label:st.lastHazard, covered:!!coverage.covered, coverageSource:coverage.source||'', heatExposure:+st.heatExposure.toFixed(2), mosquitoExposure:+st.mosquitoExposure.toFixed(2), rainExposure:+st.rainExposure.toFixed(2), stormExposure:+st.stormExposure.toFixed(2), mosquito:st.lastMosquito, balanceV357:st.lastBalanceV357},
         thresholds:{fullEfficiency:70, reducedScan:40, heavyPenalty:20},
-        decay:{sunnyHeatComfortPerMin:PERLA_V341_HEAT_COMFORT_DECAY_PER_MIN, mosquitoComfortBite:PERLA_V341_MOSQUITO_COMFORT_BITE, rainWetnessPerMin:PERLA_V341_RAIN_WETNESS_PER_MIN, stormOrientationLossPerMin:PERLA_V341_STORM_ORIENTATION_LOSS_PER_MIN, lowEnergyExtraPerMin:PERLA_V357_SURVIVAL_BALANCE_SAFE?PERLA_V357_SURVIVAL_LOW_ENERGY_EXTRA_DECAY_PER_MIN:PERLA_V336_COMFORT_LOW_ENERGY_EXTRA_DECAY_PER_MIN, lowPrepExtraPerMin:PERLA_V357_SURVIVAL_LOW_PREP_EXTRA_DECAY_PER_MIN, wetnessComfortPerMin:PERLA_V357_SURVIVAL_WETNESS_COMFORT_PER_MIN, orientationComfortPerMin:PERLA_V357_SURVIVAL_ORIENTATION_COMFORT_PER_MIN},
+        decay:{sunnyHeatComfortPerMin:PERLA_V341_HEAT_COMFORT_DECAY_PER_MIN, mosquitoComfortBite:PERLA_V341_MOSQUITO_COMFORT_BITE, rainWetnessPerMin:PERLA_V341_RAIN_WETNESS_PER_MIN, stormOrientationLossPerMin:PERLA_V341_STORM_ORIENTATION_LOSS_PER_MIN, lowEnergyExtraPerMin:PERLA_V357_SURVIVAL_BALANCE_SAFE?PERLA_V357_SURVIVAL_LOW_ENERGY_EXTRA_DECAY_PER_MIN:PERLA_V336_COMFORT_LOW_ENERGY_EXTRA_DECAY_PER_MIN, lowPrepExtraPerMin:PERLA_V357_SURVIVAL_LOW_PREP_EXTRA_DECAY_PER_MIN, wetnessComfortPerMin:PERLA_V357_SURVIVAL_WETNESS_COMFORT_PER_MIN, orientationComfortPerMin:PERLA_V357_SURVIVAL_ORIENTATION_COMFORT_PER_MIN, secondaryPressureV378:perlaRtpSecondaryStatPressureV378(st)},
         counters:Object.assign({}, st.counters),
         sources:st.sources.slice()
     };
@@ -12357,7 +12719,11 @@ const PERLA_V350_ICON_SVG = Object.freeze({
     stat_forza:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M9 15h3V9a3 3 0 0 1 6 0v5h1V8a3 3 0 0 1 6 0v8c0 7-4 11-10 11-5 0-8-3-8-8v-2a2 2 0 0 1 2-2z" fill="#f1c40f" stroke="#fff4c2" stroke-width="2"/><path d="M12 15h9" stroke="#5a3510" stroke-width="2" stroke-linecap="round"/></svg>',
     stat_hunger:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M12 4v10a4 4 0 0 1-4 4V4" fill="none" stroke="#fff4cf" stroke-width="2.5" stroke-linecap="round"/><path d="M20 4v24" stroke="#fff4cf" stroke-width="2.5" stroke-linecap="round"/><path d="M20 4c5 3 5 10 0 13" fill="none" stroke="#e29f4b" stroke-width="4" stroke-linecap="round"/><circle cx="16" cy="23" r="5" fill="#e29f4b" stroke="#fff4cf" stroke-width="2"/></svg>',
     stat_wetness:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4c5 7 8 11 8 16a8 8 0 0 1-16 0c0-5 3-9 8-16z" fill="#48c7ff" stroke="#eaf9ff" stroke-width="2"/><path d="M12 21c1 3 6 4 8 0" fill="none" stroke="#0b6f98" stroke-width="2" stroke-linecap="round"/></svg>',
-    stat_orientation:'<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="#b991ff" stroke="#f0eaff" stroke-width="2"/><path d="M20 8l-2 10-8 6 2-10z" fill="#fff4cf" stroke="#4d2f87" stroke-width="1.8" stroke-linejoin="round"/><circle cx="16" cy="16" r="2" fill="#4d2f87"/></svg>'
+    stat_orientation:'<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="#b991ff" stroke="#f0eaff" stroke-width="2"/><path d="M20 8l-2 10-8 6 2-10z" fill="#fff4cf" stroke="#4d2f87" stroke-width="1.8" stroke-linejoin="round"/><circle cx="16" cy="16" r="2" fill="#4d2f87"/></svg>',
+    tent:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 25L16 5l11 20z" fill="#3d8ee8" stroke="#eaf9ff" stroke-width="2" stroke-linejoin="round"/><path d="M16 5v20" stroke="#0d355e" stroke-width="2"/><path d="M13 25l3-8 3 8z" fill="#08223f"/></svg>',
+    camper:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 11h17l5 5v8H5z" fill="#f5d99e" stroke="#4d3720" stroke-width="2" stroke-linejoin="round"/><path d="M8 14h6v5H8zM16 14h5v5h-5z" fill="#82dcff" stroke="#4d3720" stroke-width="1.5"/><circle cx="11" cy="25" r="3" fill="#26211d" stroke="#fff4cf" stroke-width="1.5"/><circle cx="23" cy="25" r="3" fill="#26211d" stroke="#fff4cf" stroke-width="1.5"/></svg>',
+    build:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 25h20" stroke="#f5d99e" stroke-width="3" stroke-linecap="round"/><path d="M9 22V12l7-5 7 5v10" fill="#45d483" stroke="#eafff2" stroke-width="2" stroke-linejoin="round"/><path d="M13 22v-7h6v7" fill="#25190f"/></svg>',
+    reward:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 12h16v15H8z" fill="#f1c40f" stroke="#fff4cf" stroke-width="2" stroke-linejoin="round"/><path d="M6 8h20v6H6z" fill="#e29f4b" stroke="#fff4cf" stroke-width="2" stroke-linejoin="round"/><path d="M16 8v19" stroke="#7a3f1a" stroke-width="2"/><path d="M12 8c-4-3-2-7 4 0M20 8c4-3 2-7-4 0" fill="none" stroke="#fff4cf" stroke-width="2" stroke-linecap="round"/></svg>'
 });
 function perlaRtpIconSvgV350(key){
     return PERLA_V350_ICON_SVG[String(key||'')] || PERLA_V350_ICON_SVG.stone_round;
@@ -12366,6 +12732,22 @@ const perlaInfoModalStateV361 = {last:null};
 const perlaRepellentTimerStateV361 = {interval:null, lastActive:false};
 function perlaRtpInfoEscapeV361(value){
     return String(value==null?'':value).replace(/[&<>"']/g, ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+function perlaRtpMoveFocusBeforeHideV376(container, fallback){
+    if(!PERLA_V376_POPUP_FOCUS_ARIA_SAFE || !container || typeof document==='undefined') return false;
+    const active=document.activeElement;
+    if(!active || !container.contains(active)) return false;
+    try{
+        if(fallback && fallback.focus && document.body && document.body.contains(fallback) && !container.contains(fallback)){
+            fallback.focus({preventScroll:true});
+        }else if(active.blur){
+            active.blur();
+        }
+        return true;
+    }catch(err){
+        try{ if(active.blur) active.blur(); }catch(_){}
+        return false;
+    }
 }
 function perlaRtpInfoChipV361(iconKey, label, value, kind){
     const kindAttr=kind?' data-kind="'+perlaRtpInfoEscapeV361(kind)+'"':'';
@@ -12387,6 +12769,7 @@ function perlaRtpInfoModalEnsureV361(){
     el.setAttribute('role','dialog');
     el.setAttribute('aria-modal','true');
     el.setAttribute('aria-label','Informazioni di gioco');
+    el.setAttribute('aria-hidden','true');
     el.innerHTML='<div class="info-panel"><div class="info-head"><h3></h3><button class="info-close" type="button" data-info-action="close" aria-label="Chiudi">x</button></div><div class="info-body"></div></div>';
     document.body.appendChild(el);
     el.addEventListener('click', e=>{
@@ -12408,13 +12791,21 @@ function perlaRtpInfoModalOpenV361(title, bodyHtml, meta){
     if(h) h.textContent=String(title||'Informazioni');
     if(body) body.innerHTML=String(bodyHtml||'');
     el.classList.add('visible');
+    el.setAttribute('aria-hidden','false');
+    try{ el.inert=false; }catch(err){}
     perlaInfoModalStateV361.last={title:String(title||''), meta:meta||null, at:new Date().toISOString()};
     if(typeof perlaRtpActionResetMovementOnUiLockV350==='function') perlaRtpActionResetMovementOnUiLockV350('info_modal_open_v361');
     return {ok:true};
 }
 function perlaRtpInfoModalCloseV361(reason){
     const el=document.getElementById('perlaInfoModalV361');
-    if(el) el.classList.remove('visible');
+    if(el){
+        const fallback=document.querySelector('#perlaRtpUpgradeMenuV334.visible .rtp-v350-sleep-button') || document.querySelector('#perlaPauseMenuV360.visible .pause-close') || document.getElementById('rtpActionBtnV332') || document.body;
+        perlaRtpMoveFocusBeforeHideV376(el, fallback);
+        el.classList.remove('visible');
+        el.setAttribute('aria-hidden','true');
+        try{ el.inert=true; }catch(err){}
+    }
     perlaInfoModalStateV361.lastClose={reason:String(reason||'manual'), at:new Date().toISOString()};
     if(typeof perlaRtpActionResetMovementOnUiLockV350==='function') perlaRtpActionResetMovementOnUiLockV350('info_modal_close_v361');
     return {ok:true};
@@ -12513,7 +12904,7 @@ function perlaRtpCurrentModifierGroupsV361(){
     if((Number(st.stress)||0)>=55) malus.push(perlaRtpInfoChipV361('stat_stress','Stress alto','rischio crescente','malus'));
     if((Number(st.hunger)||0)>=65) malus.push(perlaRtpInfoChipV361('stat_hunger','Fame alta','recuperi peggiori','malus'));
     if((Number(st.wetness)||0)>=55) malus.push(perlaRtpInfoChipV361('stat_wetness','Bagnato alto','soglia pericolosa','malus'));
-    if((Number(st.orientation)||100)<=45) malus.push(perlaRtpInfoChipV361('stat_orientation','Orientamento basso','rischio svenimento','malus'));
+    if((Number(st.orientation)||100)<=45) malus.push(perlaRtpInfoChipV361('stat_orientation','Orientamento basso','pressione Comfort/Stress','malus'));
     if((Number(st.mosquitoExposure)||0)>0 || String(st.lastHazard||'').toLowerCase().indexOf('mosquito')>=0) malus.push(perlaRtpInfoChipV361('repellent','Zanzare','pressione attiva','malus'));
     if(!bonus.length) bonus.push(perlaRtpInfoChipV361('stat_comfort','Nessun bonus','attivo','bonus'));
     if(!malus.length) malus.push(perlaRtpInfoChipV361('stat_comfort','Nessun malus','critico','malus'));
@@ -12528,8 +12919,8 @@ function perlaRtpOpenStatInfoV361(key){
         energy:{label:'Energia', icon:'stat_energy', value:Math.round(Number(st.energy)||0), text:'Serve per muoversi e raccogliere. Energia bassa aumenta la pressione sugli altri stati.', cure:'Dormi, snack, base e progressione carriola.'},
         prep:{label:'Forza', icon:'stat_forza', value:Math.round(Number(st.prep)||0), text:'Rappresenta preparazione fisica e capacità di gestire carichi duri. Serve soprattutto per quarzo, basalto e raccolte pesanti.', cure:'Snack, doccia, riposo e upgrade.'},
         hunger:{label:'Fame', icon:'stat_hunger', value:Math.round(Number(st.hunger)||0), text:'Aumenta col tempo e soprattutto dormendo. Fame alta rende più rischioso continuare fuori base.', cure:'Snack e gestione dei tempi di esplorazione.'},
-        wetness:{label:'Bagnato', icon:'stat_wetness', value:Math.round(Number(st.wetness)||0), text:'Sale con pioggia/tempesta e zone esposte. Quando è alto peggiora Comfort e Stress; a soglia massima porta allo svenimento.', cure:'Coperture, doccia, dormire, acqua solo come piccolo recupero e upgrade meteo.'},
-        orientation:{label:'Orientamento', icon:'stat_orientation', value:Math.round(Number(st.orientation)||100), text:'Scende soprattutto in tempesta e in esplorazione difficile. Se crolla sei perso e svieni.', cure:'Base, riposo, coperture, upgrade bussola e scegliere fasce meno ostili.'}
+        wetness:{label:'Bagnato', icon:'stat_wetness', value:Math.round(Number(st.wetness)||0), text:'Sale con pioggia/tempesta e zone esposte. Quando è alto non svieni subito: moltiplica però il consumo di Comfort e la crescita dello Stress.', cure:'Coperture, doccia, dormire, acqua solo come piccolo recupero e upgrade meteo.'},
+        orientation:{label:'Orientamento', icon:'stat_orientation', value:Math.round(Number(st.orientation)||100), text:'Scende soprattutto in tempesta e in esplorazione difficile. Quando arriva a 0 svieni; quando è basso rende anche più rapida la crisi di Comfort e Stress.', cure:'Base, riposo, coperture, upgrade bussola e scegliere fasce meno ostili.'}
     };
     const def=defs[k]||defs.comfort;
     const groups=perlaRtpCurrentModifierGroupsV361();
@@ -12681,8 +13072,8 @@ function perlaRtpOpenStatInfoV361(key){
         energy:{label:'Energia', icon:'stat_energy', value:Math.round(Number(st.energy)||0), text:'Serve per muoversi e raccogliere. Energia bassa aumenta la pressione sugli altri stati.', cure:'Dormi, snack, base e progressione carriola.'},
         prep:{label:'Forza', icon:'stat_forza', value:Math.round(Number(st.prep)||0), text:'Rappresenta preparazione fisica e capacit\u00e0 di gestire carichi duri. Serve soprattutto per quarzo, basalto e raccolte pesanti.', cure:'Snack, doccia, riposo e upgrade.'},
         hunger:{label:'Fame', icon:'stat_hunger', value:Math.round(Number(st.hunger)||0), text:'Aumenta col tempo e soprattutto dormendo. Fame alta rende pi\u00f9 rischioso continuare fuori base.', cure:'Snack e gestione dei tempi di esplorazione.'},
-        wetness:{label:'Bagnato', icon:'stat_wetness', value:Math.round(Number(st.wetness)||0), text:'Sale con pioggia/tempesta e zone esposte. Quando \u00e8 alto peggiora Comfort e Stress; a soglia massima porta allo svenimento.', cure:'Coperture, doccia, dormire, acqua solo come piccolo recupero e upgrade meteo.'},
-        orientation:{label:'Orientamento', icon:'stat_orientation', value:Math.round(Number(st.orientation)||100), text:'Scende soprattutto in tempesta e in esplorazione difficile. Se crolla sei perso e svieni.', cure:'Base, riposo, coperture, upgrade bussola e scegliere fasce meno ostili.'}
+        wetness:{label:'Bagnato', icon:'stat_wetness', value:Math.round(Number(st.wetness)||0), text:'Sale con pioggia/tempesta e zone esposte. Quando è alto non svieni subito: moltiplica però il consumo di Comfort e la crescita dello Stress.', cure:'Coperture, doccia, dormire, acqua solo come piccolo recupero e upgrade meteo.'},
+        orientation:{label:'Orientamento', icon:'stat_orientation', value:Math.round(Number(st.orientation)||100), text:'Scende soprattutto in tempesta e in esplorazione difficile. Quando arriva a 0 svieni; quando è basso rende anche più rapida la crisi di Comfort e Stress.', cure:'Base, riposo, coperture, upgrade bussola e scegliere fasce meno ostili.'}
     };
     const def=defs[k]||defs.comfort;
     const groups=perlaRtpCurrentModifierGroupsV361(k);
@@ -12764,12 +13155,62 @@ function perlaRtpInstructionsOpenV361(){
     const sections=[
         perlaRtpInfoSectionV361('Game loop', '<p>Esci dalla base, scegli fascia oraria e meteo, raccogli risorse, scarica la carriola a CASA, compra usabili, recluta PG e investi negli upgrade.</p>'+perlaRtpInfoChipRowV361([perlaRtpInfoChipV361('capacity','Raccogli','sassi'),perlaRtpInfoChipV361('backpack','Sopravvivi','stats'),perlaRtpInfoChipV361('ec','Converti','EC'),perlaRtpInfoChipV361('stat_forza','Upgrade','base')])),
         perlaRtpInfoSectionV361('Consigli', '<ul><li>Non uscire sempre a mezzogiorno: sole e zanzare puniscono.</li><li>Scarica spesso la carriola: piena non produce valore finché non torni a CASA.</li><li>Usa il repellente prima delle pinete, non dopo il panico.</li></ul>'),
-        perlaRtpInfoSectionV361('Sopravvivenza', '<p>Comfort, Stress, Energia, Forza, Fame, Bagnato e Orientamento lavorano insieme. Uno stato debole aumenta il rischio degli altri.</p>'+perlaRtpInfoChipRowV361([perlaRtpInfoChipV361('stat_comfort','Comfort','0 = svieni'),perlaRtpInfoChipV361('stat_stress','Stress','100 = svieni'),perlaRtpInfoChipV361('stat_wetness','Bagnato','alto = rischio'),perlaRtpInfoChipV361('stat_orientation','Orient.','basso = rischio')])),
+        perlaRtpInfoSectionV361('Sopravvivenza', '<p>Comfort, Stress, Energia, Forza, Fame, Bagnato e Orientamento lavorano insieme. Uno stato debole aumenta il rischio degli altri.</p>'+perlaRtpInfoChipRowV361([perlaRtpInfoChipV361('stat_comfort','Comfort','0 = svieni'),perlaRtpInfoChipV361('stat_stress','Stress','100 = svieni'),perlaRtpInfoChipV361('stat_wetness','Bagnato','alto = pressione'),perlaRtpInfoChipV361('stat_orientation','Orient.','0 = svieni')])),
         perlaRtpInfoSectionV361('Upgrade', '<p>Gli upgrade CASA migliorano capienza, recupero, gestione meteo e preparazione al finale. Costano sassi e EC: non vendere tutto alla cieca.</p>'),
         perlaRtpInfoSectionV361('Come curare gli stats', '<p>Dormi in base, usa docce GD nei bagni, porta acqua/snack/repellente e sfrutta coperture contro meteo e sole.</p>'+perlaRtpInfoChipRowV361([perlaRtpInfoChipV361('water','Acqua','Comfort'),perlaRtpInfoChipV361('snack','Snack','Energia'),perlaRtpInfoChipV361('repellent','Repellente','Zanzare'),perlaRtpInfoChipV361('gd','Doccia','recupero')])),
         perlaRtpInfoSectionV361('Come ottenere risorse', '<p>I cinque siti estrattivi generano gruppi casuali di nodi. La main-road ha pochi sassi rari. I forzieri ciclici danno EC o consumabili.</p>'+perlaRtpInfoChipRowV361([perlaRtpInfoChipV361('stone_round','Ciottoli','base'),perlaRtpInfoChipV361('gravel','Ghiaione','upgrade'),perlaRtpInfoChipV361('quartz','Quarzo','raro'),perlaRtpInfoChipV361('basalt','Basalto','pesante')]))
     ];
     return perlaRtpInfoModalOpenV361('Istruzioni', sections.join(''), {kind:'instructions'});
+}
+function perlaRtpActionRearmHubMenuAfterRecoveryV376(result, source){
+    if(!PERLA_V376_CASA_SLEEP_REOPEN_SAFE) return {ok:false, reason:'disabled_v376'};
+    const st=perlaRtpActionDialogueStateV332;
+    const hub=document.getElementById('perlaRtpUpgradeMenuV334');
+    const fail=typeof perlaRtpFailStateRuntimeV350==='function' ? perlaRtpFailStateRuntimeV350() : null;
+    const failOverlay=document.getElementById('perlaFailStateOverlayV350');
+    const failVisible=!!(failOverlay&&failOverlay.classList.contains('visible')) || !!(fail&&fail.awaitingDismissV366);
+    if(failVisible){
+        st.visible=false;
+        st.noticeOnly=false;
+        st.upgradeMenuVisible=false;
+        st.marketMenuVisible=false;
+        st.battleModalVisible=false;
+        st.challengeModalVisible=false;
+        st.status='recovery_sleep_failstate_controls_rearmed_v376';
+        st.lastAction={ok:true, type:'rearm_hub_after_recovery_v376', source:String(source||'recovery'), failState:true, at:new Date().toISOString()};
+        perlaRtpActionUpdateDialogueUiV332();
+        perlaRtpActionUpdateButtonV332();
+        return {ok:true, failState:true, menuVisible:false};
+    }
+    if(hub && hub.classList.contains('visible')){
+        st.visible=false;
+        st.noticeOnly=false;
+        st.upgradeMenuVisible=true;
+        st.marketMenuVisible=false;
+        st.battleModalVisible=false;
+        st.challengeModalVisible=false;
+        st.eventId='event.system.hub_upgrade_loop';
+        st.eventType='base_upgrade';
+        st.battlePlaceholder=false;
+        st.contracts=[];
+        st.lineIndex=0;
+        st.status='upgrade_menu_rearmed_after_recovery_v376';
+        st.lastAction={ok:true, type:'rearm_hub_after_recovery_v376', source:String(source||'recovery'), resultOk:!!(result&&result.ok), at:new Date().toISOString()};
+        perlaRtpActionUpdateDialogueUiV332();
+        perlaRtpActionUpdateButtonV332();
+        return {ok:true, failState:false, menuVisible:true};
+    }
+    st.visible=false;
+    st.noticeOnly=false;
+    st.upgradeMenuVisible=false;
+    st.marketMenuVisible=false;
+    st.battleModalVisible=false;
+    st.challengeModalVisible=false;
+    st.status='upgrade_menu_reopen_ready_after_recovery_v376';
+    st.lastAction={ok:true, type:'rearm_hub_after_recovery_v376', source:String(source||'recovery'), resultOk:!!(result&&result.ok), menuClosed:true, at:new Date().toISOString()};
+    perlaRtpActionUpdateDialogueUiV332();
+    perlaRtpActionUpdateButtonV332();
+    return {ok:true, failState:false, menuVisible:false};
 }
 function perlaRtpInfoModalHandleActionV361(btn){
     const action=String(btn&&btn.dataset&&btn.dataset.infoAction||'close');
@@ -12800,6 +13241,7 @@ function perlaRtpInfoModalHandleActionV361(btn){
             }
         }
         perlaRtpInfoModalCloseV361(kind+'_used');
+        if(kind!=='shower_gd') perlaRtpActionRearmHubMenuAfterRecoveryV376(res, kind+'_used');
         return res;
     }
     return {ok:false, reason:'unknown_info_action_v361', action};
@@ -12901,6 +13343,8 @@ const perlaRtpPass2RuntimeState = {
     rent:{lastPromptDay:-1, lastPaidDay:-1, missedDays:0, lastDailyCheck:null, graceStartedDay:null, lastAutoPayment:null, lastBasePenalty:null, defaultCount:0, lastDebtNoticeDayV366:-1},
     jobs:{lastPayoutDay:-1, lastPayout:null, totalPayouts:0, assignedWorkers:[], lastAssignment:null, lastDailySyncDayV370:-1, lastDailySync:null},
     hubSkills:{owned:{}, lastPurchase:null},
+    hubBuildables:{counts:{tent:0, camper:0}, lastBuild:null, lastPayoutDay:-1, lastPayout:null, totalPayouts:0},
+    challengeRewards:{paidByEvent:{}, last:null, totalRewards:0},
     birdSnack:{collected:{}, last:null},
     npcGifts:{lastGiftDay:-1, lastGift:null, rolls:0},
     finalAdminTax:{paidAmount:0, paidAt:null, requiredEc:PERLA_V349_FINAL_ADMIN_TAX_EC},
@@ -13008,6 +13452,128 @@ function perlaRtpMerchantRatesV370(){
         marketDiscountPct:+Math.min(.38,pct*.80).toFixed(4),
         marketRewardPct:+Math.min(.24,pct*.45).toFixed(4)
     };
+}
+function perlaRtpHubSkillLimitByTierV374(tier){
+    const t=clamp(Math.floor(Number(tier)||1),1,3);
+    return Math.max(1, Math.floor(Number(PERLA_V374_TIER_SKILL_LIMIT_BY_TIER[t])||4));
+}
+function perlaRtpHubBuildablesRuntimeV374(){
+    const rt=perlaRtpPass2RuntimeState;
+    if(!rt.hubBuildables || typeof rt.hubBuildables!=='object') rt.hubBuildables={counts:{tent:0, camper:0}, lastBuild:null, lastPayoutDay:-1, lastPayout:null, totalPayouts:0};
+    if(!rt.hubBuildables.counts || typeof rt.hubBuildables.counts!=='object') rt.hubBuildables.counts={tent:0, camper:0};
+    const limit=Math.max(0, Math.floor(Number(PERLA_V374_BUILDABLE_LIMIT_BY_TIER[perlaRtpHubTierV365()])||1));
+    Object.keys(PERLA_V374_BUILDABLE_SPECS).forEach(k=>{
+        rt.hubBuildables.counts[k]=clamp(Math.floor(Number(rt.hubBuildables.counts[k])||0),0,limit);
+    });
+    rt.hubBuildables.lastPayoutDay=Number.isFinite(Number(rt.hubBuildables.lastPayoutDay))?Math.floor(Number(rt.hubBuildables.lastPayoutDay)):-1;
+    rt.hubBuildables.totalPayouts=Math.max(0, Math.floor(Number(rt.hubBuildables.totalPayouts)||0));
+    return rt.hubBuildables;
+}
+function perlaRtpHubBuildableLimitV374(){
+    return Math.max(0, Math.floor(Number(PERLA_V374_BUILDABLE_LIMIT_BY_TIER[perlaRtpHubTierV365()])||1));
+}
+function perlaRtpHubBuildableCostV374(kind){
+    const spec=PERLA_V374_BUILDABLE_SPECS[String(kind||'')]||null;
+    if(!spec) return {};
+    const tier=perlaRtpHubTierV365();
+    return Object.assign({}, spec.costs[tier]||spec.costs[1]||{});
+}
+function perlaRtpHubBuildableSummaryV374(){
+    const runtime=perlaRtpHubBuildablesRuntimeV374();
+    const out={buildId:PERLA_BUILD_ID, safe:!!PERLA_V374_CASA_BUILDABLES_SAFE, tier:perlaRtpHubTierV365(), limit:perlaRtpHubBuildableLimitV374(), counts:Object.assign({}, runtime.counts), dailyYield:{ec:0, gd:0}, lastBuild:runtime.lastBuild||null, lastPayout:runtime.lastPayout||null};
+    Object.keys(PERLA_V374_BUILDABLE_SPECS).forEach(k=>{
+        const spec=PERLA_V374_BUILDABLE_SPECS[k];
+        const count=Math.max(0, Math.floor(Number(runtime.counts[k])||0));
+        out.dailyYield.ec+=count*Math.max(0,Math.floor(Number(spec.yield&&spec.yield.ec)||0));
+        out.dailyYield.gd+=count*Math.max(0,Math.floor(Number(spec.yield&&spec.yield.gd)||0));
+    });
+    return out;
+}
+function perlaRtpHubBuildableCanBuyV374(kind){
+    const k=String(kind||'');
+    const spec=PERLA_V374_BUILDABLE_SPECS[k]||null;
+    if(!spec) return {ok:false, reason:'unknown_buildable_v374', kind:k};
+    const runtime=perlaRtpHubBuildablesRuntimeV374();
+    const limit=perlaRtpHubBuildableLimitV374();
+    const count=Math.max(0, Math.floor(Number(runtime.counts[k])||0));
+    const cost=perlaRtpHubBuildableCostV374(k);
+    if(count>=limit) return {ok:false, reason:'buildable_limit_reached_v374', kind:k, count, limit, cost};
+    if(!perlaRtpPass2ResourceCostAffordable(cost)) return {ok:false, reason:'buildable_resources_missing_v374', kind:k, count, limit, cost};
+    return {ok:true, kind:k, count, limit, cost, spec};
+}
+function perlaRtpHubBuildableBuyV374(kind, source){
+    if(!PERLA_V374_CASA_BUILDABLES_SAFE) return {ok:false, reason:'buildables_disabled_v374'};
+    const check=perlaRtpHubBuildableCanBuyV374(kind);
+    const runtime=perlaRtpHubBuildablesRuntimeV374();
+    if(!check.ok){
+        perlaRtpPass2RuntimeState.lastNotice=check.reason==='buildable_limit_reached_v374' ? 'Costruzione bloccata: limite raggiunto per il tier attuale.' : 'Costruzione bloccata: risorse insufficienti.';
+        perlaRtpPass2PlayActionSoundV345('upgrade_fail');
+        return check;
+    }
+    perlaRtpPass2SpendResourceCost(check.cost);
+    runtime.counts[check.kind]=(Number(runtime.counts[check.kind])||0)+1;
+    runtime.lastBuild={kind:check.kind, title:check.spec.title, count:runtime.counts[check.kind], tier:perlaRtpHubTierV365(), cost:check.cost, source:String(source||'hub_buildables_v374'), at:new Date().toISOString()};
+    perlaRtpPass2RuntimeState.lastNotice='Costruzione completata: '+check.spec.title+'. Rendita giornaliera aggiornata.';
+    perlaRtpPass2PlayActionSoundV345('upgrade');
+    perlaRtpPass2FloatingTextV345('+ '+check.spec.title,'convert',{iconKey:check.spec.icon||'build'});
+    perlaRtpPass2RenderInventoryHud();
+    if(typeof perlaRtpPass2AutoSaveAfterStateChange==='function') perlaRtpPass2AutoSaveAfterStateChange('hub_buildable_'+check.kind);
+    return {ok:true, type:'hub_buildable_buy_v374', kind:check.kind, count:runtime.counts[check.kind], tier:perlaRtpHubTierV365(), cost:check.cost, summary:perlaRtpHubBuildableSummaryV374()};
+}
+function perlaRtpPass2ApplyBuildableYieldV374(reason){
+    if(!PERLA_V374_CASA_BUILDABLES_SAFE) return {ok:false, reason:'disabled_v374'};
+    const runtime=perlaRtpHubBuildablesRuntimeV374();
+    const day=perlaRtpResourceCurrentGameDayV345();
+    if(runtime.lastPayoutDay>=day) return {ok:true, skipped:true, reason:'already_paid_today', day};
+    const summary=perlaRtpHubBuildableSummaryV374();
+    const ec=Math.max(0, Math.floor(Number(summary.dailyYield&&summary.dailyYield.ec)||0));
+    const gd=Math.max(0, Math.floor(Number(summary.dailyYield&&summary.dailyYield.gd)||0));
+    if(ec<=0 && gd<=0) return {ok:true, skipped:true, reason:'no_buildables', day, summary};
+    const wallet=perlaRtpPass2CurrencySummaryV345();
+    if(ec>0) wallet.ec=(Number(wallet.ec)||0)+ec;
+    if(gd>0) wallet.gd=(Number(wallet.gd)||0)+gd;
+    perlaRtpPass2RuntimeState.wallet=wallet;
+    const payout={day, reason:String(reason||'buildable_yield_v374'), ec, gd, counts:Object.assign({}, summary.counts), at:new Date().toISOString()};
+    runtime.lastPayoutDay=day;
+    runtime.lastPayout=payout;
+    runtime.totalPayouts++;
+    return {ok:true, payout, summary};
+}
+function perlaRtpPass2BuildablePayoutTextV374(payout){
+    const p=payout||{};
+    const parts=[];
+    if(Number(p.ec)>0) parts.push('+'+Math.floor(Number(p.ec))+' EC');
+    if(Number(p.gd)>0) parts.push('+'+Math.floor(Number(p.gd))+' GD');
+    return 'Rendita area base: '+(parts.length?parts.join(', '):'nessun premio')+' da tende e camper costruiti.';
+}
+function perlaRtpChallengeRewardsRuntimeV374(){
+    const rt=perlaRtpPass2RuntimeState;
+    if(!rt.challengeRewards || typeof rt.challengeRewards!=='object') rt.challengeRewards={paidByEvent:{}, last:null, totalRewards:0};
+    if(!rt.challengeRewards.paidByEvent || typeof rt.challengeRewards.paidByEvent!=='object') rt.challengeRewards.paidByEvent={};
+    rt.challengeRewards.totalRewards=Math.max(0, Math.floor(Number(rt.challengeRewards.totalRewards)||0));
+    return rt.challengeRewards;
+}
+function perlaRtpChallengeRewardRollV374(eventId){
+    const table=PERLA_V374_CHALLENGE_REWARD_TABLE;
+    const day=typeof perlaRtpResourceCurrentGameDayV345==='function'?perlaRtpResourceCurrentGameDayV345():0;
+    const seed=perlaRtpActionSmallHashV350(String(eventId||'battle')+'|challenge_reward_v374|'+day);
+    return Object.assign({}, table[seed%table.length]||{ec:8});
+}
+function perlaRtpChallengeRewardGrantV374(eventId, result){
+    if(!PERLA_V374_CHALLENGE_REWARD_SAFE || String(result||'')!=='won') return null;
+    const id=String(eventId||'').trim();
+    if(!id) return null;
+    const runtime=perlaRtpChallengeRewardsRuntimeV374();
+    if(runtime.paidByEvent[id]) return Object.assign({alreadyPaid:true, eventId:id}, runtime.paidByEvent[id]);
+    const reward=perlaRtpChallengeRewardRollV374(id);
+    const granted=perlaRtpMarketGrantRewardV356(reward, 'challenge_reward_v374');
+    const rec={eventId:id, reward, granted, label:perlaRtpPass2ResourceCostText(granted), at:new Date().toISOString()};
+    runtime.paidByEvent[id]=rec;
+    runtime.last=rec;
+    runtime.totalRewards++;
+    perlaRtpPass2RuntimeState.lastNotice='Premio Torneo dei Sassi: '+rec.label+'.';
+    perlaRtpPass2FloatingTextV345('+'+rec.label,'convert',{iconKey:'reward'});
+    return rec;
 }
 function perlaRtpResourceScaleCostV370(cost, discountPct){
     const out={};
@@ -14112,7 +14678,15 @@ function perlaRtpPass2DailySystemsSyncV370(reason, options){
     const jobs=perlaRtpPass2JobsRuntimeV349();
     const day=perlaRtpResourceCurrentGameDayV345();
     if(jobs.lastDailySyncDayV370===day && options.force!==true){
-        return {ok:true, skipped:true, reason:'already_synced_today', day, lastDailySync:jobs.lastDailySync||null};
+        const buildable=typeof perlaRtpPass2ApplyBuildableYieldV374==='function' ? perlaRtpPass2ApplyBuildableYieldV374(reason||'daily_sync_repeat_v374') : {ok:false, reason:'buildable_yield_unavailable_v374'};
+        if(buildable&&buildable.payout){
+            const line=perlaRtpPass2BuildablePayoutTextV374(buildable.payout);
+            perlaRtpPass2RuntimeState.lastNotice=line;
+            perlaRtpPass2PlayActionSoundV345('convert');
+            if(typeof perlaRtpPass2ToastV366==='function') perlaRtpPass2ToastV366(line, 'convert');
+            if(typeof perlaRtpPass2AutoSaveAfterStateChange==='function') perlaRtpPass2AutoSaveAfterStateChange('buildable_daily_payout_v374_day_'+day);
+        }
+        return {ok:true, skipped:true, reason:'already_synced_today', day, lastDailySync:jobs.lastDailySync||null, buildablePayout:buildable&&buildable.payout||null};
     }
     const beforePayouts=Number(jobs.totalPayouts)||0;
     const result=perlaRtpPass2UpdateProgressFlags('daily_systems_v370_'+String(reason||'tick'));
@@ -14131,7 +14705,15 @@ function perlaRtpPass2DailySystemsSyncV370(reason, options){
         if(typeof perlaRtpPass2ToastV366==='function') perlaRtpPass2ToastV366(line, 'quest');
         if(typeof perlaRtpPass2AutoSaveAfterStateChange==='function') perlaRtpPass2AutoSaveAfterStateChange('job_daily_payout_v370_day_'+day);
     }
-    return {ok:true, day, delivered, payout, result};
+    const buildable=typeof perlaRtpPass2ApplyBuildableYieldV374==='function' ? perlaRtpPass2ApplyBuildableYieldV374(reason||'daily_sync_v370') : {ok:false, reason:'buildable_yield_unavailable_v374'};
+    if(buildable&&buildable.payout){
+        const line=perlaRtpPass2BuildablePayoutTextV374(buildable.payout);
+        perlaRtpPass2RuntimeState.lastNotice=line;
+        perlaRtpPass2PlayActionSoundV345('convert');
+        if(typeof perlaRtpPass2ToastV366==='function') perlaRtpPass2ToastV366(line, 'convert');
+        if(typeof perlaRtpPass2AutoSaveAfterStateChange==='function') perlaRtpPass2AutoSaveAfterStateChange('buildable_daily_payout_v374_day_'+day);
+    }
+    return {ok:true, day, delivered:delivered||!!(buildable&&buildable.payout), payout, buildablePayout:buildable&&buildable.payout||null, result};
 }
 function perlaRtpStateStoreConditionsMatchExceptV349(conditions, ignoredState){
     const ignored=String(ignoredState||'');
@@ -14355,6 +14937,8 @@ function perlaRtpPass2Serializable(reason){
         rent:Object.assign({}, perlaRtpPass2RuntimeState.rent||{}),
         jobs:Object.assign({}, perlaRtpPass2RuntimeState.jobs||{}),
         hubSkills:Object.assign({}, perlaRtpHubSkillsRuntimeV365(), {owned:Object.assign({}, perlaRtpHubSkillsRuntimeV365().owned)}),
+        hubBuildables:Object.assign({}, perlaRtpHubBuildablesRuntimeV374(), {counts:Object.assign({}, perlaRtpHubBuildablesRuntimeV374().counts)}),
+        challengeRewards:Object.assign({}, perlaRtpChallengeRewardsRuntimeV374(), {paidByEvent:Object.assign({}, perlaRtpChallengeRewardsRuntimeV374().paidByEvent)}),
         birdSnack:Object.assign({}, perlaRtpPass2RuntimeState.birdSnack||{}, {collected:Object.assign({}, perlaRtpPass2RuntimeState.birdSnack&&perlaRtpPass2RuntimeState.birdSnack.collected||{})}),
         npcGifts:Object.assign({}, perlaRtpPass2RuntimeState.npcGifts||{}),
         finalAdminTax:Object.assign({}, perlaRtpFinalAdminTaxRuntimeV365()),
@@ -14412,6 +14996,16 @@ function perlaRtpPass2ApplySaveData(data, reason){
         perlaRtpPass2RuntimeState.hubSkills=Object.assign({}, perlaRtpPass2RuntimeState.hubSkills||{}, data.hubSkills);
         if(data.hubSkills.owned && typeof data.hubSkills.owned==='object') perlaRtpPass2RuntimeState.hubSkills.owned=Object.assign({}, data.hubSkills.owned);
         perlaRtpHubSkillsRuntimeV365();
+    }
+    if(data.hubBuildables && typeof data.hubBuildables==='object'){
+        perlaRtpPass2RuntimeState.hubBuildables=Object.assign({}, perlaRtpPass2RuntimeState.hubBuildables||{}, data.hubBuildables);
+        if(data.hubBuildables.counts && typeof data.hubBuildables.counts==='object') perlaRtpPass2RuntimeState.hubBuildables.counts=Object.assign({}, data.hubBuildables.counts);
+        perlaRtpHubBuildablesRuntimeV374();
+    }
+    if(data.challengeRewards && typeof data.challengeRewards==='object'){
+        perlaRtpPass2RuntimeState.challengeRewards=Object.assign({}, perlaRtpPass2RuntimeState.challengeRewards||{}, data.challengeRewards);
+        if(data.challengeRewards.paidByEvent && typeof data.challengeRewards.paidByEvent==='object') perlaRtpPass2RuntimeState.challengeRewards.paidByEvent=Object.assign({}, data.challengeRewards.paidByEvent);
+        perlaRtpChallengeRewardsRuntimeV374();
     }
     if(data.birdSnack && typeof data.birdSnack==='object'){
         perlaRtpPass2RuntimeState.birdSnack=Object.assign({collected:{}, last:null}, perlaRtpPass2RuntimeState.birdSnack||{}, data.birdSnack);
@@ -14982,6 +15576,8 @@ function perlaRtpPass2Summary(){
         consumables:perlaRtpPass2ConsumableSummary(),
         wallet:perlaRtpPass2CurrencySummaryV345(),
         rent:perlaRtpPass2RentSummaryV350(),
+        hubBuildables:perlaRtpHubBuildableSummaryV374(),
+        challengeRewards:Object.assign({}, perlaRtpChallengeRewardsRuntimeV374(), {paidByEvent:Object.assign({}, perlaRtpChallengeRewardsRuntimeV374().paidByEvent)}),
         failState:perlaRtpFailStateSummaryV350(),
         buffs:Object.assign({}, perlaRtpPass2RuntimeState.buffs),
         lastSave:perlaRtpPass2RuntimeState.lastSave,
@@ -15012,9 +15608,49 @@ function perlaRtpStateFlagV345(key){
     const flags=perlaRtpStateStoreStateV325&&perlaRtpStateStoreStateV325.flags||{};
     return flags[String(key||'')];
 }
+function perlaRtpMainChallengeIdFromEventV377(eventId){
+    const id=String(eventId||'').trim();
+    const prefix='event.challenge.';
+    if(id.indexOf(prefix)!==0) return '';
+    const entityId=id.slice(prefix.length);
+    const found=PERLA_V345_RECRUITABLE_MAIN.find(item=>item&&item.id===entityId)||null;
+    return found ? entityId : '';
+}
+function perlaRtpMainChallengeRosterItemV377(eventId){
+    const id=perlaRtpMainChallengeIdFromEventV377(eventId);
+    return id ? (PERLA_V345_RECRUITABLE_MAIN.find(item=>item&&item.id===id)||null) : null;
+}
+function perlaRtpMainChallengeRecruitedV377(eventId){
+    const id=perlaRtpMainChallengeIdFromEventV377(eventId);
+    return !!(id && perlaRtpStateFlagV345(id+'.recruited')===true);
+}
+function perlaRtpMainChallengeRematchAllowedV377(eventOrId){
+    if(!PERLA_V377_MAIN_ORIGINAL_REMATCH_AFTER_RECRUIT_SAFE) return false;
+    const eventId=typeof eventOrId==='string' ? eventOrId : String(eventOrId&&eventOrId.eventId||'');
+    return perlaRtpMainChallengeRecruitedV377(eventId);
+}
+function perlaRtpMainOriginalChallengePlacementV377(placement){
+    if(!PERLA_V377_MAIN_ORIGINAL_REMATCH_AFTER_RECRUIT_SAFE || !placement) return false;
+    if(String(placement.entityType||'').toLowerCase()!=='main_character') return false;
+    const entityId=String(placement.entityId||'');
+    if(!PERLA_V345_RECRUITABLE_MAIN.some(item=>item&&item.id===entityId)) return false;
+    return perlaRtpBoundedLiveTestListV331(placement.eventLinks).some(id=>perlaRtpMainChallengeIdFromEventV377(id)===entityId);
+}
+function perlaRtpMainOriginalChallengePlacementBypassesRecruitFilterV377(placement){
+    if(!perlaRtpMainOriginalChallengePlacementV377(placement)) return false;
+    const entityId=String(placement.entityId||'');
+    if(perlaRtpStateFlagV345(entityId+'.recruited')!==true) return false;
+    const conditions=perlaRtpBoundedLiveTestListV331(placement&&placement.availabilityConditions);
+    return conditions.some(cond=>{
+        return String(cond&&cond.state||'')===entityId+'.recruited' &&
+            String(cond&&cond.op||'equals').toLowerCase()==='equals' &&
+            cond.value===false;
+    });
+}
 function perlaRtpPlacementAvailableByStateV345(placement){
     const conditions=perlaRtpBoundedLiveTestListV331(placement&&placement.availabilityConditions);
     if(!conditions.length) return true;
+    if(perlaRtpMainOriginalChallengePlacementBypassesRecruitFilterV377(placement)) return true;
     return conditions.every(cond=>{
         const op=String(cond&&cond.op||'equals').toLowerCase();
         const state=String(cond&&cond.state||'');
@@ -15025,6 +15661,136 @@ function perlaRtpPlacementAvailableByStateV345(placement){
         if(op==='not_equals') return current!==cond.value;
         return true;
     });
+}
+function perlaRtpMainRematchLineProfileV377(entityId, name){
+    const lines={
+        nina_ciottolo:[
+            name+' ti guarda il borsello come fosse una scena del crimine: "Se siamo alleati, non vuol dire che ti faccio lo sconto sulla dignit\u00e0. Rivincita?"',
+            'Nina batte il piede: "Una rivincita serve a ricordare alla Resistenza che anche i conti amici vanno saldati."'
+        ],
+        prof_ossidiana:[
+            name+' sistema gli occhiali: "La prima sfida era ammissione. Questa \u00e8 revisione periodica, con verbale morale allegato."',
+            'Il Professore sorride appena: "Rivincita accettabile, purch\u00e9 tu non confonda audacia e contabilit\u00e0 creativa."'
+        ],
+        orbo_granito:[
+            name+' solleva il metal detector: "Alleato s\u00ec, ma il Torneo non va in pensione. Vediamo se oggi trovi pi\u00f9 coraggio che monetine."',
+            'Orbo annusa l\'aria: "Rivincita? La spiaggia conserva ogni figuraccia sotto uno strato sottile di ghiaia."'
+        ],
+        teo_pietrafocaia:[
+            name+' ravviva la brace: "Siamo dalla stessa parte, ma la griglia giudica tutti uguale. Vuoi la rivincita?"',
+            'Teo ride: "Se vinci, ti offro rispetto tecnico. Se perdi, ti giro piano come una salsiccia triste."'
+        ],
+        bruno_basalto:[
+            name+' fa scricchiolare le nocche: "Reclutato non significa addomesticato. La rivincita misura se la base ti ha reso più duro."',
+            'Bruno indica i sassi: "Quando vuoi, capitano. Io conto solo colpi puliti e scuse zero."'
+        ],
+        lalla_lapillo:[
+            name+' chiude gli occhi: "La prima sfida ti ha aperto una porta. La rivincita controlla se sei entrato senza portarti dietro il fango."',
+            'Lalla sfiora un cristallo: "Accetto, ma respira. Perdere lucidit\u00e0 prima del colpo \u00e8 gi\u00e0 mezza sconfitta."'
+        ],
+        mara_selce:[
+            name+' richiude una radiolina con un colpo secco: "Reclutata, s\u00ec. Disattivata, no. Vuoi una rivincita o un preventivo?"',
+            'Mara accende una lucina sospetta: "La prima vittoria ha sbloccato il lavoro. Questa verifica se sai ancora usare il vantaggio."'
+        ],
+        zelda_quarzo:[
+            name+' mescola bigliettini: "Rivincita? Magnifico. Il destino ama i clienti abituali, soprattutto quelli che pagano in autostima."',
+            'Zelda strizza l\'occhio: "Siamo alleati, non parenti. La fortuna oggi ha un tariffario speciale."'
+        ]
+    };
+    return lines[entityId]||[
+        name+' resta al suo posto originale: "Alleati s\u00ec, ma il Torneo dei Sassi continua. Questa si chiama rivincita."',
+        'Il personaggio annuisce: "Se vuoi misurarti ancora, io non sparisco solo perch\u00e9 lavoro anche alla base."'
+    ];
+}
+function perlaRtpMainRematchContractsV377(eventId){
+    const item=perlaRtpMainChallengeRosterItemV377(eventId);
+    if(!item || !perlaRtpMainChallengeRematchAllowedV377(eventId)) return [];
+    const lines=perlaRtpMainRematchLineProfileV377(item.id, item.name||item.id);
+    return lines.map((line,index)=>({
+        dialogueId:'runtime.rematch_v377.'+item.id+'.'+String(index+1).padStart(3,'0'),
+        eventId,
+        speakerId:item.id,
+        speakerRole:'main_character',
+        portraitPolicy:'main_character_portrait',
+        lineType:'rematch_intro_v377',
+        line,
+        speakerDisplayName:item.name||item.id,
+        conditions:[],
+        effectsDeclared:[],
+        uiPolicy:'dialogue_box_with_portrait',
+        portraitLazyLoadAllowed:true,
+        animalDialogueBlocked:false,
+        runtimeRematchV377:true
+    }));
+}
+function perlaRtpMainRematchResultContractV377(eventId, result){
+    const item=perlaRtpMainChallengeRosterItemV377(eventId);
+    if(!item || !perlaRtpMainChallengeRematchAllowedV377(eventId)) return null;
+    const won=String(result||'')==='won';
+    const lines={
+        nina_ciottolo:won?'Nina aggiorna il registro: "Rivincita tua. Non montarti la testa: la prossima rata arriva comunque."':'Nina chiude il taccuino: "Rivincita mia. La Resistenza ha appena ricevuto una lezione di contabilit\u00e0 applicata."',
+        prof_ossidiana:won?'Il Professore firma nell\'aria: "Esito positivo. Sei meno improvvisato di quanto sembri."':'Il Professore sospira: "Esito negativo. Ti assegno compiti: preparazione, comfort e meno eroismo verbale."',
+        orbo_granito:won?'Orbo ride: "Oggi hai trovato la vena giusta. Segnalo vittoria, ma la spiaggia resta piena di debiti nascosti."':'Orbo batte il detector: "Hai perso. Non grave: anche i tappi arrugginiti prima o poi diventano reperti."',
+        teo_pietrafocaia:won?'Teo alza le pinze: "Rivincita tua. La brace conferma: oggi non sei carne da contorno."':'Teo scuote la testa: "Rivincita mia. Torna quando la tua energia smette di sembrare una candela bagnata."',
+        bruno_basalto:won?'Bruno annuisce: "Colpo pulito. La base ti sta facendo bene, ma non dirlo troppo forte."':'Bruno sorride: "Hai perso, ma almeno non hai fatto finta che fosse strategia."',
+        lalla_lapillo:won?'Lalla sorride appena: "Hai vinto senza perdere centro. Questo vale più di un sasso lucido."':'Lalla indica la base: "Hai perso lucidità prima del finale. Riposa, asciugati, poi torna."',
+        mara_selce:won?'Mara spegne la lucina: "Rivincita tua. Sistema stabile, ego appena sovralimentato."':'Mara picchietta la radiolina: "Rivincita mia. Diagnosi: troppa fiducia, poca manutenzione."',
+        zelda_quarzo:won?'Zelda applaude: "La fortuna ha firmato per te. Io ne nego ogni responsabilità."':'Zelda raccoglie i bigliettini: "Hai perso. Ottima notizia: il destino ama i clienti che tornano."'
+    };
+    return {
+        dialogueId:'runtime.rematch_v377.'+item.id+'.result_'+(won?'won':'lost'),
+        eventId,
+        speakerId:item.id,
+        speakerRole:'main_character',
+        portraitPolicy:'main_character_portrait',
+        lineType:won?'rematch_result_won_v377':'rematch_result_lost_v377',
+        line:lines[item.id] || (won?'Rivincita vinta: il personaggio ti riconosce come alleato ancora competitivo.':'Rivincita persa: il personaggio resta alleato, ma pretende allenamento vero.'),
+        speakerDisplayName:item.name||item.id,
+        conditions:[],
+        effectsDeclared:[],
+        uiPolicy:'dialogue_box_with_portrait',
+        portraitLazyLoadAllowed:true,
+        animalDialogueBlocked:false,
+        runtimeRematchV377:true
+    };
+}
+function perlaRtpMainRematchContinuityAuditV377(){
+    const manifests=perlaRtpMetadataStateV323&&perlaRtpMetadataStateV323.manifests||{};
+    const placements=perlaRtpBoundedLiveTestListV331(manifests.placements&&manifests.placements.placements);
+    const eventList=perlaRtpBoundedLiveTestListV331(manifests.events&&manifests.events.events);
+    const eventById=Object.create(null);
+    eventList.forEach(ev=>{ const id=String(ev&&ev.eventId||''); if(id) eventById[id]=ev; });
+    const storeEvents=perlaRtpStateStoreStateV325&&perlaRtpStateStoreStateV325.catalog&&perlaRtpStateStoreStateV325.catalog.eventsById||{};
+    const manifestLoaded=placements.length>0 || eventList.length>0;
+    const rows=PERLA_V345_RECRUITABLE_MAIN.map(item=>{
+        const placement=placements.find(p=>p&&p.entityId===item.id&&perlaRtpMainOriginalChallengePlacementV377(p))||null;
+        const eventId='event.challenge.'+item.id;
+        const recruited=perlaRtpStateFlagV345(item.id+'.recruited')===true;
+        const eventExists=!!(storeEvents[eventId]||eventById[eventId]);
+        return {
+            id:item.id,
+            name:item.name,
+            recruited,
+            originalPlacementId:placement&&placement.id||null,
+            originalPlacementKeptAfterRecruit:placement ? (recruited ? perlaRtpPlacementAvailableByStateV345(placement) : true) : null,
+            eventId,
+            eventExists:manifestLoaded ? eventExists : null,
+            rematchAllowedNow:perlaRtpMainChallengeRematchAllowedV377(eventId),
+            baseCopyExpectedWhenRecruited:recruited,
+            policy:'original_main_sprite_kept_for_rematch_v377'
+        };
+    });
+    return {
+        buildId:PERLA_BUILD_ID,
+        safe:!!PERLA_V377_MAIN_ORIGINAL_REMATCH_AFTER_RECRUIT_SAFE,
+        status:manifestLoaded?'metadata_loaded':'metadata_not_loaded',
+        manifestLoaded,
+        total:rows.length,
+        missing:manifestLoaded ? rows.filter(row=>!row.originalPlacementId||!row.eventExists) : [],
+        recruitedRematches:rows.filter(row=>row.rematchAllowedNow).length,
+        items:rows,
+        rows
+    };
 }
 function perlaRtpRecruitedRosterV345(){
     return PERLA_V345_RECRUITABLE_MAIN.map(item=>{
@@ -15815,6 +16581,183 @@ function perlaRtpBoundedLiveTestHubTierSpriteV333(){
     }
     return sprite;
 }
+const perlaRtpHubBuildablePlacementStateV376 = {last:null};
+function perlaRtpHubBuildableTextureV376(kind, index){
+    const k=String(kind||'tent');
+    const i=Math.max(0,Math.floor(Number(index)||0));
+    if(k==='camper') return 10;
+    return [21,36,22][i%3];
+}
+function perlaRtpHubBuildableScaleV376(kind){
+    return String(kind||'tent')==='camper'
+        ? {hScale:1.06, wScale:1.12, groundSink:2.0, profile:'historical_camper_fullsize_v376'}
+        : {hScale:.92, wScale:1.04, groundSink:2.8, profile:'historical_tent_fullsize_v376'};
+}
+function perlaRtpHubBuildablePathDistanceV376(x,y){
+    const ax=PERLA_V334_HUB_SIGN_WORLD_X, ay=PERLA_V334_HUB_SIGN_WORLD_Y;
+    const bx=PERLA_V335_HUB_PIAZZOLA_WORLD_X, by=PERLA_V335_HUB_PIAZZOLA_WORLD_Y;
+    const vx=bx-ax, vy=by-ay;
+    const lenSq=vx*vx+vy*vy || 1;
+    const t=clamp(((Number(x)-ax)*vx+(Number(y)-ay)*vy)/lenSq,0,1);
+    const px=ax+vx*t, py=ay+vy*t;
+    return {distance:Math.hypot(Number(x)-px,Number(y)-py), t:+t.toFixed(3), closest:{x:+px.toFixed(3), y:+py.toFixed(3)}};
+}
+function perlaRtpHubBuildableReservedPointsV376(){
+    const out=[
+        {x:PERLA_V334_HUB_SIGN_WORLD_X, y:PERLA_V334_HUB_SIGN_WORLD_Y, radius:2.05, reason:'casa_trigger'},
+        {x:PERLA_V354_HUB_SIGN_VISUAL_WORLD_X||141.4, y:PERLA_V354_HUB_SIGN_VISUAL_WORLD_Y||37.9, radius:2.15, reason:'casa_visual_sign'},
+        {x:PERLA_V335_HUB_PIAZZOLA_WORLD_X, y:PERLA_V335_HUB_PIAZZOLA_WORLD_Y, radius:1.15, reason:'piazzola_center'}
+    ];
+    perlaRtpBoundedLiveTestListV331(PERLA_V345_RECRUITED_BASE_OFFSETS).forEach((off,i)=>{
+        out.push({x:PERLA_V335_HUB_PIAZZOLA_WORLD_X+Number(off.x||0), y:PERLA_V335_HUB_PIAZZOLA_WORLD_Y+Number(off.y||0), radius:1.25, reason:'recruited_base_slot_'+i});
+    });
+    return out;
+}
+function perlaRtpHubBuildableCandidateSlotsV376(){
+    const ax=PERLA_V334_HUB_SIGN_WORLD_X, ay=PERLA_V334_HUB_SIGN_WORLD_Y;
+    const bx=PERLA_V335_HUB_PIAZZOLA_WORLD_X, by=PERLA_V335_HUB_PIAZZOLA_WORLD_Y;
+    const vx=bx-ax, vy=by-ay;
+    const len=Math.hypot(vx,vy)||1;
+    const nx=-vy/len, ny=vx/len;
+    const slots=[];
+    const make=(kind,index,t,side,offset,manual)=>{
+        const s=side<0?-1:1;
+        const baseX=ax+vx*t, baseY=ay+vy*t;
+        slots.push({kind, index, x:+(baseX+nx*s*offset).toFixed(3), y:+(baseY+ny*s*offset).toFixed(3), pathT:+t.toFixed(3), side:s<0?'ovest':'est', lateralOffset:offset, source:manual||'path_edge_solver_v376'});
+    };
+    make('camper',0,.26, 1,2.55);
+    make('tent',0,.32,-1,2.25);
+    make('camper',1,.54,-1,2.75);
+    make('tent',1,.58, 1,2.35);
+    make('camper',2,.78, 1,2.85);
+    make('tent',2,.82,-1,2.25);
+    [
+        {kind:'camper',index:0,x:144.45,y:38.95,side:'est'},
+        {kind:'tent',index:0,x:138.55,y:39.25,side:'ovest'},
+        {kind:'camper',index:1,x:138.35,y:40.95,side:'ovest'},
+        {kind:'tent',index:1,x:144.45,y:40.95,side:'est'},
+        {kind:'camper',index:2,x:144.75,y:42.95,side:'est'},
+        {kind:'tent',index:2,x:139.20,y:43.20,side:'ovest'}
+    ].forEach(slot=>slots.push(Object.assign({pathT:perlaRtpHubBuildablePathDistanceV376(slot.x,slot.y).t,lateralOffset:null,source:'fallback_measured_edge_v376'},slot)));
+    return slots;
+}
+function perlaRtpHubBuildableSlotSafeV376(slot, selected){
+    const sx=Number(slot&&slot.x), sy=Number(slot&&slot.y);
+    if(!Number.isFinite(sx) || !Number.isFinite(sy)) return {ok:false, reason:'invalid_xy'};
+    const ix=Math.floor(sx), iy=Math.floor(sy);
+    if(typeof inBounds==='function' && !inBounds(ix,iy)) return {ok:false, reason:'out_of_bounds', ix, iy};
+    if(map&&map[iy]&&Number(map[iy][ix])!==0) return {ok:false, reason:'wall_cell', ix, iy};
+    if(cMap&&cMap[iy]&&Number(cMap[iy][ix])!==0) return {ok:false, reason:'covered_cell', ix, iy};
+    if(objectBlock&&objectBlock[iy]&&objectBlock[iy][ix]) return {ok:false, reason:'object_blocked', ix, iy};
+    const path=perlaRtpHubBuildablePathDistanceV376(sx,sy);
+    if(path.distance<1.05) return {ok:false, reason:'on_path_not_edge', path};
+    if(path.distance>4.25) return {ok:false, reason:'too_far_from_path_edge', path};
+    const reserved=perlaRtpHubBuildableReservedPointsV376();
+    for(let i=0;i<reserved.length;i++){
+        const r=reserved[i];
+        if(Math.hypot(sx-r.x,sy-r.y)<r.radius) return {ok:false, reason:'reserved_'+r.reason, reserved:r};
+    }
+    const footprint=String(slot.kind||'')==='camper'?2.2:1.7;
+    for(let i=0;i<selected.length;i++){
+        const other=selected[i];
+        if(Math.hypot(sx-other.x, sy-other.y)<Math.max(footprint, other.footprint||1.7)) return {ok:false, reason:'too_close_to_buildable_'+i, other};
+    }
+    return {ok:true, ix, iy, path};
+}
+function perlaRtpHubBuildableLayoutV376(){
+    const candidates=perlaRtpHubBuildableCandidateSlotsV376();
+    const selected=[];
+    const rejected=[];
+    ['tent','camper'].forEach(kind=>{
+        for(let i=0;i<3;i++){
+            const pool=candidates.filter(slot=>slot.kind===kind && slot.index===i).concat(candidates.filter(slot=>slot.kind===kind && slot.index!==i));
+            let chosen=null;
+            for(let p=0;p<pool.length;p++){
+                const slot=pool[p];
+                if(selected.some(sel=>sel.kind===kind && sel.index===i)) break;
+                const safe=perlaRtpHubBuildableSlotSafeV376(slot, selected);
+                if(safe.ok){
+                    chosen=Object.assign({}, slot, {kind, index:i, originalIndex:slot.index, safe:true, footprint:kind==='camper'?2.2:1.7, safety:safe});
+                    break;
+                }
+                rejected.push(Object.assign({}, slot, {safe:false, safety:safe}));
+            }
+            if(chosen) selected.push(chosen);
+        }
+    });
+    const fallbackUsed=[];
+    ['tent','camper'].forEach(kind=>{
+        for(let i=0;i<3;i++){
+            if(selected.some(sel=>sel.kind===kind && sel.index===i)) continue;
+            const fallback=candidates.find(slot=>slot.kind===kind && slot.index===i) || {kind,index:i,x:PERLA_V335_HUB_PIAZZOLA_WORLD_X+(kind==='camper'?3.2:-3.2),y:PERLA_V335_HUB_PIAZZOLA_WORLD_Y+i*1.5,source:'emergency_fallback_v376'};
+            const soft=Object.assign({}, fallback, {safe:false, fallback:true, footprint:kind==='camper'?2.2:1.7, safety:{ok:false, reason:'strict_slot_unavailable_soft_render_only'}});
+            selected.push(soft);
+            fallbackUsed.push(soft);
+        }
+    });
+    const out={buildId:PERLA_BUILD_ID, safe:!!PERLA_V376_CASA_BUILDABLE_FULLSIZE_PATH_SAFE, selected:selected.slice(), rejected:rejected.slice(0,18), fallbackUsed:fallbackUsed.slice(), policy:'render_list_only_full_size_historical_textures_on_path_edges_no_persistent_sprites'};
+    perlaRtpHubBuildablePlacementStateV376.last=out;
+    return out;
+}
+function perlaRtpHubBuildablePlacementSummaryV376(){
+    return perlaRtpHubBuildablePlacementStateV376.last || perlaRtpHubBuildableLayoutV376();
+}
+function perlaRtpHubBuildableSpritesV374(){
+    if(!PERLA_V374_CASA_BUILDABLES_SAFE) return [];
+    const summary=perlaRtpHubBuildableSummaryV374();
+    const layout=perlaRtpHubBuildableLayoutV376();
+    const out=[];
+    Object.keys(PERLA_V374_BUILDABLE_SPECS).forEach(kind=>{
+        const count=Math.max(0, Math.min(3, Math.floor(Number(summary.counts&&summary.counts[kind])||0)));
+        const spec=PERLA_V374_BUILDABLE_SPECS[kind];
+        for(let i=0;i<count;i++){
+            const slot=(layout.selected||[]).find(item=>item.kind===kind && item.index===i) || {x:PERLA_V335_HUB_PIAZZOLA_WORLD_X, y:PERLA_V335_HUB_PIAZZOLA_WORLD_Y+1.4+i*.7, source:'missing_layout_fallback_v376'};
+            const scale=perlaRtpHubBuildableScaleV376(kind);
+            const texId=perlaRtpHubBuildableTextureV376(kind, i);
+            const id='placement.runtime.hub_buildable_v374.'+kind+'.'+i;
+            out.push({
+                x:Number(slot.x),
+                y:Number(slot.y),
+                tex:texId,
+                hScale:scale.hScale,
+                wScale:scale.wScale,
+                groundSink:scale.groundSink,
+                kind:'rtp_live_hub_buildable_v374',
+                nature:false,
+                blocking:false,
+                blockRadius:0,
+                underRoof:false,
+                rtpV327:{
+                    probe:false,
+                    liveV331:true,
+                    reviewV333:false,
+                    marker:true,
+                    characterId:'hub_buildable_'+kind,
+                    displayName:spec.title,
+                    role:'hub_buildable',
+                    requestedAnimationId:'static',
+                    sourceAnimationId:'static',
+                    sourceKey:'v376_hub_buildable_'+kind+'_tex_'+texId,
+                    mirrorX:false,
+                    storedAsset:true,
+                    textureId:texId,
+                    width:null,
+                    height:null,
+                    frameCount:1,
+                    frameIndices:[0],
+                    runtimeGrid:null,
+                    runtimeAtlasSize:null,
+                    frameDurationMs:1000,
+                    anchor:'bottom_center',
+                    materializedAt:new Date().toISOString()
+                },
+                rtpV331:{live:true, hubBuildableV374:true, hubBuildableFullsizeV376:true, kind, buildableIndex:i, placementId:id, entityId:'hub_buildable.'+kind+'.'+i, entityType:'base_or_upgrade', renderListOnly:true, persistentSpritesMutated:false, textureId:texId, scaleProfileV376:scale.profile, slotV376:slot},
+                rtpV333:{review:false, scenarioPlacementMarker:false, placementId:id, placeholderId:id, entityType:'base_or_upgrade', renderListOnly:true, buildableV374:true, fullsizePathEdgeV376:true, noCanvasShadowV376:true}
+            });
+        }
+    });
+    return out;
+}
 function perlaRtpBoundedLiveTestFrameSpritesV331(timeMs, drawStats){
     const st=perlaRtpBoundedLiveTestStateV331;
     if(!st.enabled) return [];
@@ -15831,6 +16774,11 @@ function perlaRtpBoundedLiveTestFrameSpritesV331(timeMs, drawStats){
         hubTierSprite.dist=perlaSpriteSortDistSqV335(hubTierSprite);
         out.push(hubTierSprite);
     }
+    const buildableSpritesV374=perlaRtpHubBuildableSpritesV374();
+    buildableSpritesV374.forEach(sprite=>{
+        sprite.dist=perlaSpriteSortDistSqV335(sprite);
+        out.push(sprite);
+    });
     const signGlow=perlaRtpHubSignGlowSpriteV334(timeMs);
     if(signGlow){
         signGlow.dist=perlaSpriteSortDistSqV335(signGlow);
@@ -15841,6 +16789,9 @@ function perlaRtpBoundedLiveTestFrameSpritesV331(timeMs, drawStats){
         drawStats.rtpBoundedLiveSpritesV331=out.length;
         drawStats.rtpBoundedLiveEventsV331=st.activeEvents.length;
         drawStats.rtpBoundedLiveHubTierSpriteV333=hubTierSprite&&hubTierSprite.rtpV331?hubTierSprite.rtpV331.tier:0;
+        drawStats.rtpHubBuildableSpritesV374=buildableSpritesV374.length;
+        drawStats.rtpHubBuildableFullsizePathV376=buildableSpritesV374.filter(sprite=>sprite&&sprite.rtpV331&&sprite.rtpV331.hubBuildableFullsizeV376).length;
+        drawStats.rtpHubBuildableFallbackSlotsV376=(perlaRtpHubBuildablePlacementSummaryV376().fallbackUsed||[]).length;
         drawStats.rtpHubSignGlowV334=signGlow?1:0;
         drawStats.rtpBoundedLiveRenderListOnlyV331=true;
         drawStats.rtpBoundedLivePersistentSpritesMutatedV331=false;
@@ -15855,7 +16806,10 @@ function perlaRtpBoundedLiveTestEventStatusV347(ev){
 }
 function perlaRtpBoundedLiveTestEventConditionsOkV347(ev){
     try{
-        if(perlaRtpStateStoreStateV325&&perlaRtpStateStoreStateV325.initialized) return perlaRtpStateStoreConditionsMatchV334(ev&&ev.conditions);
+        if(perlaRtpStateStoreStateV325&&perlaRtpStateStoreStateV325.initialized){
+            if(perlaRtpStateStoreConditionsMatchV334(ev&&ev.conditions)) return true;
+            return perlaRtpMainChallengeRematchAllowedV377(ev);
+        }
     }catch(err){}
     return true;
 }
@@ -15879,7 +16833,7 @@ function perlaRtpBoundedLiveTestEventEligibleV347(ev){
     if(!conditionsOk) return false;
     if(id==='event.intro.reception_debt' && status==='completed_debug') return false;
     if(id==='event.system.final_battle_unlock_check' && status==='completed_debug') return false;
-    if(status==='battle_placeholder_won') return false;
+    if(status==='battle_placeholder_won' && !perlaRtpMainChallengeRematchAllowedV377(ev)) return false;
     return true;
 }
 function perlaRtpBoundedLiveTestNearbyEventsV331(radius){
@@ -16170,6 +17124,9 @@ function perlaRtpBoundedLiveTestDialogueForEventV331(eventId){
     const packet=perlaRtpRuntimeIntegrationStateV330.lastPacket||null;
     const allContracts=perlaRtpBoundedLiveTestListV331(packet&&packet.dialogueRuntime&&packet.dialogueRuntime.contracts).filter(d=>d&&d.eventId===id);
     let contracts=allContracts.filter(d=>perlaRtpStateStoreConditionsMatchV334(d&&d.conditions));
+    if(perlaRtpMainChallengeRematchAllowedV377(id)){
+        contracts=perlaRtpMainRematchContractsV377(id).concat(contracts);
+    }
     if(id==='event.cutscene.hub_three_allies_strategy'){
         const assignedIds=(typeof perlaRtpAssignedRosterV350==='function' ? perlaRtpAssignedRosterV350() : []).map(item=>item.id);
         if(assignedIds.length){
@@ -16867,6 +17824,17 @@ function perlaRtpActionEnsureDialogueUiV332(){
         el.innerHTML='<div class="portrait" aria-hidden="true"><img alt=""></div><div class="dialogue-copy"><div class="speaker"></div><div class="line"></div></div>';
         document.body.appendChild(el);
     }
+    if(el.dataset.perlaV380TapAdvanceBound!=='1'){
+        el.dataset.perlaV380TapAdvanceBound='1';
+        el.addEventListener('pointerdown', e=>{
+            if(!PERLA_V380_ACTION_WORLD_MARKER_SAFE || !perlaRtpActionDialogueStateV332.visible) return;
+            e.preventDefault();
+            e.stopPropagation();
+            perlaRtpActionAdvanceDialogueV332('dialogue_tap_v380').catch(err=>{
+                perlaRtpActionDialogueStateV332.lastAction={ok:false, source:'dialogue_tap_v380', reason:String(err&&err.message?err.message:err), at:new Date().toISOString()};
+            });
+        }, {passive:false});
+    }
     return el;
 }
 function perlaRtpActionPortraitUrlForContractV334(contract){
@@ -17185,6 +18153,7 @@ function perlaRtpActionUpdateButtonV332(){
     btn.classList.toggle('visible', available);
     btn.disabled=!available;
     btn.setAttribute('aria-hidden', available?'false':'true');
+    if(typeof perlaRtpActionMarkerUpdateV380==='function') perlaRtpActionMarkerUpdateV380('button_update_v332');
 }
 function perlaRtpActionBindTouchButtonV332(){
     const btn=document.getElementById('rtpActionBtnV332');
@@ -17288,6 +18257,98 @@ function perlaRtpActionAvailableV332(){
     if(perlaRtpActionDialogueStateV332.visible || perlaRtpActionDialogueStateV332.upgradeMenuVisible || perlaRtpActionDialogueStateV332.marketMenuVisible || perlaRtpActionDialogueStateV332.battleModalVisible || perlaRtpActionDialogueStateV332.challengeModalVisible) return true;
     if(!perlaRtpActionRuntimeEnabledV332() || (!perlaRtpBoundedLiveTestStateV331.enabled && !(perlaRtpReviewAllStateV333&&perlaRtpReviewAllStateV333.active))) return false;
     return !!perlaRtpActionClosestEventV332();
+}
+function perlaRtpActionMarkerEnsureV380(){
+    if(!PERLA_V380_ACTION_WORLD_MARKER_SAFE) return null;
+    document.documentElement.classList.add('perla-v380-action-marker-ready');
+    let el=document.getElementById('rtpActionMarkerV380');
+    if(el) return el;
+    el=document.createElement('button');
+    el.id='rtpActionMarkerV380';
+    el.type='button';
+    el.textContent='!';
+    el.setAttribute('aria-label','Azione disponibile');
+    el.addEventListener('pointerdown', e=>{
+        e.preventDefault();
+        e.stopPropagation();
+        if(typeof perlaGuidedTourHandleActionV363==='function' && perlaGuidedTourHandleActionV363('touch_button')) return;
+        perlaRtpActionInteractV332({source:'world_marker_v380'}).catch(err=>{
+            perlaRtpActionDialogueStateV332.lastAction={ok:false, source:'world_marker_v380', reason:String(err&&err.message?err.message:err), at:new Date().toISOString()};
+        });
+    }, {passive:false});
+    document.body.appendChild(el);
+    return el;
+}
+function perlaRtpActionMarkerHideV380(reason){
+    document.documentElement.classList.remove('perla-v380-action-marker-visible');
+    const el=document.getElementById('rtpActionMarkerV380');
+    if(!el) return {ok:true, hidden:true, reason:String(reason||'hide')};
+    el.classList.remove('visible');
+    el.setAttribute('aria-hidden','true');
+    el.dataset.reason=String(reason||'hide');
+    return {ok:true, hidden:true, reason:String(reason||'hide')};
+}
+function perlaRtpActionWorldTargetForMarkerV380(ev){
+    if(!ev) return null;
+    const sprite=ev.spriteEntity || ev.selectedSpriteEntity || null;
+    const p=ev.triggerPosition || ev.position || {};
+    const candidates=[
+        {x:sprite&&sprite.x, y:sprite&&sprite.y, source:'sprite_entity_v380'},
+        {x:p.worldX, y:p.worldY, source:'trigger_position_v380'},
+        {x:ev.worldX, y:ev.worldY, source:'event_world_v380'},
+        {x:ev.showerX, y:ev.showerY, source:'legacy_shower_v380'},
+        {x:ev.x, y:ev.y, source:'event_xy_v380'}
+    ];
+    for(const c of candidates){
+        const x=Number(c.x), y=Number(c.y);
+        if(Number.isFinite(x) && Number.isFinite(y)) return {x,y,source:c.source};
+    }
+    return null;
+}
+function perlaRtpWorldToScreenCssV380(worldX, worldY){
+    if(!canvas || !canvas.getBoundingClientRect) return null;
+    const dx=Number(worldX)-posX, dy=Number(worldY)-posY;
+    const det=planeX*dirY-dirX*planeY;
+    if(!Number.isFinite(dx) || !Number.isFinite(dy) || Math.abs(det)<1e-6) return null;
+    const invDet=1/det;
+    const transX=invDet*(dirY*dx-dirX*dy);
+    const transY=invDet*(-planeY*dx+planeX*dy);
+    if(!Number.isFinite(transY) || transY<=0.18) return null;
+    const screenX=(screenW*.5)*(1+transX/transY);
+    if(screenX<-screenW*.12 || screenX>screenW*1.12) return null;
+    const markerLift=Math.max(28, Math.min(92, projectionH*.40/Math.max(.6,transY)));
+    const screenY=screenH*.50-markerLift;
+    const rect=canvas.getBoundingClientRect();
+    const cssX=rect.left+(screenX/Math.max(1,screenW))*rect.width;
+    const cssY=rect.top+(screenY/Math.max(1,screenH))*rect.height;
+    return {x:+cssX.toFixed(2), y:+cssY.toFixed(2), transY:+transY.toFixed(3), screenX:+screenX.toFixed(2), screenY:+screenY.toFixed(2)};
+}
+function perlaRtpActionMarkerUpdateV380(reason){
+    if(!PERLA_V380_ACTION_WORLD_MARKER_SAFE) return perlaRtpActionMarkerHideV380('v380_disabled');
+    const el=perlaRtpActionMarkerEnsureV380();
+    if(!el) return {ok:false, reason:'missing_marker'};
+    const mobile=currentViewportMode==='mobile-portrait' || currentViewportMode==='mobile-landscape';
+    if(!mobile) return perlaRtpActionMarkerHideV380('desktop');
+    if(perlaRtpActionDialogueStateV332.visible || perlaRtpActionDialogueStateV332.upgradeMenuVisible || perlaRtpActionDialogueStateV332.marketMenuVisible || perlaRtpActionDialogueStateV332.battleModalVisible || perlaRtpActionDialogueStateV332.challengeModalVisible){
+        return perlaRtpActionMarkerHideV380('modal_or_dialogue_active');
+    }
+    if(!perlaRtpActionRuntimeEnabledV332() || (!perlaRtpBoundedLiveTestStateV331.enabled && !(perlaRtpReviewAllStateV333&&perlaRtpReviewAllStateV333.active))){
+        return perlaRtpActionMarkerHideV380('runtime_disabled');
+    }
+    const ev=perlaRtpActionClosestEventV332();
+    const target=perlaRtpActionWorldTargetForMarkerV380(ev);
+    const pos=target ? perlaRtpWorldToScreenCssV380(target.x, target.y) : null;
+    if(!ev || !target || !pos) return perlaRtpActionMarkerHideV380('no_projected_target');
+    el.style.left=pos.x+'px';
+    el.style.top=pos.y+'px';
+    el.classList.add('visible');
+    document.documentElement.classList.add('perla-v380-action-marker-visible');
+    el.setAttribute('aria-hidden','false');
+    el.title='Azione: '+String(ev.eventId||ev.eventType||'evento');
+    el.dataset.eventId=String(ev.eventId||'');
+    el.dataset.reason=String(reason||'update');
+    el.dataset.targetSource=target.source;
+    return {ok:true, visible:true, eventId:ev.eventId||'', target, position:pos, reason:String(reason||'update')};
 }
 function perlaRtpNpcGiftRuntimeV370(){
     const rt=perlaRtpPass2RuntimeState;
@@ -17432,6 +18493,7 @@ function perlaRtpActionCloseDialogueV332(reason){
     const challenge=document.getElementById('perlaRtpChallengeModalV370');
     if(challenge) challenge.classList.remove('visible');
     perlaRtpActionCloseWorkerPopupV358();
+    perlaRtpActionCloseHubSkillPopupV374();
     return Object.assign({ok:true, type:'close_dialogue'}, perlaRtpActionSummaryV332());
 }
 function perlaRtpActionEnsureUpgradeMenuV334(){
@@ -17441,7 +18503,7 @@ function perlaRtpActionEnsureUpgradeMenuV334(){
         el.id='perlaRtpUpgradeMenuV334';
         el.setAttribute('role','dialog');
         el.setAttribute('aria-modal','false');
-        el.innerHTML='<div class="rtp-v334-panel-head"><div><h3 class="rtp-v334-title">Base Campo - CASA</h3><div class="rtp-v334-subtitle">Piazzola, carriola, squadra, risorse e usabili persistenti.</div></div><button class="rtp-v334-close" type="button" aria-label="Chiudi menu base">x</button></div><div class="rtp-v350-rent-status"></div><div class="rtp-v350-rest-row"><button class="rtp-v350-sleep-button" type="button">Dormi 8 ore</button><span class="rtp-v350-rest-note"></span></div><div class="rtp-v353-cutscene-status" data-ready="false"><span>Riunione alleati: controlla il tab Lavori.</span><button type="button" disabled>Non pronta</button></div><div class="rtp-v350-tabs" role="tablist" aria-label="Sezioni base CASA"><button class="rtp-v350-tab" type="button" data-tab="upgrade" data-active="true">Upgrade</button><button class="rtp-v350-tab" type="button" data-tab="skills">Potenzia</button><button class="rtp-v350-tab" type="button" data-tab="jobs">Lavori</button><button class="rtp-v350-tab" type="button" data-tab="resources">Risorse</button><button class="rtp-v350-tab" type="button" data-tab="consumables">Usabili</button></div><div class="rtp-v350-tab-panel" data-panel="upgrade" data-active="true"><div class="rtp-v334-upgrades"></div></div><div class="rtp-v350-tab-panel" data-panel="skills"><div class="rtp-v365-skilltree"></div></div><div class="rtp-v350-tab-panel" data-panel="jobs"><div class="rtp-v345-hub-section"><h4>Tabellone lavori</h4><div class="rtp-v345-roster-grid"></div><div class="rtp-v350-job-note"></div></div></div><div class="rtp-v350-tab-panel" data-panel="resources"><div class="rtp-v345-hub-section"><h4>Risorse e carriola</h4><div class="rtp-v345-resource-grid"></div><div class="rtp-v345-resource-actions"><button class="rtp-v345-resource-deposit" type="button">Scarica carriola</button><button class="rtp-v345-resource-convert" type="button">Converti deposito in EC</button><button class="rtp-v345-resource-convert-gd-ec" type="button">Converti EC in GD</button><button class="rtp-v345-resource-convert-gd-basalto" type="button">Converti Basalto in GD</button></div><div class="rtp-v345-resource-note"></div></div></div><div class="rtp-v350-tab-panel" data-panel="consumables"><div class="rtp-v345-hub-section"><h4>Usabili</h4><div class="rtp-v345-consumable-grid"></div><div class="rtp-v345-consumable-note"></div></div></div><div class="rtp-v358-worker-popup" role="dialog" aria-modal="false" aria-label="Dettagli lavoro PG"></div>';
+        el.innerHTML='<div class="rtp-v334-panel-head"><div><h3 class="rtp-v334-title">Base Campo - CASA</h3><div class="rtp-v334-subtitle">Piazzola, carriola, squadra, risorse, costruzioni e usabili persistenti.</div></div><button class="rtp-v334-close" type="button" aria-label="Chiudi menu base">x</button></div><div class="rtp-v350-rent-status"></div><div class="rtp-v350-rest-row"><button class="rtp-v350-sleep-button" type="button">Dormi 8 ore</button><button class="rtp-v374-empty-wheelbarrow-button" type="button">Svuota carriola</button><span class="rtp-v350-rest-note"></span></div><div class="rtp-v353-cutscene-status" data-ready="false"><span>Riunione alleati: controlla il tab Lavori.</span><button type="button" disabled>Non pronta</button></div><div class="rtp-v350-tabs" role="tablist" aria-label="Sezioni base CASA"><button class="rtp-v350-tab" type="button" data-tab="upgrade" data-active="true">Upgrade</button><button class="rtp-v350-tab" type="button" data-tab="jobs">Lavori</button><button class="rtp-v350-tab" type="button" data-tab="build">Costruisci</button><button class="rtp-v350-tab" type="button" data-tab="resources">Risorse</button><button class="rtp-v350-tab" type="button" data-tab="consumables">Usabili</button></div><div class="rtp-v350-tab-panel" data-panel="upgrade" data-active="true"><div class="rtp-v334-upgrades"></div></div><div class="rtp-v350-tab-panel" data-panel="jobs"><div class="rtp-v345-hub-section"><h4>Tabellone lavori</h4><div class="rtp-v345-roster-grid"></div><div class="rtp-v350-job-note"></div></div></div><div class="rtp-v350-tab-panel" data-panel="build"><div class="rtp-v345-hub-section"><h4>Costruisci area base</h4><div class="rtp-v374-buildable-grid"></div><div class="rtp-v374-buildable-note"></div></div></div><div class="rtp-v350-tab-panel" data-panel="resources"><div class="rtp-v345-hub-section"><h4>Risorse e carriola</h4><div class="rtp-v345-resource-grid"></div><div class="rtp-v345-resource-actions"><button class="rtp-v345-resource-deposit" type="button">Scarica carriola</button><button class="rtp-v345-resource-convert" type="button">Converti deposito in EC</button><button class="rtp-v345-resource-convert-gd-ec" type="button">Converti EC in GD</button><button class="rtp-v345-resource-convert-gd-basalto" type="button">Converti Basalto in GD</button></div><div class="rtp-v345-resource-note"></div></div></div><div class="rtp-v350-tab-panel" data-panel="consumables"><div class="rtp-v345-hub-section"><h4>Usabili</h4><div class="rtp-v345-consumable-grid"></div><div class="rtp-v345-consumable-note"></div></div></div><div class="rtp-v358-worker-popup" role="dialog" aria-modal="false" aria-label="Dettagli lavoro PG"></div><div class="rtp-v374-skill-popup" role="dialog" aria-modal="false" aria-label="Potenziamenti tier"></div>';
         document.body.appendChild(el);
         const close=el.querySelector('.rtp-v334-close');
         if(close) close.addEventListener('click', e=>{ e.preventDefault(); e.stopPropagation(); perlaRtpActionCloseDialogueV332('upgrade_menu_closed'); }, {passive:false});
@@ -17459,6 +18521,17 @@ function perlaRtpActionEnsureUpgradeMenuV334(){
             e.stopPropagation();
             perlaRtpOpenRecoveryInfoV361('sleep','hub_casa_button');
         }, {passive:false});
+        const emptyBtn=el.querySelector('.rtp-v374-empty-wheelbarrow-button');
+        if(emptyBtn) emptyBtn.addEventListener('click', e=>{
+            e.preventDefault();
+            e.stopPropagation();
+            perlaRtpResourceDepositCarriedV345('hub_casa_quick_v374');
+            perlaRtpActionRenderHubResourcesV345(el);
+            perlaRtpActionRenderHubConsumablesV345P2(el, null);
+            perlaRtpActionRenderHubRestV351(el, null);
+            perlaRtpActionRenderHubRentV350(el);
+            perlaRtpHubOwnedBoxRenderV363(el);
+        }, {passive:false});
         const cutsceneBtn=el.querySelector('.rtp-v353-cutscene-status button');
         if(cutsceneBtn) cutsceneBtn.addEventListener('click', e=>{
             e.preventDefault();
@@ -17470,10 +18543,12 @@ function perlaRtpActionEnsureUpgradeMenuV334(){
 }
 function perlaRtpActionSetHubTabV350(el, tab){
     el=el||document.getElementById('perlaRtpUpgradeMenuV334');
-    const selected=String(tab||'upgrade');
+    const requested=String(tab||'upgrade');
+    const selected=['upgrade','jobs','build','resources','consumables'].indexOf(requested)>=0 ? requested : 'upgrade';
     if(!el) return selected;
     el.dataset.activeTab=selected;
     if(selected!=='jobs') perlaRtpActionCloseWorkerPopupV358(el);
+    perlaRtpActionCloseHubSkillPopupV374(el);
     el.querySelectorAll('.rtp-v350-tab').forEach(btn=>{ btn.dataset.active=String(String(btn.dataset.tab||'')===selected); });
     el.querySelectorAll('.rtp-v350-tab-panel').forEach(panel=>{ panel.dataset.active=String(String(panel.dataset.panel||'')===selected); });
     try{ perlaRtpHubOwnedBoxRenderV363(el); }catch(err){}
@@ -17534,6 +18609,12 @@ function perlaRtpActionUpgradeSpecsV334(){
 }
 function perlaRtpActionRenderHubRestV351(el, lastResult){
     const note=el&&el.querySelector('.rtp-v350-rest-note');
+    const emptyBtn=el&&el.querySelector('.rtp-v374-empty-wheelbarrow-button');
+    if(emptyBtn){
+        const summary=perlaRtpResourceSummaryV345();
+        emptyBtn.disabled=(Number(summary.carriedWeight)||0)<=0;
+        emptyBtn.innerHTML='<span class="rtp-v350-menu-icon">'+perlaRtpIconSvgV350('capacity')+'</span><span>Svuota carriola</span>';
+    }
     if(!note) return;
     const st=perlaRtpComfortGameplayStateV336;
     const msg=lastResult&&lastResult.ok
@@ -17587,7 +18668,8 @@ async function perlaRtpHubBuySkillV365(skillId, source){
     const tier=perlaRtpHubTierV365();
     if(tier<spec.tier) return {ok:false, reason:'tier_not_unlocked', requiredTier:spec.tier, currentTier:tier};
     if(skills.owned[id]===true) return {ok:true, alreadyOwned:true, skillId:id};
-    if(perlaRtpHubSkillOwnedCountByTierV365(spec.tier)>=3) return {ok:false, reason:'tier_skill_limit_reached', tier:spec.tier, limit:3};
+    const tierLimit=typeof perlaRtpHubSkillLimitByTierV374==='function'?perlaRtpHubSkillLimitByTierV374(spec.tier):3;
+    if(perlaRtpHubSkillOwnedCountByTierV365(spec.tier)>=tierLimit) return {ok:false, reason:'tier_skill_limit_reached', tier:spec.tier, limit:tierLimit};
     if(!perlaRtpPass2ResourceCostAffordable(spec.cost||{})){
         perlaRtpPass2PlayActionSoundV345('upgrade_fail');
         return {ok:false, reason:'hub_skill_resources_missing', skillId:id, required:perlaRtpPass2ResourceCostText(spec.cost||{})};
@@ -17610,7 +18692,7 @@ function perlaRtpActionRenderHubSkillTreeV365(el){
     box.innerHTML='';
     const header=document.createElement('div');
     header.className='rtp-v345-resource-note';
-    header.innerHTML=perlaRtpHtmlEscapeV355('Potenzia i tier già posseduti. Ogni tier ha 3 rami laterali indipendenti: lavori, sopravvivenza, carriola/recupero. Effetti attivi: '+effectSummary.ownedCount+' potenziamenti.')+
+    header.innerHTML=perlaRtpHtmlEscapeV355('Potenzia i tier gia posseduti. Ogni tier ha 4 rami indipendenti: lavori, sopravvivenza, carriola/recupero e mercante. Effetti attivi: '+effectSummary.ownedCount+' potenziamenti.')+
         '<div class="rtp-v355-summary">'+
         perlaRtpSummaryChipHtmlV355('stat_forza','Lavori','+'+Math.round((Number(effectSummary.jobYieldPct)||0)*100)+'%')+
         perlaRtpSummaryChipHtmlV355('capacity','Capienza','+'+(Number(effectSummary.capacityBonus)||0))+
@@ -17624,7 +18706,8 @@ function perlaRtpActionRenderHubSkillTreeV365(el){
         const unlocked=current>=tier;
         tierBox.dataset.unlocked=String(unlocked);
         const ownedCount=perlaRtpHubSkillOwnedCountByTierV365(tier);
-        tierBox.innerHTML='<div class="rtp-v365-skill-tier-head"><span>Tier '+tier+' - potenziamenti</span><span>'+ownedCount+'/3</span></div><div class="rtp-v365-skill-grid"></div>';
+        const tierLimit=typeof perlaRtpHubSkillLimitByTierV374==='function'?perlaRtpHubSkillLimitByTierV374(tier):3;
+        tierBox.innerHTML='<div class="rtp-v365-skill-tier-head"><span>Tier '+tier+' - potenziamenti</span><span>'+ownedCount+'/'+tierLimit+'</span></div><div class="rtp-v365-skill-grid"></div>';
         const grid=tierBox.querySelector('.rtp-v365-skill-grid');
         PERLA_V365_TIER_SKILL_SPECS.filter(spec=>spec.tier===tier).forEach(spec=>{
             const owned=skills.owned[spec.id]===true;
@@ -17639,7 +18722,7 @@ function perlaRtpActionRenderHubSkillTreeV365(el){
             card.querySelector('.rtp-v365-skill-effects').outerHTML=perlaRtpHubSkillEffectChipsHtmlV365(spec);
             card.querySelector('.rtp-v334-cost').innerHTML=perlaRtpResourceCostAvailabilityHtmlV362(spec.cost||{}, {withTitle:true, emptyLabel:'gratis'});
             const btn=card.querySelector('button');
-            btn.disabled=!unlocked || owned || !affordable || ownedCount>=3;
+            btn.disabled=!unlocked || owned || !affordable || ownedCount>=tierLimit;
             btn.textContent=!unlocked?'Tier bloccato':(owned?'Attivo':(!affordable?'Risorse mancanti':'Compra'));
             btn.addEventListener('click', e=>{
                 e.preventDefault();
@@ -17660,6 +18743,127 @@ function perlaRtpActionRenderHubSkillTreeV365(el){
         });
         box.appendChild(tierBox);
     });
+}
+function perlaRtpActionCloseHubSkillPopupV374(el){
+    el=el||document.getElementById('perlaRtpUpgradeMenuV334');
+    const popup=el&&el.querySelector('.rtp-v374-skill-popup');
+    if(popup){
+        popup.classList.remove('visible');
+        popup.innerHTML='';
+    }
+}
+function perlaRtpActionOpenHubSkillPopupV374(el, tier){
+    el=el||document.getElementById('perlaRtpUpgradeMenuV334');
+    const popup=el&&el.querySelector('.rtp-v374-skill-popup');
+    if(!popup) return {ok:false, reason:'skill_popup_unavailable_v374'};
+    const t=clamp(Math.floor(Number(tier)||1),1,3);
+    const current=perlaRtpHubTierV365();
+    const unlocked=current>=t;
+    const skills=perlaRtpHubSkillsRuntimeV365();
+    const effectSummary=perlaRtpHubSkillEffectsV365();
+    const ownedCount=perlaRtpHubSkillOwnedCountByTierV365(t);
+    const tierLimit=perlaRtpHubSkillLimitByTierV374(t);
+    popup.innerHTML='<div class="rtp-v374-skill-popup-head"><div><div class="rtp-v374-skill-popup-title">Tier '+t+' - Potenzia</div><div class="rtp-v374-skill-popup-subtitle"></div><div class="rtp-v355-summary"></div></div><button class="rtp-v374-skill-popup-close" type="button" aria-label="Chiudi potenziamenti">x</button></div><div class="rtp-v365-skill-grid"></div>';
+    const subtitle=popup.querySelector('.rtp-v374-skill-popup-subtitle');
+    if(subtitle) subtitle.textContent=unlocked ? ('Potenziamenti attivi '+ownedCount+'/'+tierLimit+'. Ogni card mostra benefici e costo.') : ('Tier '+t+' bloccato: applica prima questo upgrade.');
+    const summary=popup.querySelector('.rtp-v355-summary');
+    if(summary) summary.innerHTML=
+        perlaRtpSummaryChipHtmlV355('stat_forza','Lavori','+'+Math.round((Number(effectSummary.jobYieldPct)||0)*100)+'%')+
+        perlaRtpSummaryChipHtmlV355('capacity','Capienza','+'+(Number(effectSummary.capacityBonus)||0))+
+        perlaRtpSummaryChipHtmlV355('ec','Mercante','+'+Math.round((Number(effectSummary.merchantPct)||0)*100)+'%')+
+        perlaRtpSummaryChipHtmlV355('debt','Perdite','-'+Math.round((Number(effectSummary.failLossProtectionPct)||0)*100)+'%');
+    const close=popup.querySelector('.rtp-v374-skill-popup-close');
+    if(close) close.addEventListener('click', e=>{ e.preventDefault(); e.stopPropagation(); perlaRtpActionCloseHubSkillPopupV374(el); perlaRtpPass2PlayActionSoundV345('menu_close'); }, {passive:false});
+    const grid=popup.querySelector('.rtp-v365-skill-grid');
+    PERLA_V365_TIER_SKILL_SPECS.filter(spec=>spec.tier===t).forEach(spec=>{
+        const owned=skills.owned[spec.id]===true;
+        const affordable=perlaRtpPass2ResourceCostAffordable(spec.cost||{});
+        const card=document.createElement('article');
+        card.className='rtp-v365-skill-card';
+        card.dataset.owned=String(owned);
+        card.innerHTML='<h5><span class="rtp-v350-menu-icon"></span><span></span></h5><p></p><div class="rtp-v365-skill-effects"></div><div class="rtp-v334-cost"></div><button type="button"></button>';
+        card.querySelector('.rtp-v350-menu-icon').innerHTML=perlaRtpIconSvgV350(spec.icon||'stat_forza');
+        card.querySelector('h5 span:last-child').textContent=spec.title;
+        card.querySelector('p').textContent=perlaRtpActionHumanizeTextV350(spec.desc||spec.summary||'Potenziamento base.');
+        card.querySelector('.rtp-v365-skill-effects').outerHTML=perlaRtpHubSkillEffectChipsHtmlV365(spec);
+        card.querySelector('.rtp-v334-cost').innerHTML=perlaRtpResourceCostAvailabilityHtmlV362(spec.cost||{}, {withTitle:true, emptyLabel:'gratis'});
+        const btn=card.querySelector('button');
+        btn.disabled=!unlocked || owned || !affordable || ownedCount>=tierLimit;
+        btn.textContent=!unlocked?'Tier bloccato':(owned?'Attivo':(!affordable?'Risorse mancanti':(ownedCount>=tierLimit?'Limite raggiunto':'Compra')));
+        btn.addEventListener('click', e=>{
+            e.preventDefault();
+            e.stopPropagation();
+            perlaRtpHubBuySkillV365(spec.id, 'hub_skill_popup_v374').then(res=>{
+                if(res&&res.ok===false) perlaRtpPass2RuntimeState.lastNotice='Potenziamento bloccato: '+String(res.reason||'risorse mancanti')+'.';
+                perlaRtpActionOpenHubSkillPopupV374(el, t);
+                perlaRtpActionRenderHubResourcesV345(el);
+                perlaRtpActionRenderHubBuildablesV374(el);
+                perlaRtpActionRenderHubRosterV345(el);
+                perlaRtpHubOwnedBoxRenderV363(el);
+            }).catch(err=>{
+                perlaRtpPass2PlayActionSoundV345('fail');
+                perlaRtpPass2RuntimeState.lastNotice='Potenziamento non riuscito: '+String(err&&err.message?err.message:err);
+                perlaRtpActionOpenHubSkillPopupV374(el, t);
+            });
+        }, {passive:false});
+        grid.appendChild(card);
+    });
+    popup.classList.add('visible');
+    return {ok:true, tier:t, ownedCount, tierLimit};
+}
+function perlaRtpActionRenderHubBuildablesV374(el){
+    const grid=el&&el.querySelector('.rtp-v374-buildable-grid');
+    const note=el&&el.querySelector('.rtp-v374-buildable-note');
+    if(!grid) return;
+    const summary=perlaRtpHubBuildableSummaryV374();
+    grid.innerHTML='';
+    Object.keys(PERLA_V374_BUILDABLE_SPECS).forEach(kind=>{
+        const spec=PERLA_V374_BUILDABLE_SPECS[kind];
+        const count=Math.max(0, Math.floor(Number(summary.counts&&summary.counts[kind])||0));
+        const limit=Math.max(0, Math.floor(Number(summary.limit)||0));
+        const cost=perlaRtpHubBuildableCostV374(kind);
+        const affordable=perlaRtpPass2ResourceCostAffordable(cost);
+        const capped=count>=limit;
+        const card=document.createElement('article');
+        card.className='rtp-v374-buildable-card';
+        card.dataset.kind=kind;
+        card.innerHTML='<h5><span class="rtp-v350-menu-icon"></span><span></span></h5><p></p><div class="rtp-v355-summary"></div><div class="rtp-v374-cost-title">Costa:</div><div class="rtp-v334-cost"></div><button type="button"></button>';
+        card.querySelector('.rtp-v350-menu-icon').innerHTML=perlaRtpIconSvgV350(spec.icon||'build');
+        card.querySelector('h5 span:last-child').textContent=spec.title;
+        card.querySelector('p').textContent=perlaRtpActionHumanizeTextV350(spec.text||'Costruzione area base.');
+        const chips=[
+            perlaRtpSummaryChipHtmlV355(spec.icon||'build','Costruite',count+'/'+limit),
+            perlaRtpSummaryChipHtmlV355('ec','Rendita','+'+(count*(Number(spec.yield&&spec.yield.ec)||0))+' EC/g'),
+            perlaRtpSummaryChipHtmlV355('gd','Gettoni','+'+(count*(Number(spec.yield&&spec.yield.gd)||0))+' GD/g')
+        ];
+        card.querySelector('.rtp-v355-summary').innerHTML=chips.join('');
+        card.querySelector('.rtp-v334-cost').innerHTML=perlaRtpResourceCostAvailabilityHtmlV362(cost, {withTitle:false, emptyLabel:'gratis'});
+        const btn=card.querySelector('button');
+        btn.disabled=capped || !affordable;
+        btn.textContent=capped?'Limite tier raggiunto':(affordable?'Costruisci':'Risorse mancanti');
+        btn.addEventListener('click', e=>{
+            e.preventDefault();
+            e.stopPropagation();
+            const res=perlaRtpHubBuildableBuyV374(kind, 'hub_buildable_button_v374');
+            if(res&&res.ok===false) perlaRtpPass2RuntimeState.lastNotice=res.reason==='buildable_limit_reached_v374'?'Limite costruzioni raggiunto per il tier attuale.':'Risorse insufficienti per costruire.';
+            perlaRtpActionRenderHubBuildablesV374(el);
+            perlaRtpActionRenderHubResourcesV345(el);
+            perlaRtpActionRenderHubRentV350(el);
+            perlaRtpActionRenderHubRestV351(el, null);
+            perlaRtpHubOwnedBoxRenderV363(el);
+            perlaRtpPass2RenderInventoryHud();
+        }, {passive:false});
+        grid.appendChild(card);
+    });
+    if(note){
+        note.innerHTML=perlaRtpHtmlEscapeV355('Rendita giornaliera totale: +'+summary.dailyYield.ec+' EC e +'+summary.dailyYield.gd+' GD. Gli sprite costruiti appaiono a piena scala ai lati del sentiero CASA senza mutare gli sprite storici.')+
+            '<div class="rtp-v355-summary">'+
+            perlaRtpSummaryChipHtmlV355('tent','Tende',String(summary.counts.tent||0)+'/'+summary.limit)+
+            perlaRtpSummaryChipHtmlV355('camper','Camper',String(summary.counts.camper||0)+'/'+summary.limit)+
+            perlaRtpSummaryChipHtmlV355('ec','EC/g','+'+summary.dailyYield.ec)+
+            perlaRtpSummaryChipHtmlV355('gd','GD/g','+'+summary.dailyYield.gd)+
+            '</div>';
+    }
 }
 const perlaRtpHubMenuStateV355 = {expandedWorkerId:null};
 function perlaRtpActionCloseWorkerPopupV358(el){
@@ -17925,7 +19129,7 @@ function perlaRtpActionRenderUpgradeMenuV334(eventInfo){
             btn.addEventListener('click', e=>{
                 e.preventDefault(); e.stopPropagation();
                 if(ownedTier){
-                    perlaRtpActionSetHubTabV350(el, 'skills');
+                    perlaRtpActionOpenHubSkillPopupV374(el, spec.tier);
                     perlaRtpPass2PlayActionSoundV345('menu_open');
                     return;
                 }
@@ -17954,6 +19158,7 @@ function perlaRtpActionRenderUpgradeMenuV334(eventInfo){
     perlaRtpActionRenderHubRestV351(el, null);
     perlaRtpActionRenderHubSkillTreeV365(el);
     perlaRtpActionRenderHubRosterV345(el);
+    perlaRtpActionRenderHubBuildablesV374(el);
     perlaRtpActionRenderHubResourcesV345(el);
     perlaRtpActionRenderHubConsumablesV345P2(el, eventInfo);
     perlaRtpActionRenderHubCutsceneStatusV353(el);
@@ -18364,13 +19569,20 @@ function perlaRtpActionAskChallengeV370(eventInfo){
     const st=perlaRtpActionDialogueStateV332;
     perlaRtpActionResetMovementOnUiLockV350('challenge_choice_open_v370');
     const el=perlaRtpActionEnsureChallengeModalV370();
+    const rematchV377=perlaRtpMainChallengeRematchAllowedV377(eventInfo);
     st.challengeModalVisible=true;
     st.marketMenuVisible=false;
     st.battleModalVisible=false;
     st.pendingChallengeEventId=eventInfo&&eventInfo.eventId||'';
     st.status='challenge_choice_open_v370';
+    const title=el.querySelector('.rtp-v334-title');
+    if(title) title.textContent=rematchV377?'Torneo dei Sassi - Rivincita':'Torneo dei Sassi';
     const subtitle=el.querySelector('.rtp-v334-subtitle');
-    if(subtitle) subtitle.textContent='Sfida '+perlaRtpChallengeTargetNameV370(eventInfo)+' al Torneo dei Sassi?';
+    if(subtitle) subtitle.textContent=(rematchV377?'Rivincita contro ':'Sfida ')+perlaRtpChallengeTargetNameV370(eventInfo)+' al Torneo dei Sassi?';
+    const yes=el.querySelector('button[data-challenge="yes"]');
+    if(yes) yes.textContent=rematchV377?'Rivincita':'Sfida';
+    const no=el.querySelector('button[data-challenge="no"]');
+    if(no) no.textContent=rematchV377?'Rimanda':'Saluta';
     el.classList.add('visible');
     perlaRtpPass2PlayActionSoundV345('battle_open');
     return new Promise(resolve=>{
@@ -18387,6 +19599,22 @@ function perlaRtpActionOpenPostBattleDialogueV334(eventInfo, result, trigger){
     const eventId=eventInfo&&eventInfo.eventId||trigger&&trigger.eventId||'';
     const info=perlaRtpActionDialogueContractsV332(eventId);
     let contracts=info.contracts.slice();
+    const rematchResultV377=perlaRtpMainRematchResultContractV377(eventId, result);
+    if(rematchResultV377) contracts.unshift(rematchResultV377);
+    const reward=trigger&&trigger.stateStoreResult&&trigger.stateStoreResult.challengeRewardV374||null;
+    if(reward && reward.label && !reward.alreadyPaid){
+        contracts.push({
+            dialogueId:'system.challenge_reward_v374.'+String(eventId||'battle'),
+            eventId,
+            speakerId:'sistema',
+            speakerRole:'system',
+            lineType:'reward',
+            line:'Premio Torneo dei Sassi: '+String(reward.label)+'. Il riepilogo e gia stato aggiunto al portafoglio.',
+            uiPolicy:'dialogue_box_no_portrait',
+            portraitLazyLoadAllowed:false,
+            animalDialogueBlocked:false
+        });
+    }
     if(!contracts.length){
         const fallback=perlaRtpBoundedLiveTestPostBattleFallbackDialogueV334(eventId, result);
         if(fallback) contracts=[fallback];
@@ -18422,7 +19650,7 @@ async function perlaRtpActionTriggerCurrentEventV332(source){
         try{ await perlaRtpStateStoreMarkDialogueSeenV325(dialogueId, true); }catch(err){}
     }
     let result='triggered_action_v332';
-    const eventInfo={eventId, eventType:st.eventType, battlePlaceholder:st.battlePlaceholder};
+    const eventInfo={eventId, eventType:st.eventType, battlePlaceholder:st.battlePlaceholder, rematchV377:perlaRtpMainChallengeRematchAllowedV377(eventId)};
     if(st.battlePlaceholder){
         st.visible=false;
         perlaRtpActionUpdateDialogueUiV332();
@@ -18431,7 +19659,7 @@ async function perlaRtpActionTriggerCurrentEventV332(source){
             if(!accepted){
                 st.battlePlaceholder=false;
                 st.lastTrigger={ok:true, eventId, result:'challenge_declined_v370', source:actionSource, at:new Date().toISOString()};
-                return perlaRtpActionShowNoticeV332(eventInfo, 'Sfida rimandata: '+perlaRtpChallengeTargetNameV370(eventInfo)+' ti lascia andare, per ora.', {ok:true, type:'challenge_declined_v370'});
+                return perlaRtpActionShowNoticeV332(eventInfo, (eventInfo.rematchV377?'Rivincita rimandata: ':'Sfida rimandata: ')+perlaRtpChallengeTargetNameV370(eventInfo)+' ti lascia andare, per ora.', {ok:true, type:'challenge_declined_v370', rematchV377:eventInfo.rematchV377});
             }
         }
         result=await perlaRtpActionAskBattleResultV334(eventId);
@@ -20033,13 +21261,33 @@ function perlaRtpV370GameplayExpansionSummary(){
             mosquitoTuning:!!PERLA_V370_MOSQUITO_CHASE_TUNING_SAFE,
             jobDailySync:!!PERLA_V370_JOB_DAILY_SYNC_SAFE,
             historicBoulderExtraction:!!PERLA_V370_HISTORIC_BOULDER_EXTRACTION_SAFE,
-            hubSignPriority:!!PERLA_V370_HUB_SIGN_INTERACTION_PRIORITY_SAFE
+            hubSignPriority:!!PERLA_V370_HUB_SIGN_INTERACTION_PRIORITY_SAFE,
+            v374RegressionUiCasaBuildables:!!PERLA_V374_REGRESSION_UI_CASA_BUILDABLES_SAFE,
+            v374TierSkillPopup:!!PERLA_V374_TIER_SKILL_POPUP_SAFE,
+            v374ChallengeRewards:!!PERLA_V374_CHALLENGE_REWARD_SAFE,
+            v374CasaBuildables:!!PERLA_V374_CASA_BUILDABLES_SAFE,
+            v375CasaMenuTypographyNormalized:!!PERLA_V375_CASA_MENU_TYPOGRAPHY_NORMALIZED_SAFE,
+            v376BuildableFullsizePath:!!PERLA_V376_CASA_BUILDABLE_FULLSIZE_PATH_SAFE,
+            v376CasaSleepReopen:!!PERLA_V376_CASA_SLEEP_REOPEN_SAFE,
+            v376PopupFocusAria:!!PERLA_V376_POPUP_FOCUS_ARIA_SAFE,
+            v376WetnessOrientationFailVisual:!!PERLA_V376_WETNESS_ORIENTATION_FAIL_VISUAL_SAFE,
+            v377MainOriginalRematchAfterRecruit:!!PERLA_V377_MAIN_ORIGINAL_REMATCH_AFTER_RECRUIT_SAFE,
+            v378SecondaryStatPressureNotDirectFaint:!!PERLA_V378_SECONDARY_STAT_PRESSURE_NOT_DIRECT_FAINT_SAFE,
+            v379OrientationDirectFaint:!!PERLA_V379_ORIENTATION_DIRECT_FAINT_SAFE,
+            v379WetnessSecondaryOnly:!!PERLA_V379_WETNESS_SECONDARY_ONLY_SAFE
         },
         merchantRates:perlaRtpMerchantRatesV370(),
         startup,
         birdSnack:Object.assign({}, runtime.birdSnack||{}),
         npcGifts:Object.assign({}, runtime.npcGifts||{}),
         jobs:Object.assign({}, perlaRtpPass2JobsRuntimeV349()),
+        hubBuildables:perlaRtpHubBuildableSummaryV374(),
+        hubBuildablePlacementV376:perlaRtpHubBuildablePlacementSummaryV376(),
+        wetnessOrientationFailVisualV376:perlaRtpWetnessOrientationFailVisualValidationV376(),
+        faintContractAuditV378:perlaRtpFaintContractAuditV378(),
+        secondaryStatPressureV378:perlaRtpSecondaryStatPressureV378(perlaRtpComfortGameplayStateV336),
+        mainRematchContinuityV377:perlaRtpMainRematchContinuityAuditV377(),
+        challengeRewards:Object.assign({}, perlaRtpChallengeRewardsRuntimeV374(), {paidByEvent:Object.assign({}, perlaRtpChallengeRewardsRuntimeV374().paidByEvent)}),
         historicBoulder:Object.assign({}, PERLA_V370_HISTORIC_BOULDER_PINETA_EST, {state:Object.assign({}, perlaRtpHistoricBoulderStateV370(PERLA_V370_HISTORIC_BOULDER_PINETA_EST.id)), lastExtraction:perlaRtpResourceRuntimeStateV345.lastHistoricBoulderExtraction||null}),
         interactionPriority:{hubSignRadius:PERLA_V370_HUB_SIGN_PRIORITY_RADIUS_TILES, recruitedBaseDialogueRadius:PERLA_V370_RECRUITED_BASE_DIALOGUE_RADIUS_TILES},
         mosquito:{
@@ -34131,15 +35379,16 @@ function resizePerlaRenderer(force=false){
     allocateRenderBuffers();
     touchInput.moveX=touchInput.moveY=touchInput.lookX=touchInput.buttonTurn=touchInput.screenForward=touchInput.screenLookX=0;
     touchInput.activeMove=false; touchInput.activeLook=false;
+    if(typeof perlaRtpMiniMapClusterRelayoutScheduleV380==='function') perlaRtpMiniMapClusterRelayoutScheduleV380('renderer_resize_'+String(mode));
 }
 allocateRenderBuffers();
 applyRendererMode(currentViewportMode);
 let resizeTimer=null;
-window.addEventListener('resize',()=>{ clearTimeout(resizeTimer); resizeTimer=setTimeout(()=>resizePerlaRenderer(false),80); }, {passive:true});
-window.addEventListener('orientationchange',()=>{ clearTimeout(resizeTimer); resizeTimer=setTimeout(()=>resizePerlaRenderer(true),160); }, {passive:true});
+window.addEventListener('resize',()=>{ if(typeof perlaRtpMiniMapClusterRelayoutScheduleV380==='function') perlaRtpMiniMapClusterRelayoutScheduleV380('window_resize'); clearTimeout(resizeTimer); resizeTimer=setTimeout(()=>resizePerlaRenderer(false),80); }, {passive:true});
+window.addEventListener('orientationchange',()=>{ if(typeof perlaRtpMiniMapClusterRelayoutScheduleV380==='function') perlaRtpMiniMapClusterRelayoutScheduleV380('orientationchange'); clearTimeout(resizeTimer); resizeTimer=setTimeout(()=>resizePerlaRenderer(true),160); }, {passive:true});
 if(window.visualViewport){
-    window.visualViewport.addEventListener('resize',()=>{ updatePerlaVisualViewportCSS(); clearTimeout(resizeTimer); resizeTimer=setTimeout(()=>resizePerlaRenderer(false),60); }, {passive:true});
-    window.visualViewport.addEventListener('scroll',updatePerlaVisualViewportCSS,{passive:true});
+    window.visualViewport.addEventListener('resize',()=>{ updatePerlaVisualViewportCSS(); if(typeof perlaRtpMiniMapClusterRelayoutScheduleV380==='function') perlaRtpMiniMapClusterRelayoutScheduleV380('visual_viewport_resize'); clearTimeout(resizeTimer); resizeTimer=setTimeout(()=>resizePerlaRenderer(false),60); }, {passive:true});
+    window.visualViewport.addEventListener('scroll',()=>{ updatePerlaVisualViewportCSS(); if(typeof perlaRtpMiniMapClusterRelayoutScheduleV380==='function') perlaRtpMiniMapClusterRelayoutScheduleV380('visual_viewport_scroll'); },{passive:true});
 }
 const keys={};
 const touchInput = { moveX:0, moveY:0, lookX:0, buttonTurn:0, screenForward:0, screenLookX:0, activeMove:false, activeLook:false };
@@ -44227,7 +45476,7 @@ function updatePerlaDebugLineV258(time){
     const lastDraw=((perlaPerfStats.drawMs && perlaPerfStats.drawMs.length)?perlaPerfStats.drawMs[perlaPerfStats.drawMs.length-1]:0)||0;
     debugLine.textContent=perlaRtpTextNormalizeEncodingV350(`X ${displayWorldX_V74(posX).toFixed(2)} / Y ${posY.toFixed(2)} - zona: ${zoneAtPlayer()} - ${perlaEnvironmentDebugLabelV188()} - ${perlaWeatherDebugLabelV190()} - ${currentViewportMode} ${screenW}x${screenH} - FPS ${perlaPerfStats.lastFps.toFixed(1)} - draw ${lastDraw.toFixed(1)}ms - sprite: ${sprites.length}`);
 }
-const perlaPauseMenuStateV360 = {bound:false, lastAction:null};
+const perlaPauseMenuStateV360 = {bound:false, lastAction:null, popupReturnFocus:null};
 function perlaRtpPauseMenuPositionChipV360(chip){
     if(!chip || !mini || !mini.getBoundingClientRect) return;
     const rect=mini.getBoundingClientRect();
@@ -44307,9 +45556,18 @@ function perlaRtpPauseMenuPopupCloseV364(reason){
     const menu=document.getElementById('perlaPauseMenuV360');
     const popup=menu&&menu.querySelector('[data-role="popup"]');
     if(popup){
+        const menuClosing=String(reason||'').indexOf('menu_close_')===0;
+        const fallback=menuClosing
+            ? document.getElementById('perlaPauseMenuChipV360')
+            : (perlaPauseMenuStateV360.popupReturnFocus && menu && menu.contains(perlaPauseMenuStateV360.popupReturnFocus) && !popup.contains(perlaPauseMenuStateV360.popupReturnFocus)
+                ? perlaPauseMenuStateV360.popupReturnFocus
+                : (menu&&menu.querySelector('[data-action="safe-backup"],[data-action="mission-current"],.pause-close')));
+        perlaRtpMoveFocusBeforeHideV376(popup, fallback||document.getElementById('perlaPauseMenuChipV360')||document.body);
         popup.classList.remove('visible');
         popup.setAttribute('aria-hidden','true');
+        try{ popup.inert=true; }catch(err){}
     }
+    perlaPauseMenuStateV360.popupReturnFocus=null;
     perlaPauseMenuStateV360.lastAction={type:'popup_close', reason:String(reason||'manual'), at:new Date().toISOString()};
     return {ok:true, reason:String(reason||'manual')};
 }
@@ -44321,10 +45579,13 @@ function perlaRtpPauseMenuPopupOpenV364(title, bodyHtml, options){
     const titleEl=popup&&popup.querySelector('[data-role="popup-title"]');
     const bodyEl=popup&&popup.querySelector('[data-role="popup-body"]');
     if(!popup || !bodyEl) return {ok:false, reason:'pause_popup_missing_v364'};
+    const active=document.activeElement;
+    perlaPauseMenuStateV360.popupReturnFocus=(active && menu && menu.contains(active) && !popup.contains(active)) ? active : null;
     if(titleEl) titleEl.textContent=String(title||'Menu');
     bodyEl.innerHTML=String(bodyHtml||'');
     popup.classList.add('visible');
     popup.setAttribute('aria-hidden','false');
+    try{ popup.inert=false; }catch(err){}
     if(options&&options.focusSelector){
         const focusEl=popup.querySelector(options.focusSelector);
         if(focusEl) setTimeout(()=>focusEl.focus(),0);
@@ -44557,7 +45818,7 @@ function perlaRtpPauseMenuBindV360(){
         if(e.key==='Escape'){ e.preventDefault(); perlaRtpPauseMenuCloseV360('escape_v360'); }
         if(e.key==='Enter' && e.target && e.target.matches && e.target.matches('.pause-pin input,[data-role="debug-pin-input"]')){ e.preventDefault(); perlaRtpPauseDebugOpenV360(); }
     }, {passive:false});
-    window.addEventListener('resize', ()=>{ const next=perlaRtpPauseMenuEnsureV360(); if(next&&next.chip) perlaRtpPauseMenuPositionChipV360(next.chip); const warn=document.getElementById('perlaMiniMapWarningsV360'); if(warn) perlaRtpMiniMapStatWarningsPositionV360(warn); const currency=document.getElementById('perlaMiniMapCurrencyV364'); if(currency) perlaRtpMiniMapCurrencyPositionV364(currency); }, {passive:true});
+    window.addEventListener('resize', ()=>{ const next=perlaRtpPauseMenuEnsureV360(); if(next&&next.chip) perlaRtpPauseMenuPositionChipV360(next.chip); if(typeof perlaRtpMiniMapClusterRelayoutScheduleV380==='function') perlaRtpMiniMapClusterRelayoutScheduleV380('pause_menu_resize'); }, {passive:true});
     return perlaPauseMenuStateV360;
 }
 function perlaDebugGrantResourcesV361(kind){
@@ -44730,6 +45991,7 @@ function gameLoop(time){
     const drawMiniMapThisFrame=miniMapGroupEnabledV315 && ((currentViewportMode==='desktop') || ((perlaMiniMapFrameCounter++ % PERLA_MOBILE_MINIMAP_FRAME_SKIP)===0));
     if(drawMiniMapThisFrame){ const mt0=performance.now(); drawMiniMap(); miniMapMs=performance.now()-mt0; if(perlaLastDrawStats) perlaLastDrawStats.miniMapGroupEnabledV315=1; }
     else if(perlaLastDrawStats){ perlaLastDrawStats.miniMapSkippedV315=(perlaLastDrawStats.miniMapSkippedV315||0)+1; perlaLastDrawStats.miniMapGroupEnabledV315=miniMapGroupEnabledV315?1:0; }
+    if(typeof perlaRtpActionMarkerUpdateV380==='function') perlaRtpActionMarkerUpdateV380('frame_loop_v380');
     const t3=performance.now();
     if(typeof perlaSmartAdaptiveModeFinalizeFrameV300==='function') perlaSmartAdaptiveModeFinalizeFrameV300(perlaLastDrawStats,{frameIntervalMs, updateMs:t1-t0, drawMs:t2-t1, miniMapMs, cpuMs:t3-loopStart});
     recordPerlaFrameStats(frameIntervalMs, t1-t0, t2-t1, miniMapMs, t3-loopStart, pacingV305);
@@ -44896,6 +46158,15 @@ Object.assign(window.perla, {
     rtpBirdSnackSummaryV370:perlaRtpV370GameplayExpansionSummary,
     rtpV370GameplayExpansionSummary:perlaRtpV370GameplayExpansionSummary,
     rtpPass2DailySystemsSyncV370:perlaRtpPass2DailySystemsSyncV370,
+    rtpHubBuildableSummaryV374:perlaRtpHubBuildableSummaryV374,
+    rtpHubBuildableBuyV374:perlaRtpHubBuildableBuyV374,
+    rtpHubBuildablePlacementSummaryV376:perlaRtpHubBuildablePlacementSummaryV376,
+    rtpActionRearmHubMenuAfterRecoveryV376:perlaRtpActionRearmHubMenuAfterRecoveryV376,
+    rtpWetnessOrientationFailVisualValidationV376:perlaRtpWetnessOrientationFailVisualValidationV376,
+    rtpFaintContractAuditV378:perlaRtpFaintContractAuditV378,
+    rtpSecondaryStatPressureV378:perlaRtpSecondaryStatPressureV378,
+    rtpMainRematchContinuityAuditV377:perlaRtpMainRematchContinuityAuditV377,
+    rtpChallengeRewardsV374:perlaRtpChallengeRewardsRuntimeV374,
     rtpHistoricBoulderLayerV370:perlaRtpHistoricBoulderLayerV370,
     rtpActionExtractHistoricBoulderV370:perlaRtpActionExtractHistoricBoulderV370,
     rtpMarketSpecsV356:perlaRtpMarketSpecsV356,
@@ -44986,6 +46257,15 @@ window.perlaRtpPass2ConvertStorageToEcV345 = perlaRtpPass2ConvertStorageToEcV345
 window.perlaRtpMerchantRatesV370 = perlaRtpMerchantRatesV370;
 window.perlaRtpV370GameplayExpansionSummary = perlaRtpV370GameplayExpansionSummary;
 window.perlaRtpPass2DailySystemsSyncV370 = perlaRtpPass2DailySystemsSyncV370;
+window.perlaRtpHubBuildableSummaryV374 = perlaRtpHubBuildableSummaryV374;
+window.perlaRtpHubBuildableBuyV374 = perlaRtpHubBuildableBuyV374;
+window.perlaRtpHubBuildablePlacementSummaryV376 = perlaRtpHubBuildablePlacementSummaryV376;
+window.perlaRtpActionRearmHubMenuAfterRecoveryV376 = perlaRtpActionRearmHubMenuAfterRecoveryV376;
+window.perlaRtpWetnessOrientationFailVisualValidationV376 = perlaRtpWetnessOrientationFailVisualValidationV376;
+window.perlaRtpFaintContractAuditV378 = perlaRtpFaintContractAuditV378;
+window.perlaRtpSecondaryStatPressureV378 = perlaRtpSecondaryStatPressureV378;
+window.perlaRtpMainRematchContinuityAuditV377 = perlaRtpMainRematchContinuityAuditV377;
+window.perlaRtpChallengeRewardsV374 = perlaRtpChallengeRewardsRuntimeV374;
 window.perlaRtpHistoricBoulderLayerV370 = perlaRtpHistoricBoulderLayerV370;
 window.perlaRtpActionExtractHistoricBoulderV370 = perlaRtpActionExtractHistoricBoulderV370;
 window.perlaRtpMarketSpecsV356 = perlaRtpMarketSpecsV356;
@@ -45007,6 +46287,8 @@ window.perlaRtpSystemAudioSummaryV346 = perlaRtpSystemAudioSummaryV346;
 window.perlaRtpSystemAudioProfileV346 = perlaRtpSystemAudioProfileV346;
 window.perlaRtpPlaySystemAudioV346 = perlaRtpPass2PlayActionSoundV345;
 window.perlaRtpPass2RenderInventoryHudV345 = perlaRtpPass2RenderInventoryHud;
+window.perlaRtpMiniMapClusterRelayoutV380 = perlaRtpMiniMapClusterRelayoutV380;
+window.perlaRtpActionMarkerUpdateV380 = perlaRtpActionMarkerUpdateV380;
 window.perlaRtpHubRosterV345 = perlaRtpRecruitedRosterV345;
 window.perlaRtpV349GameplayHardeningSummary = perlaRtpV349GameplayHardeningSummary;
 window.perlaRtpPass3DialogueFlowSummaryV347 = perlaRtpPass3DialogueFlowSummaryV347;
@@ -45124,6 +46406,19 @@ window.__PERLA_DEBUG__.setPlayerForDebug = function(x,y,dx,dy){
     return result;
 };
 Object.assign(window.__PERLA_DEBUG__, {
+    PERLA_V378_SECONDARY_STAT_PRESSURE_NOT_DIRECT_FAINT_SAFE,
+    PERLA_V378_DIRECT_FAINT_STATS,
+    PERLA_V378_SECONDARY_PRESSURE_START,
+    PERLA_V378_SECONDARY_PRESSURE_EXP,
+    PERLA_V378_SECONDARY_PRESSURE_COMFORT_MULT,
+    PERLA_V378_SECONDARY_PRESSURE_STRESS_MULT,
+    PERLA_V378_CONDITION_CRITICAL_PROGRESS_GATE_SAFE,
+    PERLA_V378_CONDITION_CRITICAL_PROGRESS_MIN,
+    PERLA_V379_ORIENTATION_DIRECT_FAINT_SAFE,
+    PERLA_V379_WETNESS_SECONDARY_ONLY_SAFE,
+    PERLA_V379_FAINT_AND_SECONDARY_PRESSURE_SAFE,
+    perlaRtpFaintContractAuditV378,
+    perlaRtpSecondaryStatPressureV378,
     PERLA_V331_RTP_BOUNDED_LIVE_TEST_SAFE,
     PERLA_V331_BASE_BUILD,
     PERLA_V331_PATCH_MODE,
@@ -45335,6 +46630,7 @@ Object.assign(window.__PERLA_DEBUG__, {
     perlaRtpStartupSimulationFreezeV366,
     perlaRtpEffectiveStatRatesV366,
     perlaRtpConditionCriticalMapV366,
+    perlaRtpConditionCriticalProgressGateV378,
     perlaRtpCurrentModifierGroupsV361,
     perlaRtpPass2ToastV366,
     perlaRtpPass2MaybeShowDebtNoticeV366,
