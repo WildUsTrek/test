@@ -728,8 +728,12 @@
             scroll-snap-type:x proximity;
             -webkit-overflow-scrolling:touch;
         }
-        html.perla-mobile-portrait #perlaInventoryHudV345P2 { max-width:calc(100% - 204px); }
-        html.perla-mobile-landscape #perlaInventoryHudV345P2 { max-width:calc(100% - 190px); }
+        html.perla-mobile-portrait .ui-panel,
+        html.perla-mobile-landscape .ui-panel { display:none !important; }
+        html.perla-mobile-portrait #mini-map { width:92px !important; height:92px !important; right:10px !important; top:10px !important; opacity:.92 !important; }
+        html.perla-mobile-landscape #mini-map { width:88px !important; height:88px !important; right:12px !important; top:10px !important; opacity:.92 !important; }
+        html.perla-mobile-portrait #perlaInventoryHudV345P2 { max-width:calc(100% - 228px); }
+        html.perla-mobile-landscape #perlaInventoryHudV345P2 { max-width:calc(100% - 332px); top:8px; }
         html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-head,
         html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-resources,
         html.perla-mobile-landscape #perlaInventoryHudV345P2 .inv-head,
@@ -755,6 +759,11 @@
         html.perla-mobile-landscape #perlaMiniMapCurrencyV364 .v364-currency-badge svg {
             width:15px;
             height:15px;
+        }
+        html.perla-mobile-portrait.perla-v380-action-marker-ready.perla-v380-action-marker-visible #rtpActionBtnV332.visible,
+        html.perla-mobile-landscape.perla-v380-action-marker-ready.perla-v380-action-marker-visible #rtpActionBtnV332.visible {
+            display:none !important;
+            pointer-events:none !important;
         }
         html.perla-mobile-portrait #rtpActionMarkerV380[data-casa="true"],
         html.perla-mobile-landscape #rtpActionMarkerV380[data-casa="true"] {
@@ -803,11 +812,26 @@
             padding:10px 12px 12px;
             scroll-snap-type:x mandatory;
             -webkit-overflow-scrolling:touch;
+            scrollbar-width:none;
         }
+        #perlaRtpMarketMenuV356 .rtp-v356-market-grid::-webkit-scrollbar { display:none; }
         #perlaRtpMarketMenuV356 .rtp-v356-market-card {
             flex:0 0 min(330px, calc(100vw - 42px));
             scroll-snap-align:start;
             grid-template-rows:auto minmax(38px,auto) minmax(94px,1fr) auto;
+        }
+        html.perla-mobile-portrait #perlaRtpMarketMenuV356 .rtp-v356-market-grid,
+        html.perla-mobile-landscape #perlaRtpMarketMenuV356 .rtp-v356-market-grid {
+            display:flex !important;
+            grid-template-columns:none !important;
+            max-height:none !important;
+            overflow-x:auto !important;
+            overflow-y:hidden !important;
+        }
+        html.perla-mobile-portrait #perlaRtpMarketMenuV356 .rtp-v356-market-card,
+        html.perla-mobile-landscape #perlaRtpMarketMenuV356 .rtp-v356-market-card {
+            flex:0 0 min(320px, calc(100vw - 46px));
+            min-width:min(320px, calc(100vw - 46px));
         }
         #perlaRtpUpgradeMenuV334 .rtp-v350-rent-status {
             display:grid;
@@ -934,6 +958,111 @@
         html.perla-mobile-landscape #perlaRtpDialogueV332 {
             max-height:58dvh;
             bottom:calc(62px + env(safe-area-inset-bottom));
+        }
+        html.perla-mobile-landscape #perlaInfoModalV361 {
+            align-items:center;
+            justify-content:center;
+            padding:8px calc(74px + env(safe-area-inset-right)) 8px calc(74px + env(safe-area-inset-left));
+            overflow:hidden;
+        }
+        html.perla-mobile-landscape #perlaInfoModalV361 .info-panel {
+            width:min(620px, calc(var(--perla-vv-width,100vw) - 160px - env(safe-area-inset-left) - env(safe-area-inset-right)));
+            max-height:calc(var(--perla-vv-height,100dvh) - 18px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+            display:grid;
+            grid-template-rows:auto minmax(0,1fr);
+            overflow:hidden;
+        }
+        html.perla-mobile-landscape #perlaInfoModalV361 .info-head {
+            position:relative;
+            padding:8px 10px;
+        }
+        html.perla-mobile-landscape #perlaInfoModalV361 h3 {
+            font-size:13px;
+            line-height:1.08;
+        }
+        html.perla-mobile-landscape #perlaInfoModalV361 .info-close {
+            width:30px;
+            height:30px;
+        }
+        html.perla-mobile-landscape #perlaInfoModalV361 .info-body {
+            min-height:0;
+            overflow:auto;
+            gap:8px;
+            padding:9px 10px 10px;
+        }
+        html.perla-mobile-landscape #perlaInfoModalV361 .info-section {
+            gap:5px;
+            padding:7px 8px;
+        }
+        html.perla-mobile-landscape #perlaInfoModalV361 .info-section h4 {
+            font-size:11px;
+            line-height:1.08;
+        }
+        html.perla-mobile-landscape #perlaInfoModalV361 p,
+        html.perla-mobile-landscape #perlaInfoModalV361 li {
+            font-size:11px;
+            line-height:1.22;
+        }
+        html.perla-mobile-landscape #perlaInfoModalV361 .info-chip {
+            min-height:25px;
+            padding:3px 7px;
+            font-size:9px;
+        }
+        html.perla-mobile-landscape #perlaInfoModalV361 .info-action {
+            min-height:30px;
+        }
+        html.perla-mobile-landscape #perlaPauseMenuV360 .pause-panel {
+            width:min(640px, calc(var(--perla-vv-width,100vw) - 156px - env(safe-area-inset-left) - env(safe-area-inset-right)));
+            max-height:calc(var(--perla-vv-height,100dvh) - 18px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+            display:grid;
+            grid-template-rows:auto minmax(0,1fr);
+        }
+        html.perla-mobile-landscape #perlaPauseMenuV360 .pause-head {
+            padding:7px 10px;
+        }
+        html.perla-mobile-landscape #perlaPauseMenuV360 h3 {
+            font-size:15px;
+            line-height:1.02;
+        }
+        html.perla-mobile-landscape #perlaPauseMenuV360 .pause-title-kicker {
+            font-size:8px;
+            margin-bottom:2px;
+        }
+        html.perla-mobile-landscape #perlaPauseMenuV360 .pause-body {
+            min-height:0;
+            overflow:auto;
+            display:grid;
+            grid-template-columns:repeat(2,minmax(0,1fr));
+            gap:7px;
+            padding:8px 10px 9px;
+        }
+        html.perla-mobile-landscape #perlaPauseMenuV360 .pause-button {
+            min-height:40px;
+            grid-template-columns:28px minmax(0,1fr);
+            gap:7px;
+            padding:5px 8px;
+        }
+        html.perla-mobile-landscape #perlaPauseMenuV360 .pause-button-icon {
+            width:28px;
+            height:28px;
+        }
+        html.perla-mobile-landscape #perlaPauseMenuV360 .pause-button-text strong {
+            font-size:12px;
+            line-height:1.04;
+        }
+        html.perla-mobile-landscape #perlaPauseMenuV360 .pause-button-text small {
+            display:-webkit-box;
+            -webkit-line-clamp:1;
+            -webkit-box-orient:vertical;
+            overflow:hidden;
+            font-size:9px;
+            line-height:1.08;
+        }
+        html.perla-mobile-landscape #perlaPauseMenuV360 .pause-missions,
+        html.perla-mobile-landscape #perlaPauseMenuV360 .pause-confirm,
+        html.perla-mobile-landscape #perlaPauseMenuV360 .pause-pin,
+        html.perla-mobile-landscape #perlaPauseMenuV360 .pause-status {
+            grid-column:1 / -1;
         }
     </style>
 </head>
@@ -9558,8 +9687,8 @@ function perlaRtpMiniMapStatWarningsBindV361(el){
 function perlaRtpMiniMapBadgeSizeV380(rect, kind){
     const base=Math.max(1, Math.min(Number(rect&&rect.width)||0, Number(rect&&rect.height)||0));
     const mobile=currentViewportMode==='mobile-portrait' || currentViewportMode==='mobile-landscape';
-    if(kind==='currency') return mobile ? Math.max(22, Math.min(30, Math.round(base*.34))) : Math.max(28, Math.min(34, Math.round(base*.44)));
-    return mobile ? Math.max(22, Math.min(28, Math.round(base*.32))) : Math.max(26, Math.min(32, Math.round(base*.42)));
+    if(kind==='currency') return mobile ? Math.max(22, Math.min(26, Math.round(base*.29))) : Math.max(28, Math.min(34, Math.round(base*.44)));
+    return mobile ? Math.max(21, Math.min(24, Math.round(base*.27))) : Math.max(26, Math.min(32, Math.round(base*.42)));
 }
 function perlaRtpMiniMapStatWarningsPositionV360(el, force){
     if(!el || !mini || !mini.getBoundingClientRect) return;
@@ -9578,16 +9707,23 @@ function perlaRtpMiniMapStatWarningsPositionV360(el, force){
     el.style.setProperty('--perla-mini-warning-size', badgeSize+'px');
     el.style.setProperty('--perla-mini-badge-size', badgeSize+'px');
     const mobile=currentViewportMode==='mobile-portrait' || currentViewportMode==='mobile-landscape';
-    const cx=rect.width*.5, cy=rect.height*.5, r=Math.min(rect.width,rect.height)*(mobile?.57:.50);
+    const cx=rect.width*.5, cy=rect.height*.5, r=Math.min(rect.width,rect.height)*(mobile?.62:.50);
     const place=(key, angleDeg)=>{
         const badge=el.querySelector('[data-key="'+key+'"]');
         if(!badge) return;
         const a=angleDeg*Math.PI/180;
-        badge.style.left=Math.round(cx+Math.cos(a)*r-badgeSize*.5)+'px';
-        badge.style.top=Math.round(cy+Math.sin(a)*r-badgeSize*.5)+'px';
+        const safe=4;
+        const viewportW=Number(window&&window.visualViewport&&window.visualViewport.width)||window.innerWidth||800;
+        const viewportH=Number(window&&window.visualViewport&&window.visualViewport.height)||window.innerHeight||600;
+        let left=cx+Math.cos(a)*r-badgeSize*.5;
+        let top=cy+Math.sin(a)*r-badgeSize*.5;
+        left=Math.max(safe-rect.left, Math.min(left, viewportW-safe-badgeSize-rect.left));
+        top=Math.max(safe-rect.top, Math.min(top, viewportH-safe-badgeSize-rect.top));
+        badge.style.left=Math.round(left)+'px';
+        badge.style.top=Math.round(top)+'px';
     };
-    place('wetness', mobile?128:150);
-    place('orientation', mobile?52:30);
+    place('wetness', mobile?150:150);
+    place('orientation', mobile?30:30);
 }
 function perlaRtpMiniMapStatWarningsUpdateV360(values, st){
     const el=perlaRtpMiniMapStatWarningsEnsureV360();
@@ -9661,16 +9797,23 @@ function perlaRtpMiniMapCurrencyPositionV364(el, force){
     el.style.setProperty('--perla-mini-currency-size', badgeSize+'px');
     el.style.setProperty('--perla-mini-badge-size', badgeSize+'px');
     const mobile=currentViewportMode==='mobile-portrait' || currentViewportMode==='mobile-landscape';
-    const cx=rect.width*.5, cy=rect.height*.5, r=Math.min(rect.width,rect.height)*(mobile?.61:.50);
+    const cx=rect.width*.5, cy=rect.height*.5, r=Math.min(rect.width,rect.height)*(mobile?.66:.50);
     const place=(key, angleDeg)=>{
         const badge=el.querySelector('[data-key="'+key+'"]');
         if(!badge) return;
         const a=angleDeg*Math.PI/180;
-        badge.style.left=Math.round(cx+Math.cos(a)*r-badgeSize*.5)+'px';
-        badge.style.top=Math.round(cy+Math.sin(a)*r-badgeSize*.5)+'px';
+        const safe=4;
+        const viewportW=Number(window&&window.visualViewport&&window.visualViewport.width)||window.innerWidth||800;
+        const viewportH=Number(window&&window.visualViewport&&window.visualViewport.height)||window.innerHeight||600;
+        let left=cx+Math.cos(a)*r-badgeSize*.5;
+        let top=cy+Math.sin(a)*r-badgeSize*.5;
+        left=Math.max(safe-rect.left, Math.min(left, viewportW-safe-badgeSize-rect.left));
+        top=Math.max(safe-rect.top, Math.min(top, viewportH-safe-badgeSize-rect.top));
+        badge.style.left=Math.round(left)+'px';
+        badge.style.top=Math.round(top)+'px';
     };
-    place('ec', mobile?-114:-138);
-    place('gd', mobile?-66:-42);
+    place('ec', mobile?-132:-138);
+    place('gd', mobile?-48:-42);
 }
 function perlaRtpMiniMapCurrencyUpdateV364(summary){
     const el=perlaRtpMiniMapCurrencyEnsureV364();
@@ -9697,6 +9840,7 @@ function perlaRtpMiniMapClusterRelayoutV380(reason){
     if(warn) perlaRtpMiniMapStatWarningsPositionV360(warn, true);
     if(currency) perlaRtpMiniMapCurrencyPositionV364(currency, true);
     if(chip && typeof perlaRtpPauseMenuPositionChipV360==='function') perlaRtpPauseMenuPositionChipV360(chip);
+    if(typeof perlaRtpRateInfoButtonPositionV381==='function') perlaRtpRateInfoButtonPositionV381();
     if(typeof perlaRtpActionMarkerUpdateV380==='function') perlaRtpActionMarkerUpdateV380('minimap_cluster_'+String(reason||'relayout'));
     return {ok:true, reason:String(reason||'relayout'), warn:!!warn, currency:!!currency, chip:!!chip};
 }
@@ -9725,7 +9869,10 @@ function perlaRtpBindHudInfoClicksV361(){
 function perlaRtpRateInfoButtonEnsureV381(){
     if(!PERLA_V361_INFO_MODAL_SAFE) return null;
     let btn=document.getElementById('perlaRateInfoButtonV381');
-    if(btn) return btn;
+    if(btn){
+        perlaRtpRateInfoButtonPositionV381(btn);
+        return btn;
+    }
     btn=document.createElement('button');
     btn.id='perlaRateInfoButtonV381';
     btn.className='perla-rate-info-button-v381';
@@ -9738,7 +9885,35 @@ function perlaRtpRateInfoButtonEnsureV381(){
         perlaRtpOpenRateInfoV381();
     }, {passive:false});
     document.body.appendChild(btn);
+    perlaRtpRateInfoButtonPositionV381(btn);
     return btn;
+}
+function perlaRtpRateInfoButtonPositionV381(btn){
+    btn=btn||document.getElementById('perlaRateInfoButtonV381');
+    if(!btn) return null;
+    const anchor=document.getElementById('perlaBackpackToggleV350')||document.getElementById('perlaBackpackHudV350');
+    const vw=window.innerWidth||document.documentElement.clientWidth||800;
+    const vh=window.innerHeight||document.documentElement.clientHeight||600;
+    const size=30;
+    let left=12;
+    let top=118;
+    if(anchor){
+        const r=anchor.getBoundingClientRect();
+        const gap=(document.documentElement.classList.contains('perla-mobile-landscape')||document.documentElement.classList.contains('perla-mobile-portrait')) ? 6 : 8;
+        left=r.right+gap;
+        top=r.top+(r.height-size)/2;
+        if(left+size+8>vw){
+            left=Math.max(8, r.left);
+            top=Math.min(vh-size-8, r.bottom+gap);
+        }
+    }
+    left=Math.max(8, Math.min(vw-size-8, left));
+    top=Math.max(8, Math.min(vh-size-8, top));
+    btn.style.left=left+'px';
+    btn.style.top=top+'px';
+    btn.style.right='auto';
+    btn.style.bottom='auto';
+    return {left, top, size, anchored:!!anchor};
 }
 function perlaRtpOpenRateInfoV381(){
     const groups=perlaRtpCurrentModifierGroupsV361('comfort');
@@ -15674,6 +15849,7 @@ function perlaBackpackHudRenderV350(){
     const count=hud.querySelector('.bag-count');
     if(count) count.textContent=String(total);
     const panel=document.getElementById('perlaBackpackPanelV350');
+    if(typeof perlaRtpRateInfoButtonPositionV381==='function') perlaRtpRateInfoButtonPositionV381();
     if(!panel) return {total};
     panel.innerHTML='';
     Object.keys(PERLA_V345_PASS2_CONSUMABLE_SPECS).forEach(k=>{
@@ -18069,7 +18245,24 @@ function perlaRtpUiModalLockActiveV350(){
     const st=typeof perlaRtpActionDialogueStateV332!=='undefined' ? perlaRtpActionDialogueStateV332 : null;
     const overlay=document.getElementById('perlaFailStateOverlayV350');
     const pause=document.getElementById('perlaPauseMenuV360');
-    return !!(st && (st.visible || st.upgradeMenuVisible || st.marketMenuVisible || st.battleModalVisible || st.challengeModalVisible)) || !!(overlay && overlay.classList.contains('visible')) || !!(pause && pause.classList.contains('visible')) || (typeof perlaIntroTourLockActiveV363==='function' && perlaIntroTourLockActiveV363());
+    const dialogue=document.getElementById('perlaRtpDialogueV332');
+    const upgrade=document.getElementById('perlaRtpUpgradeMenuV334');
+    const market=document.getElementById('perlaRtpMarketMenuV356');
+    const battle=document.getElementById('perlaRtpBattleModalV334');
+    const challenge=document.getElementById('perlaRtpChallengeModalV370');
+    const dialogueLock=!!(st&&st.visible&&dialogue&&dialogue.classList.contains('visible'));
+    const upgradeLock=!!(st&&st.upgradeMenuVisible&&upgrade&&upgrade.classList.contains('visible'));
+    const marketLock=!!(st&&st.marketMenuVisible&&market&&market.classList.contains('visible'));
+    const battleLock=!!(st&&st.battleModalVisible&&battle&&battle.classList.contains('visible'));
+    const challengeLock=!!(st&&st.challengeModalVisible&&challenge&&challenge.classList.contains('visible'));
+    if(st && !dialogueLock && !upgradeLock && !marketLock && !battleLock && !challengeLock && (st.visible || st.upgradeMenuVisible || st.marketMenuVisible || st.battleModalVisible || st.challengeModalVisible)){
+        st.visible=false;
+        st.upgradeMenuVisible=false;
+        st.marketMenuVisible=false;
+        st.battleModalVisible=false;
+        st.challengeModalVisible=false;
+    }
+    return dialogueLock || upgradeLock || marketLock || battleLock || challengeLock || !!(overlay && overlay.classList.contains('visible')) || !!(pause && pause.classList.contains('visible')) || (typeof perlaIntroTourLockActiveV363==='function' && perlaIntroTourLockActiveV363());
 }
 function perlaRtpActionResetMovementOnUiLockV350(reason){
     if(typeof resetKeyboardMovementV118==='function') resetKeyboardMovementV118(reason||'rtp_ui_lock_v350');
@@ -18414,10 +18607,12 @@ function perlaRtpActionUpdateButtonV332(){
     const btn=document.getElementById('rtpActionBtnV332');
     if(!btn) return;
     const available=perlaRtpActionAvailableV332();
-    btn.classList.toggle('visible', available);
-    btn.disabled=!available;
-    btn.setAttribute('aria-hidden', available?'false':'true');
-    if(typeof perlaRtpActionMarkerUpdateV380==='function') perlaRtpActionMarkerUpdateV380('button_update_v332');
+    const markerResult=typeof perlaRtpActionMarkerUpdateV380==='function' ? perlaRtpActionMarkerUpdateV380('button_update_v332') : null;
+    const mobile=currentViewportMode==='mobile-portrait' || currentViewportMode==='mobile-landscape';
+    const showBottomButton=!!available && !(mobile && markerResult && markerResult.visible);
+    btn.classList.toggle('visible', showBottomButton);
+    btn.disabled=!showBottomButton;
+    btn.setAttribute('aria-hidden', showBottomButton?'false':'true');
 }
 function perlaRtpActionBindTouchButtonV332(){
     const btn=document.getElementById('rtpActionBtnV332');
@@ -45805,9 +46000,18 @@ function perlaRtpPauseMenuPositionChipV360(chip){
     if(!rect || rect.width<=0 || rect.height<=0) return;
     const mobile=currentViewportMode==='mobile-portrait' || currentViewportMode==='mobile-landscape';
     const chipW=mobile?54:48;
-    const yOffset=mobile?8:13;
-    chip.style.left=Math.round(rect.left+rect.width*.50-chipW*.5)+'px';
-    chip.style.top=Math.round(rect.bottom-yOffset)+'px';
+    const gap=mobile?7:4;
+    const safeLeft=6+(Number(window&&window.visualViewport&&window.visualViewport.offsetLeft)||0);
+    const safeTop=6+(Number(window&&window.visualViewport&&window.visualViewport.offsetTop)||0);
+    const viewportW=Number(window&&window.visualViewport&&window.visualViewport.width)||window.innerWidth||800;
+    const viewportH=Number(window&&window.visualViewport&&window.visualViewport.height)||window.innerHeight||600;
+    const chipH=mobile?26:25;
+    const rawLeft=rect.left+rect.width*.50-chipW*.5;
+    const rawTop=rect.bottom+gap;
+    const left=Math.max(safeLeft, Math.min(rawLeft, safeLeft+viewportW-chipW-6));
+    const top=Math.max(safeTop, Math.min(rawTop, safeTop+viewportH-chipH-6));
+    chip.style.left=Math.round(left)+'px';
+    chip.style.top=Math.round(top)+'px';
     chip.style.minWidth=chipW+'px';
 }
 function perlaRtpPauseMenuEnsureV360(){
