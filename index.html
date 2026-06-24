@@ -3227,6 +3227,12 @@
             height:24px;
             filter:drop-shadow(0 3px 5px rgba(0,0,0,.45));
         }
+        #perlaCasaPremiumMenuV384 .casa-v403-section-resources .rtp-v364-owned-chip,
+        #perlaCasaPremiumMenuV384 .casa-v403-skill-resources .rtp-v364-owned-chip {
+            position:relative;
+            justify-content:center;
+            overflow:visible;
+        }
         #perlaCasaPremiumMenuV384 .casa-v390-section-body {
             min-height:0;
             overflow:auto;
@@ -4309,6 +4315,18 @@
         #perlaInfoModalV361[data-kind="casa_bonus_detail_v403"] .info-panel {
             width:min(700px,calc(100vw - 22px)) !important;
         }
+        #perlaInfoModalV361[data-kind="casa_bonus_detail_v403"] .info-panel,
+        #perlaInfoModalV361[data-kind="casa_bonus_detail_v403"] .info-body {
+            scrollbar-width:none !important;
+            -ms-overflow-style:none !important;
+        }
+        #perlaInfoModalV361[data-kind="casa_bonus_detail_v403"] .info-panel::-webkit-scrollbar,
+        #perlaInfoModalV361[data-kind="casa_bonus_detail_v403"] .info-body::-webkit-scrollbar {
+            width:0 !important;
+            height:0 !important;
+            display:none !important;
+            background:transparent !important;
+        }
         #perlaInfoModalV361[data-kind="casa_confirm_purchase_v403"] .rtp-v355-summary,
         #perlaInfoModalV361[data-kind="casa_bonus_detail_v403"] .rtp-v355-summary {
             display:flex !important;
@@ -4335,6 +4353,76 @@
         }
         #perlaInfoModalV361 .casa-v403-after-chip[data-delta="same"] {
             opacity:.82;
+        }
+        #perlaCasaPremiumMenuV384[data-route="child"] .casa-v384-close,
+        #perlaCasaPremiumMenuV384:has(.casa-v390-resource-popup.visible) .casa-v384-close,
+        #perlaCasaPremiumMenuV384:has(.rtp-v358-worker-popup.visible) .casa-v384-close,
+        #perlaCasaPremiumMenuV384:has(.rtp-v374-skill-popup.visible) .casa-v384-close {
+            position:absolute !important;
+            top:10px !important;
+            right:12px !important;
+            margin:0 !important;
+            width:42px !important;
+            height:42px !important;
+            justify-self:auto !important;
+            align-self:auto !important;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v403-section-resources,
+        #perlaCasaPremiumMenuV384 .casa-v403-skill-resources {
+            flex-wrap:nowrap !important;
+            gap:6px !important;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v403-skill-resources {
+            height:32px !important;
+            min-height:32px !important;
+            padding:0 !important;
+            margin:-8px 0 6px !important;
+            overflow:visible !important;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v403-section-resources .rtp-v364-owned-chip,
+        #perlaCasaPremiumMenuV384 .casa-v403-skill-resources .rtp-v364-owned-chip {
+            position:relative !important;
+            width:32px !important;
+            min-width:32px !important;
+            max-width:32px !important;
+            min-height:32px !important;
+            height:32px !important;
+            padding:0 !important;
+            border:0 !important;
+            background:transparent !important;
+            box-shadow:none !important;
+            overflow:visible !important;
+            justify-content:center !important;
+            align-items:center !important;
+            gap:0 !important;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v403-section-resources .rtp-v364-owned-chip svg,
+        #perlaCasaPremiumMenuV384 .casa-v403-skill-resources .rtp-v364-owned-chip svg {
+            width:26px !important;
+            height:26px !important;
+            filter:drop-shadow(0 3px 5px rgba(0,0,0,.48)) !important;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v403-section-resources .rtp-v364-owned-chip span,
+        #perlaCasaPremiumMenuV384 .casa-v403-skill-resources .rtp-v364-owned-chip span {
+            position:absolute !important;
+            right:-5px !important;
+            bottom:-4px !important;
+            min-width:16px !important;
+            height:16px !important;
+            padding:0 4px !important;
+            display:flex !important;
+            align-items:center !important;
+            justify-content:center !important;
+            border-radius:999px !important;
+            color:#25190f !important;
+            background:linear-gradient(180deg,#fff1bf,#e0ad52) !important;
+            border:1px solid rgba(48,29,11,.34) !important;
+            box-shadow:0 2px 5px rgba(0,0,0,.38) !important;
+            font-size:10px !important;
+            line-height:1 !important;
+            font-weight:950 !important;
+            font-variant-numeric:tabular-nums !important;
+            pointer-events:none !important;
         }
         #perlaClockHud {
             min-width:0 !important;
@@ -6276,7 +6364,7 @@
         #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card p,
         #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card p,
         #perlaCasaPremiumMenuV384 .rtp-v334-card p {
-            min-height:46px !important;
+            min-height:48px !important;
             max-height:46px !important;
             margin:0 !important;
             overflow:hidden !important;
@@ -6937,6 +7025,407 @@
                 height:12px !important;
                 flex-basis:12px !important;
             }
+        }
+        /* V404: mobile Casa/HUD compactness contract.
+           Scope is narrow: vertical header protection, compact info popups,
+           landscape card height recovery, and resource popup grids. */
+        #perlaInfoModalV361 .casa-v403-owned-popover[hidden] { display:none !important; }
+        #perlaInfoModalV361 .casa-v403-owned-popover { display:block !important; margin-top:-2px !important; }
+        #perlaInfoModalV361 .casa-v403-owned-popover .info-section {
+            border-color:rgba(245,217,158,.30) !important;
+            background:linear-gradient(180deg,rgba(245,217,158,.10),rgba(255,255,255,.04)) !important;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v390-resource-action-columns {
+            display:grid !important;
+            grid-template-columns:1fr !important;
+            gap:10px !important;
+            min-width:0 !important;
+        }
+        #perlaCasaPremiumMenuV384 .casa-v390-resource-action-block {
+            display:grid !important;
+            gap:8px !important;
+            min-width:0 !important;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup-head { padding-top:8px !important; }
+        #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup-head .rtp-v355-summary {
+            display:flex !important;
+            flex-wrap:nowrap !important;
+            gap:6px !important;
+            min-width:0 !important;
+            overflow:hidden !important;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup-head .rtp-v355-summary-chip {
+            flex:0 1 auto !important;
+            min-width:38px !important;
+            max-width:56px !important;
+            min-height:28px !important;
+            padding:4px 6px !important;
+            gap:3px !important;
+            justify-content:center !important;
+            font-size:10.5px !important;
+            white-space:nowrap !important;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup-head .rtp-v355-summary-chip svg {
+            width:15px !important;
+            height:15px !important;
+            flex-basis:15px !important;
+        }
+
+        html.perla-mobile-portrait #perlaBackpackHudV350 {
+            left:calc(8px + env(safe-area-inset-left)) !important;
+            top:calc(8px + env(safe-area-inset-top)) !important;
+            z-index:9 !important;
+        }
+        html.perla-mobile-portrait #perlaInventoryHudV345P2 {
+            left:calc(54px + env(safe-area-inset-left)) !important;
+            right:auto !important;
+            top:calc(8px + env(safe-area-inset-top)) !important;
+            width:max-content !important;
+            min-width:max-content !important;
+            max-width:calc(100vw - 64px - env(safe-area-inset-left) - env(safe-area-inset-right)) !important;
+            min-height:46px !important;
+            padding:4px 5px !important;
+            flex-wrap:nowrap !important;
+            overflow:visible !important;
+            transform:none !important;
+            z-index:8 !important;
+        }
+        html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-head {
+            display:grid !important;
+            grid-template-columns:38px minmax(56px,64px) 38px !important;
+            align-items:center !important;
+            gap:5px !important;
+            min-width:0 !important;
+            min-height:44px !important;
+            flex-wrap:nowrap !important;
+        }
+        html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-label-title,
+        html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-ec,
+        html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-gd {
+            display:none !important;
+        }
+        html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-debt,
+        html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-menu {
+            width:38px !important;
+            min-width:38px !important;
+            height:44px !important;
+            padding:0 !important;
+        }
+        html.perla-mobile-portrait #perlaInventoryHudV345P2 .inv-capacity {
+            width:64px !important;
+            min-width:56px !important;
+            height:44px !important;
+            padding:0 5px !important;
+        }
+        html.perla-mobile-portrait #perlaClockHud {
+            left:calc(8px + env(safe-area-inset-left)) !important;
+            top:calc(56px + env(safe-area-inset-top)) !important;
+            max-width:132px !important;
+            z-index:4 !important;
+        }
+
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v384-title-line {
+            grid-template-columns:minmax(0,1fr) !important;
+            gap:0 !important;
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v384-title { display:none !important; }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v390-status-strip {
+            grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+            gap:3px !important;
+            width:100% !important;
+            overflow:hidden !important;
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v390-status-strip .casa-v384-head-chip {
+            min-width:0 !important;
+            width:100% !important;
+            min-height:25px !important;
+            padding:3px 3px !important;
+            gap:2px !important;
+            overflow:hidden !important;
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v390-status-strip .casa-v384-head-chip svg {
+            width:12px !important;
+            height:12px !important;
+            flex:0 0 12px !important;
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v390-status-strip .casa-v384-head-chip span {
+            min-width:0 !important;
+            overflow:hidden !important;
+            text-overflow:ellipsis !important;
+            white-space:nowrap !important;
+            font-size:8.4px !important;
+        }
+        html.perla-mobile-portrait #perlaInfoModalV361[data-kind="casa_missing_resources_v384"] .info-panel,
+        html.perla-mobile-portrait #perlaInfoModalV361[data-kind="casa_confirm_purchase_v403"] .info-panel {
+            width:calc(100vw - 10px) !important;
+            max-height:calc(100svh - 10px) !important;
+        }
+        html.perla-mobile-portrait #perlaInfoModalV361[data-kind="casa_missing_resources_v384"] .info-body,
+        html.perla-mobile-portrait #perlaInfoModalV361[data-kind="casa_confirm_purchase_v403"] .info-body {
+            gap:7px !important;
+            padding:9px !important;
+        }
+        html.perla-mobile-portrait #perlaInfoModalV361[data-kind="casa_missing_resources_v384"] .info-section,
+        html.perla-mobile-portrait #perlaInfoModalV361[data-kind="casa_confirm_purchase_v403"] .info-section {
+            padding:7px !important;
+            gap:5px !important;
+        }
+        html.perla-mobile-portrait #perlaInfoModalV361[data-kind="casa_missing_resources_v384"] .rtp-v355-summary,
+        html.perla-mobile-portrait #perlaInfoModalV361[data-kind="casa_confirm_purchase_v403"] .rtp-v355-summary,
+        html.perla-mobile-portrait #perlaInfoModalV361[data-kind="casa_missing_resources_v384"] .casa-v384-missing-owned,
+        html.perla-mobile-portrait #perlaInfoModalV361[data-kind="casa_confirm_purchase_v403"] .casa-v384-missing-owned {
+            display:grid !important;
+            grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+            gap:7px !important;
+        }
+        html.perla-mobile-portrait #perlaInfoModalV361[data-kind="casa_missing_resources_v384"] .rtp-v355-summary-chip,
+        html.perla-mobile-portrait #perlaInfoModalV361[data-kind="casa_confirm_purchase_v403"] .rtp-v355-summary-chip,
+        html.perla-mobile-portrait #perlaInfoModalV361[data-kind="casa_missing_resources_v384"] .rtp-v364-owned-chip,
+        html.perla-mobile-portrait #perlaInfoModalV361[data-kind="casa_confirm_purchase_v403"] .rtp-v364-owned-chip {
+            min-width:0 !important;
+            min-height:34px !important;
+            padding:5px 6px !important;
+            gap:5px !important;
+            font-size:13px !important;
+        }
+        html.perla-mobile-portrait #perlaInfoModalV361[data-kind="casa_missing_resources_v384"] .rtp-v355-summary-chip svg,
+        html.perla-mobile-portrait #perlaInfoModalV361[data-kind="casa_confirm_purchase_v403"] .rtp-v355-summary-chip svg,
+        html.perla-mobile-portrait #perlaInfoModalV361[data-kind="casa_missing_resources_v384"] .rtp-v364-owned-chip svg,
+        html.perla-mobile-portrait #perlaInfoModalV361[data-kind="casa_confirm_purchase_v403"] .rtp-v364-owned-chip svg {
+            width:22px !important;
+            height:22px !important;
+        }
+        html.perla-mobile-portrait #perlaInfoModalV361[data-kind="casa_missing_resources_v384"] .info-actions,
+        html.perla-mobile-portrait #perlaInfoModalV361[data-kind="casa_confirm_purchase_v403"] .info-actions {
+            display:grid !important;
+            grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+            gap:7px !important;
+        }
+        html.perla-mobile-portrait #perlaInfoModalV361[data-kind="casa_missing_resources_v384"] .info-action,
+        html.perla-mobile-portrait #perlaInfoModalV361[data-kind="casa_confirm_purchase_v403"] .info-action {
+            min-height:36px !important;
+            padding:0 9px !important;
+            font-size:12px !important;
+        }
+
+        html.perla-mobile-landscape #perlaInfoModalV361[data-kind="casa_missing_resources_v384"] .info-panel,
+        html.perla-mobile-landscape #perlaInfoModalV361[data-kind="casa_confirm_purchase_v403"] .info-panel {
+            width:min(680px,calc(100vw - 190px - env(safe-area-inset-left) - env(safe-area-inset-right))) !important;
+            max-height:calc(100svh - 16px) !important;
+        }
+        html.perla-mobile-landscape #perlaInfoModalV361[data-kind="casa_missing_resources_v384"] .info-body,
+        html.perla-mobile-landscape #perlaInfoModalV361[data-kind="casa_confirm_purchase_v403"] .info-body {
+            display:grid !important;
+            grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+            gap:7px !important;
+            padding:8px !important;
+        }
+        html.perla-mobile-landscape #perlaInfoModalV361[data-kind="casa_missing_resources_v384"] .info-actions,
+        html.perla-mobile-landscape #perlaInfoModalV361[data-kind="casa_confirm_purchase_v403"] .info-actions,
+        html.perla-mobile-landscape #perlaInfoModalV361 .casa-v403-owned-popover {
+            grid-column:1 / -1 !important;
+        }
+        html.perla-mobile-landscape #perlaInfoModalV361[data-kind="casa_missing_resources_v384"] .rtp-v355-summary,
+        html.perla-mobile-landscape #perlaInfoModalV361[data-kind="casa_confirm_purchase_v403"] .rtp-v355-summary,
+        html.perla-mobile-landscape #perlaInfoModalV361[data-kind="casa_missing_resources_v384"] .casa-v384-missing-owned,
+        html.perla-mobile-landscape #perlaInfoModalV361[data-kind="casa_confirm_purchase_v403"] .casa-v384-missing-owned {
+            display:grid !important;
+            grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+            gap:6px !important;
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v392-stone-barter-row {
+            grid-template-columns:minmax(0,1fr) 54px minmax(0,1fr) minmax(66px,.72fr) !important;
+            gap:5px !important;
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v392-stone-barter-field label { font-size:8px !important; }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v392-stone-barter select,
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v392-stone-barter input {
+            height:34px !important;
+            padding:0 5px !important;
+            font-size:11px !important;
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v392-stone-barter-control {
+            grid-template-columns:28px minmax(0,1fr) !important;
+            gap:4px !important;
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v392-stone-barter-icon {
+            width:28px !important;
+            height:34px !important;
+        }
+        html.perla-mobile-portrait #perlaCasaPremiumMenuV384 .casa-v392-stone-barter-preview {
+            min-height:34px !important;
+            font-size:10px !important;
+            overflow:hidden !important;
+        }
+
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v334-card,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup .rtp-v365-skill-card,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v365-skill-card,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card {
+            grid-template-rows:auto 22px 48px 74px 38px !important;
+            gap:5px !important;
+            padding:8px !important;
+            min-height:0 !important;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v334-card p,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup .rtp-v365-skill-card p,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v365-skill-card p,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card p,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card p {
+            min-height:22px !important;
+            max-height:22px !important;
+            -webkit-line-clamp:1 !important;
+            font-size:11.5px !important;
+            line-height:1.18 !important;
+            background-position:left bottom !important;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v355-upgrade-summary,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup .rtp-v365-skill-effects,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v365-skill-effects,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card .rtp-v355-summary,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card .rtp-v355-consumable-summary {
+            height:48px !important;
+            max-height:48px !important;
+            gap:4px !important;
+            overflow:hidden !important;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v355-upgrade-summary .rtp-v355-summary-chip,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup .rtp-v365-skill-effects .rtp-v355-summary-chip,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v365-skill-effects .rtp-v355-summary-chip,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v374-buildable-card .rtp-v355-summary .rtp-v355-summary-chip,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .rtp-v345-consumable-card .rtp-v355-consumable-summary .rtp-v355-summary-chip {
+            min-height:22px !important;
+            padding:3px 5px !important;
+            font-size:10px !important;
+        }
+
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v390-resource-grid {
+            display:grid !important;
+            grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+            gap:7px !important;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v390-resource-grid .rtp-v364-owned-chip:nth-child(3) {
+            display:none !important;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v392-resource-schematic {
+            grid-template-columns:1fr !important;
+            gap:7px !important;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v392-resource-box-head {
+            grid-template-columns:30px minmax(0,1fr) auto !important;
+            gap:7px !important;
+            padding:7px !important;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v392-resource-box[data-kind="base"] .casa-v392-resource-stone-grid {
+            display:flex !important;
+            flex-wrap:nowrap !important;
+            gap:6px !important;
+            overflow:hidden !important;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v392-resource-stone-chip {
+            flex:1 1 0 !important;
+            min-width:0 !important;
+            padding:5px !important;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v390-resource-action-columns {
+            grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+            gap:8px !important;
+            align-items:start !important;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v390-resource-actions,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v390-resource-action-block,
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v392-stone-barter {
+            gap:7px !important;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v390-resource-action-grid {
+            grid-template-columns:1fr !important;
+            gap:7px !important;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v390-resource-action {
+            min-height:38px !important;
+            padding:5px 7px !important;
+            font-size:11.5px !important;
+        }
+        html.perla-mobile-landscape #perlaCasaPremiumMenuV384 .casa-v390-resource-divider {
+            margin:7px 0 6px !important;
+        }
+
+        /* V405: final Potenzia popup spacing guard.
+           The skill popup owns a real header band and a centered resource band before
+           cards start; resources must not visually fall onto the card grid divider. */
+        #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup {
+            padding-top:0 !important;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup .rtp-v374-skill-popup-head {
+            position:sticky !important;
+            top:0 !important;
+            z-index:72 !important;
+            display:grid !important;
+            grid-template-columns:minmax(0,1fr) 42px !important;
+            gap:12px !important;
+            align-items:start !important;
+            margin:0 0 12px !important;
+            padding:17px 14px 14px !important;
+            background:linear-gradient(180deg,rgba(34,29,22,.998),rgba(16,18,17,.985)) !important;
+            border-bottom:1px solid rgba(245,217,158,.22) !important;
+            box-shadow:0 10px 22px rgba(0,0,0,.34) !important;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup .rtp-v374-skill-popup-close {
+            position:relative !important;
+            top:auto !important;
+            right:auto !important;
+            justify-self:end !important;
+            align-self:start !important;
+            width:42px !important;
+            height:42px !important;
+            margin:0 !important;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup .rtp-v374-skill-popup-title {
+            margin:0 !important;
+            padding:0 !important;
+            line-height:1.12 !important;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup .rtp-v374-skill-popup-subtitle {
+            margin:4px 0 0 !important;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup .rtp-v374-skill-popup-head .rtp-v355-summary {
+            margin-top:9px !important;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup .casa-v403-skill-resources {
+            display:flex !important;
+            flex-wrap:nowrap !important;
+            align-items:center !important;
+            justify-content:flex-start !important;
+            gap:8px !important;
+            height:48px !important;
+            min-height:48px !important;
+            margin:0 0 8px !important;
+            padding:6px 14px 8px !important;
+            border-top:0 !important;
+            border-bottom:1px solid rgba(245,217,158,.22) !important;
+            overflow:visible !important;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup .casa-v403-skill-resources .rtp-v364-owned-chip {
+            width:34px !important;
+            min-width:34px !important;
+            max-width:34px !important;
+            height:34px !important;
+            min-height:34px !important;
+            align-self:center !important;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup .casa-v403-skill-resources .rtp-v364-owned-chip svg {
+            width:27px !important;
+            height:27px !important;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup .casa-v403-skill-resources .rtp-v364-owned-chip span {
+            right:-4px !important;
+            bottom:-2px !important;
+        }
+        #perlaCasaPremiumMenuV384 .rtp-v374-skill-popup .rtp-v365-skill-grid {
+            margin-top:0 !important;
+            padding-top:0 !important;
+            align-items:start !important;
         }
     </style>
 </head>
@@ -19339,6 +19828,9 @@ function perlaRtpInfoModalActionsV361(actions){
     });
     return rows.length ? '<div class="info-actions">'+rows.join('')+'</div>' : '';
 }
+function perlaRtpInfoOwnedPopoverHtmlV403(){
+    return '<div class="casa-v403-owned-popover" data-owned-popover-v403 hidden>'+perlaRtpInfoSectionV361('Possiedi ora', perlaRtpCasaOwnedSummaryHtmlV384(), 'missing_owned_v384')+'</div>';
+}
 function perlaRtpConsumableEffectChipsV361(key){
     if(key==='acqua') return [
         perlaRtpInfoChipV361('stat_comfort','Comfort','+14'),
@@ -19871,6 +20363,17 @@ function perlaRtpInfoModalHandleActionV361(btn){
         btn.disabled=true;
         btn.dataset.processing='true';
         return perlaRtpCasaConfirmPendingTransactionV403();
+    }
+    if(action==='toggle-owned-v403'){
+        const modal=document.getElementById('perlaInfoModalV361');
+        const pop=modal&&modal.querySelector('[data-owned-popover-v403]');
+        if(pop){
+            pop.hidden=!pop.hidden;
+            btn.setAttribute('aria-expanded', pop.hidden?'false':'true');
+            perlaRtpPass2PlayActionSoundV345(pop.hidden?'menu_close':'menu_open');
+            return {ok:true, type:'toggle_owned_v403', visible:!pop.hidden};
+        }
+        return {ok:false, reason:'owned_popover_missing_v403'};
     }
     if(action==='use-consumable'){
         const key=String(btn.dataset.key||'');
@@ -20455,11 +20958,12 @@ function perlaRtpCasaMissingResourcesHtmlV384(cost){
     return [
         perlaRtpInfoSectionV361('Richiesto', requiredHtml, 'missing_required_v384'),
         perlaRtpInfoSectionV361('Ti manca', missingHtml, 'missing_delta_v384'),
-        perlaRtpInfoSectionV361('Possiedi ora', perlaRtpCasaOwnedSummaryHtmlV384(), 'missing_owned_v384'),
         perlaRtpInfoModalActionsV361([
             {action:'open-casa-resources-v392', label:'Vendi i sassi'},
+            {action:'toggle-owned-v403', label:'Possiedi ora', secondary:true},
             {action:'close', label:'Chiudi', secondary:true}
-        ])
+        ]),
+        perlaRtpInfoOwnedPopoverHtmlV403()
     ].join('');
 }
 function perlaRtpCasaOpenMissingResourcesPopupV384(cost, label){
@@ -20518,12 +21022,14 @@ function perlaRtpCasaConfirmPurchaseHtmlV403(cost, label){
     return [
         perlaRtpInfoSectionV361('Acquisto', '<p>'+perlaRtpInfoEscapeV361(label||'Conferma operazione')+'</p>', 'confirm_label_v403'),
         perlaRtpInfoSectionV361('Costo', delta.costHtml, 'missing_required_v384'),
-        perlaRtpInfoSectionV361('Adesso', delta.nowHtml, 'confirm_now_v403'),
         perlaRtpInfoSectionV361('Dopo conferma', delta.afterHtml, 'missing_delta_v384'),
         perlaRtpInfoModalActionsV361([
             {action:'casa-confirm-transaction-v403', label:'Conferma'},
+            {action:'open-casa-resources-v392', label:'Vendi i sassi', secondary:true},
+            {action:'toggle-owned-v403', label:'Possiedi ora', secondary:true},
             {action:'close', label:'Annulla', secondary:true}
-        ])
+        ]),
+        perlaRtpInfoOwnedPopoverHtmlV403()
     ].join('');
 }
 function perlaRtpCasaPostEconomyRefreshV403(reason, eventInfo){
@@ -25850,17 +26356,23 @@ function perlaCasaRenderResourcePopupV390(el){
     const actionsHtml=[
         '<div class="casa-v390-resource-divider" aria-hidden="true"></div>',
         '<div class="casa-v390-resource-actions">',
-            '<div class="casa-v390-resource-action-title">Deposito</div>',
-            '<div class="casa-v390-resource-action-grid">',
-                actionButton('sell_all','deposit','ec','Vendi tutti i sassi', displayedPotentialEc>0?('+'+displayedPotentialEc+' EC'):'deposito vuoto', potentialEc<=0),
-                actionButton('sell_half','deposit','stone_round','Vendi met\u00e0 dei tuoi sassi', displayedHalfEc>0?('+'+displayedHalfEc+' EC'):'deposito vuoto', (Number(halfPotential.pieces)||0)<=0),
+            '<div class="casa-v390-resource-action-columns">',
+                '<section class="casa-v390-resource-action-block" data-block="deposit">',
+                    '<div class="casa-v390-resource-action-title">Deposito</div>',
+                    '<div class="casa-v390-resource-action-grid">',
+                        actionButton('sell_all','deposit','ec','Vendi tutti i sassi', displayedPotentialEc>0?('+'+displayedPotentialEc+' EC'):'deposito vuoto', potentialEc<=0),
+                        actionButton('sell_half','deposit','stone_round','Vendi met\u00e0 dei tuoi sassi', displayedHalfEc>0?('+'+displayedHalfEc+' EC'):'deposito vuoto', (Number(halfPotential.pieces)||0)<=0),
+                    '</div>',
+                '</section>',
+                '<section class="casa-v390-resource-action-block" data-block="barter">',
+                    '<div class="casa-v390-resource-action-title">Baratto</div>',
+                    '<div class="casa-v390-resource-action-grid">',
+                        actionButton('gd_ec','barter','gd','Cambia '+merchantRates.ecPerGd+' EC in 1 GD', 'servizi e docce', (Number(wallet.ec)||0)<merchantRates.ecPerGd),
+                        actionButton('gd_basalto','barter','basalt','Cambia '+merchantRates.basaltoCost+' Basalto in '+merchantRates.basaltoToGd+' GD', 'servizi e docce', (Number(storage.basalto)||0)<merchantRates.basaltoCost),
+                    '</div>',
+                '</section>',
             '</div>',
             '<div class="casa-v390-resource-divider" aria-hidden="true"></div>',
-            '<div class="casa-v390-resource-action-title">Baratto</div>',
-            '<div class="casa-v390-resource-action-grid">',
-                actionButton('gd_ec','barter','gd','Cambia '+merchantRates.ecPerGd+' EC in 1 GD', 'servizi e docce', (Number(wallet.ec)||0)<merchantRates.ecPerGd),
-                actionButton('gd_basalto','barter','basalt','Cambia '+merchantRates.basaltoCost+' Basalto in '+merchantRates.basaltoToGd+' GD', 'servizi e docce', (Number(storage.basalto)||0)<merchantRates.basaltoCost),
-            '</div>',
             '<div class="casa-v392-stone-barter" aria-label="Baratta sassi tra loro">',
                 '<div class="casa-v390-resource-action-title">Sassi tra loro</div>',
                 '<div class="casa-v392-stone-barter-row">',
@@ -26816,10 +27328,10 @@ function perlaRtpActionOpenHubSkillPopupV374(el, tier){
     if(subtitle) subtitle.textContent=unlocked ? ('Potenziamenti attivi '+ownedCount+'/'+tierLimit+'. Ogni card mostra benefici e costo.') : ('Tier '+t+' bloccato: applica prima questo upgrade.');
     const summary=popup.querySelector('.rtp-v355-summary');
     if(summary) summary.innerHTML=
-        perlaRtpSummaryChipHtmlV355('stat_forza','Lavori','+'+Math.round((Number(effectSummary.jobYieldPct)||0)*100)+'%')+
-        perlaRtpSummaryChipHtmlV355('capacity','Capienza','+'+(Number(effectSummary.capacityBonus)||0))+
-        perlaRtpSummaryChipHtmlV355('ec','Mercante','+'+Math.round((Number(effectSummary.merchantPct)||0)*100)+'%')+
-        perlaRtpSummaryChipHtmlV355('debt','Perdite','-'+Math.round((Number(effectSummary.failLossProtectionPct)||0)*100)+'%');
+        perlaRtpSummaryChipHtmlV355('stat_forza','', '+'+Math.round((Number(effectSummary.jobYieldPct)||0)*100)+'%')+
+        perlaRtpSummaryChipHtmlV355('capacity','', '+'+(Number(effectSummary.capacityBonus)||0))+
+        perlaRtpSummaryChipHtmlV355('ec','', '+'+Math.round((Number(effectSummary.merchantPct)||0)*100)+'%')+
+        perlaRtpSummaryChipHtmlV355('debt','', '-'+Math.round((Number(effectSummary.failLossProtectionPct)||0)*100)+'%');
     const close=popup.querySelector('.rtp-v374-skill-popup-close');
     if(close) close.addEventListener('click', e=>{ e.preventDefault(); e.stopPropagation(); perlaRtpActionCloseHubSkillPopupV374(el); perlaRtpPass2PlayActionSoundV345('menu_close'); }, {passive:false});
     const grid=popup.querySelector('.rtp-v365-skill-grid');
