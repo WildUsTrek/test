@@ -1,10 +1,10 @@
 {
-  "id": "./?perlaBuild=PERLA1_V627_ANDROID_EVIDENCE_ROUTER_PROMOTION_PROBES_LOCAL",
+  "id": "./?perlaBuild=PERLA1_V628_ANDROID_CHROMIUM_GECKO_PROMOTION_PROBES_LOCAL",
   "name": "Camping Sole, Mare & Zanzare",
   "short_name": "PERLA1",
   "description": "Camping Sole, Mare & Zanzare",
   "lang": "it",
-  "start_url": "./?perlaBuild=PERLA1_V627_ANDROID_EVIDENCE_ROUTER_PROMOTION_PROBES_LOCAL&pwaStart=1",
+  "start_url": "./?perlaBuild=PERLA1_V628_ANDROID_CHROMIUM_GECKO_PROMOTION_PROBES_LOCAL&pwaStart=1",
   "scope": "./",
   "display": "fullscreen",
   "display_override": ["fullscreen", "standalone"],
