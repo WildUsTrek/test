@@ -1,10 +1,10 @@
 {
-  "id": "./",
+  "id": "./?perlaBuild=PERLA1_V626_AUTOTEST_EXPORT_IDENTITY_CACHE_BYPASS_LOCAL",
   "name": "Camping Sole, Mare & Zanzare",
   "short_name": "PERLA1",
   "description": "Camping Sole, Mare & Zanzare",
   "lang": "it",
-  "start_url": "./",
+  "start_url": "./?perlaBuild=PERLA1_V626_AUTOTEST_EXPORT_IDENTITY_CACHE_BYPASS_LOCAL&pwaStart=1",
   "scope": "./",
   "display": "fullscreen",
   "display_override": ["fullscreen", "standalone"],
