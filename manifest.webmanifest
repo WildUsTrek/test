@@ -1,10 +1,10 @@
 {
-  "id": "./?perlaBuild=PERLA1_V633_ANDROID_HISTORIC_FINALISTS_LOCAL",
+  "id": "./?perlaBuild=PERLA1_V635_ANDROID_RUNTIME_AWARE_SETUP_POLICY_ROUTER_LOCAL",
   "name": "Camping Sole, Mare & Zanzare",
   "short_name": "PERLA1",
   "description": "Camping Sole, Mare & Zanzare",
   "lang": "it",
-  "start_url": "./?perlaBuild=PERLA1_V633_ANDROID_HISTORIC_FINALISTS_LOCAL&pwaStart=1",
+  "start_url": "./?perlaBuild=PERLA1_V635_ANDROID_RUNTIME_AWARE_SETUP_POLICY_ROUTER_LOCAL&pwaStart=1",
   "scope": "./",
   "display": "fullscreen",
   "display_override": ["fullscreen", "standalone"],
